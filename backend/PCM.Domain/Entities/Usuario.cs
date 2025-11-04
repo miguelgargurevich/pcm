@@ -16,6 +16,8 @@ public class Usuario
     public bool Activo { get; set; } = true;
     public int PerfilId { get; set; }
     public DateTime? LastLogin { get; set; }
+    public string? ResetPasswordToken { get; set; }
+    public DateTime? ResetPasswordExpiry { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 

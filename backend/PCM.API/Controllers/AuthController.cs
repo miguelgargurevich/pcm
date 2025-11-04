@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PCM.Application.DTOs.Auth;
 using PCM.Application.Interfaces;
+using PCM.Infrastructure.Handlers.Auth;
 using System.Security.Claims;
 
 namespace PCM.API.Controllers;
@@ -12,11 +13,19 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     private readonly ILogger<AuthController> _logger;
+    private readonly ForgotPasswordHandler _forgotPasswordHandler;
+    private readonly ResetPasswordHandler _resetPasswordHandler;
 
-    public AuthController(IAuthService authService, ILogger<AuthController> logger)
+    public AuthController(
+        IAuthService authService, 
+        ILogger<AuthController> logger,
+        ForgotPasswordHandler forgotPasswordHandler,
+        ResetPasswordHandler resetPasswordHandler)
     {
         _authService = authService;
         _logger = logger;
+        _forgotPasswordHandler = forgotPasswordHandler;
+        _resetPasswordHandler = resetPasswordHandler;
     }
 
     /// <summary>
@@ -141,5 +150,68 @@ public class AuthController : ControllerBase
         };
 
         return Ok(new { success = true, data = userInfo, claims });
+    }
+
+    /// <summary>
+    /// Solicitar recuperación de contraseña
+    /// </summary>
+    [HttpPost("forgot-password")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var result = await _forgotPasswordHandler.Handle(request);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(new { message = result.Message, errors = result.Errors });
+        }
+
+        _logger.LogInformation("Solicitud de recuperación de contraseña para email: {Email}", request.Email);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Restablecer contraseña con token
+    /// </summary>
+    [HttpPost("reset-password")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDto request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var result = await _resetPasswordHandler.Handle(request);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(new { message = result.Message, errors = result.Errors });
+        }
+
+        _logger.LogInformation("Contraseña restablecida exitosamente");
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Validar token de recuperación de contraseña
+    /// </summary>
+    [HttpGet("validate-reset-token/{token}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ValidateResetToken(string token)
+    {
+        var result = await _resetPasswordHandler.ValidateToken(token);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(new { message = result.Message, errors = result.Errors });
+        }
+
+        return Ok(result);
     }
 }

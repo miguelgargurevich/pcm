@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { useAuth } from '../hooks/useAuth';
 
@@ -118,9 +118,9 @@ const Login = () => {
           </div>
 
           <div className="text-right">
-            <a href="#" className="text-sm text-primary hover:text-primary-dark">
+            <Link to="/forgot-password" className="text-sm text-primary hover:text-primary-dark">
               ¿Olvidaste tu contraseña?
-            </a>
+            </Link>
           </div>
 
           <button

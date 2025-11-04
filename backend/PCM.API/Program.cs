@@ -75,6 +75,10 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
+// Registro de handlers de Auth
+builder.Services.AddScoped<PCM.Infrastructure.Handlers.Auth.ForgotPasswordHandler>();
+builder.Services.AddScoped<PCM.Infrastructure.Handlers.Auth.ResetPasswordHandler>();
+
 // Configuración de CORS
 var corsOrigins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? new[] { "http://localhost:5173" };
 builder.Services.AddCors(options =>

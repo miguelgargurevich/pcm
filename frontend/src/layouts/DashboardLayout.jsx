@@ -22,8 +22,8 @@ const Sidebar = ({ isOpen, onClose }) => {
   const menuItems = [
     { icon: Users, label: 'Gestionar Usuario', path: '/dashboard/usuarios' },
     { icon: Building2, label: 'Gestionar Entidades', path: '/dashboard/entidades' },
-    { icon: FileText, label: 'Marco Normativo', path: '/dashboard/marco-normativo' },
-    { icon: CheckSquare, label: 'Compromisos Gob. Digital', path: '/dashboard/compromisos' },
+    { icon: FileText, label: 'Gestionar Marco Normativo', path: '/dashboard/marco-normativo' },
+    { icon: CheckSquare, label: 'Compromisos Gobierno Digital', path: '/dashboard/compromisos' },
     { icon: ClipboardCheck, label: 'Cumplimiento Normativo', path: '/dashboard/cumplimiento' },
     { icon: TrendingUp, label: 'Seguimiento PGD-PP', path: '/dashboard/seguimiento' },
     { icon: BarChart3, label: 'Evaluación y Cumplimiento', path: '/dashboard/evaluacion' },
