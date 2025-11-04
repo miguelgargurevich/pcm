@@ -2,23 +2,59 @@ import api from './api';
 
 export const authService = {
   // Login
-  async login(email, password) {
+  async login(email, password, recaptchaToken) {
     try {
+      console.log('🌐 authService: Enviando petición POST /auth/login');
       const response = await api.post('/auth/login', {
         email,
         password,
+        recaptchaToken,
       });
 
-      if (response.data.success) {
-        const { token, refreshToken, usuario } = response.data.data;
+      console.log('📡 authService: Respuesta del servidor:', response.data);
+
+      // El backend retorna IsSuccess, no success
+      const isSuccess = response.data.isSuccess || response.data.IsSuccess;
+      
+      if (isSuccess) {
+        // El backend retorna AccessToken, no token
+        const token = response.data.data?.accessToken || response.data.data?.AccessToken;
+        const refreshToken = response.data.data?.refreshToken || response.data.data?.RefreshToken;
+        const usuario = response.data.data?.usuario || response.data.data?.Usuario;
+        
+        console.log('💾 authService: Guardando en localStorage...');
+        console.log('  - Token:', token ? 'OK' : 'Falta');
+        console.log('  - RefreshToken:', refreshToken ? 'OK' : 'Falta');
+        console.log('  - Usuario:', usuario ? usuario.email : 'Falta');
+        
         localStorage.setItem('token', token);
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('user', JSON.stringify(usuario));
-        return response.data;
+        
+        console.log('✅ authService: Datos guardados exitosamente');
+        
+        // Retornar en formato que espera el frontend
+        return {
+          success: true,
+          data: {
+            token,
+            refreshToken,
+            usuario
+          }
+        };
       }
-      return response.data;
+      console.log('⚠️ authService: success=false en respuesta');
+      return {
+        success: false,
+        message: response.data.message || response.data.Message || 'Error desconocido'
+      };
     } catch (error) {
-      throw error.response?.data || { success: false, message: 'Error al iniciar sesión' };
+      console.error('❌ authService: Error en petición:', error);
+      const errorData = error.response?.data;
+      throw {
+        success: false,
+        message: errorData?.message || errorData?.Message || error.message || 'Error al iniciar sesión'
+      };
     }
   },
 

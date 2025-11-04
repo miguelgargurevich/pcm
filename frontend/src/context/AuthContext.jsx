@@ -23,18 +23,20 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, []);
 
-  const login = async (email, password) => {
-    try {
-      const response = await authService.login(email, password);
-      if (response.success) {
-        setUser(response.data.usuario);
-        setIsAuthenticated(true);
-        return { success: true };
-      }
-      return response;
-    } catch (error) {
-      return { success: false, message: error.message || 'Error al iniciar sesión' };
+  const login = async (email, password, recaptchaToken) => {
+    console.log('🔄 AuthContext: Llamando a authService.login...');
+    const response = await authService.login(email, password, recaptchaToken);
+    console.log('📦 AuthContext: Respuesta recibida:', response);
+    
+    if (response.success) {
+      console.log('👤 AuthContext: Usuario:', response.data.usuario);
+      setUser(response.data.usuario);
+      setIsAuthenticated(true);
+      console.log('✅ AuthContext: Estado actualizado - isAuthenticated: true');
+      return { success: true };
     }
+    console.log('⚠️ AuthContext: Login no exitoso');
+    return response;
   };
 
   const logout = async () => {

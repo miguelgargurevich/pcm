@@ -28,6 +28,14 @@ VITE_RECAPTCHA_SITE_KEY=tu_site_key_aqui
 VITE_API_URL=http://localhost:5164/api
 ```
 
+#### Claves de prueba de Google (para desarrollo local)
+Google proporciona claves de prueba que siempre pasan la validación:
+
+**Site Key (pública)**: `6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI`  
+**Secret Key (privada)**: `6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe`
+
+⚠️ **Importante**: Estas claves **SOLO** deben usarse en desarrollo. En producción, crea tus propias claves.
+
 ### 5. Configurar en el Backend (opcional)
 Si quieres verificar el token en el backend, edita `appsettings.json` en `/backend/PCM.API`:
 

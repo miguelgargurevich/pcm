@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
@@ -43,19 +42,28 @@ const Login = () => {
       // Ejecutar reCAPTCHA v3
       const recaptchaToken = await executeRecaptcha('login');
       
-      // Aquí puedes enviar el token al backend para verificación
-      console.log('reCAPTCHA Token:', recaptchaToken);
+      console.log('🔐 Iniciando login...');
+      console.log('📧 Email:', formData.email);
+      console.log('🤖 reCAPTCHA Token:', recaptchaToken ? 'Generado ✓' : 'No generado ✗');
       
-      const result = await login(formData.email, formData.password);
+      const result = await login(formData.email, formData.password, recaptchaToken);
       
-      if (result.success) {
-        navigate('/dashboard');
+      console.log('📥 Respuesta del login:', result);
+      
+      if (result && result.success) {
+        console.log('✅ Login exitoso, redirigiendo a dashboard...');
+        // Pequeña pausa para asegurar que el estado se actualice
+        await new Promise(resolve => setTimeout(resolve, 100));
+        console.log('🚀 Ejecutando navigate...');
+        navigate('/dashboard', { replace: true });
       } else {
-        setError(result.message || 'Credenciales incorrectas');
+        console.log('❌ Login fallido:', result);
+        setError(result?.message || 'Credenciales incorrectas');
+        setLoading(false);
       }
     } catch (err) {
-      setError('Error al iniciar sesión. Por favor, intenta nuevamente.');
-    } finally {
+      console.error('💥 Error en login:', err);
+      setError(err?.message || 'Error al iniciar sesión. Por favor, intenta nuevamente.');
       setLoading(false);
     }
   };
