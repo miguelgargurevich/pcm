@@ -41,6 +41,8 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
             entity.Property(e => e.PerfilId).HasColumnName("perfil_id").IsRequired();
             entity.Property(e => e.LastLogin).HasColumnName("last_login");
+            entity.Property(e => e.ResetPasswordToken).HasColumnName("reset_password_token").HasMaxLength(100);
+            entity.Property(e => e.ResetPasswordExpiry).HasColumnName("reset_password_expiry");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
 

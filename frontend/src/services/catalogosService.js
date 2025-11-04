@@ -3,7 +3,7 @@ import api from './api';
 export const catalogosService = {
   getNivelesGobierno: async () => {
     try {
-      const response = await api.get('/api/catalogos/niveles-gobierno');
+      const response = await api.get('/catalogos/niveles-gobierno');
       return response.data;
     } catch (error) {
       console.error('Error al obtener niveles de gobierno:', error);
@@ -13,7 +13,7 @@ export const catalogosService = {
 
   getSectores: async () => {
     try {
-      const response = await api.get('/api/catalogos/sectores');
+      const response = await api.get('/catalogos/sectores');
       return response.data;
     } catch (error) {
       console.error('Error al obtener sectores:', error);
@@ -23,7 +23,7 @@ export const catalogosService = {
 
   getClasificaciones: async () => {
     try {
-      const response = await api.get('/api/catalogos/clasificaciones');
+      const response = await api.get('/catalogos/clasificaciones');
       return response.data;
     } catch (error) {
       console.error('Error al obtener clasificaciones:', error);
@@ -33,7 +33,7 @@ export const catalogosService = {
 
   getPerfiles: async () => {
     try {
-      const response = await api.get('/api/catalogos/perfiles');
+      const response = await api.get('/catalogos/perfiles');
       return response.data;
     } catch (error) {
       console.error('Error al obtener perfiles:', error);

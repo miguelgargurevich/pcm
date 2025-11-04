@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { executeRecaptcha } = useGoogleReCaptcha();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -31,20 +29,15 @@ const Login = () => {
       return;
     }
 
-    if (!executeRecaptcha) {
-      setError('reCAPTCHA no está disponible. Por favor, recarga la página.');
-      return;
-    }
-
     setLoading(true);
 
     try {
-      // Ejecutar reCAPTCHA v3
-      const recaptchaToken = await executeRecaptcha('login');
+      // Sin reCAPTCHA en modo desarrollo
+      const recaptchaToken = null;
       
       console.log('🔐 Iniciando login...');
       console.log('📧 Email:', formData.email);
-      console.log('🤖 reCAPTCHA Token:', recaptchaToken ? 'Generado ✓' : 'No generado ✗');
+      console.log('🤖 reCAPTCHA Token:', 'No disponible (modo dev)');
       
       const result = await login(formData.email, formData.password, recaptchaToken);
       
@@ -133,17 +126,6 @@ const Login = () => {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500 mb-4">
-            Este sitio está protegido por reCAPTCHA v3 y se aplican las{' '}
-            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-primary-500 hover:underline">
-              Políticas de Privacidad
-            </a>{' '}
-            y{' '}
-            <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="text-primary-500 hover:underline">
-              Términos de Servicio
-            </a>{' '}
-            de Google.
-          </p>
           <div className="text-sm text-gray-600 pt-4 border-t border-gray-200">
             <p>Usuario de prueba: admin@pcm.gob.pe</p>
             <p>Contraseña: Admin123!</p>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { usuariosService } from '../services/usuariosService';
 import { entidadesService } from '../services/entidadesService';
 import { catalogosService } from '../services/catalogosService';
+import { showConfirmToast, showSuccessToast, showErrorToast } from '../utils/toast.jsx';
 import { Plus, Edit2, Trash2, X, Save, FilterX } from 'lucide-react';
 
 const Usuarios = () => {
@@ -205,21 +206,23 @@ const Usuarios = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('¿Está seguro de eliminar este usuario?')) return;
-
-    try {
-      const response = await usuariosService.delete(id);
-      const isSuccess = response.isSuccess || response.IsSuccess;
-      
-      if (isSuccess) {
-        await loadUsuarios();
-        alert('Usuario eliminado exitosamente');
-      } else {
-        alert(response.message || 'Error al eliminar usuario');
-      }
-    } catch (err) {
-      alert(err.message || 'Error al eliminar usuario');
-    }
+    showConfirmToast({
+      title: '¿Está seguro de eliminar este usuario?',
+      message: 'Esta acción no se puede deshacer.',
+      confirmText: 'Eliminar',
+      loadingText: 'Eliminando usuario...',
+      onConfirm: async () => {
+        const response = await usuariosService.delete(id);
+        const isSuccess = response.isSuccess || response.IsSuccess;
+        
+        if (isSuccess) {
+          await loadUsuarios();
+          showSuccessToast('Usuario eliminado exitosamente');
+        } else {
+          showErrorToast(response.message || 'Error al eliminar usuario');
+        }
+      },
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -239,7 +242,7 @@ const Usuarios = () => {
       if (isSuccess) {
         setShowModal(false);
         await loadUsuarios();
-        alert(editingUsuario ? 'Usuario actualizado exitosamente' : 'Usuario creado exitosamente');
+        showSuccessToast(editingUsuario ? 'Usuario actualizado exitosamente' : 'Usuario creado exitosamente');
       } else {
         setError(response.message || 'Error al guardar usuario');
       }
@@ -538,8 +541,17 @@ const Usuarios = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div 
+          className="fixed bg-black bg-opacity-50 flex items-center justify-center p-4 overflow-y-auto"
+          style={{
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
+          }}
+        >
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto my-8">
             <div className="p-6">
               <h2 className="text-xl font-bold mb-4">
                 {editingUsuario ? 'Editar Usuario' : 'Nuevo Usuario'}

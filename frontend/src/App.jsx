@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
@@ -13,10 +14,35 @@ import DashboardLayout from './layouts/DashboardLayout';
 function App() {
   const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
-  return (
-    <GoogleReCaptchaProvider reCaptchaKey={recaptchaSiteKey}>
-      <Router>
-        <AuthProvider>
+  const appContent = (
+    <Router>
+      <AuthProvider>
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: '#363636',
+                color: '#fff',
+                padding: '16px',
+                borderRadius: '8px',
+              },
+              success: {
+                duration: 3000,
+                iconTheme: {
+                  primary: '#10b981',
+                  secondary: '#fff',
+                },
+              },
+              error: {
+                duration: 4000,
+                iconTheme: {
+                  primary: '#ef4444',
+                  secondary: '#fff',
+                },
+              },
+            }}
+          />
           <Routes>
           {/* Rutas públicas */}
           <Route path="/login" element={<Login />} />
@@ -49,7 +75,29 @@ function App() {
         </Routes>
       </AuthProvider>
     </Router>
+  );
+
+  // Si hay una clave de reCAPTCHA válida, envolver con el provider
+  // Si no, renderizar sin reCAPTCHA (útil para desarrollo)
+  return recaptchaSiteKey ? (
+    <GoogleReCaptchaProvider 
+      reCaptchaKey={recaptchaSiteKey}
+      scriptProps={{
+        async: true,
+        defer: true,
+        appendTo: "head",
+      }}
+      container={{
+        parameters: {
+          badge: 'bottomright',
+          theme: 'light',
+        },
+      }}
+    >
+      {appContent}
     </GoogleReCaptchaProvider>
+  ) : (
+    appContent
   );
 }
 

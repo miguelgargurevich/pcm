@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { entidadesService } from '../services/entidadesService';
 import { catalogosService } from '../services/catalogosService';
+import { showConfirmToast, showSuccessToast, showErrorToast } from '../utils/toast.jsx';
 import { Plus, Edit2, Trash2, X, Save, Filter, FilterX } from 'lucide-react';
 
 const Entidades = () => {
@@ -286,21 +287,23 @@ const Entidades = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('¿Está seguro de eliminar esta entidad?')) return;
-
-    try {
-      const response = await entidadesService.delete(id);
-      const isSuccess = response.isSuccess || response.IsSuccess;
-      
-      if (isSuccess) {
-        await loadEntidades();
-        alert('Entidad eliminada exitosamente');
-      } else {
-        alert(response.message || 'Error al eliminar entidad');
-      }
-    } catch (err) {
-      alert(err.message || 'Error al eliminar entidad');
-    }
+    showConfirmToast({
+      title: '¿Está seguro de eliminar esta entidad?',
+      message: 'Esta acción no se puede deshacer.',
+      confirmText: 'Eliminar',
+      loadingText: 'Eliminando entidad...',
+      onConfirm: async () => {
+        const response = await entidadesService.delete(id);
+        const isSuccess = response.isSuccess || response.IsSuccess;
+        
+        if (isSuccess) {
+          await loadEntidades();
+          showSuccessToast('Entidad eliminada exitosamente');
+        } else {
+          showErrorToast(response.message || 'Error al eliminar entidad');
+        }
+      },
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -320,7 +323,7 @@ const Entidades = () => {
       if (isSuccess) {
         setShowModal(false);
         await loadEntidades();
-        alert(editingEntidad ? 'Entidad actualizada exitosamente' : 'Entidad creada exitosamente');
+        showSuccessToast(editingEntidad ? 'Entidad actualizada exitosamente' : 'Entidad creada exitosamente');
       } else {
         setError(response.message || 'Error al guardar entidad');
       }
@@ -666,8 +669,17 @@ const Entidades = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div 
+          className="fixed bg-black bg-opacity-50 flex items-center justify-center p-4 overflow-y-auto"
+          style={{
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
+          }}
+        >
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto my-8">
             <div className="p-6">
               <h2 className="text-xl font-bold mb-4">
                 {editingEntidad ? 'Editar Entidad' : 'Nueva Entidad'}
