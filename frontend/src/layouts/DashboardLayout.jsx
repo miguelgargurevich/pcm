@@ -55,11 +55,11 @@ const Sidebar = ({ isOpen, onClose }) => {
           {/* Logo */}
           <div className="p-4 border-b border-primary-700">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3 ml-6">
                 <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-md">
                   <span className="text-primary-500 font-bold text-sm">PCM</span>
                 </div>
-                <span className="font-semibold text-sm">Platanforma de Cumplimiento</span>
+                <span className="font-semibold text-xs">Platanforma de Cumplimiento</span>
               </div>
               <button
                 onClick={onClose}
