@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { usuariosService } from '../services/usuariosService';
 import { entidadesService } from '../services/entidadesService';
+import { catalogosService } from '../services/catalogosService';
 import { Plus, Edit2, Trash2, X, Save, FilterX } from 'lucide-react';
 
 const Usuarios = () => {
@@ -89,13 +90,24 @@ const Usuarios = () => {
         setEntidades(Array.isArray(entidadesData) ? entidadesData : []);
       }
 
-      // TODO: Crear servicio de perfiles cuando esté disponible
-      // Por ahora usamos datos mock para perfiles
-      setPerfiles([
-        { perfilId: 1, nombre: 'Administrador' },
-        { perfilId: 2, nombre: 'Usuario' },
-        { perfilId: 3, nombre: 'Consultor' },
-      ]);
+      // Cargar perfiles desde API
+      try {
+        const perfilesResponse = await catalogosService.getPerfiles();
+        const perfilesSuccess = perfilesResponse.isSuccess || perfilesResponse.IsSuccess;
+        
+        if (perfilesSuccess) {
+          const perfilesData = perfilesResponse.data || perfilesResponse.Data;
+          setPerfiles(Array.isArray(perfilesData) ? perfilesData : []);
+        }
+      } catch (perfilesError) {
+        console.error('Error al cargar perfiles:', perfilesError);
+        // Fallback a datos mock si falla la API
+        setPerfiles([
+          { perfilId: 1, nombre: 'Administrador' },
+          { perfilId: 2, nombre: 'Usuario' },
+          { perfilId: 3, nombre: 'Consultor' },
+        ]);
+      }
     } catch (err) {
       console.error('Error al cargar entidades y perfiles:', err);
       // En caso de error, usar datos mock
@@ -629,30 +641,42 @@ const Usuarios = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      ID Entidad *
+                      Entidad *
                     </label>
-                    <input
-                      type="number"
+                    <select
                       name="entidadId"
                       value={formData.entidadId}
                       onChange={handleChange}
                       className="input-field"
                       required
-                    />
+                    >
+                      <option value="">Seleccione una entidad...</option>
+                      {entidades.map((entidad) => (
+                        <option key={entidad.entidadId} value={entidad.entidadId}>
+                          {entidad.nombre}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      ID Perfil *
+                      Perfil *
                     </label>
-                    <input
-                      type="number"
+                    <select
                       name="perfilId"
                       value={formData.perfilId}
                       onChange={handleChange}
                       className="input-field"
                       required
-                    />
+                    >
+                      <option value="">Seleccione un perfil...</option>
+                      {perfiles.map((perfil) => (
+                        <option key={perfil.perfilId} value={perfil.perfilId}>
+                          {perfil.nombre}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 

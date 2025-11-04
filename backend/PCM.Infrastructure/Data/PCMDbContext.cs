@@ -15,6 +15,8 @@ public class PCMDbContext : DbContext
     public DbSet<Perfil> Perfiles { get; set; }
     public DbSet<Ubigeo> Ubigeos { get; set; }
     public DbSet<Clasificacion> Clasificaciones { get; set; }
+    public DbSet<NivelGobierno> NivelesGobierno { get; set; }
+    public DbSet<Sector> Sectores { get; set; }
     public DbSet<MarcoNormativo> MarcosNormativos { get; set; }
     public DbSet<LogAuditoria> LogAuditoria { get; set; }
 
@@ -91,6 +93,16 @@ public class PCMDbContext : DbContext
                 .WithMany(c => c.Entidades)
                 .HasForeignKey(e => e.ClasificacionId)
                 .HasConstraintName("fk_entidades_clasificacion");
+
+            entity.HasOne(e => e.NivelGobierno)
+                .WithMany(n => n.Entidades)
+                .HasForeignKey(e => e.NivelGobiernoId)
+                .HasConstraintName("fk_entidades_nivel_gobierno");
+
+            entity.HasOne(e => e.Sector)
+                .WithMany(s => s.Entidades)
+                .HasForeignKey(e => e.SectorId)
+                .HasConstraintName("fk_entidades_sector");
         });
 
         // Configuración de Perfil
@@ -180,6 +192,65 @@ public class PCMDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.UsuarioId)
                 .HasConstraintName("fk_log_usuario");
+        });
+
+        // Configuración de NivelGobierno
+        modelBuilder.Entity<NivelGobierno>(entity =>
+        {
+            entity.ToTable("nivel_gobierno");
+            entity.HasKey(e => e.NivelGobiernoId);
+            entity.Property(e => e.NivelGobiernoId).HasColumnName("nivel_gobierno_id");
+            entity.Property(e => e.Nombre).HasColumnName("nombre").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Descripcion).HasColumnName("descripcion").HasMaxLength(200);
+            entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasIndex(e => e.Nombre).IsUnique();
+
+            // Seed data
+            entity.HasData(
+                new NivelGobierno { NivelGobiernoId = 1, Nombre = "Nacional", Descripcion = "Gobierno Nacional", Activo = true },
+                new NivelGobierno { NivelGobiernoId = 2, Nombre = "Regional", Descripcion = "Gobierno Regional", Activo = true },
+                new NivelGobierno { NivelGobiernoId = 3, Nombre = "Local", Descripcion = "Gobierno Local", Activo = true }
+            );
+        });
+
+        // Configuración de Sector
+        modelBuilder.Entity<Sector>(entity =>
+        {
+            entity.ToTable("sector");
+            entity.HasKey(e => e.SectorId);
+            entity.Property(e => e.SectorId).HasColumnName("sector_id");
+            entity.Property(e => e.Nombre).HasColumnName("nombre").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Descripcion).HasColumnName("descripcion").HasMaxLength(200);
+            entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasIndex(e => e.Nombre).IsUnique();
+
+            // Seed data con sectores del gobierno peruano
+            entity.HasData(
+                new Sector { SectorId = 1, Nombre = "Presidencia del Consejo de Ministros", Descripcion = "PCM", Activo = true },
+                new Sector { SectorId = 2, Nombre = "Educación", Descripcion = "MINEDU", Activo = true },
+                new Sector { SectorId = 3, Nombre = "Salud", Descripcion = "MINSA", Activo = true },
+                new Sector { SectorId = 4, Nombre = "Economía y Finanzas", Descripcion = "MEF", Activo = true },
+                new Sector { SectorId = 5, Nombre = "Interior", Descripcion = "MININTER", Activo = true },
+                new Sector { SectorId = 6, Nombre = "Defensa", Descripcion = "MINDEF", Activo = true },
+                new Sector { SectorId = 7, Nombre = "Justicia y Derechos Humanos", Descripcion = "MINJUSDH", Activo = true },
+                new Sector { SectorId = 8, Nombre = "Relaciones Exteriores", Descripcion = "MRE", Activo = true },
+                new Sector { SectorId = 9, Nombre = "Trabajo y Promoción del Empleo", Descripcion = "MTPE", Activo = true },
+                new Sector { SectorId = 10, Nombre = "Agricultura y Riego", Descripcion = "MIDAGRI", Activo = true },
+                new Sector { SectorId = 11, Nombre = "Producción", Descripcion = "PRODUCE", Activo = true },
+                new Sector { SectorId = 12, Nombre = "Comercio Exterior y Turismo", Descripcion = "MINCETUR", Activo = true },
+                new Sector { SectorId = 13, Nombre = "Energía y Minas", Descripcion = "MINEM", Activo = true },
+                new Sector { SectorId = 14, Nombre = "Transportes y Comunicaciones", Descripcion = "MTC", Activo = true },
+                new Sector { SectorId = 15, Nombre = "Vivienda, Construcción y Saneamiento", Descripcion = "MVCS", Activo = true },
+                new Sector { SectorId = 16, Nombre = "Ambiente", Descripcion = "MINAM", Activo = true },
+                new Sector { SectorId = 17, Nombre = "Mujer y Poblaciones Vulnerables", Descripcion = "MIMP", Activo = true },
+                new Sector { SectorId = 18, Nombre = "Desarrollo e Inclusión Social", Descripcion = "MIDIS", Activo = true },
+                new Sector { SectorId = 19, Nombre = "Cultura", Descripcion = "MINCU", Activo = true },
+                new Sector { SectorId = 20, Nombre = "Desarrollo Agrario y Riego", Descripcion = "MIDAGRI", Activo = true }
+            );
         });
     }
 }

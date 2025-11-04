@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { entidadesService } from '../services/entidadesService';
+import { catalogosService } from '../services/catalogosService';
 import { Plus, Edit2, Trash2, X, Save, Filter, FilterX } from 'lucide-react';
 
 const Entidades = () => {
@@ -29,6 +30,7 @@ const Entidades = () => {
   const [departamentos, setDepartamentos] = useState([]);
   const [provincias, setProvincias] = useState([]);
   const [distritos, setDistritos] = useState([]);
+  const [nivelesGobierno, setNivelesGobierno] = useState([]);
   const [sectores, setSectores] = useState([]);
   const [clasificaciones, setClasificaciones] = useState([]);
 
@@ -127,26 +129,51 @@ const Entidades = () => {
     setPaginaActual(1); // Reset a primera página cuando cambian filtros
   }, [entidades, filtros]);
 
-  const loadUbigeoYCatalogos = () => {
-    // TODO: Obtener del backend cuando esté disponible
-    // Mock de departamentos únicos
-    setDepartamentos([
-      'Lima', 'Arequipa', 'Cusco', 'La Libertad', 'Piura', 'Junín', 'Cajamarca'
-    ]);
-    
-    setSectores([
-      { id: 1, nombre: 'Salud' },
-      { id: 2, nombre: 'Educación' },
-      { id: 3, nombre: 'Economía' },
-      { id: 4, nombre: 'Transportes' },
-    ]);
-    
-    setClasificaciones([
-      { id: 1, nombre: 'Ministerio' },
-      { id: 2, nombre: 'Organismo Público' },
-      { id: 3, nombre: 'Gobierno Regional' },
-      { id: 4, nombre: 'Municipalidad' },
-    ]);
+  const loadUbigeoYCatalogos = async () => {
+    try {
+      // Cargar niveles de gobierno
+      const nivelesResponse = await catalogosService.getNivelesGobierno();
+      if (nivelesResponse.isSuccess || nivelesResponse.IsSuccess) {
+        const nivelesData = nivelesResponse.data || nivelesResponse.Data;
+        setNivelesGobierno(Array.isArray(nivelesData) ? nivelesData : []);
+      }
+
+      // Cargar sectores
+      const sectoresResponse = await catalogosService.getSectores();
+      if (sectoresResponse.isSuccess || sectoresResponse.IsSuccess) {
+        const sectoresData = sectoresResponse.data || sectoresResponse.Data;
+        setSectores(Array.isArray(sectoresData) ? sectoresData : []);
+      }
+
+      // Cargar clasificaciones
+      const clasificacionesResponse = await catalogosService.getClasificaciones();
+      if (clasificacionesResponse.isSuccess || clasificacionesResponse.IsSuccess) {
+        const clasificacionesData = clasificacionesResponse.data || clasificacionesResponse.Data;
+        setClasificaciones(Array.isArray(clasificacionesData) ? clasificacionesData : []);
+      }
+
+      // Mock de departamentos (hasta que esté el endpoint de ubigeo)
+      setDepartamentos([
+        'Lima', 'Arequipa', 'Cusco', 'La Libertad', 'Piura', 'Junín', 'Cajamarca'
+      ]);
+    } catch (error) {
+      console.error('Error al cargar catálogos:', error);
+      // Fallback a datos mock en caso de error
+      setNivelesGobierno([
+        { nivelGobiernoId: 1, nombre: 'Nacional' },
+        { nivelGobiernoId: 2, nombre: 'Regional' },
+        { nivelGobiernoId: 3, nombre: 'Local' },
+      ]);
+      setSectores([
+        { sectorId: 1, nombre: 'Presidencia del Consejo de Ministros' },
+        { sectorId: 2, nombre: 'Educación' },
+        { sectorId: 3, nombre: 'Salud' },
+      ]);
+      setClasificaciones([
+        { clasificacionId: 1, nombre: 'Ministerio' },
+        { clasificacionId: 2, nombre: 'Organismo Público' },
+      ]);
+    }
   };
 
   const handleFiltroChange = (e) => {
@@ -423,7 +450,7 @@ const Entidades = () => {
             >
               <option value="">Todos los sectores</option>
               {sectores.map((sector) => (
-                <option key={sector.id} value={sector.id}>
+                <option key={sector.sectorId} value={sector.sectorId}>
                   {sector.nombre}
                 </option>
               ))}
@@ -442,7 +469,7 @@ const Entidades = () => {
             >
               <option value="">Todas las clasificaciones</option>
               {clasificaciones.map((clasificacion) => (
-                <option key={clasificacion.id} value={clasificacion.id}>
+                <option key={clasificacion.clasificacionId} value={clasificacion.clasificacionId}>
                   {clasificacion.nombre}
                 </option>
               ))}
@@ -754,44 +781,62 @@ const Entidades = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      ID Nivel Gobierno *
+                      Nivel de Gobierno *
                     </label>
-                    <input
-                      type="number"
+                    <select
                       name="nivelGobiernoId"
                       value={formData.nivelGobiernoId}
                       onChange={handleChange}
                       className="input-field"
                       required
-                    />
+                    >
+                      <option value="">Seleccione...</option>
+                      {nivelesGobierno.map((nivel) => (
+                        <option key={nivel.nivelGobiernoId} value={nivel.nivelGobiernoId}>
+                          {nivel.nombre}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      ID Sector *
+                      Sector *
                     </label>
-                    <input
-                      type="number"
+                    <select
                       name="sectorId"
                       value={formData.sectorId}
                       onChange={handleChange}
                       className="input-field"
                       required
-                    />
+                    >
+                      <option value="">Seleccione...</option>
+                      {sectores.map((sector) => (
+                        <option key={sector.sectorId} value={sector.sectorId}>
+                          {sector.nombre}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      ID Clasificación *
+                      Clasificación *
                     </label>
-                    <input
-                      type="number"
+                    <select
                       name="clasificacionId"
                       value={formData.clasificacionId}
                       onChange={handleChange}
                       className="input-field"
                       required
-                    />
+                    >
+                      <option value="">Seleccione...</option>
+                      {clasificaciones.map((clasificacion) => (
+                        <option key={clasificacion.clasificacionId} value={clasificacion.clasificacionId}>
+                          {clasificacion.nombre}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 

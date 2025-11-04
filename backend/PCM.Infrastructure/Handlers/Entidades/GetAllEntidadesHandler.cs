@@ -23,6 +23,8 @@ public class GetAllEntidadesHandler : IRequestHandler<GetAllEntidadesQuery, Resu
             var query = _context.Entidades
                 .Include(e => e.Ubigeo)
                 .Include(e => e.Clasificacion)
+                .Include(e => e.NivelGobierno)
+                .Include(e => e.Sector)
                 .AsQueryable();
 
             // Filtros opcionales
@@ -70,10 +72,8 @@ public class GetAllEntidadesHandler : IRequestHandler<GetAllEntidadesQuery, Resu
                     Departamento = e.Ubigeo == null ? "" : e.Ubigeo.Departamento,
                     Provincia = e.Ubigeo == null ? "" : e.Ubigeo.Provincia,
                     Distrito = e.Ubigeo == null ? "" : e.Ubigeo.Distrito,
-                    NivelGobierno = e.NivelGobiernoId == 1 ? "Nacional" : 
-                                   e.NivelGobiernoId == 2 ? "Regional" : 
-                                   e.NivelGobiernoId == 3 ? "Local" : "N/A",
-                    NombreSector = "Sector " + e.SectorId.ToString(),
+                    NivelGobierno = e.NivelGobierno == null ? "" : e.NivelGobierno.Nombre,
+                    NombreSector = e.Sector == null ? "" : e.Sector.Nombre,
                     NombreClasificacion = e.Clasificacion == null ? "" : e.Clasificacion.Nombre,
                     Email = e.Email ?? "",
                     Telefono = e.Telefono ?? "",

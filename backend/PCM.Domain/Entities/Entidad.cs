@@ -27,5 +27,7 @@ public class Entidad
     // Navigation properties
     public virtual Ubigeo Ubigeo { get; set; } = null!;
     public virtual Clasificacion Clasificacion { get; set; } = null!;
+    public virtual NivelGobierno NivelGobierno { get; set; } = null!;
+    public virtual Sector Sector { get; set; } = null!;
     public virtual ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
 }
