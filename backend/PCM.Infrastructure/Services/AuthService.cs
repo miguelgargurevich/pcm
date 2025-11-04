@@ -91,20 +91,20 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<Result<LoginResponseDto>> RefreshTokenAsync(string refreshToken)
+    public Task<Result<LoginResponseDto>> RefreshTokenAsync(string refreshToken)
     {
         try
         {
             // TODO: Implementar almacenamiento de refresh tokens en base de datos
             // Por ahora retornamos error
-            return Result<LoginResponseDto>.Failure("Refresh token no implementado aún");
+            return Task.FromResult(Result<LoginResponseDto>.Failure("Refresh token no implementado aún"));
         }
         catch (Exception ex)
         {
-            return Result<LoginResponseDto>.Failure(
+            return Task.FromResult(Result<LoginResponseDto>.Failure(
                 "Error al refrescar token",
                 new List<string> { ex.Message }
-            );
+            ));
         }
     }
 

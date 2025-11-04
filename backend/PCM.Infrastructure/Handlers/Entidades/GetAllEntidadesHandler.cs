@@ -67,12 +67,16 @@ public class GetAllEntidadesHandler : IRequestHandler<GetAllEntidadesQuery, Resu
                     EntidadId = e.EntidadId,
                     Ruc = e.Ruc,
                     Nombre = e.Nombre,
-                    Departamento = e.Ubigeo!.Departamento,
-                    Provincia = e.Ubigeo.Provincia,
-                    Distrito = e.Ubigeo.Distrito,
-                    NombreClasificacion = e.Clasificacion!.Nombre,
-                    Email = e.Email,
-                    Telefono = e.Telefono,
+                    Departamento = e.Ubigeo == null ? "" : e.Ubigeo.Departamento,
+                    Provincia = e.Ubigeo == null ? "" : e.Ubigeo.Provincia,
+                    Distrito = e.Ubigeo == null ? "" : e.Ubigeo.Distrito,
+                    NivelGobierno = e.NivelGobiernoId == 1 ? "Nacional" : 
+                                   e.NivelGobiernoId == 2 ? "Regional" : 
+                                   e.NivelGobiernoId == 3 ? "Local" : "N/A",
+                    NombreSector = "Sector " + e.SectorId.ToString(),
+                    NombreClasificacion = e.Clasificacion == null ? "" : e.Clasificacion.Nombre,
+                    Email = e.Email ?? "",
+                    Telefono = e.Telefono ?? "",
                     Activo = e.Activo
                 })
                 .ToListAsync(cancellationToken);

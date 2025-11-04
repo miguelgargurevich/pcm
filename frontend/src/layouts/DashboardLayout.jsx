@@ -57,9 +57,9 @@ const Sidebar = ({ isOpen, onClose }) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-md">
-                  <span className="text-primary-500 font-bold text-xl">PCM</span>
+                  <span className="text-primary-500 font-bold text-sm">PCM</span>
                 </div>
-                <span className="font-semibold text-sm">Cumplimiento Digital</span>
+                <span className="font-semibold text-sm">Platanforma de Cumplimiento</span>
               </div>
               <button
                 onClick={onClose}
@@ -71,23 +71,27 @@ const Sidebar = ({ isOpen, onClose }) => {
           </div>
 
           {/* Menú */}
-          <nav className="flex-1 overflow-y-auto py-4">
-            {menuItems.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={index}
-                  to={item.path}
-                  className="flex items-center space-x-3 px-4 py-3 hover:bg-primary-600 hover:border-l-4 hover:border-white transition-all duration-200 text-gray-100 hover:text-white"
-                  onClick={() => {
-                    if (window.innerWidth < 1024) onClose();
-                  }}
-                >
-                  <Icon size={20} />
-                  <span className="text-sm font-medium">{item.label}</span>
-                </Link>
-              );
-            })}
+          <nav className="flex-1 overflow-y-auto py-4 px-3">
+            <div className="space-y-2">
+              {menuItems.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={index}
+                    to={item.path}
+                    className="flex items-center space-x-3 px-4 py-3 rounded-lg bg-primary-700/50 hover:bg-primary-600 transition-all duration-200 text-gray-100 hover:text-white shadow-sm hover:shadow-md group"
+                    onClick={() => {
+                      if (window.innerWidth < 1024) onClose();
+                    }}
+                  >
+                    <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-md bg-white/10 group-hover:bg-white/20 transition-colors">
+                      <Icon size={18} />
+                    </div>
+                    <span className="text-sm font-medium flex-1">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
           </nav>
 
           {/* Logout */}
@@ -117,31 +121,31 @@ const DashboardLayout = () => {
       {/* Contenido principal */}
       <div className="lg:ml-64 min-h-screen bg-gray-50">
         {/* Barra superior */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+        <header className="bg-primary-800 border-b border-primary-700 sticky top-0 z-30 shadow-lg">
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden text-gray-600 hover:text-primary-500 transition-colors"
+                className="lg:hidden text-white hover:text-gray-200 transition-colors"
               >
                 <Menu size={24} />
               </button>
-              <h1 className="text-xl font-bold text-primary-500">
+              <h1 className="text-xl font-bold text-white">
                 Plataforma de Cumplimiento Digital
               </h1>
             </div>
 
             <div className="flex items-center space-x-4">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-semibold text-gray-800">
+                <p className="text-sm font-semibold text-white">
                   {user?.nombreCompleto || 'Usuario'}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-300">
                   {user?.perfil?.nombre || 'Administrador'}
                 </p>
               </div>
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-full flex items-center justify-center shadow-md">
-                <span className="text-white font-semibold text-sm">
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">
+                <span className="text-primary-800 font-bold text-sm">
                   {user?.nombreCompleto?.charAt(0) || 'A'}
                 </span>
               </div>

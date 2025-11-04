@@ -72,6 +72,8 @@ public record EntidadListDto
     public string Departamento { get; init; } = string.Empty;
     public string Provincia { get; init; } = string.Empty;
     public string Distrito { get; init; } = string.Empty;
+    public string NivelGobierno { get; init; } = string.Empty;
+    public string NombreSector { get; init; } = string.Empty;
     public string NombreClasificacion { get; init; } = string.Empty;
     public string Email { get; init; } = string.Empty;
     public string Telefono { get; init; } = string.Empty;

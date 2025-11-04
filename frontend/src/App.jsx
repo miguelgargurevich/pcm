@@ -4,6 +4,8 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Usuarios from './pages/Usuarios';
+import Entidades from './pages/Entidades';
 import DashboardLayout from './layouts/DashboardLayout';
 
 function App() {
@@ -27,8 +29,8 @@ function App() {
             }
           >
             <Route index element={<Dashboard />} />
-            <Route path="usuarios" element={<div className="card">Módulo de Usuarios</div>} />
-            <Route path="entidades" element={<div className="card">Módulo de Entidades</div>} />
+            <Route path="usuarios" element={<Usuarios />} />
+            <Route path="entidades" element={<Entidades />} />
             <Route path="marco-normativo" element={<div className="card">Módulo de Marco Normativo</div>} />
             <Route path="compromisos" element={<div className="card">Módulo de Compromisos</div>} />
             <Route path="cumplimiento" element={<div className="card">Módulo de Cumplimiento</div>} />
