@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { entidadesService } from '../services/entidadesService';
 import { catalogosService } from '../services/catalogosService';
-import { showConfirmToast, showSuccessToast, showErrorToast } from '../utils/toast.jsx';
-import { Plus, Edit2, Trash2, X, Save, Filter, FilterX } from 'lucide-react';
+import { ubigeoService } from '../services/ubigeoService';
+import { showConfirmToast, showSuccessToast, showErrorToast, showInfoToast } from '../utils/toast.jsx';
+import { Plus, Edit2, Trash2, X, Save, Filter, FilterX, Search } from 'lucide-react';
 
 const Entidades = () => {
   const [entidades, setEntidades] = useState([]);
@@ -35,6 +36,14 @@ const Entidades = () => {
   const [sectores, setSectores] = useState([]);
   const [clasificaciones, setClasificaciones] = useState([]);
 
+  // Estados para selects en cascada
+  const [selectedDepartamento, setSelectedDepartamento] = useState('');
+  const [selectedProvincia, setSelectedProvincia] = useState('');
+  const [selectedDistrito, setSelectedDistrito] = useState('');
+  const [provinciasModal, setProvinciasModal] = useState([]);
+  const [distritosModal, setDistritosModal] = useState([]);
+  const [consultingRUC, setConsultingRUC] = useState(false);
+
   const [formData, setFormData] = useState({
     ruc: '',
     nombre: '',
@@ -42,10 +51,14 @@ const Entidades = () => {
     telefono: '',
     email: '',
     web: '',
-    ubigeoCodigo: '',
+    ubigeoId: '',
     nivelGobiernoId: '',
     sectorId: '',
     clasificacionId: '',
+    nombreAlcalde: '',
+    apePatAlcalde: '',
+    apeMatAlcalde: '',
+    emailAlcalde: '',
     activo: true,
   });
 
@@ -153,10 +166,12 @@ const Entidades = () => {
         setClasificaciones(Array.isArray(clasificacionesData) ? clasificacionesData : []);
       }
 
-      // Mock de departamentos (hasta que esté el endpoint de ubigeo)
-      setDepartamentos([
-        'Lima', 'Arequipa', 'Cusco', 'La Libertad', 'Piura', 'Junín', 'Cajamarca'
-      ]);
+      // Cargar departamentos
+      const departamentosResponse = await ubigeoService.getDepartamentos();
+      if (departamentosResponse.isSuccess || departamentosResponse.IsSuccess) {
+        const deptosData = departamentosResponse.data || departamentosResponse.Data;
+        setDepartamentos(Array.isArray(deptosData) ? deptosData : []);
+      }
     } catch (error) {
       console.error('Error al cargar catálogos:', error);
       // Fallback a datos mock en caso de error
@@ -252,6 +267,11 @@ const Entidades = () => {
 
   const handleCreate = () => {
     setEditingEntidad(null);
+    setSelectedDepartamento('');
+    setSelectedProvincia('');
+    setSelectedDistrito('');
+    setProvinciasModal([]);
+    setDistritosModal([]);
     setFormData({
       ruc: '',
       nombre: '',
@@ -259,17 +279,53 @@ const Entidades = () => {
       telefono: '',
       email: '',
       web: '',
-      ubigeoCodigo: '',
+      ubigeoId: '',
       nivelGobiernoId: '',
       sectorId: '',
       clasificacionId: '',
+      nombreAlcalde: '',
+      apePatAlcalde: '',
+      apeMatAlcalde: '',
+      emailAlcalde: '',
       activo: true,
     });
     setShowModal(true);
   };
 
-  const handleEdit = (entidad) => {
+  const handleEdit = async (entidad) => {
     setEditingEntidad(entidad);
+    
+    // Si tiene ubigeoId, cargar los datos de ubicación
+    if (entidad.ubigeoId) {
+      setSelectedDepartamento(entidad.departamento || '');
+      setSelectedProvincia(entidad.provincia || '');
+      setSelectedDistrito(entidad.ubigeoId);
+      
+      // Cargar provincias si hay departamento
+      if (entidad.departamento) {
+        try {
+          const provResponse = await ubigeoService.getProvincias(entidad.departamento);
+          if (provResponse.isSuccess || provResponse.IsSuccess) {
+            setProvinciasModal(provResponse.data || provResponse.Data || []);
+          }
+        } catch (error) {
+          console.error('Error al cargar provincias:', error);
+        }
+      }
+      
+      // Cargar distritos si hay departamento y provincia
+      if (entidad.departamento && entidad.provincia) {
+        try {
+          const distResponse = await ubigeoService.getDistritos(entidad.departamento, entidad.provincia);
+          if (distResponse.isSuccess || distResponse.IsSuccess) {
+            setDistritosModal(distResponse.data || distResponse.Data || []);
+          }
+        } catch (error) {
+          console.error('Error al cargar distritos:', error);
+        }
+      }
+    }
+    
     setFormData({
       ruc: entidad.ruc || '',
       nombre: entidad.nombre || '',
@@ -277,10 +333,14 @@ const Entidades = () => {
       telefono: entidad.telefono || '',
       email: entidad.email || '',
       web: entidad.web || '',
-      ubigeoCodigo: entidad.ubigeoCodigo || '',
+      ubigeoId: entidad.ubigeoId || '',
       nivelGobiernoId: entidad.nivelGobiernoId || '',
       sectorId: entidad.sectorId || '',
       clasificacionId: entidad.clasificacionId || '',
+      nombreAlcalde: entidad.nombreAlcalde || '',
+      apePatAlcalde: entidad.apePatAlcalde || '',
+      apeMatAlcalde: entidad.apeMatAlcalde || '',
+      emailAlcalde: entidad.emailAlcalde || '',
       activo: entidad.activo !== undefined ? entidad.activo : true,
     });
     setShowModal(true);
@@ -340,6 +400,89 @@ const Entidades = () => {
     });
   };
 
+  // Manejar cambio de departamento en el modal
+  const handleDepartamentoChange = async (e) => {
+    const dept = e.target.value;
+    setSelectedDepartamento(dept);
+    setSelectedProvincia('');
+    setSelectedDistrito('');
+    setProvinciasModal([]);
+    setDistritosModal([]);
+    setFormData({ ...formData, ubigeoId: '' });
+
+    if (dept) {
+      try {
+        const response = await ubigeoService.getProvincias(dept);
+        if (response.isSuccess || response.IsSuccess) {
+          const provData = response.data || response.Data;
+          setProvinciasModal(Array.isArray(provData) ? provData : []);
+        }
+      } catch (error) {
+        console.error('Error al cargar provincias:', error);
+        showErrorToast('Error al cargar provincias');
+      }
+    }
+  };
+
+  // Manejar cambio de provincia en el modal
+  const handleProvinciaChange = async (e) => {
+    const prov = e.target.value;
+    setSelectedProvincia(prov);
+    setSelectedDistrito('');
+    setDistritosModal([]);
+    setFormData({ ...formData, ubigeoId: '' });
+
+    if (prov && selectedDepartamento) {
+      try {
+        const response = await ubigeoService.getDistritos(selectedDepartamento, prov);
+        if (response.isSuccess || response.IsSuccess) {
+          const distData = response.data || response.Data;
+          setDistritosModal(Array.isArray(distData) ? distData : []);
+        }
+      } catch (error) {
+        console.error('Error al cargar distritos:', error);
+        showErrorToast('Error al cargar distritos');
+      }
+    }
+  };
+
+  // Manejar cambio de distrito en el modal
+  const handleDistritoChange = (e) => {
+    const ubigeoId = e.target.value;
+    setSelectedDistrito(ubigeoId);
+    setFormData({ ...formData, ubigeoId });
+  };
+
+  // Consultar RUC en SUNAT (mock por ahora, se puede integrar con API real)
+  const consultarRUC = async () => {
+    if (!formData.ruc || formData.ruc.length !== 11) {
+      showErrorToast('Ingrese un RUC válido de 11 dígitos');
+      return;
+    }
+
+    setConsultingRUC(true);
+    try {
+      // TODO: Integrar con API de SUNAT o servicio de consulta RUC
+      // Por ahora, simulamos una consulta
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      showInfoToast('Consulta RUC: Funcionalidad pendiente de integración con SUNAT');
+      
+      // Cuando se integre con SUNAT, se puede autocompletar:
+      // setFormData({
+      //   ...formData,
+      //   nombre: response.razonSocial,
+      //   direccion: response.direccion,
+      //   // etc...
+      // });
+    } catch (err) {
+      console.error('Error al consultar RUC:', err);
+      showErrorToast('Error al consultar RUC');
+    } finally {
+      setConsultingRUC(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -349,14 +492,15 @@ const Entidades = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800">Gestión de Entidades</h1>
-        <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
-          <Plus size={20} />
-          Nueva Entidad
-        </button>
-      </div>
+    <>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-gray-800">Gestión de Entidades</h1>
+          <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
+            <Plus size={20} />
+            Nueva Entidad
+          </button>
+        </div>
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -666,22 +810,32 @@ const Entidades = () => {
           </button>
         </div>
       )}
+      </div>
 
       {/* Modal */}
       {showModal && (
         <div 
-          className="fixed bg-black bg-opacity-50 flex items-center justify-center p-4 overflow-y-auto"
-          style={{
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 9999,
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowModal(false);
+            }
           }}
         >
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto my-8">
-            <div className="p-6">
-              <h2 className="text-xl font-bold mb-4">
+          <div className="min-h-screen flex items-start justify-center p-4 pt-8">
+            <div className="bg-white rounded-lg max-w-5xl w-full shadow-xl relative my-8">
+            {/* Botón cerrar */}
+            <button
+              type="button"
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10"
+              title="Cerrar"
+            >
+              <X size={24} />
+            </button>
+
+            <div className="p-8">
+              <h2 className="text-2xl font-bold mb-6 text-gray-900 pr-8">
                 {editingEntidad ? 'Editar Entidad' : 'Nueva Entidad'}
               </h2>
 
@@ -691,168 +845,332 @@ const Entidades = () => {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      RUC *
-                    </label>
-                    <input
-                      type="text"
-                      name="ruc"
-                      value={formData.ruc}
-                      onChange={handleChange}
-                      className="input-field"
-                      required
-                      maxLength="11"
-                    />
-                  </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Información Básica */}
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <span className="w-2 h-6 bg-primary-600 rounded"></span>
+                    Información de la Entidad
+                  </h3>
+                  <div className="space-y-4">
+                    {/* RUC y Nombre */}
+                    <div className="grid grid-cols-12 gap-4">
+                      <div className="col-span-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          RUC *
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            name="ruc"
+                            value={formData.ruc}
+                            onChange={handleChange}
+                            className="input-field flex-1"
+                            required
+                            maxLength="11"
+                            pattern="[0-9]{11}"
+                            placeholder="20123456789"
+                          />
+                          <button
+                            type="button"
+                            onClick={consultarRUC}
+                            disabled={consultingRUC || !formData.ruc || formData.ruc.length !== 11}
+                            className="btn-secondary px-3 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                            title="Consultar RUC en SUNAT"
+                          >
+                            <Search size={18} />
+                            {consultingRUC ? '...' : 'Consultar'}
+                          </button>
+                        </div>
+                      </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Nombre *
-                    </label>
-                    <input
-                      type="text"
-                      name="nombre"
-                      value={formData.nombre}
-                      onChange={handleChange}
-                      className="input-field"
-                      required
-                    />
-                  </div>
+                      <div className="col-span-8">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Nombre de la Entidad *
+                        </label>
+                        <input
+                          type="text"
+                          name="nombre"
+                          value={formData.nombre}
+                          onChange={handleChange}
+                          className="input-field"
+                          required
+                          maxLength="300"
+                        />
+                      </div>
+                    </div>
 
-                  <div className="col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Dirección
-                    </label>
-                    <input
-                      type="text"
-                      name="direccion"
-                      value={formData.direccion}
-                      onChange={handleChange}
-                      className="input-field"
-                    />
-                  </div>
+                    {/* Ubicación Geográfica */}
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Departamento *
+                        </label>
+                        <select
+                          value={selectedDepartamento}
+                          onChange={handleDepartamentoChange}
+                          className="input-field"
+                          required
+                        >
+                          <option value="">Seleccione...</option>
+                          {departamentos.map((dept) => (
+                            <option key={dept} value={dept}>
+                              {dept}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Teléfono
-                    </label>
-                    <input
-                      type="text"
-                      name="telefono"
-                      value={formData.telefono}
-                      onChange={handleChange}
-                      className="input-field"
-                    />
-                  </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Provincia *
+                        </label>
+                        <select
+                          value={selectedProvincia}
+                          onChange={handleProvinciaChange}
+                          className="input-field"
+                          required
+                          disabled={!selectedDepartamento}
+                        >
+                          <option value="">Seleccione...</option>
+                          {provinciasModal.map((prov) => (
+                            <option key={prov} value={prov}>
+                              {prov}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="input-field"
-                    />
-                  </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Distrito *
+                        </label>
+                        <select
+                          value={selectedDistrito}
+                          onChange={handleDistritoChange}
+                          className="input-field"
+                          required
+                          disabled={!selectedProvincia}
+                        >
+                          <option value="">Seleccione...</option>
+                          {distritosModal.map((dist) => (
+                            <option key={dist.ubigeoId} value={dist.ubigeoId}>
+                              {dist.distrito}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
 
-                  <div className="col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Sitio Web
-                    </label>
-                    <input
-                      type="url"
-                      name="web"
-                      value={formData.web}
-                      onChange={handleChange}
-                      className="input-field"
-                      placeholder="https://"
-                    />
-                  </div>
+                    {/* Dirección y Teléfono */}
+                    <div className="grid grid-cols-12 gap-4">
+                      <div className="col-span-9">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Dirección
+                        </label>
+                        <input
+                          type="text"
+                          name="direccion"
+                          value={formData.direccion}
+                          onChange={handleChange}
+                          className="input-field"
+                          maxLength="200"
+                          placeholder="Av. Principal 123, Piso 5"
+                        />
+                      </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Código Ubigeo *
-                    </label>
-                    <input
-                      type="text"
-                      name="ubigeoCodigo"
-                      value={formData.ubigeoCodigo}
-                      onChange={handleChange}
-                      className="input-field"
-                      required
-                      maxLength="6"
-                      placeholder="150101"
-                    />
-                  </div>
+                      <div className="col-span-3">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Teléfono
+                        </label>
+                        <input
+                          type="text"
+                          name="telefono"
+                          value={formData.telefono}
+                          onChange={handleChange}
+                          className="input-field"
+                          maxLength="20"
+                          placeholder="(01) 123-4567"
+                        />
+                      </div>
+                    </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Nivel de Gobierno *
-                    </label>
-                    <select
-                      name="nivelGobiernoId"
-                      value={formData.nivelGobiernoId}
-                      onChange={handleChange}
-                      className="input-field"
-                      required
-                    >
-                      <option value="">Seleccione...</option>
-                      {nivelesGobierno.map((nivel) => (
-                        <option key={nivel.nivelGobiernoId} value={nivel.nivelGobiernoId}>
-                          {nivel.nombre}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                    {/* Contacto Digital */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Correo Electrónico *
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          className="input-field"
+                          required
+                          maxLength="100"
+                          placeholder="contacto@entidad.gob.pe"
+                        />
+                      </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Sector *
-                    </label>
-                    <select
-                      name="sectorId"
-                      value={formData.sectorId}
-                      onChange={handleChange}
-                      className="input-field"
-                      required
-                    >
-                      <option value="">Seleccione...</option>
-                      {sectores.map((sector) => (
-                        <option key={sector.sectorId} value={sector.sectorId}>
-                          {sector.nombre}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Dirección Web Institucional
+                        </label>
+                        <input
+                          type="url"
+                          name="web"
+                          value={formData.web}
+                          onChange={handleChange}
+                          className="input-field"
+                          maxLength="100"
+                          placeholder="https://www.entidad.gob.pe"
+                        />
+                      </div>
+                    </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Clasificación *
-                    </label>
-                    <select
-                      name="clasificacionId"
-                      value={formData.clasificacionId}
-                      onChange={handleChange}
-                      className="input-field"
-                      required
-                    >
-                      <option value="">Seleccione...</option>
-                      {clasificaciones.map((clasificacion) => (
-                        <option key={clasificacion.clasificacionId} value={clasificacion.clasificacionId}>
-                          {clasificacion.nombre}
-                        </option>
-                      ))}
-                    </select>
+                    {/* Clasificación Administrativa */}
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Nivel de Gobierno *
+                        </label>
+                        <select
+                          name="nivelGobiernoId"
+                          value={formData.nivelGobiernoId}
+                          onChange={handleChange}
+                          className="input-field"
+                          required
+                        >
+                          <option value="">Seleccione...</option>
+                          {nivelesGobierno.map((nivel) => (
+                            <option key={nivel.nivelGobiernoId} value={nivel.nivelGobiernoId}>
+                              {nivel.nombre}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Sector *
+                        </label>
+                        <select
+                          name="sectorId"
+                          value={formData.sectorId}
+                          onChange={handleChange}
+                          className="input-field"
+                          required
+                        >
+                          <option value="">Seleccione...</option>
+                          {sectores.map((sector) => (
+                            <option key={sector.sectorId} value={sector.sectorId}>
+                              {sector.nombre}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Clasificación *
+                        </label>
+                        <select
+                          name="clasificacionId"
+                          value={formData.clasificacionId}
+                          onChange={handleChange}
+                          className="input-field"
+                          required
+                        >
+                          <option value="">Seleccione...</option>
+                          {clasificaciones.map((clasificacion) => (
+                            <option key={clasificacion.clasificacionId} value={clasificacion.clasificacionId}>
+                              {clasificacion.nombre}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center">
+                {/* Información del Alcalde */}
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <span className="w-2 h-6 bg-primary-600 rounded"></span>
+                    Información del Alcalde o Responsable
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-12 gap-4">
+                      <div className="col-span-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Nombres *
+                        </label>
+                        <input
+                          type="text"
+                          name="nombreAlcalde"
+                          value={formData.nombreAlcalde}
+                          onChange={handleChange}
+                          className="input-field"
+                          required
+                          maxLength="100"
+                          placeholder="Juan Carlos"
+                        />
+                      </div>
+
+                      <div className="col-span-3">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Apellido Paterno *
+                        </label>
+                        <input
+                          type="text"
+                          name="apePatAlcalde"
+                          value={formData.apePatAlcalde}
+                          onChange={handleChange}
+                          className="input-field"
+                          required
+                          maxLength="60"
+                          placeholder="Pérez"
+                        />
+                      </div>
+
+                      <div className="col-span-3">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Apellido Materno *
+                        </label>
+                        <input
+                          type="text"
+                          name="apeMatAlcalde"
+                          value={formData.apeMatAlcalde}
+                          onChange={handleChange}
+                          className="input-field"
+                          required
+                          maxLength="60"
+                          placeholder="García"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Correo Electrónico *
+                      </label>
+                      <input
+                        type="email"
+                        name="emailAlcalde"
+                        value={formData.emailAlcalde}
+                        onChange={handleChange}
+                        className="input-field"
+                        required
+                        maxLength="100"
+                        placeholder="alcalde@entidad.gob.pe"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Estado */}
+                <div className="flex items-center pt-4">
                   <input
                     type="checkbox"
                     name="activo"
@@ -881,10 +1199,11 @@ const Entidades = () => {
                 </div>
               </form>
             </div>
+            </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

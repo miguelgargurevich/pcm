@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { usuariosService } from '../services/usuariosService';
 import { entidadesService } from '../services/entidadesService';
 import { catalogosService } from '../services/catalogosService';
-import { showConfirmToast, showSuccessToast, showErrorToast } from '../utils/toast.jsx';
-import { Plus, Edit2, Trash2, X, Save, FilterX } from 'lucide-react';
+import { showConfirmToast, showSuccessToast, showErrorToast, showInfoToast } from '../utils/toast.jsx';
+import { Plus, Edit2, Trash2, X, Save, FilterX, Search } from 'lucide-react';
 
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -12,6 +12,7 @@ const Usuarios = () => {
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingUsuario, setEditingUsuario] = useState(null);
+  const [consultingRENIEC, setConsultingRENIEC] = useState(false);
   
   // Filtros
   const [filtros, setFiltros] = useState({
@@ -34,7 +35,7 @@ const Usuarios = () => {
     nombres: '',
     apePaterno: '',
     apeMaterno: '',
-    password: '',
+    direccion: '',
     entidadId: '',
     perfilId: '',
     activo: true,
@@ -181,7 +182,7 @@ const Usuarios = () => {
       nombres: '',
       apePaterno: '',
       apeMaterno: '',
-      password: '',
+      direccion: '',
       entidadId: '',
       perfilId: '',
       activo: true,
@@ -197,7 +198,7 @@ const Usuarios = () => {
       nombres: usuario.nombres || '',
       apePaterno: usuario.apePaterno || '',
       apeMaterno: usuario.apeMaterno || '',
-      password: '',
+      direccion: usuario.direccion || '',
       entidadId: usuario.entidadId || '',
       perfilId: usuario.perfilId || '',
       activo: usuario.activo !== undefined ? usuario.activo : true,
@@ -259,6 +260,37 @@ const Usuarios = () => {
     });
   };
 
+  const consultarRENIEC = async () => {
+    if (!formData.numDni || formData.numDni.length !== 8) {
+      showErrorToast('Ingrese un DNI válido de 8 dígitos');
+      return;
+    }
+
+    setConsultingRENIEC(true);
+    try {
+      // Simulación de consulta a RENIEC
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      showInfoToast('Función de consulta RENIEC en desarrollo');
+      
+      // Cuando se integre con la API real de RENIEC, descomentar:
+      // const response = await reniecService.consultarDNI(formData.numDni);
+      // if (response.isSuccess) {
+      //   setFormData({
+      //     ...formData,
+      //     nombres: response.data.nombres,
+      //     apePaterno: response.data.apellidoPaterno,
+      //     apeMaterno: response.data.apellidoMaterno,
+      //   });
+      //   showSuccessToast('Datos obtenidos de RENIEC');
+      // }
+    } catch {
+      showErrorToast('Error al consultar RENIEC');
+    } finally {
+      setConsultingRENIEC(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -268,14 +300,15 @@ const Usuarios = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800">Gestión de Usuarios</h1>
-        <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
-          <Plus size={20} />
-          Nuevo Usuario
-        </button>
-      </div>
+    <>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-gray-800">Gestión de Usuarios</h1>
+          <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
+            <Plus size={20} />
+            Nuevo Usuario
+          </button>
+        </div>
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -538,22 +571,32 @@ const Usuarios = () => {
           </div>
         )}
       </div>
+      </div>
 
       {/* Modal */}
       {showModal && (
         <div 
-          className="fixed bg-black bg-opacity-50 flex items-center justify-center p-4 overflow-y-auto"
-          style={{
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 9999,
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowModal(false);
+            }
           }}
         >
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto my-8">
+          <div className="min-h-screen flex items-start justify-center p-4 pt-8">
+            <div className="bg-white rounded-lg max-w-2xl w-full shadow-xl relative my-8">
+            {/* Botón cerrar */}
+            <button
+              type="button"
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10"
+              title="Cerrar"
+            >
+              <X size={24} />
+            </button>
+
             <div className="p-6">
-              <h2 className="text-xl font-bold mb-4">
+              <h2 className="text-xl font-bold mb-4 pr-8">
                 {editingUsuario ? 'Editar Usuario' : 'Nuevo Usuario'}
               </h2>
 
@@ -564,50 +607,54 @@ const Usuarios = () => {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      DNI *
-                    </label>
+                {/* DNI con botón consultar */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Número de DNI *
+                  </label>
+                  <div className="flex gap-2">
                     <input
                       type="text"
                       name="numDni"
                       value={formData.numDni}
                       onChange={handleChange}
-                      className="input-field"
+                      className="input-field flex-1"
                       required
                       maxLength="8"
+                      pattern="[0-9]{8}"
+                      placeholder="12345678"
                     />
+                    <button
+                      type="button"
+                      onClick={consultarRENIEC}
+                      disabled={consultingRENIEC || !formData.numDni || formData.numDni.length !== 8}
+                      className="btn-secondary flex items-center gap-2 whitespace-nowrap"
+                    >
+                      <Search size={18} />
+                      {consultingRENIEC ? '...' : 'Consultar RENIEC'}
+                    </button>
                   </div>
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email *
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="input-field"
-                      required
-                    />
-                  </div>
+                {/* Nombres */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombres *
+                  </label>
+                  <input
+                    type="text"
+                    name="nombres"
+                    value={formData.nombres}
+                    onChange={handleChange}
+                    className="input-field"
+                    required
+                    maxLength="100"
+                    placeholder="Juan Carlos"
+                  />
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Nombres *
-                    </label>
-                    <input
-                      type="text"
-                      name="nombres"
-                      value={formData.nombres}
-                      onChange={handleChange}
-                      className="input-field"
-                      required
-                    />
-                  </div>
-
+                {/* Apellido Paterno, Apellido Materno */}
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Apellido Paterno *
@@ -619,6 +666,8 @@ const Usuarios = () => {
                       onChange={handleChange}
                       className="input-field"
                       required
+                      maxLength="60"
+                      placeholder="Pérez"
                     />
                   </div>
 
@@ -633,21 +682,27 @@ const Usuarios = () => {
                       onChange={handleChange}
                       className="input-field"
                       required
+                      maxLength="60"
+                      placeholder="García"
                     />
                   </div>
+                </div>
 
+                {/* Correo Electrónico, Entidad */}
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Contraseña {editingUsuario ? '' : '*'}
+                      Correo Electrónico *
                     </label>
                     <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
+                      type="email"
+                      name="email"
+                      value={formData.email}
                       onChange={handleChange}
                       className="input-field"
-                      required={!editingUsuario}
-                      placeholder={editingUsuario ? 'Dejar en blanco para no cambiar' : ''}
+                      required
+                      maxLength="100"
+                      placeholder="usuario@entidad.gob.pe"
                     />
                   </div>
 
@@ -671,6 +726,26 @@ const Usuarios = () => {
                     </select>
                   </div>
 
+                </div>
+
+                {/* Dirección */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Dirección
+                  </label>
+                  <input
+                    type="text"
+                    name="direccion"
+                    value={formData.direccion}
+                    onChange={handleChange}
+                    className="input-field"
+                    maxLength="200"
+                    placeholder="Av. Principal 123, Piso 5"
+                  />
+                </div>
+
+                {/* Perfil, Estado */}
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Perfil *
@@ -690,19 +765,19 @@ const Usuarios = () => {
                       ))}
                     </select>
                   </div>
-                </div>
 
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    name="activo"
-                    checked={formData.activo}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
-                  />
-                  <label className="ml-2 block text-sm text-gray-900">
-                    Usuario Activo
-                  </label>
+                  <div className="flex items-center pt-7">
+                    <input
+                      type="checkbox"
+                      name="activo"
+                      checked={formData.activo}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                    />
+                    <label className="ml-2 block text-sm text-gray-900">
+                      Usuario Activo
+                    </label>
+                  </div>
                 </div>
 
                 <div className="flex justify-end space-x-3 pt-4">
@@ -721,10 +796,11 @@ const Usuarios = () => {
                 </div>
               </form>
             </div>
+            </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

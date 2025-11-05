@@ -13,6 +13,7 @@ import {
   LogOut,
   Menu,
   X,
+  Shield,
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -57,7 +58,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3 ml-6">
                 <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-md">
-                  <span className="text-primary-500 font-bold text-sm">PCM</span>
+                  <Shield className="text-primary-700" size={24} />
                 </div>
                 <span className="font-semibold text-xs">Platanforma de Cumplimiento</span>
               </div>
@@ -85,7 +86,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                     }}
                   >
                     <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-md bg-white/10 group-hover:bg-white/20 transition-colors">
-                      <Icon size={18} />
+                      <Icon size={18} className="text-cyan-100 group-hover:text-white" />
                     </div>
                     <span className="text-sm font-medium flex-1">{item.label}</span>
                   </Link>
