@@ -3,4 +3,4 @@ using PCM.Application.Common;
 
 namespace PCM.Application.Features.Entidades.Commands.ToggleEntidadStatus;
 
-public record ToggleEntidadStatusCommand(int EntidadId) : IRequest<Result>;
+public record ToggleEntidadStatusCommand(Guid EntidadId) : IRequest<Result>;

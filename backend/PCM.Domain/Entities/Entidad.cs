@@ -5,7 +5,7 @@ namespace PCM.Domain.Entities;
 
 public class Entidad
 {
-    public int EntidadId { get; set; }
+    public Guid EntidadId { get; set; }
     public string Ruc { get; set; } = string.Empty;
     public string Nombre { get; set; } = string.Empty;
     public string Direccion { get; set; } = string.Empty;

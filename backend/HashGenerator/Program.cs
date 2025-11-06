@@ -19,36 +19,29 @@ try
     await conn.OpenAsync();
     Console.WriteLine("✓ Conectado a PostgreSQL");
 
-    // Eliminar usuario si existe
-    using var deleteCmd = new NpgsqlCommand("DELETE FROM usuarios WHERE email = 'admin@pcm.gob.pe'", conn);
-    var deleted = await deleteCmd.ExecuteNonQueryAsync();
-    if (deleted > 0)
+    // Actualizar hash de contraseña del usuario existente
+    var updateSql = @"
+        UPDATE usuarios 
+        SET password_hash = @password 
+        WHERE email = 'admin@pcm.gob.pe'";
+
+    using var updateCmd = new NpgsqlCommand(updateSql, conn);
+    updateCmd.Parameters.AddWithValue("password", hash);
+    
+    var updated = await updateCmd.ExecuteNonQueryAsync();
+    
+    if (updated > 0)
     {
-        Console.WriteLine($"✓ Usuario existente eliminado");
+        Console.WriteLine("✓ Contraseña del usuario actualizada exitosamente");
+        Console.WriteLine();
+        Console.WriteLine("Credenciales:");
+        Console.WriteLine("  Email: admin@pcm.gob.pe");
+        Console.WriteLine("  Password: Admin123!");
     }
-
-    // Insertar nuevo usuario
-    var insertSql = @"
-        INSERT INTO usuarios (email, password, num_dni, nombres, ape_paterno, ape_materno, entidad_id, perfil_id, activo) 
-        VALUES (@email, @password, @dni, @nombres, @apePaterno, @apeMaterno, @entidadId, @perfilId, @activo)";
-
-    using var insertCmd = new NpgsqlCommand(insertSql, conn);
-    insertCmd.Parameters.AddWithValue("email", "admin@pcm.gob.pe");
-    insertCmd.Parameters.AddWithValue("password", hash);
-    insertCmd.Parameters.AddWithValue("dni", "12345678");
-    insertCmd.Parameters.AddWithValue("nombres", "Administrador");
-    insertCmd.Parameters.AddWithValue("apePaterno", "Sistema");
-    insertCmd.Parameters.AddWithValue("apeMaterno", "PCM");
-    insertCmd.Parameters.AddWithValue("entidadId", 1);
-    insertCmd.Parameters.AddWithValue("perfilId", 1);
-    insertCmd.Parameters.AddWithValue("activo", true);
-
-    await insertCmd.ExecuteNonQueryAsync();
-    Console.WriteLine("✓ Usuario creado exitosamente");
-    Console.WriteLine();
-    Console.WriteLine("Credenciales:");
-    Console.WriteLine("  Email: admin@pcm.gob.pe");
-    Console.WriteLine("  Password: Admin123!");
+    else
+    {
+        Console.WriteLine("✗ Usuario no encontrado");
+    }
 }
 catch (Exception ex)
 {

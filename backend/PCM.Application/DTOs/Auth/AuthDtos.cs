@@ -17,11 +17,11 @@ public class LoginResponseDto
 
 public class UsuarioDto
 {
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
     public string Email { get; set; } = string.Empty;
     public string NumDni { get; set; } = string.Empty;
     public string NombreCompleto { get; set; } = string.Empty;
-    public int EntidadId { get; set; }
+    public Guid? EntidadId { get; set; }
     public string NombreEntidad { get; set; } = string.Empty;
     public int PerfilId { get; set; }
     public string NombrePerfil { get; set; } = string.Empty;

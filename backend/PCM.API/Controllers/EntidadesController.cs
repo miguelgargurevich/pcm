@@ -61,7 +61,7 @@ public class EntidadesController : ControllerBase
     /// Obtener entidad por ID
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var query = new GetEntidadByIdQuery(id);
         var result = await _mediator.Send(query);
@@ -118,7 +118,7 @@ public class EntidadesController : ControllerBase
     /// Actualizar entidad existente
     /// </summary>
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateEntidadDto dto)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateEntidadDto dto)
     {
         if (!ModelState.IsValid)
         {
@@ -164,7 +164,7 @@ public class EntidadesController : ControllerBase
     /// Activar o desactivar entidad
     /// </summary>
     [HttpPatch("{id}/toggle-status")]
-    public async Task<IActionResult> ToggleStatus(int id)
+    public async Task<IActionResult> ToggleStatus(Guid id)
     {
         var command = new ToggleEntidadStatusCommand(id);
         var result = await _mediator.Send(command);

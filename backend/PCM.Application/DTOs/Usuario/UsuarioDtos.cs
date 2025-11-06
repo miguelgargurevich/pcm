@@ -9,26 +9,26 @@ public record CreateUsuarioDto
     public required string ApePaterno { get; init; }
     public required string ApeMaterno { get; init; }
     public string? Direccion { get; init; }
-    public required int EntidadId { get; init; }
+    public required Guid? EntidadId { get; init; }
     public required int PerfilId { get; init; }
 }
 
 public record UpdateUsuarioDto
 {
-    public required int UserId { get; init; }
+    public required Guid UserId { get; init; }
     public required string Email { get; init; }
     public required string NumDni { get; init; }
     public required string Nombres { get; init; }
     public required string ApePaterno { get; init; }
     public required string ApeMaterno { get; init; }
     public string? Direccion { get; init; }
-    public required int EntidadId { get; init; }
+    public required Guid? EntidadId { get; init; }
     public required int PerfilId { get; init; }
 }
 
 public record UsuarioDetailDto
 {
-    public int UserId { get; init; }
+    public Guid UserId { get; init; }
     public string Email { get; init; } = string.Empty;
     public string NumDni { get; init; } = string.Empty;
     public string Nombres { get; init; } = string.Empty;
@@ -36,7 +36,7 @@ public record UsuarioDetailDto
     public string ApeMaterno { get; init; } = string.Empty;
     public string NombreCompleto { get; init; } = string.Empty;
     public string? Direccion { get; init; }
-    public int EntidadId { get; init; }
+    public Guid? EntidadId { get; init; }
     public string NombreEntidad { get; init; } = string.Empty;
     public string RucEntidad { get; init; } = string.Empty;
     public int PerfilId { get; init; }
@@ -49,7 +49,7 @@ public record UsuarioDetailDto
 
 public record UsuarioListDto
 {
-    public int UserId { get; init; }
+    public Guid UserId { get; init; }
     public string Email { get; init; } = string.Empty;
     public string NombreCompleto { get; init; } = string.Empty;
     public string NumDni { get; init; } = string.Empty;

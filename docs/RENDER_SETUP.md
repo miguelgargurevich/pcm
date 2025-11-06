@@ -20,6 +20,8 @@ Host=<TU_HOST_SUPABASE>;Port=5432;Database=<TU_DATABASE>;Username=<TU_USER>;Pass
 **Ejemplo con Supabase:**
 ```
 Host=db.xxxxxxxxxx.supabase.co;Port=5432;Database=postgres;Username=postgres;Password=TU_PASSWORD_AQUI;SSL Mode=Require;Trust Server Certificate=true
+
+Host=db.amzwfwfhllwhjffkqxhn.supabase.co;Port=5432;Database=postgres;Username=postgres;Password=Zl@tan2016;SSL Mode=Require;Trust Server Certificate=true
 ```
 
 ### 2. JwtSettings__SecretKey

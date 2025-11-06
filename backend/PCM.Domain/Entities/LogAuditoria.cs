@@ -5,9 +5,9 @@ namespace PCM.Domain.Entities;
 public class LogAuditoria
 {
     public int LogId { get; set; }
-    public int EntidadId { get; set; }
+    public Guid EntidadId { get; set; }
     public int? CompromisoId { get; set; }
-    public int UsuarioId { get; set; }
+    public Guid UsuarioId { get; set; }
     public string Accion { get; set; } = string.Empty;
     public string? TablaAfectada { get; set; }
     public int? RegistroId { get; set; }

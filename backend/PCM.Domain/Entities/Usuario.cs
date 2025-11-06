@@ -4,7 +4,7 @@ namespace PCM.Domain.Entities;
 
 public class Usuario
 {
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
     public string NumDni { get; set; } = string.Empty;
@@ -12,7 +12,7 @@ public class Usuario
     public string ApePaterno { get; set; } = string.Empty;
     public string ApeMaterno { get; set; } = string.Empty;
     public string? Direccion { get; set; }
-    public int EntidadId { get; set; }
+    public Guid? EntidadId { get; set; }
     public bool Activo { get; set; } = true;
     public int PerfilId { get; set; }
     public DateTime? LastLogin { get; set; }

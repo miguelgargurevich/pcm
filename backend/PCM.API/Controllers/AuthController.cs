@@ -89,7 +89,7 @@ public class AuthController : ControllerBase
 
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         
-        if (!int.TryParse(userIdClaim, out int userId))
+        if (!Guid.TryParse(userIdClaim, out Guid userId))
         {
             return Unauthorized(new { message = "Token inválido" });
         }
@@ -114,7 +114,7 @@ public class AuthController : ControllerBase
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         
-        if (!int.TryParse(userIdClaim, out int userId))
+        if (!Guid.TryParse(userIdClaim, out Guid userId))
         {
             return Unauthorized(new { message = "Token inválido" });
         }

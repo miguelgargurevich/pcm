@@ -20,7 +20,7 @@ public record CreateEntidadDto
 
 public record UpdateEntidadDto
 {
-    public required int EntidadId { get; init; }
+    public required Guid EntidadId { get; init; }
     public required string Ruc { get; init; }
     public required string Nombre { get; init; }
     public required string Direccion { get; init; }
@@ -39,7 +39,7 @@ public record UpdateEntidadDto
 
 public record EntidadDetailDto
 {
-    public int EntidadId { get; init; }
+    public Guid EntidadId { get; init; }
     public string Ruc { get; init; } = string.Empty;
     public string Nombre { get; init; } = string.Empty;
     public string Direccion { get; init; } = string.Empty;
@@ -66,7 +66,7 @@ public record EntidadDetailDto
 
 public record EntidadListDto
 {
-    public int EntidadId { get; init; }
+    public Guid EntidadId { get; init; }
     public string Ruc { get; init; } = string.Empty;
     public string Nombre { get; init; } = string.Empty;
     public string Departamento { get; init; } = string.Empty;

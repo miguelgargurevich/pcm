@@ -31,7 +31,7 @@ public class PCMDbContext : DbContext
             entity.HasKey(e => e.UserId);
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(200).IsRequired();
-            entity.Property(e => e.Password).HasColumnName("password").HasMaxLength(255).IsRequired();
+            entity.Property(e => e.Password).HasColumnName("password_hash").HasMaxLength(255).IsRequired();
             entity.Property(e => e.NumDni).HasColumnName("num_dni").HasMaxLength(15).IsRequired();
             entity.Property(e => e.Nombres).HasColumnName("nombres").HasMaxLength(100).IsRequired();
             entity.Property(e => e.ApePaterno).HasColumnName("ape_paterno").HasMaxLength(60).IsRequired();

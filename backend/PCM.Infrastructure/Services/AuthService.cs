@@ -108,7 +108,7 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<Result> ChangePasswordAsync(int userId, ChangePasswordRequestDto request)
+    public async Task<Result> ChangePasswordAsync(Guid userId, ChangePasswordRequestDto request)
     {
         try
         {
@@ -148,7 +148,7 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<Result> LogoutAsync(int userId)
+    public async Task<Result> LogoutAsync(Guid userId)
     {
         try
         {

@@ -28,7 +28,7 @@ public class UsuariosController : ControllerBase
     /// Obtener todos los usuarios con filtros opcionales
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] int? entidadId, [FromQuery] int? perfilId, [FromQuery] bool? activo)
+    public async Task<IActionResult> GetAll([FromQuery] Guid? entidadId, [FromQuery] int? perfilId, [FromQuery] bool? activo)
     {
         var query = new GetAllUsuariosQuery
         {
@@ -51,7 +51,7 @@ public class UsuariosController : ControllerBase
     /// Obtener usuario por ID
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var query = new GetUsuarioByIdQuery(id);
         var result = await _mediator.Send(query);
@@ -103,7 +103,7 @@ public class UsuariosController : ControllerBase
     /// Actualizar usuario existente
     /// </summary>
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateUsuarioDto dto)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUsuarioDto dto)
     {
         if (!ModelState.IsValid)
         {
@@ -143,7 +143,7 @@ public class UsuariosController : ControllerBase
     /// Activar o desactivar usuario
     /// </summary>
     [HttpPatch("{id}/toggle-status")]
-    public async Task<IActionResult> ToggleStatus(int id)
+    public async Task<IActionResult> ToggleStatus(Guid id)
     {
         var command = new ToggleUsuarioStatusCommand(id);
         var result = await _mediator.Send(command);

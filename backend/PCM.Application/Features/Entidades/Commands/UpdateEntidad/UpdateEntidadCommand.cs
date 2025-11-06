@@ -6,7 +6,7 @@ namespace PCM.Application.Features.Entidades.Commands.UpdateEntidad;
 
 public record UpdateEntidadCommand : IRequest<Result<EntidadDetailDto>>
 {
-    public required int EntidadId { get; init; }
+    public required Guid EntidadId { get; init; }
     public required string Ruc { get; init; }
     public required string Nombre { get; init; }
     public required string Direccion { get; init; }
