@@ -37,7 +37,7 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.ApePaterno).HasColumnName("ape_paterno").HasMaxLength(60).IsRequired();
             entity.Property(e => e.ApeMaterno).HasColumnName("ape_materno").HasMaxLength(60).IsRequired();
             entity.Property(e => e.Direccion).HasColumnName("direccion").HasMaxLength(200);
-            entity.Property(e => e.EntidadId).HasColumnName("entidad_id").IsRequired();
+            entity.Property(e => e.EntidadId).HasColumnName("entidad_id");
             entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
             entity.Property(e => e.PerfilId).HasColumnName("perfil_id").IsRequired();
             entity.Property(e => e.LastLogin).HasColumnName("last_login");
