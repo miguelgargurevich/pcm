@@ -32,12 +32,25 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Sin reCAPTCHA en modo desarrollo
-      const recaptchaToken = null;
+      // Obtener reCAPTCHA token si está disponible
+      let recaptchaToken = null;
+      const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+      
+      if (recaptchaSiteKey && window.grecaptcha) {
+        try {
+          console.log('🤖 Obteniendo token de reCAPTCHA...');
+          recaptchaToken = await window.grecaptcha.execute(recaptchaSiteKey, { action: 'login' });
+          console.log('✅ Token de reCAPTCHA obtenido');
+        } catch (recaptchaError) {
+          console.warn('⚠️ Error al obtener token de reCAPTCHA:', recaptchaError);
+        }
+      } else {
+        console.log('ℹ️ reCAPTCHA no disponible (modo desarrollo)');
+      }
       
       console.log('🔐 Iniciando login...');
       console.log('📧 Email:', formData.email);
-      console.log('🤖 reCAPTCHA Token:', 'No disponible (modo dev)');
+      console.log('🤖 reCAPTCHA Token:', recaptchaToken ? 'Disponible' : 'No disponible');
       
       const result = await login(formData.email, formData.password, recaptchaToken);
       
@@ -125,12 +138,14 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <div className="text-sm text-gray-600 pt-4 border-t border-gray-200">
-            <p>Usuario de prueba: admin@pcm.gob.pe</p>
-            <p>Contraseña: Admin123!</p>
+        {import.meta.env.DEV && (
+          <div className="mt-6 text-center">
+            <div className="text-sm text-gray-600 pt-4 border-t border-gray-200">
+              <p>Usuario de prueba: admin@pcm.gob.pe</p>
+              <p>Contraseña: Admin123!</p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
