@@ -1,5 +1,5 @@
-# Usar la imagen oficial de .NET 8 SDK para build
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Usar la imagen oficial de .NET 9 SDK para build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copiar archivos de proyecto y restaurar dependencias
@@ -15,8 +15,8 @@ COPY backend/ ./backend/
 WORKDIR /src/backend/PCM.API
 RUN dotnet publish -c Release -o /app/publish
 
-# Usar la imagen runtime de .NET 8 para ejecutar
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+# Usar la imagen runtime de .NET 9 para ejecutar
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 COPY --from=build /app/publish .
 
