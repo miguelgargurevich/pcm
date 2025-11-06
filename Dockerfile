@@ -13,7 +13,8 @@ RUN dotnet restore backend/PCM.API/PCM.API.csproj
 # Copiar todo el código y compilar
 COPY backend/ ./backend/
 WORKDIR /src/backend/PCM.API
-RUN dotnet publish -c Release -o /app/publish
+# Forzar rebuild completo para actualizar navigation properties
+RUN dotnet clean && dotnet publish -c Release -o /app/publish --no-restore
 
 # Usar la imagen runtime de .NET 9 para ejecutar
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
