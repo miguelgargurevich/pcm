@@ -1,0 +1,17 @@
+**/bin
+**/obj
+**/out
+**/.vs
+**/.vscode
+**/node_modules
+**/dist
+**/.git
+**/.gitignore
+**/.env
+**/.env.local
+**/README.md
+frontend/
+db/
+docs/
+.git/
+.github/
