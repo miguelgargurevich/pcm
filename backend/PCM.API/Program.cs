@@ -9,6 +9,10 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configurar el puerto desde la variable de entorno (para Render u otros servicios en la nube)
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5164";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 // Configuración de servicios
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -131,7 +135,12 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+// Solo usar HTTPS redirection en desarrollo
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
