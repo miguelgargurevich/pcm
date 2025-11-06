@@ -1,6 +1,44 @@
 # Migración de Base de Datos en Supabase
 
-## Paso 1: Agregar columna last_login
+## 🚀 Solución Rápida: Script Completo
+
+**RECOMENDADO**: Ejecuta el script completo que incluye todas las migraciones necesarias.
+
+### Instrucciones Rápidas
+
+1. Ve a tu proyecto en Supabase
+2. Abre **SQL Editor** desde el menú lateral
+3. Copia y pega el contenido completo del archivo: **`db/migration_supabase_complete.sql`**
+4. Haz clic en **Run**
+5. Verifica que todas las verificaciones muestren resultados correctos
+
+Este script hace lo siguiente:
+- ✅ Agrega columnas `activo` y `created_at` a tabla `perfiles`
+- ✅ Agrega columna `last_login` a tabla `usuarios`
+- ✅ **Actualiza el hash de contraseña del usuario admin** (Admin123!)
+- ✅ Crea índices necesarios
+- ✅ Verifica que todo esté configurado correctamente
+
+---
+
+## 📝 Migraciones Individuales (Opcional)
+
+Si prefieres ejecutar las migraciones paso por paso:
+
+### Paso 1: Agregar columnas a la tabla perfiles
+
+Esta migración agrega las columnas `activo` y `created_at` a la tabla `perfiles` que son requeridas por el código.
+
+### Instrucciones:
+
+1. Ve a tu proyecto en Supabase: https://supabase.com/dashboard
+2. Selecciona tu proyecto
+3. En el menú lateral, haz clic en **SQL Editor**
+4. Copia y pega el contenido del archivo: `db/migration_perfiles_add_columns.sql`
+5. Haz clic en **Run** para ejecutar el script
+6. Verifica que la salida muestre las columnas agregadas correctamente
+
+## Paso 2: Agregar columna last_login a usuarios
 
 Esta migración agrega la columna `last_login` a la tabla `usuarios` en Supabase para registrar el último inicio de sesión de cada usuario.
 
@@ -35,7 +73,7 @@ WHERE table_name = 'usuarios' AND column_name = 'last_login';
    last_login  | timestamp without time zone | YES
    ```
 
-## Paso 2: Actualizar contraseña del usuario admin (si es necesario)
+## Paso 3: Actualizar contraseña del usuario admin (si es necesario)
 
 Si el usuario administrador no puede iniciar sesión después del despliegue, ejecuta este script para actualizar su contraseña:
 

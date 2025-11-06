@@ -22,6 +22,6 @@ public class Usuario
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     // Navigation properties
-    public virtual Entidad Entidad { get; set; } = null!;
+    public virtual Entidad? Entidad { get; set; }
     public virtual Perfil Perfil { get; set; } = null!;
 }
