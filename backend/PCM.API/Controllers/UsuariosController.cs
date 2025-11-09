@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PCM.Application.DTOs.Usuario;
 using PCM.Application.Features.Usuarios.Commands.CreateUsuario;
+using PCM.Application.Features.Usuarios.Commands.DeleteUsuario;
 using PCM.Application.Features.Usuarios.Commands.ToggleUsuarioStatus;
 using PCM.Application.Features.Usuarios.Commands.UpdateUsuario;
 using PCM.Application.Features.Usuarios.Queries.GetAllUsuarios;
@@ -154,6 +155,24 @@ public class UsuariosController : ControllerBase
         }
 
         _logger.LogInformation("Estado de usuario {UserId} cambiado", id);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Eliminar usuario (soft delete)
+    /// </summary>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var command = new DeleteUsuarioCommand(id);
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result);
+        }
+
+        _logger.LogInformation("Usuario eliminado: {UserId}", id);
         return Ok(result);
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PCM.Application.DTOs.Entidad;
 using PCM.Application.Features.Entidades.Commands.CreateEntidad;
+using PCM.Application.Features.Entidades.Commands.DeleteEntidad;
 using PCM.Application.Features.Entidades.Commands.ToggleEntidadStatus;
 using PCM.Application.Features.Entidades.Commands.UpdateEntidad;
 using PCM.Application.Features.Entidades.Queries.GetAllEntidades;
@@ -197,6 +198,24 @@ public class EntidadesController : ControllerBase
             return BadRequest(result);
         }
 
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Eliminar entidad (soft delete)
+    /// </summary>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var command = new DeleteEntidadCommand(id);
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result);
+        }
+
+        _logger.LogInformation("Entidad eliminada: {EntidadId}", id);
         return Ok(result);
     }
 }
