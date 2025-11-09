@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PCM.Application.DTOs.MarcoNormativo;
 using PCM.Application.Features.MarcoNormativo.Commands.CreateMarcoNormativo;
+using PCM.Application.Features.MarcoNormativo.Commands.DeleteMarcoNormativo;
 using PCM.Application.Features.MarcoNormativo.Commands.ToggleMarcoNormativoStatus;
 using PCM.Application.Features.MarcoNormativo.Commands.UpdateMarcoNormativo;
 using PCM.Application.Features.MarcoNormativo.Queries.GetAllMarcoNormativo;
@@ -160,6 +161,24 @@ public class MarcoNormativoController : ControllerBase
         }
 
         _logger.LogInformation("Estado de marco normativo {MarcoNormativoId} cambiado", id);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Eliminar norma (soft delete)
+    /// </summary>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var command = new DeleteMarcoNormativoCommand(id);
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result);
+        }
+
+        _logger.LogInformation("Marco normativo eliminado: {NormaId}", id);
         return Ok(result);
     }
 }

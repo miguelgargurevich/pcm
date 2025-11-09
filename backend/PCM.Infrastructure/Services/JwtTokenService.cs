@@ -35,7 +35,7 @@ public class JwtTokenService : IJwtTokenService
             new Claim(ClaimTypes.Email, usuario.Email),
             new Claim(ClaimTypes.Name, $"{usuario.Nombres} {usuario.ApePaterno} {usuario.ApeMaterno}"),
             new Claim("dni", usuario.NumDni),
-            new Claim("entidad_id", usuario.EntidadId.ToString()),
+            new Claim("entidad_id", usuario.EntidadId?.ToString() ?? ""),
             new Claim("perfil_id", usuario.PerfilId.ToString()),
             new Claim("perfil_nombre", usuario.Perfil?.Nombre ?? ""),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
