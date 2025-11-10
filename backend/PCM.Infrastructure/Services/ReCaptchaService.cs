@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Interfaces;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PCM.Infrastructure.Services;
 
@@ -98,16 +99,22 @@ public class ReCaptchaService : IReCaptchaService
 
     private class ReCaptchaResponse
     {
+        [JsonPropertyName("success")]
         public bool Success { get; set; }
         
+        [JsonPropertyName("score")]
         public double? Score { get; set; }
         
+        [JsonPropertyName("action")]
         public string? Action { get; set; }
         
+        [JsonPropertyName("challenge_ts")]
         public DateTime? ChallengeTs { get; set; }
         
+        [JsonPropertyName("hostname")]
         public string? Hostname { get; set; }
         
+        [JsonPropertyName("error-codes")]
         public string[]? ErrorCodes { get; set; }
     }
 }
