@@ -21,7 +21,7 @@ public class UpdateMarcoNormativoHandler : IRequestHandler<UpdateMarcoNormativoC
         try
         {
             var marcoNormativo = await _context.MarcosNormativos
-                .FirstOrDefaultAsync(m => m.NormaId == request.MarcoNormativoId, cancellationToken);
+                .FirstOrDefaultAsync(m => m.NormaId == request.NormaId, cancellationToken);
 
             if (marcoNormativo == null)
             {
@@ -30,7 +30,7 @@ public class UpdateMarcoNormativoHandler : IRequestHandler<UpdateMarcoNormativoC
 
             // Validar número único (excepto el actual)
             var existeNumero = await _context.MarcosNormativos
-                .AnyAsync(m => m.Numero == request.NumeroNorma && m.NormaId != request.MarcoNormativoId, cancellationToken);
+                .AnyAsync(m => m.Numero == request.Numero && m.NormaId != request.NormaId, cancellationToken);
 
             if (existeNumero)
             {
@@ -38,35 +38,46 @@ public class UpdateMarcoNormativoHandler : IRequestHandler<UpdateMarcoNormativoC
             }
 
             // Actualizar datos
-            marcoNormativo.Numero = request.NumeroNorma;
-            marcoNormativo.NombreNorma = request.Titulo;
+            marcoNormativo.Numero = request.Numero;
+            marcoNormativo.NombreNorma = request.NombreNorma;
             marcoNormativo.TipoNormaId = request.TipoNormaId;
+            marcoNormativo.NivelGobiernoId = request.NivelGobiernoId;
+            marcoNormativo.SectorId = request.SectorId;
             marcoNormativo.FechaPublicacion = request.FechaPublicacion;
             marcoNormativo.Descripcion = request.Descripcion;
-            marcoNormativo.Url = request.UrlDocumento;
+            marcoNormativo.Url = request.Url;
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            // Obtener tipo de norma
+            // Obtener descripciones
             var tipoNorma = await _context.Database
-                .SqlQuery<string>($"SELECT descripcion FROM tabla_tablas WHERE tabla_id = {request.TipoNormaId} AND tipo_tabla = 'TIPO_NORMA'")
-                .FirstOrDefaultAsync(cancellationToken) ?? "No especificado";
+                .SqlQuery<CatalogoResult>($"SELECT descripcion as Descripcion FROM tabla_tablas WHERE tabla_id = {request.TipoNormaId} AND tipo_tabla = 'TIPO_NORMA'")
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var nivelGobierno = await _context.Database
+                .SqlQuery<CatalogoResult>($"SELECT descripcion as Descripcion FROM tabla_tablas WHERE tabla_id = {request.NivelGobiernoId} AND tipo_tabla = 'NIVEL_GOBIERNO'")
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var sector = await _context.Database
+                .SqlQuery<CatalogoResult>($"SELECT descripcion as Descripcion FROM tabla_tablas WHERE tabla_id = {request.SectorId} AND tipo_tabla = 'SECTOR'")
+                .FirstOrDefaultAsync(cancellationToken);
 
             var marcoNormativoDto = new MarcoNormativoDetailDto
             {
-                MarcoNormativoId = marcoNormativo.NormaId,
-                Titulo = marcoNormativo.NombreNorma,
-                NumeroNorma = marcoNormativo.Numero,
+                NormaId = marcoNormativo.NormaId,
+                NombreNorma = marcoNormativo.NombreNorma,
+                Numero = marcoNormativo.Numero,
                 TipoNormaId = marcoNormativo.TipoNormaId,
-                TipoNorma = tipoNorma,
+                TipoNorma = tipoNorma?.Descripcion ?? "No especificado",
+                NivelGobiernoId = marcoNormativo.NivelGobiernoId,
+                NivelGobierno = nivelGobierno?.Descripcion ?? "No especificado",
+                SectorId = marcoNormativo.SectorId,
+                Sector = sector?.Descripcion ?? "No especificado",
                 FechaPublicacion = marcoNormativo.FechaPublicacion,
-                FechaVigencia = request.FechaVigencia,
-                Entidad = request.Entidad,
                 Descripcion = marcoNormativo.Descripcion,
-                UrlDocumento = marcoNormativo.Url,
+                Url = marcoNormativo.Url,
                 Activo = marcoNormativo.Activo,
-                CreatedAt = marcoNormativo.CreatedAt,
-                UpdatedAt = marcoNormativo.CreatedAt
+                CreatedAt = marcoNormativo.CreatedAt
             };
 
             return Result<MarcoNormativoDetailDto>.Success(marcoNormativoDto, "Marco normativo actualizado exitosamente");
@@ -78,5 +89,10 @@ public class UpdateMarcoNormativoHandler : IRequestHandler<UpdateMarcoNormativoC
                 new List<string> { ex.Message }
             );
         }
+    }
+
+    private class CatalogoResult
+    {
+        public string Descripcion { get; set; } = string.Empty;
     }
 }

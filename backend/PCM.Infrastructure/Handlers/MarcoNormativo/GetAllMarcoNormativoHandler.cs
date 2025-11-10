@@ -63,14 +63,27 @@ public class GetAllMarcoNormativoHandler : IRequestHandler<GetAllMarcoNormativoQ
 
             var tiposNormaDict = tiposNorma.ToDictionary(t => t.TipoNormaId, t => t.Descripcion);
 
+            // Obtener niveles de gobierno y sectores
+            var nivelesGobierno = await _context.Database
+                .SqlQuery<CatalogoResult>($"SELECT tabla_id as Id, descripcion as Descripcion FROM tabla_tablas WHERE tipo_tabla = 'NIVEL_GOBIERNO'")
+                .ToListAsync(cancellationToken);
+            
+            var sectores = await _context.Database
+                .SqlQuery<CatalogoResult>($"SELECT tabla_id as Id, descripcion as Descripcion FROM tabla_tablas WHERE tipo_tabla = 'SECTOR'")
+                .ToListAsync(cancellationToken);
+
+            var nivelesDict = nivelesGobierno.ToDictionary(n => n.Id, n => n.Descripcion);
+            var sectoresDict = sectores.ToDictionary(s => s.Id, s => s.Descripcion);
+
             var result = marcosNormativos.Select(m => new MarcoNormativoListDto
             {
-                MarcoNormativoId = m.NormaId,
-                Titulo = m.NombreNorma,
-                NumeroNorma = m.Numero,
+                NormaId = m.NormaId,
+                NombreNorma = m.NombreNorma,
+                Numero = m.Numero,
                 TipoNorma = tiposNormaDict.GetValueOrDefault(m.TipoNormaId, "No especificado"),
                 FechaPublicacion = m.FechaPublicacion,
-                Entidad = "PCM",
+                NivelGobierno = nivelesDict.GetValueOrDefault(m.NivelGobiernoId, "No especificado"),
+                Sector = sectoresDict.GetValueOrDefault(m.SectorId, "No especificado"),
                 Activo = m.Activo
             }).ToList();
 
@@ -88,6 +101,12 @@ public class GetAllMarcoNormativoHandler : IRequestHandler<GetAllMarcoNormativoQ
     private class TipoNormaResult
     {
         public int TipoNormaId { get; set; }
+        public string Descripcion { get; set; } = string.Empty;
+    }
+
+    private class CatalogoResult
+    {
+        public int Id { get; set; }
         public string Descripcion { get; set; } = string.Empty;
     }
 }

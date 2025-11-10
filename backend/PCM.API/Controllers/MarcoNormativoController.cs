@@ -85,14 +85,14 @@ public class MarcoNormativoController : ControllerBase
 
         var command = new CreateMarcoNormativoCommand
         {
-            Titulo = dto.Titulo,
-            NumeroNorma = dto.NumeroNorma,
+            NombreNorma = dto.NombreNorma,
+            Numero = dto.Numero,
             TipoNormaId = dto.TipoNormaId,
+            NivelGobiernoId = dto.NivelGobiernoId,
+            SectorId = dto.SectorId,
             FechaPublicacion = dto.FechaPublicacion,
-            FechaVigencia = dto.FechaVigencia,
-            Entidad = dto.Entidad,
             Descripcion = dto.Descripcion,
-            UrlDocumento = dto.UrlDocumento
+            Url = dto.Url
         };
 
         var result = await _mediator.Send(command);
@@ -102,8 +102,8 @@ public class MarcoNormativoController : ControllerBase
             return BadRequest(result);
         }
 
-        _logger.LogInformation("Marco normativo creado: {Numero}", dto.NumeroNorma);
-        return CreatedAtAction(nameof(GetById), new { id = result.Data!.MarcoNormativoId }, result);
+        _logger.LogInformation("Marco normativo creado: {Numero}", dto.Numero);
+        return CreatedAtAction(nameof(GetById), new { id = result.Data!.NormaId }, result);
     }
 
     /// <summary>
@@ -117,22 +117,22 @@ public class MarcoNormativoController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        if (id != dto.MarcoNormativoId)
+        if (id != dto.NormaId)
         {
             return BadRequest(new { message = "El ID de la URL no coincide con el ID del body" });
         }
 
         var command = new UpdateMarcoNormativoCommand
         {
-            MarcoNormativoId = dto.MarcoNormativoId,
-            Titulo = dto.Titulo,
-            NumeroNorma = dto.NumeroNorma,
+            NormaId = dto.NormaId,
+            NombreNorma = dto.NombreNorma,
+            Numero = dto.Numero,
             TipoNormaId = dto.TipoNormaId,
+            NivelGobiernoId = dto.NivelGobiernoId,
+            SectorId = dto.SectorId,
             FechaPublicacion = dto.FechaPublicacion,
-            FechaVigencia = dto.FechaVigencia,
-            Entidad = dto.Entidad,
             Descripcion = dto.Descripcion,
-            UrlDocumento = dto.UrlDocumento
+            Url = dto.Url
         };
 
         var result = await _mediator.Send(command);
@@ -142,7 +142,7 @@ public class MarcoNormativoController : ControllerBase
             return BadRequest(result);
         }
 
-        _logger.LogInformation("Marco normativo actualizado: {MarcoNormativoId}", id);
+        _logger.LogInformation("Marco normativo actualizado: {NormaId}", id);
         return Ok(result);
     }
 
