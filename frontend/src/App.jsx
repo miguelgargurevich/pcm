@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Usuarios from './pages/Usuarios';
 import Entidades from './pages/Entidades';
 import MarcoNormativo from './pages/MarcoNormativo';
+import CompromisoGobiernoDigital from './pages/CompromisoGobiernoDigital';
 import DashboardLayout from './layouts/DashboardLayout';
 
 function App() {
@@ -63,7 +64,7 @@ function App() {
             <Route path="usuarios" element={<Usuarios />} />
             <Route path="entidades" element={<Entidades />} />
             <Route path="marco-normativo" element={<MarcoNormativo />} />
-            <Route path="compromisos" element={<div className="card">Módulo de Compromisos</div>} />
+            <Route path="compromisos" element={<CompromisoGobiernoDigital />} />
             <Route path="cumplimiento" element={<div className="card">Módulo de Cumplimiento</div>} />
             <Route path="seguimiento" element={<div className="card">Módulo de Seguimiento</div>} />
             <Route path="evaluacion" element={<div className="card">Módulo de Evaluación</div>} />

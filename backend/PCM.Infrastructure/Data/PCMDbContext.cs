@@ -18,6 +18,9 @@ public class PCMDbContext : DbContext
     public DbSet<NivelGobierno> NivelesGobierno { get; set; }
     public DbSet<Sector> Sectores { get; set; }
     public DbSet<MarcoNormativo> MarcosNormativos { get; set; }
+    public DbSet<CompromisoGobiernoDigital> CompromisosGobiernoDigital { get; set; }
+    public DbSet<CompromisoNormativa> CompromisosNormativas { get; set; }
+    public DbSet<CriterioEvaluacion> CriteriosEvaluacion { get; set; }
     public DbSet<LogAuditoria> LogAuditoria { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -253,6 +256,63 @@ public class PCMDbContext : DbContext
                 new Sector { SectorId = 19, Nombre = "Cultura", Descripcion = "MINCU", Activo = true },
                 new Sector { SectorId = 20, Nombre = "Desarrollo Agrario y Riego", Descripcion = "MIDAGRI", Activo = true }
             );
+        });
+
+        // Configuración de CompromisoGobiernoDigital
+        modelBuilder.Entity<CompromisoGobiernoDigital>(entity =>
+        {
+            entity.ToTable("compromiso_gobierno_digital");
+            entity.HasKey(e => e.CompromisoId);
+            entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id");
+            entity.Property(e => e.NombreCompromiso).HasColumnName("nombre_compromiso").HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Descripcion).HasColumnName("descripcion").HasColumnType("text");
+            entity.Property(e => e.Alcances).HasColumnName("alcances").HasMaxLength(500).IsRequired();
+            entity.Property(e => e.FechaInicio).HasColumnName("fecha_inicio").IsRequired();
+            entity.Property(e => e.FechaFin).HasColumnName("fecha_fin").IsRequired();
+            entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(50).HasDefaultValue("pendiente");
+            entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+        });
+
+        // Configuración de CompromisoNormativa
+        modelBuilder.Entity<CompromisoNormativa>(entity =>
+        {
+            entity.ToTable("compromiso_normativa");
+            entity.HasKey(e => e.CompromisoNormativaId);
+            entity.Property(e => e.CompromisoNormativaId).HasColumnName("compromiso_normativa_id");
+            entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id").IsRequired();
+            entity.Property(e => e.NormaId).HasColumnName("norma_id").IsRequired();
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(e => e.Compromiso)
+                .WithMany(c => c.Normativas)
+                .HasForeignKey(e => e.CompromisoId)
+                .HasConstraintName("fk_compromiso_normativa_compromiso");
+
+            entity.HasOne(e => e.Norma)
+                .WithMany()
+                .HasForeignKey(e => e.NormaId)
+                .HasConstraintName("fk_compromiso_normativa_norma");
+        });
+
+        // Configuración de CriterioEvaluacion
+        modelBuilder.Entity<CriterioEvaluacion>(entity =>
+        {
+            entity.ToTable("criterio_evaluacion");
+            entity.HasKey(e => e.CriterioEvaluacionId);
+            entity.Property(e => e.CriterioEvaluacionId).HasColumnName("criterio_evaluacion_id");
+            entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id").IsRequired();
+            entity.Property(e => e.Descripcion).HasColumnName("descripcion").HasColumnType("text").IsRequired();
+            entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(50).HasDefaultValue("pendiente");
+            entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+
+            entity.HasOne(e => e.Compromiso)
+                .WithMany(c => c.CriteriosEvaluacion)
+                .HasForeignKey(e => e.CompromisoId)
+                .HasConstraintName("fk_criterio_evaluacion_compromiso");
         });
     }
 }
