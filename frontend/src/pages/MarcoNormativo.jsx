@@ -13,6 +13,34 @@ const TIPOS_NORMA = [
   { id: 7, nombre: 'Otro' }
 ];
 
+const NIVELES_GOBIERNO = [
+  { id: 1, nombre: 'Nacional' },
+  { id: 2, nombre: 'Regional' },
+  { id: 3, nombre: 'Local' }
+];
+
+const SECTORES = [
+  { id: 1, nombre: 'PCM - Presidencia del Consejo de Ministros' },
+  { id: 2, nombre: 'Educación' },
+  { id: 3, nombre: 'Salud' },
+  { id: 4, nombre: 'Interior' },
+  { id: 5, nombre: 'Economía y Finanzas' },
+  { id: 6, nombre: 'Trabajo' },
+  { id: 7, nombre: 'Transportes y Comunicaciones' },
+  { id: 8, nombre: 'Vivienda' },
+  { id: 9, nombre: 'Defensa' },
+  { id: 10, nombre: 'Agricultura' },
+  { id: 11, nombre: 'Justicia' },
+  { id: 12, nombre: 'Comercio Exterior y Turismo' },
+  { id: 13, nombre: 'Energía y Minas' },
+  { id: 14, nombre: 'Mujer y Poblaciones Vulnerables' },
+  { id: 15, nombre: 'Ambiente' },
+  { id: 16, nombre: 'Cultura' },
+  { id: 17, nombre: 'Desarrollo e Inclusión Social' },
+  { id: 18, nombre: 'Producción' },
+  { id: 19, nombre: 'Relaciones Exteriores' }
+];
+
 const MarcoNormativo = () => {
   const [normas, setNormas] = useState([]);
   const [normasFiltradas, setNormasFiltradas] = useState([]);
@@ -33,14 +61,14 @@ const MarcoNormativo = () => {
   const itemsPorPagina = 10;
 
   const [formData, setFormData] = useState({
-    titulo: '',
-    numeroNorma: '',
+    nombreNorma: '',
+    numero: '',
     tipoNormaId: '',
+    nivelGobiernoId: '1', // Por defecto Nacional
+    sectorId: '1', // Por defecto PCM
     fechaPublicacion: '',
-    fechaVigencia: '',
-    entidad: '',
     descripcion: '',
-    urlDocumento: '',
+    url: '',
     activo: true
   });
 
@@ -56,9 +84,9 @@ const MarcoNormativo = () => {
       const busqueda = filtros.busqueda.toLowerCase();
       filtered = filtered.filter(
         (n) =>
-          n.titulo?.toLowerCase().includes(busqueda) ||
-          n.numeroNorma?.toLowerCase().includes(busqueda) ||
-          n.entidad?.toLowerCase().includes(busqueda)
+          n.nombreNorma?.toLowerCase().includes(busqueda) ||
+          n.numero?.toLowerCase().includes(busqueda) ||
+          n.sector?.toLowerCase().includes(busqueda)
       );
     }
 
@@ -102,14 +130,14 @@ const MarcoNormativo = () => {
   const handleCreate = () => {
     setEditingNorma(null);
     setFormData({
-      titulo: '',
-      numeroNorma: '',
+      nombreNorma: '',
+      numero: '',
       tipoNormaId: '',
+      nivelGobiernoId: '1',
+      sectorId: '1',
       fechaPublicacion: '',
-      fechaVigencia: '',
-      entidad: '',
       descripcion: '',
-      urlDocumento: '',
+      url: '',
       activo: true
     });
     setShowModal(true);
@@ -118,14 +146,14 @@ const MarcoNormativo = () => {
   const handleEdit = (norma) => {
     setEditingNorma(norma);
     setFormData({
-      titulo: norma.titulo || '',
-      numeroNorma: norma.numeroNorma || '',
+      nombreNorma: norma.nombreNorma || '',
+      numero: norma.numero || '',
       tipoNormaId: norma.tipoNormaId || '',
+      nivelGobiernoId: norma.nivelGobiernoId || '1',
+      sectorId: norma.sectorId || '1',
       fechaPublicacion: norma.fechaPublicacion ? norma.fechaPublicacion.split('T')[0] : '',
-      fechaVigencia: norma.fechaVigencia || '',
-      entidad: norma.entidad || '',
       descripcion: norma.descripcion || '',
-      urlDocumento: norma.urlDocumento || '',
+      url: norma.url || '',
       activo: norma.activo !== undefined ? norma.activo : true
     });
     setShowModal(true);
@@ -134,7 +162,7 @@ const MarcoNormativo = () => {
   const handleDelete = async (id) => {
     showConfirmToast({
       title: '¿Está seguro de eliminar esta norma?',
-      message: 'Esta acción no se puede deshacer.',
+      message: 'Esta acción desactivará la norma.',
       confirmText: 'Eliminar',
       loadingText: 'Eliminando norma...',
       onConfirm: async () => {
@@ -156,20 +184,20 @@ const MarcoNormativo = () => {
 
     try {
       const dataToSend = {
-        titulo: formData.titulo,
-        numeroNorma: formData.numeroNorma,
+        nombreNorma: formData.nombreNorma,
+        numero: formData.numero,
         tipoNormaId: parseInt(formData.tipoNormaId),
+        nivelGobiernoId: parseInt(formData.nivelGobiernoId),
+        sectorId: parseInt(formData.sectorId),
         fechaPublicacion: formData.fechaPublicacion,
-        fechaVigencia: formData.fechaVigencia || null,
-        entidad: formData.entidad,
         descripcion: formData.descripcion || null,
-        urlDocumento: formData.urlDocumento || null
+        url: formData.url || null
       };
 
       let response;
       if (editingNorma) {
-        dataToSend.marcoNormativoId = editingNorma.marcoNormativoId;
-        response = await marcoNormativoService.update(editingNorma.marcoNormativoId, dataToSend);
+        dataToSend.normaId = editingNorma.normaId;
+        response = await marcoNormativoService.update(editingNorma.normaId, dataToSend);
       } else {
         response = await marcoNormativoService.create(dataToSend);
       }
@@ -332,16 +360,16 @@ const MarcoNormativo = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {currentItems.map((norma) => (
-                <tr key={norma.marcoNormativoId} className="hover:bg-gray-50">
+                <tr key={norma.normaId} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div className="flex items-start">
                       <FileText className="text-primary mr-2 mt-1" size={18} />
                       <div>
-                        <div className="text-sm font-medium text-gray-900">{norma.titulo}</div>
-                        <div className="text-sm text-gray-500">{norma.numeroNorma}</div>
-                        {norma.urlDocumento && (
+                        <div className="text-sm font-medium text-gray-900">{norma.nombreNorma}</div>
+                        <div className="text-sm text-gray-500">{norma.numero}</div>
+                        {norma.url && (
                           <a
-                            href={norma.urlDocumento}
+                            href={norma.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 mt-1"
@@ -359,7 +387,7 @@ const MarcoNormativo = () => {
                     {new Date(norma.fechaPublicacion).toLocaleDateString('es-PE')}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    {norma.entidad}
+                    {norma.sector}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
@@ -379,7 +407,7 @@ const MarcoNormativo = () => {
                       <Edit2 size={18} />
                     </button>
                     <button
-                      onClick={() => handleDelete(norma.marcoNormativoId)}
+                      onClick={() => handleDelete(norma.normaId)}
                       className="text-red-600 hover:text-red-800"
                       title="Eliminar"
                     >
@@ -466,12 +494,12 @@ const MarcoNormativo = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Título <span className="text-red-500">*</span>
+                    Nombre de la Norma <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    name="titulo"
-                    value={formData.titulo}
+                    name="nombreNorma"
+                    value={formData.nombreNorma}
                     onChange={handleInputChange}
                     required
                     className="input-field"
@@ -485,8 +513,8 @@ const MarcoNormativo = () => {
                   </label>
                   <input
                     type="text"
-                    name="numeroNorma"
-                    value={formData.numeroNorma}
+                    name="numero"
+                    value={formData.numero}
                     onChange={handleInputChange}
                     required
                     className="input-field"
@@ -528,30 +556,38 @@ const MarcoNormativo = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fecha de Vigencia
+                    Nivel de Gobierno <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="date"
-                    name="fechaVigencia"
-                    value={formData.fechaVigencia}
+                  <select
+                    name="nivelGobiernoId"
+                    value={formData.nivelGobiernoId}
                     onChange={handleInputChange}
+                    required
                     className="input-field"
-                  />
+                  >
+                    <option value="">Seleccione...</option>
+                    {NIVELES_GOBIERNO.map((nivel) => (
+                      <option key={nivel.id} value={nivel.id}>{nivel.nombre}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Entidad Emisora <span className="text-red-500">*</span>
+                    Sector <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    name="entidad"
-                    value={formData.entidad}
+                  <select
+                    name="sectorId"
+                    value={formData.sectorId}
                     onChange={handleInputChange}
                     required
                     className="input-field"
-                    placeholder="Nombre de la entidad que emite la norma"
-                  />
+                  >
+                    <option value="">Seleccione...</option>
+                    {SECTORES.map((sector) => (
+                      <option key={sector.id} value={sector.id}>{sector.nombre}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="md:col-span-2">
@@ -574,8 +610,8 @@ const MarcoNormativo = () => {
                   </label>
                   <input
                     type="url"
-                    name="urlDocumento"
-                    value={formData.urlDocumento}
+                    name="url"
+                    value={formData.url}
                     onChange={handleInputChange}
                     className="input-field"
                     placeholder="https://..."
