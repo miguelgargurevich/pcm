@@ -51,9 +51,11 @@ const MarcoNormativo = () => {
   
   // Filtros
   const [filtros, setFiltros] = useState({
-    busqueda: '',
+    nombreNorma: '',
+    numero: '',
     tipoNormaId: '',
-    estado: ''
+    nivelGobiernoId: '',
+    sectorId: ''
   });
 
   // Paginación
@@ -80,24 +82,26 @@ const MarcoNormativo = () => {
   useEffect(() => {
     let filtered = [...normas];
 
-    if (filtros.busqueda.trim()) {
-      const busqueda = filtros.busqueda.toLowerCase();
-      filtered = filtered.filter(
-        (n) =>
-          n.nombreNorma?.toLowerCase().includes(busqueda) ||
-          n.numero?.toLowerCase().includes(busqueda) ||
-          n.sector?.toLowerCase().includes(busqueda)
-      );
+    if (filtros.nombreNorma.trim()) {
+      const busqueda = filtros.nombreNorma.toLowerCase();
+      filtered = filtered.filter((n) => n.nombreNorma?.toLowerCase().includes(busqueda));
+    }
+
+    if (filtros.numero.trim()) {
+      const busqueda = filtros.numero.toLowerCase();
+      filtered = filtered.filter((n) => n.numero?.toLowerCase().includes(busqueda));
     }
 
     if (filtros.tipoNormaId) {
       filtered = filtered.filter((n) => n.tipoNormaId === parseInt(filtros.tipoNormaId));
     }
 
-    if (filtros.estado === 'activo') {
-      filtered = filtered.filter((n) => n.activo === true);
-    } else if (filtros.estado === 'inactivo') {
-      filtered = filtered.filter((n) => n.activo === false);
+    if (filtros.nivelGobiernoId) {
+      filtered = filtered.filter((n) => n.nivelGobiernoId === parseInt(filtros.nivelGobiernoId));
+    }
+
+    if (filtros.sectorId) {
+      filtered = filtered.filter((n) => n.sectorId === parseInt(filtros.sectorId));
     }
 
     setNormasFiltradas(filtered);
@@ -228,7 +232,7 @@ const MarcoNormativo = () => {
   };
 
   const limpiarFiltros = () => {
-    setFiltros({ busqueda: '', tipoNormaId: '', estado: '' });
+    setFiltros({ nombreNorma: '', numero: '', tipoNormaId: '', nivelGobiernoId: '', sectorId: '' });
   };
 
   // Paginación
@@ -260,22 +264,33 @@ const MarcoNormativo = () => {
 
       {/* Filtros */}
       <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="md:col-span-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Buscar
+              Nombre del Marco Normativo
             </label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-              <input
-                type="text"
-                name="busqueda"
-                value={filtros.busqueda}
-                onChange={handleFiltroChange}
-                placeholder="Título, número o entidad..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-              />
-            </div>
+            <input
+              type="text"
+              name="nombreNorma"
+              value={filtros.nombreNorma}
+              onChange={handleFiltroChange}
+              placeholder="Buscar por nombre..."
+              className="input-field"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Número
+            </label>
+            <input
+              type="text"
+              name="numero"
+              value={filtros.numero}
+              onChange={handleFiltroChange}
+              placeholder="Buscar por número..."
+              className="input-field"
+            />
           </div>
 
           <div>
@@ -295,34 +310,53 @@ const MarcoNormativo = () => {
             </select>
           </div>
 
-          <div className="flex items-end gap-2">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Estado
-              </label>
-              <select
-                name="estado"
-                value={filtros.estado}
-                onChange={handleFiltroChange}
-                className="input-field"
-              >
-                <option value="">Todos</option>
-                <option value="activo">Activos</option>
-                <option value="inactivo">Inactivos</option>
-              </select>
-            </div>
-            <button
-              onClick={limpiarFiltros}
-              className="btn-secondary flex items-center gap-2 px-4 py-2"
-              title="Limpiar filtros"
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nivel de Gobierno
+            </label>
+            <select
+              name="nivelGobiernoId"
+              value={filtros.nivelGobiernoId}
+              onChange={handleFiltroChange}
+              className="input-field"
             >
-              <FilterX size={20} />
-            </button>
+              <option value="">Todos</option>
+              {NIVELES_GOBIERNO.map((nivel) => (
+                <option key={nivel.id} value={nivel.id}>{nivel.nombre}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Sector
+            </label>
+            <select
+              name="sectorId"
+              value={filtros.sectorId}
+              onChange={handleFiltroChange}
+              className="input-field"
+            >
+              <option value="">Todos</option>
+              {SECTORES.map((sector) => (
+                <option key={sector.id} value={sector.id}>{sector.nombre}</option>
+              ))}
+            </select>
           </div>
         </div>
 
-        <div className="mt-3 text-sm text-gray-600">
-          Mostrando {currentItems.length} de {normasFiltradas.length} normas
+        <div className="mt-4 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            Mostrando {currentItems.length} de {normasFiltradas.length} normas
+          </div>
+          <button
+            onClick={limpiarFiltros}
+            className="btn-secondary flex items-center gap-2"
+            title="Limpiar filtros"
+          >
+            <FilterX size={18} />
+            Limpiar Filtros
+          </button>
         </div>
       </div>
 
@@ -339,19 +373,22 @@ const MarcoNormativo = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Norma
+                  Número
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tipo
+                  Nombre de la Norma
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fecha Publicación
+                  Tipo de Norma
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Entidad
+                  Descripción
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Estado
+                  Nivel de Gobierno
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Sector
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Acciones
@@ -361,42 +398,37 @@ const MarcoNormativo = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {currentItems.map((norma) => (
                 <tr key={norma.normaId} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {norma.numero}
+                  </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-start">
-                      <FileText className="text-primary mr-2 mt-1" size={18} />
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{norma.nombreNorma}</div>
-                        <div className="text-sm text-gray-500">{norma.numero}</div>
-                        {norma.url && (
-                          <a
-                            href={norma.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 mt-1"
-                          >
-                            Ver documento <ExternalLink size={12} />
-                          </a>
-                        )}
-                      </div>
-                    </div>
+                    <div className="text-sm font-medium text-gray-900">{norma.nombreNorma}</div>
+                    {norma.url && (
+                      <a
+                        href={norma.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 mt-1"
+                      >
+                        Ver documento <ExternalLink size={12} />
+                      </a>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {norma.tipoNorma}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(norma.fechaPublicacion).toLocaleDateString('es-PE')}
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    <div className="max-w-xs truncate" title={norma.descripcion}>
+                      {norma.descripcion || '-'}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {norma.nivelGobierno}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    {norma.sector}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      norma.activo
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {norma.activo ? 'Activo' : 'Inactivo'}
-                    </span>
+                    <div className="max-w-xs truncate" title={norma.sector}>
+                      {norma.sector}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                     <button

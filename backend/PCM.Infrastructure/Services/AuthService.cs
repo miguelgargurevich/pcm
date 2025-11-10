@@ -13,21 +13,34 @@ public class AuthService : IAuthService
     private readonly PCMDbContext _context;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IConfiguration _configuration;
+    private readonly IReCaptchaService _reCaptchaService;
 
     public AuthService(
         PCMDbContext context,
         IJwtTokenService jwtTokenService,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IReCaptchaService reCaptchaService)
     {
         _context = context;
         _jwtTokenService = jwtTokenService;
         _configuration = configuration;
+        _reCaptchaService = reCaptchaService;
     }
 
     public async Task<Result<LoginResponseDto>> LoginAsync(LoginRequestDto request)
     {
         try
         {
+            // Validar reCAPTCHA token si está presente
+            if (!string.IsNullOrWhiteSpace(request.RecaptchaToken))
+            {
+                var isValidRecaptcha = await _reCaptchaService.ValidateTokenAsync(request.RecaptchaToken, "login");
+                if (!isValidRecaptcha)
+                {
+                    return Result<LoginResponseDto>.Failure("Verificación de reCAPTCHA fallida. Por favor, intente nuevamente.");
+                }
+            }
+
             // Buscar usuario por email
             var usuario = await _context.Usuarios
                 .Include(u => u.Entidad)
