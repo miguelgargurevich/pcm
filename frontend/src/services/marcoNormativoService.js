@@ -11,7 +11,7 @@ export const marcoNormativoService = {
       if (filters.fechaDesde) params.append('fechaDesde', filters.fechaDesde);
       if (filters.fechaHasta) params.append('fechaHasta', filters.fechaHasta);
       
-      const response = await api.get(`/marconormativo?${params.toString()}`);
+      const response = await api.get(`/MarcoNormativo?${params.toString()}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || { success: false, message: 'Error al obtener normas' };
@@ -21,7 +21,7 @@ export const marcoNormativoService = {
   // Obtener una norma por ID
   async getById(id) {
     try {
-      const response = await api.get(`/marconormativo/${id}`);
+      const response = await api.get(`/MarcoNormativo/${id}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || { success: false, message: 'Error al obtener norma' };
@@ -31,7 +31,7 @@ export const marcoNormativoService = {
   // Crear una nueva norma
   async create(normaData) {
     try {
-      const response = await api.post('/marconormativo', normaData);
+      const response = await api.post('/MarcoNormativo', normaData);
       return response.data;
     } catch (error) {
       throw error.response?.data || { success: false, message: 'Error al crear norma' };
@@ -41,7 +41,7 @@ export const marcoNormativoService = {
   // Actualizar una norma
   async update(id, normaData) {
     try {
-      const response = await api.put(`/marconormativo/${id}`, normaData);
+      const response = await api.put(`/MarcoNormativo/${id}`, normaData);
       return response.data;
     } catch (error) {
       throw error.response?.data || { success: false, message: 'Error al actualizar norma' };
@@ -51,7 +51,7 @@ export const marcoNormativoService = {
   // Eliminar una norma (soft delete)
   async delete(id) {
     try {
-      const response = await api.delete(`/marconormativo/${id}`);
+      const response = await api.delete(`/MarcoNormativo/${id}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || { success: false, message: 'Error al eliminar norma' };
@@ -61,7 +61,7 @@ export const marcoNormativoService = {
   // Activar/desactivar norma
   async toggleStatus(id) {
     try {
-      const response = await api.patch(`/marconormativo/${id}/toggle-status`);
+      const response = await api.patch(`/MarcoNormativo/${id}/toggle-status`);
       return response.data;
     } catch (error) {
       throw error.response?.data || { success: false, message: 'Error al cambiar estado' };
