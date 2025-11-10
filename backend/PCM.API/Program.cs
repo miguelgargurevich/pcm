@@ -125,15 +125,13 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // Configuración del pipeline HTTP
-if (app.Environment.IsDevelopment())
+// Habilitar Swagger en todos los ambientes para debugging
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "PCM API v1");
-        c.RoutePrefix = string.Empty; // Swagger en la raíz
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "PCM API v1");
+    c.RoutePrefix = string.Empty; // Swagger en la raíz
+});
 
 // Solo usar HTTPS redirection en desarrollo
 if (app.Environment.IsDevelopment())
@@ -146,14 +144,48 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// Endpoint de salud
-app.MapGet("/health", () => Results.Ok(new
+// Endpoint de salud básico (para health check de Render)
+app.MapGet("/", () => Results.Ok(new
 {
-    status = "healthy",
+    api = "PCM API",
+    status = "running",
     timestamp = DateTime.UtcNow,
-    database = "connected"
+    version = "1.0"
 }))
+.WithName("Root")
+.WithTags("Health")
+.AllowAnonymous();
+
+// Endpoint de salud con verificación real de DB
+app.MapGet("/health", async (PCMDbContext dbContext) =>
+{
+    try
+    {
+        // Verificar conexión a la base de datos
+        await dbContext.Database.CanConnectAsync();
+        
+        return Results.Ok(new
+        {
+            status = "healthy",
+            timestamp = DateTime.UtcNow,
+            database = "connected",
+            environment = app.Environment.EnvironmentName
+        });
+    }
+    catch (Exception ex)
+    {
+        return Results.Ok(new
+        {
+            status = "unhealthy",
+            timestamp = DateTime.UtcNow,
+            database = "disconnected",
+            error = ex.Message,
+            environment = app.Environment.EnvironmentName
+        });
+    }
+})
 .WithName("HealthCheck")
-.WithTags("Health");
+.WithTags("Health")
+.AllowAnonymous();
 
 app.Run();
