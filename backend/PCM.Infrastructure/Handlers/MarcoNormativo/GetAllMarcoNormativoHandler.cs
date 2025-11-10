@@ -58,18 +58,18 @@ public class GetAllMarcoNormativoHandler : IRequestHandler<GetAllMarcoNormativoQ
 
             // Obtener tipos de norma
             var tiposNorma = await _context.Database
-                .SqlQuery<TipoNormaResult>($"SELECT tabla_id as TipoNormaId, descripcion as Descripcion FROM tabla_tablas WHERE tipo_tabla = 'TIPO_NORMA'")
+                .SqlQuery<TipoNormaResult>($"SELECT tabla_id as TipoNormaId, descripcion as Descripcion FROM tabla_tablas WHERE nombre_tabla = 'TIPO_NORMA'")
                 .ToListAsync(cancellationToken);
 
             var tiposNormaDict = tiposNorma.ToDictionary(t => t.TipoNormaId, t => t.Descripcion);
 
             // Obtener niveles de gobierno y sectores
             var nivelesGobierno = await _context.Database
-                .SqlQuery<CatalogoResult>($"SELECT tabla_id as Id, descripcion as Descripcion FROM tabla_tablas WHERE tipo_tabla = 'NIVEL_GOBIERNO'")
+                .SqlQuery<CatalogoResult>($"SELECT tabla_id as Id, descripcion as Descripcion FROM tabla_tablas WHERE nombre_tabla = 'NIVEL_GOBIERNO'")
                 .ToListAsync(cancellationToken);
             
             var sectores = await _context.Database
-                .SqlQuery<CatalogoResult>($"SELECT tabla_id as Id, descripcion as Descripcion FROM tabla_tablas WHERE tipo_tabla = 'SECTOR'")
+                .SqlQuery<CatalogoResult>($"SELECT tabla_id as Id, descripcion as Descripcion FROM tabla_tablas WHERE nombre_tabla = 'SECTOR'")
                 .ToListAsync(cancellationToken);
 
             var nivelesDict = nivelesGobierno.ToDictionary(n => n.Id, n => n.Descripcion);

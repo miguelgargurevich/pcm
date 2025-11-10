@@ -30,15 +30,15 @@ public class GetMarcoNormativoByIdHandler : IRequestHandler<GetMarcoNormativoByI
 
             // Obtener descripciones de catálogos
             var tipoNorma = await _context.Database
-                .SqlQuery<CatalogoResult>($"SELECT descripcion as Descripcion FROM tabla_tablas WHERE tabla_id = {marcoNormativo.TipoNormaId} AND tipo_tabla = 'TIPO_NORMA'")
+                .SqlQuery<CatalogoResult>($"SELECT descripcion as Descripcion FROM tabla_tablas WHERE tabla_id = {marcoNormativo.TipoNormaId} AND nombre_tabla = 'TIPO_NORMA'")
                 .FirstOrDefaultAsync(cancellationToken);
 
             var nivelGobierno = await _context.Database
-                .SqlQuery<CatalogoResult>($"SELECT descripcion as Descripcion FROM tabla_tablas WHERE tabla_id = {marcoNormativo.NivelGobiernoId} AND tipo_tabla = 'NIVEL_GOBIERNO'")
+                .SqlQuery<CatalogoResult>($"SELECT descripcion as Descripcion FROM tabla_tablas WHERE tabla_id = {marcoNormativo.NivelGobiernoId} AND nombre_tabla = 'NIVEL_GOBIERNO'")
                 .FirstOrDefaultAsync(cancellationToken);
 
             var sector = await _context.Database
-                .SqlQuery<CatalogoResult>($"SELECT descripcion as Descripcion FROM tabla_tablas WHERE tabla_id = {marcoNormativo.SectorId} AND tipo_tabla = 'SECTOR'")
+                .SqlQuery<CatalogoResult>($"SELECT descripcion as Descripcion FROM tabla_tablas WHERE tabla_id = {marcoNormativo.SectorId} AND nombre_tabla = 'SECTOR'")
                 .FirstOrDefaultAsync(cancellationToken);
 
             var marcoNormativoDto = new MarcoNormativoDetailDto
