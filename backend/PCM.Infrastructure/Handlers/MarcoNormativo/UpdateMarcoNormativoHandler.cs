@@ -4,6 +4,7 @@ using PCM.Application.Common;
 using PCM.Application.DTOs.MarcoNormativo;
 using PCM.Application.Features.MarcoNormativo.Commands.UpdateMarcoNormativo;
 using PCM.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace PCM.Infrastructure.Handlers.MarcoNormativo;
 
@@ -52,6 +53,9 @@ public class UpdateMarcoNormativoHandler : IRequestHandler<UpdateMarcoNormativoC
             marcoNormativo.Descripcion = request.Descripcion;
             marcoNormativo.Url = request.Url;
 
+            // Marcar explícitamente la entidad como modificada
+            _context.Entry(marcoNormativo).State = EntityState.Modified;
+            
             await _context.SaveChangesAsync(cancellationToken);
 
             // Obtener descripciones
