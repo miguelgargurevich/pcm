@@ -49,9 +49,14 @@ public record MarcoNormativoListDto
     public int NormaId { get; init; }
     public string NombreNorma { get; init; } = string.Empty;
     public string Numero { get; init; } = string.Empty;
+    public int TipoNormaId { get; init; }
     public string TipoNorma { get; init; } = string.Empty;
-    public DateTime FechaPublicacion { get; init; }
+    public int NivelGobiernoId { get; init; }
     public string NivelGobierno { get; init; } = string.Empty;
+    public int SectorId { get; init; }
     public string Sector { get; init; } = string.Empty;
+    public DateTime FechaPublicacion { get; init; }
+    public string? Descripcion { get; init; }
+    public string? Url { get; init; }
     public bool Activo { get; init; }
 }

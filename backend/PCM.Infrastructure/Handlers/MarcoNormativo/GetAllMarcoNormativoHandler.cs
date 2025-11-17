@@ -80,10 +80,15 @@ public class GetAllMarcoNormativoHandler : IRequestHandler<GetAllMarcoNormativoQ
                 NormaId = m.NormaId,
                 NombreNorma = m.NombreNorma,
                 Numero = m.Numero,
+                TipoNormaId = m.TipoNormaId,
                 TipoNorma = tiposNormaDict.GetValueOrDefault(m.TipoNormaId, "No especificado"),
-                FechaPublicacion = m.FechaPublicacion,
+                NivelGobiernoId = m.NivelGobiernoId,
                 NivelGobierno = nivelesDict.GetValueOrDefault(m.NivelGobiernoId, "No especificado"),
+                SectorId = m.SectorId,
                 Sector = sectoresDict.GetValueOrDefault(m.SectorId, "No especificado"),
+                FechaPublicacion = m.FechaPublicacion,
+                Descripcion = m.Descripcion,
+                Url = m.Url,
                 Activo = m.Activo
             }).ToList();
 
