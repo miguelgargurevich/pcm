@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { marcoNormativoService } from '../services/marcoNormativoService';
 import { catalogosService } from '../services/catalogosService';
-import { showConfirmToast, showSuccessToast, showErrorToast } from '../utils/toast.jsx';
-import { Plus, Edit2, Trash2, X, Save, FilterX, Search, FileText, ExternalLink } from 'lucide-react';
+import { showConfirmToast, showSuccessToast, showErrorToast, showInfoToast } from '../utils/toast.jsx';
+import { Plus, Edit2, Trash2, X, Save, FilterX, Search, FileText, ExternalLink, Eye } from 'lucide-react';
 
 const MarcoNormativo = () => {
   const [normas, setNormas] = useState([]);
@@ -11,6 +11,9 @@ const MarcoNormativo = () => {
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingNorma, setEditingNorma] = useState(null);
+  const [showPdfModal, setShowPdfModal] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState('');
+  const [pdfTitle, setPdfTitle] = useState('');
 
   // Catálogos dinámicos
   const [tiposNorma, setTiposNorma] = useState([]);
@@ -242,6 +245,28 @@ const MarcoNormativo = () => {
     setFiltros({ nombreNorma: '', numero: '', tipoNormaId: '', nivelGobiernoId: '', sectorId: '' });
   };
 
+  const handleViewDocument = (norma) => {
+    if (!norma.url) {
+      showErrorToast('No hay documento disponible para esta norma');
+      return;
+    }
+
+    // Validar si es un PDF
+    const url = norma.url.toLowerCase();
+    const isPdf = url.endsWith('.pdf') || url.includes('.pdf?') || url.includes('pdf');
+    
+    if (!isPdf) {
+      showErrorToast('Solo se pueden visualizar documentos PDF. Este enlace se abrirá en una nueva ventana.');
+      window.open(norma.url, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    // Abrir modal con visor PDF
+    setPdfUrl(norma.url);
+    setPdfTitle(`${norma.numero} - ${norma.nombreNorma}`);
+    setShowPdfModal(true);
+  };
+
   // Paginación
   const indexOfLastItem = paginaActual * itemsPorPagina;
   const indexOfFirstItem = indexOfLastItem - itemsPorPagina;
@@ -408,14 +433,14 @@ const MarcoNormativo = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{norma.numero}</div>
                     {norma.url && (
-                      <a
-                        href={norma.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 mt-1"
+                      <button
+                        onClick={() => handleViewDocument(norma)}
+                        className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 mt-1 hover:underline"
+                        title="Ver documento"
                       >
-                        Ver documento <ExternalLink size={12} />
-                      </a>
+                        <Eye size={14} />
+                        Ver documento
+                      </button>
                     )}
                   </td>
                   <td className="px-6 py-4">
@@ -673,6 +698,72 @@ const MarcoNormativo = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Visor de PDF */}
+      {showPdfModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+          <div className="relative bg-white rounded-lg shadow-xl w-full max-w-6xl h-[90vh] flex flex-col">
+            {/* Header del modal */}
+            <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center gap-2">
+                <FileText size={24} className="text-primary" />
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Visor de Documento</h3>
+                  <p className="text-sm text-gray-600">{pdfTitle}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <a
+                  href={pdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary flex items-center gap-2 px-3 py-2"
+                  title="Abrir en nueva pestaña"
+                >
+                  <ExternalLink size={18} />
+                  Abrir en nueva pestaña
+                </a>
+                <button
+                  onClick={() => {
+                    setShowPdfModal(false);
+                    setPdfUrl('');
+                    setPdfTitle('');
+                  }}
+                  className="text-gray-400 hover:text-gray-600 p-2"
+                  title="Cerrar"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+            </div>
+
+            {/* Contenedor del PDF */}
+            <div className="flex-1 overflow-hidden">
+              <iframe
+                src={pdfUrl}
+                className="w-full h-full border-0"
+                title={pdfTitle}
+                style={{ minHeight: '600px' }}
+              />
+            </div>
+
+            {/* Footer con información */}
+            <div className="px-6 py-3 border-t border-gray-200 bg-gray-50 text-sm text-gray-600 flex items-center justify-between">
+              <span>Si el documento no se visualiza correctamente, ábralo en una nueva pestaña.</span>
+              <button
+                onClick={() => {
+                  setShowPdfModal(false);
+                  setPdfUrl('');
+                  setPdfTitle('');
+                }}
+                className="btn-secondary px-4 py-2"
+              >
+                Cerrar
+              </button>
+            </div>
           </div>
         </div>
       )}
