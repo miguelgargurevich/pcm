@@ -483,7 +483,7 @@ const Usuarios = () => {
                           title="Editar"
                         >
                           <Edit2 size={16} />
-                          <span>Editar</span>
+                          {/* <span>Editar</span> */}
                         </button>
                         <button
                           onClick={() => handleDelete(usuario.userId)}
@@ -491,7 +491,7 @@ const Usuarios = () => {
                           title="Eliminar"
                         >
                           <Trash2 size={16} />
-                          <span>Eliminar</span>
+                          {/* <span>Eliminar</span> */}
                         </button>
                       </div>
                     </td>

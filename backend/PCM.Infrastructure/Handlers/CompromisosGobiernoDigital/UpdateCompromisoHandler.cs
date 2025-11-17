@@ -42,6 +42,9 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
             compromiso.FechaFin = DateTime.SpecifyKind(request.FechaFin, DateTimeKind.Utc);
             compromiso.IdEstado = request.Estado;
             compromiso.UpdatedAt = DateTime.UtcNow;
+            
+            // Mark entity as modified to ensure EF tracks changes
+            _context.Entry(compromiso).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
 
             // Update normativas - remove old ones and add new ones
             _context.CompromisosNormativas.RemoveRange(compromiso.Normativas);

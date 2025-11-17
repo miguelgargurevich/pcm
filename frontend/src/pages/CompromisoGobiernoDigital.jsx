@@ -157,6 +157,7 @@ const CompromisoGobiernoDigital = () => {
   };
 
   const handleEdit = (compromiso) => {
+    //console.log('Compromiso a editar:', compromiso); // Debug
     setEditingCompromiso(compromiso);
     
     // Convertir el estado ID al nombre del estado
@@ -227,13 +228,16 @@ const CompromisoGobiernoDigital = () => {
         })
       };
 
-      console.log('Datos a enviar:', dataToSend); // Debug
+      // console.log('FormData:', formData); // Debug
+      // console.log('Datos a enviar:', dataToSend); // Debug
 
       let response;
       if (editingCompromiso) {
         dataToSend.compromisoId = editingCompromiso.compromisoId;
+        //console.log('Actualizando compromiso ID:', editingCompromiso.compromisoId); // Debug
         response = await compromisosService.update(editingCompromiso.compromisoId, dataToSend);
       } else {
+        //console.log('Creando nuevo compromiso'); // Debug
         response = await compromisosService.create(dataToSend);
       }
 
