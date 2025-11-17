@@ -663,22 +663,19 @@ const Entidades = () => {
           </div>
         </div>
 
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-sm text-gray-600">
+            Mostrando {entidadesPaginadas.length} de {entidadesFiltradas.length} entidades
+          </div>
           <button
             onClick={limpiarFiltros}
-            className="btn-secondary text-sm flex items-center gap-2"
+            className="btn-secondary flex items-center gap-2 px-4 py-2"
+            title="Limpiar filtros"
           >
-            <FilterX size={16} />
+            <FilterX size={20} />
             Limpiar Filtros
           </button>
         </div>
-      </div>
-
-      {/* Información de resultados */}
-      <div className="flex justify-between items-center text-sm text-gray-600">
-        <span>
-          Mostrando {indicePrimero + 1} - {Math.min(indiceUltimo, entidadesFiltradas.length)} de {entidadesFiltradas.length} entidades
-        </span>
       </div>
 
       <div className="card overflow-hidden">

@@ -384,12 +384,16 @@ const Usuarios = () => {
           </div>
         </div>
 
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-sm text-gray-600">
+            Mostrando {usuariosPaginados.length} de {usuariosFiltrados.length} usuarios
+          </div>
           <button
             onClick={limpiarFiltros}
-            className="btn-secondary text-sm flex items-center gap-2"
+            className="btn-secondary flex items-center gap-2 px-4 py-2"
+            title="Limpiar filtros"
           >
-            <FilterX size={16} />
+            <FilterX size={20} />
             Limpiar Filtros
           </button>
         </div>
