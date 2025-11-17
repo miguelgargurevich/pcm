@@ -203,7 +203,11 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.Descripcion).HasColumnName("descripcion").HasColumnType("text");
             entity.Property(e => e.Url).HasColumnName("url").HasMaxLength(500);
             entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAdd()
+                .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
         });
 
         // Configuración de LogAuditoria
