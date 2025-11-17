@@ -66,7 +66,8 @@ public class CreateCompromisoHandler : IRequestHandler<CreateCompromisoCommand, 
                         Descripcion = criterioDto.Descripcion,
                         IdEstado = criterioDto.Estado,
                         Activo = true,
-                        CreatedAt = DateTime.UtcNow
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = null  // Explicitly set to null to avoid unspecified DateTime
                     };
                     _context.CriteriosEvaluacion.Add(criterio);
                 }
