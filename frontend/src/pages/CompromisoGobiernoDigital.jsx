@@ -1,32 +1,9 @@
 import { useState, useEffect } from 'react';
 import { compromisosService } from '../services/compromisosService';
 import { marcoNormativoService } from '../services/marcoNormativoService';
+import { catalogosService } from '../services/catalogosService';
 import { showConfirmToast, showSuccessToast, showErrorToast } from '../utils/toast.jsx';
 import { Plus, Edit2, Trash2, X, Save, FilterX, Search, FileCheck, Calendar } from 'lucide-react';
-
-const ALCANCES = [
-  { id: 'nacional', nombre: 'Nacional' },
-  { id: 'regional', nombre: 'Regional' },
-  { id: 'local', nombre: 'Local' },
-  { id: 'sectorial', nombre: 'Sectorial' }
-];
-
-const ESTADOS = [
-  { id: 'pendiente', nombre: 'Pendiente' },
-  { id: 'en_proceso', nombre: 'En Proceso' },
-  { id: 'completado', nombre: 'Completado' },
-  { id: 'vencido', nombre: 'Vencido' }
-];
-
-const TIPOS_NORMA = [
-  { id: 1, nombre: 'Ley' },
-  { id: 2, nombre: 'Decreto Supremo' },
-  { id: 3, nombre: 'Resolución Ministerial' },
-  { id: 4, nombre: 'Resolución Directoral' },
-  { id: 5, nombre: 'Ordenanza' },
-  { id: 6, nombre: 'Acuerdo' },
-  { id: 7, nombre: 'Otro' }
-];
 
 const CompromisoGobiernoDigital = () => {
   const [compromisos, setCompromisos] = useState([]);
@@ -37,6 +14,11 @@ const CompromisoGobiernoDigital = () => {
   const [editingCompromiso, setEditingCompromiso] = useState(null);
   const [showBuscarNormaModal, setShowBuscarNormaModal] = useState(false);
   const [normasDisponibles, setNormasDisponibles] = useState([]);
+
+  // Catálogos dinámicos
+  const [estados, setEstados] = useState([]);
+  const [tiposNorma, setTiposNorma] = useState([]);
+  const [alcances, setAlcances] = useState([]);
   
   // Filtros
   const [filtros, setFiltros] = useState({
@@ -77,7 +59,30 @@ const CompromisoGobiernoDigital = () => {
 
   useEffect(() => {
     loadCompromisos();
+    loadCatalogos();
   }, []);
+
+  const loadCatalogos = async () => {
+    try {
+      const [estadosResponse, tiposResponse, alcancesResponse] = await Promise.all([
+        catalogosService.getEstados(),
+        catalogosService.getTiposNorma(),
+        catalogosService.getAlcances()
+      ]);
+
+      if (estadosResponse.isSuccess) {
+        setEstados(estadosResponse.data || []);
+      }
+      if (tiposResponse.isSuccess) {
+        setTiposNorma(tiposResponse.data || []);
+      }
+      if (alcancesResponse.isSuccess) {
+        setAlcances(alcancesResponse.data || []);
+      }
+    } catch (error) {
+      console.error('Error al cargar catálogos:', error);
+    }
+  };
 
   // Aplicar filtros
   useEffect(() => {
@@ -420,7 +425,7 @@ const CompromisoGobiernoDigital = () => {
               className="input-field"
             >
               <option value="">Todos</option>
-              {ALCANCES.map((alcance) => (
+              {alcances.map((alcance) => (
                 <option key={alcance.id} value={alcance.id}>{alcance.nombre}</option>
               ))}
             </select>
@@ -437,8 +442,8 @@ const CompromisoGobiernoDigital = () => {
               className="input-field"
             >
               <option value="">Todos</option>
-              {ESTADOS.map((estado) => (
-                <option key={estado.id} value={estado.id}>{estado.nombre}</option>
+              {estados.map((estado) => (
+                <option key={estado.estadoId} value={estado.nombre}>{estado.nombre}</option>
               ))}
             </select>
           </div>
@@ -518,7 +523,7 @@ const CompromisoGobiernoDigital = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadgeClass(compromiso.estado)}`}>
-                      {ESTADOS.find(e => e.id === compromiso.estado)?.nombre || compromiso.estado}
+                      {estados.find(e => e.nombre === compromiso.estado)?.nombre || compromiso.estado}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
@@ -636,7 +641,7 @@ const CompromisoGobiernoDigital = () => {
                     Alcance <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-2 gap-2 p-3 border border-gray-300 rounded-lg">
-                    {ALCANCES.map((alcance) => (
+                    {alcances.map((alcance) => (
                       <label key={alcance.id} className="flex items-center space-x-2">
                         <input
                           type="checkbox"
@@ -703,8 +708,8 @@ const CompromisoGobiernoDigital = () => {
                     required
                     className="input-field"
                   >
-                    {ESTADOS.map((estado) => (
-                      <option key={estado.id} value={estado.id}>{estado.nombre}</option>
+                    {estados.map((estado) => (
+                      <option key={estado.estadoId} value={estado.nombre}>{estado.nombre}</option>
                     ))}
                   </select>
                 </div>
@@ -726,8 +731,8 @@ const CompromisoGobiernoDigital = () => {
                         className="input-field"
                       >
                         <option value="">Seleccione...</option>
-                        {TIPOS_NORMA.map((tipo) => (
-                          <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
+                        {tiposNorma.map((tipo) => (
+                          <option key={tipo.tipoNormaId} value={tipo.tipoNormaId}>{tipo.nombre}</option>
                         ))}
                       </select>
                     </div>
@@ -798,7 +803,7 @@ const CompromisoGobiernoDigital = () => {
                         {formData.normativas.map((normativa, index) => (
                           <tr key={normativa.id}>
                             <td className="px-4 py-2 text-sm text-gray-900">
-                              {TIPOS_NORMA.find(t => t.id === parseInt(normativa.tipoNormaId))?.nombre}
+                              {tiposNorma.find(t => t.tipoNormaId === parseInt(normativa.tipoNormaId))?.nombre}
                             </td>
                             <td className="px-4 py-2 text-sm text-gray-900">{normativa.nombreNorma}</td>
                             <td className="px-4 py-2 text-sm text-gray-900">{normativa.nivelGobierno || '-'}</td>
@@ -853,8 +858,8 @@ const CompromisoGobiernoDigital = () => {
                           onChange={(e) => setNuevoCriterio(prev => ({ ...prev, estado: e.target.value }))}
                           className="input-field flex-1"
                         >
-                          {ESTADOS.map((estado) => (
-                            <option key={estado.id} value={estado.id}>{estado.nombre}</option>
+                          {estados.map((estado) => (
+                            <option key={estado.estadoId} value={estado.nombre}>{estado.nombre}</option>
                           ))}
                         </select>
                         <button
@@ -887,7 +892,7 @@ const CompromisoGobiernoDigital = () => {
                             <td className="px-4 py-2 text-sm text-gray-900">{criterio.descripcion}</td>
                             <td className="px-4 py-2">
                               <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadgeClass(criterio.estado)}`}>
-                                {ESTADOS.find(e => e.id === criterio.estado)?.nombre || criterio.estado}
+                                {estados.find(e => e.nombre === criterio.estado)?.nombre || criterio.estado}
                               </span>
                             </td>
                             <td className="px-4 py-2 space-x-2">

@@ -40,4 +40,34 @@ export const catalogosService = {
       throw error;
     }
   },
+
+  getTiposNorma: async () => {
+    try {
+      const response = await api.get('/catalogos/tipos-norma');
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener tipos de norma:', error);
+      throw error;
+    }
+  },
+
+  getEstados: async () => {
+    try {
+      const response = await api.get('/catalogos/estados');
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener estados:', error);
+      throw error;
+    }
+  },
+
+  getAlcances: async () => {
+    try {
+      const response = await api.get('/catalogos/alcances');
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener alcances:', error);
+      throw error;
+    }
+  },
 };

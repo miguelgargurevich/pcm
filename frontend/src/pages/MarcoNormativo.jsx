@@ -1,45 +1,8 @@
 import { useState, useEffect } from 'react';
 import { marcoNormativoService } from '../services/marcoNormativoService';
+import { catalogosService } from '../services/catalogosService';
 import { showConfirmToast, showSuccessToast, showErrorToast } from '../utils/toast.jsx';
 import { Plus, Edit2, Trash2, X, Save, FilterX, Search, FileText, ExternalLink } from 'lucide-react';
-
-const TIPOS_NORMA = [
-  { id: 1, nombre: 'Ley' },
-  { id: 2, nombre: 'Decreto Supremo' },
-  { id: 3, nombre: 'Resolución Ministerial' },
-  { id: 4, nombre: 'Resolución Directoral' },
-  { id: 5, nombre: 'Ordenanza' },
-  { id: 6, nombre: 'Acuerdo' },
-  { id: 7, nombre: 'Otro' }
-];
-
-const NIVELES_GOBIERNO = [
-  { id: 1, nombre: 'Nacional' },
-  { id: 2, nombre: 'Regional' },
-  { id: 3, nombre: 'Local' }
-];
-
-const SECTORES = [
-  { id: 1, nombre: 'PCM - Presidencia del Consejo de Ministros' },
-  { id: 2, nombre: 'Educación' },
-  { id: 3, nombre: 'Salud' },
-  { id: 4, nombre: 'Interior' },
-  { id: 5, nombre: 'Economía y Finanzas' },
-  { id: 6, nombre: 'Trabajo' },
-  { id: 7, nombre: 'Transportes y Comunicaciones' },
-  { id: 8, nombre: 'Vivienda' },
-  { id: 9, nombre: 'Defensa' },
-  { id: 10, nombre: 'Agricultura' },
-  { id: 11, nombre: 'Justicia' },
-  { id: 12, nombre: 'Comercio Exterior y Turismo' },
-  { id: 13, nombre: 'Energía y Minas' },
-  { id: 14, nombre: 'Mujer y Poblaciones Vulnerables' },
-  { id: 15, nombre: 'Ambiente' },
-  { id: 16, nombre: 'Cultura' },
-  { id: 17, nombre: 'Desarrollo e Inclusión Social' },
-  { id: 18, nombre: 'Producción' },
-  { id: 19, nombre: 'Relaciones Exteriores' }
-];
 
 const MarcoNormativo = () => {
   const [normas, setNormas] = useState([]);
@@ -48,6 +11,11 @@ const MarcoNormativo = () => {
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingNorma, setEditingNorma] = useState(null);
+
+  // Catálogos dinámicos
+  const [tiposNorma, setTiposNorma] = useState([]);
+  const [nivelesGobierno, setNivelesGobierno] = useState([]);
+  const [sectores, setSectores] = useState([]);
   
   // Filtros
   const [filtros, setFiltros] = useState({
@@ -76,7 +44,30 @@ const MarcoNormativo = () => {
 
   useEffect(() => {
     loadNormas();
+    loadCatalogos();
   }, []);
+
+  const loadCatalogos = async () => {
+    try {
+      const [tiposResponse, nivelesResponse, sectoresResponse] = await Promise.all([
+        catalogosService.getTiposNorma(),
+        catalogosService.getNivelesGobierno(),
+        catalogosService.getSectores()
+      ]);
+
+      if (tiposResponse.isSuccess) {
+        setTiposNorma(tiposResponse.data || []);
+      }
+      if (nivelesResponse.isSuccess) {
+        setNivelesGobierno(nivelesResponse.data || []);
+      }
+      if (sectoresResponse.isSuccess) {
+        setSectores(sectoresResponse.data || []);
+      }
+    } catch (error) {
+      console.error('Error al cargar catálogos:', error);
+    }
+  };
 
   // Aplicar filtros
   useEffect(() => {
@@ -308,8 +299,8 @@ const MarcoNormativo = () => {
               className="input-field"
             >
               <option value="">Todos</option>
-              {TIPOS_NORMA.map((tipo) => (
-                <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
+              {tiposNorma.map((tipo) => (
+                <option key={tipo.tipoNormaId} value={tipo.tipoNormaId}>{tipo.nombre}</option>
               ))}
             </select>
           </div>
@@ -325,8 +316,8 @@ const MarcoNormativo = () => {
               className="input-field"
             >
               <option value="">Todos</option>
-              {NIVELES_GOBIERNO.map((nivel) => (
-                <option key={nivel.id} value={nivel.id}>{nivel.nombre}</option>
+              {nivelesGobierno.map((nivel) => (
+                <option key={nivel.nivelGobiernoId} value={nivel.nivelGobiernoId}>{nivel.nombre}</option>
               ))}
             </select>
           </div>
@@ -342,8 +333,8 @@ const MarcoNormativo = () => {
               className="input-field"
             >
               <option value="">Todos</option>
-              {SECTORES.map((sector) => (
-                <option key={sector.id} value={sector.id}>{sector.nombre}</option>
+              {sectores.map((sector) => (
+                <option key={sector.sectorId} value={sector.sectorId}>{sector.nombre}</option>
               ))}
             </select>
           </div>
@@ -568,8 +559,8 @@ const MarcoNormativo = () => {
                     className="input-field"
                   >
                     <option value="">Seleccione...</option>
-                    {TIPOS_NORMA.map((tipo) => (
-                      <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
+                    {tiposNorma.map((tipo) => (
+                      <option key={tipo.tipoNormaId} value={tipo.tipoNormaId}>{tipo.nombre}</option>
                     ))}
                   </select>
                 </div>
@@ -600,8 +591,8 @@ const MarcoNormativo = () => {
                     className="input-field"
                   >
                     <option value="">Seleccione...</option>
-                    {NIVELES_GOBIERNO.map((nivel) => (
-                      <option key={nivel.id} value={nivel.id}>{nivel.nombre}</option>
+                    {nivelesGobierno.map((nivel) => (
+                      <option key={nivel.nivelGobiernoId} value={nivel.nivelGobiernoId}>{nivel.nombre}</option>
                     ))}
                   </select>
                 </div>
@@ -618,8 +609,8 @@ const MarcoNormativo = () => {
                     className="input-field"
                   >
                     <option value="">Seleccione...</option>
-                    {SECTORES.map((sector) => (
-                      <option key={sector.id} value={sector.id}>{sector.nombre}</option>
+                    {sectores.map((sector) => (
+                      <option key={sector.sectorId} value={sector.sectorId}>{sector.nombre}</option>
                     ))}
                   </select>
                 </div>

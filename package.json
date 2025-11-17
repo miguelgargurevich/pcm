@@ -1,0 +1,14 @@
+{
+  "name": "pcm-fullstack",
+  "version": "1.0.0",
+  "description": "Plataforma de Cumplimiento Digital - Frontend + Backend",
+  "scripts": {
+    "dev": "concurrently --kill-others-on-fail \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && dotnet watch run --project PCM.API/PCM.API.csproj",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "cd frontend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

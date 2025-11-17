@@ -302,8 +302,11 @@ const Usuarios = () => {
   return (
     <>
       <div className="p-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-800">Gestión de Usuarios</h1>
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">Gestión de Usuarios</h1>
+            <p className="text-gray-600 mt-1">Administración de usuarios del sistema</p>
+          </div>
           <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
             <Plus size={20} />
             Nuevo Usuario
@@ -433,13 +436,15 @@ const Usuarios = () => {
                 usuariosPaginados.map((usuario) => (
                   <tr key={usuario.userId}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {usuario.numDni}
+                      {usuario.numDni || 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {`${usuario.nombres} ${usuario.apePaterno} ${usuario.apeMaterno}`}
+                      {[usuario.nombres, usuario.apePaterno, usuario.apeMaterno]
+                        .filter(Boolean)
+                        .join(' ') || 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {usuario.email}
+                      {usuario.email || 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {usuario.nombreEntidad || 'N/A'}
