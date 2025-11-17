@@ -182,22 +182,34 @@ const MarcoNormativo = () => {
     e.preventDefault();
 
     try {
-      const dataToSend = {
-        nombreNorma: formData.nombreNorma,
-        numero: formData.numero,
-        tipoNormaId: parseInt(formData.tipoNormaId),
-        nivelGobiernoId: parseInt(formData.nivelGobiernoId),
-        sectorId: parseInt(formData.sectorId),
-        fechaPublicacion: formData.fechaPublicacion,
-        descripcion: formData.descripcion || null,
-        url: formData.url || null
-      };
-
       let response;
+      
       if (editingNorma) {
-        dataToSend.normaId = editingNorma.normaId;
+        // Para actualizar: incluir normaId en el body
+        const dataToSend = {
+          normaId: editingNorma.normaId,
+          nombreNorma: formData.nombreNorma,
+          numero: formData.numero,
+          tipoNormaId: parseInt(formData.tipoNormaId),
+          nivelGobiernoId: parseInt(formData.nivelGobiernoId),
+          sectorId: parseInt(formData.sectorId),
+          fechaPublicacion: formData.fechaPublicacion,
+          descripcion: formData.descripcion || null,
+          url: formData.url || null
+        };
         response = await marcoNormativoService.update(editingNorma.normaId, dataToSend);
       } else {
+        // Para crear: no incluir normaId
+        const dataToSend = {
+          nombreNorma: formData.nombreNorma,
+          numero: formData.numero,
+          tipoNormaId: parseInt(formData.tipoNormaId),
+          nivelGobiernoId: parseInt(formData.nivelGobiernoId),
+          sectorId: parseInt(formData.sectorId),
+          fechaPublicacion: formData.fechaPublicacion,
+          descripcion: formData.descripcion || null,
+          url: formData.url || null
+        };
         response = await marcoNormativoService.create(dataToSend);
       }
 
@@ -212,7 +224,7 @@ const MarcoNormativo = () => {
       }
     } catch (error) {
       console.error('Error al guardar norma:', error);
-      showErrorToast('Error al conectar con el servidor');
+      showErrorToast(error.message || 'Error al conectar con el servidor');
     }
   };
 

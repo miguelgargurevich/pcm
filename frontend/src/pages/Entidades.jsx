@@ -384,9 +384,16 @@ const Entidades = () => {
 
     try {
       let response;
+      
       if (editingEntidad) {
-        response = await entidadesService.update(editingEntidad.entidadId, formData);
+        // Para actualizar: incluir entidadId en el body
+        const dataToSend = {
+          entidadId: editingEntidad.entidadId,
+          ...formData
+        };
+        response = await entidadesService.update(editingEntidad.entidadId, dataToSend);
       } else {
+        // Para crear: no incluir entidadId
         response = await entidadesService.create(formData);
       }
 
@@ -401,6 +408,7 @@ const Entidades = () => {
       }
     } catch (err) {
       setError(err.message || 'Error al guardar entidad');
+      showErrorToast(err.message || 'Error al guardar entidad');
     }
   };
 

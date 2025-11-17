@@ -66,10 +66,15 @@ public class UbigeoController : ControllerBase
                     && (u.CCOD_TIPO_UBI == "NACIONAL" || u.CCOD_TIPO_UBI == "LOCAL"))
                 .Select(u => u.NOPRV)
                 .Distinct()
-                .OrderBy(p => p)
                 .ToListAsync();
 
-            return Ok(Result<List<string>>.Success(provincias));
+            // Filtrar provincias vacías o con solo espacios en blanco
+            var provinciasFiltradas = provincias
+                .Where(p => !string.IsNullOrWhiteSpace(p))
+                .OrderBy(p => p)
+                .ToList();
+
+            return Ok(Result<List<string>>.Success(provinciasFiltradas));
         }
         catch (Exception ex)
         {
@@ -103,10 +108,15 @@ public class UbigeoController : ControllerBase
                     departamento = u.NODEP,
                     provincia = u.NOPRV
                 })
-                .OrderBy(d => d.distrito)
                 .ToListAsync();
 
-            return Ok(Result<List<object>>.Success(distritos.Cast<object>().ToList()));
+            // Filtrar distritos vacíos o con solo espacios en blanco
+            var distritosFiltrados = distritos
+                .Where(d => !string.IsNullOrWhiteSpace(d.distrito))
+                .OrderBy(d => d.distrito)
+                .ToList();
+
+            return Ok(Result<List<object>>.Success(distritosFiltrados.Cast<object>().ToList()));
         }
         catch (Exception ex)
         {

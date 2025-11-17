@@ -232,9 +232,16 @@ const Usuarios = () => {
 
     try {
       let response;
+      
       if (editingUsuario) {
-        response = await usuariosService.update(editingUsuario.userId, formData);
+        // Para actualizar: incluir userId en el body
+        const dataToSend = {
+          userId: editingUsuario.userId,
+          ...formData
+        };
+        response = await usuariosService.update(editingUsuario.userId, dataToSend);
       } else {
+        // Para crear: no incluir userId
         response = await usuariosService.create(formData);
       }
 
@@ -249,6 +256,7 @@ const Usuarios = () => {
       }
     } catch (err) {
       setError(err.message || 'Error al guardar usuario');
+      showErrorToast(err.message || 'Error al guardar usuario');
     }
   };
 
