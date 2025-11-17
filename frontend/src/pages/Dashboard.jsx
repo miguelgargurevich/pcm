@@ -1,39 +1,72 @@
+import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Users, Building2, FileText, CheckSquare } from 'lucide-react';
+import { dashboardService } from '../services/dashboardService';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [stats, setStats] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const stats = [
-    {
-      title: 'Usuarios',
-      value: '45',
-      icon: Users,
-      color: 'bg-blue-500',
-      change: '+12%',
-    },
-    {
-      title: 'Entidades',
-      value: '128',
-      icon: Building2,
-      color: 'bg-green-500',
-      change: '+8%',
-    },
-    {
-      title: 'Marco Normativo',
-      value: '67',
-      icon: FileText,
-      color: 'bg-purple-500',
-      change: '+5%',
-    },
-    {
-      title: 'Compromisos',
-      value: '234',
-      icon: CheckSquare,
-      color: 'bg-orange-500',
-      change: '+15%',
-    },
-  ];
+  useEffect(() => {
+    loadStats();
+  }, []);
+
+  const loadStats = async () => {
+    try {
+      setLoading(true);
+      const response = await dashboardService.getStats();
+      
+      if (response.isSuccess || response.IsSuccess) {
+        const data = response.data || response.Data;
+        
+        const statsData = [
+          {
+            title: 'Usuarios',
+            value: data.totalUsuarios.toString(),
+            icon: Users,
+            color: 'bg-blue-500',
+            subtitle: `${data.usuariosActivos} activos`,
+          },
+          {
+            title: 'Entidades',
+            value: data.totalEntidades.toString(),
+            icon: Building2,
+            color: 'bg-green-500',
+            subtitle: `${data.entidadesActivas} activas`,
+          },
+          {
+            title: 'Marco Normativo',
+            value: data.totalMarcoNormativo.toString(),
+            icon: FileText,
+            color: 'bg-purple-500',
+            subtitle: 'Normas registradas',
+          },
+          {
+            title: 'Compromisos',
+            value: data.totalCompromisos.toString(),
+            icon: CheckSquare,
+            color: 'bg-orange-500',
+            subtitle: `${data.compromisosPendientes} pendientes`,
+          },
+        ];
+        
+        setStats(statsData);
+      }
+    } catch (error) {
+      console.error('Error al cargar estadísticas:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -56,7 +89,7 @@ const Dashboard = () => {
                 <div>
                   <p className="text-sm text-gray-600 mb-1">{stat.title}</p>
                   <p className="text-3xl font-bold text-gray-800">{stat.value}</p>
-                  <p className="text-sm text-green-600 mt-2">{stat.change} este mes</p>
+                  <p className="text-sm text-gray-500 mt-2">{stat.subtitle}</p>
                 </div>
                 <div className={`${stat.color} p-3 rounded-lg`}>
                   <Icon className="text-white" size={24} />
@@ -65,53 +98,6 @@ const Dashboard = () => {
             </div>
           );
         })}
-      </div>
-
-      {/* Actividad reciente */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="card">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
-            Actividad Reciente
-          </h3>
-          <div className="space-y-4">
-            {[1, 2, 3, 4].map((item) => (
-              <div
-                key={item}
-                className="flex items-center space-x-3 pb-3 border-b border-gray-200 last:border-0"
-              >
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-800">
-                    Nuevo usuario registrado
-                  </p>
-                  <p className="text-xs text-gray-500">Hace {item} hora(s)</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="card">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
-            Notificaciones
-          </h3>
-          <div className="space-y-4">
-            {[1, 2, 3].map((item) => (
-              <div
-                key={item}
-                className="flex items-start space-x-3 pb-3 border-b border-gray-200 last:border-0"
-              >
-                <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-800">
-                    Compromiso pendiente de revisión
-                  </p>
-                  <p className="text-xs text-gray-500">Hace {item} día(s)</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

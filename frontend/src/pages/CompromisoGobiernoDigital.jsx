@@ -14,6 +14,9 @@ const CompromisoGobiernoDigital = () => {
   const [editingCompromiso, setEditingCompromiso] = useState(null);
   const [showBuscarNormaModal, setShowBuscarNormaModal] = useState(false);
   const [normasDisponibles, setNormasDisponibles] = useState([]);
+  const [normaSearchTerm, setNormaSearchTerm] = useState('');
+  const [paginaNormas, setPaginaNormas] = useState(1);
+  const normasPorPagina = 5;
 
   // Catálogos dinámicos
   const [estados, setEstados] = useState([]);
@@ -44,6 +47,7 @@ const CompromisoGobiernoDigital = () => {
 
   // Estados para nueva normativa
   const [nuevaNormativa, setNuevaNormativa] = useState({
+    normaId: null,
     tipoNormaId: '',
     numero: '',
     nombreNorma: ''
@@ -190,17 +194,36 @@ const CompromisoGobiernoDigital = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validaciones
+    if (formData.alcances.length === 0) {
+      showErrorToast('Debe seleccionar al menos un alcance');
+      return;
+    }
+
     try {
+      // Encontrar el estadoId del string de estado
+      const estadoEncontrado = estados.find(e => e.nombre === formData.estado);
+      const estadoId = estadoEncontrado ? estadoEncontrado.estadoId : 1; // Default pendiente
+
       const dataToSend = {
         nombreCompromiso: formData.nombreCompromiso,
         descripcion: formData.descripcion || null,
         alcances: formData.alcances,
         fechaInicio: formData.fechaInicio,
         fechaFin: formData.fechaFin,
-        estado: formData.estado,
-        normativas: formData.normativas,
-        criteriosEvaluacion: formData.criteriosEvaluacion
+        estado: estadoId, // Enviar el ID, no el nombre
+        normativas: formData.normativas.map(n => ({ normaId: n.normaId || n.id })), // Solo enviar normaId
+        criteriosEvaluacion: formData.criteriosEvaluacion.map(c => {
+          const criterioEstado = estados.find(e => e.nombre === c.estado);
+          return {
+            criterioEvaluacionId: c.criterioEvaluacionId,
+            descripcion: c.descripcion,
+            estado: criterioEstado ? criterioEstado.estadoId : 1 // Convertir estado a ID
+          };
+        })
       };
+
+      console.log('Datos a enviar:', dataToSend); // Debug
 
       let response;
       if (editingCompromiso) {
@@ -221,7 +244,7 @@ const CompromisoGobiernoDigital = () => {
       }
     } catch (error) {
       console.error('Error al guardar compromiso:', error);
-      showErrorToast('Error al conectar con el servidor');
+      showErrorToast(error.response?.data?.message || error.message || 'Error al conectar con el servidor');
     }
   };
 
@@ -270,7 +293,7 @@ const CompromisoGobiernoDigital = () => {
   };
 
   const handleAgregarNormativa = () => {
-    if (!nuevaNormativa.nombreNorma) {
+    if (!nuevaNormativa.nombreNorma || !nuevaNormativa.normaId) {
       showErrorToast('Debe buscar y seleccionar una norma');
       return;
     }
@@ -286,6 +309,7 @@ const CompromisoGobiernoDigital = () => {
     }));
 
     setNuevaNormativa({
+      normaId: null,
       tipoNormaId: '',
       numero: '',
       nombreNorma: ''
@@ -294,6 +318,7 @@ const CompromisoGobiernoDigital = () => {
 
   const handleSeleccionarNorma = (norma) => {
     setNuevaNormativa({
+      normaId: norma.normaId, // IMPORTANTE: Guardar el normaId
       tipoNormaId: norma.tipoNormaId,
       numero: norma.numero,
       nombreNorma: norma.nombreNorma,
@@ -944,59 +969,131 @@ const CompromisoGobiernoDigital = () => {
       )}
 
       {/* Modal Buscar Norma */}
-      {showBuscarNormaModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-[60] flex items-center justify-center p-4">
-          <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">Seleccionar Norma</h3>
-              <button
-                onClick={() => setShowBuscarNormaModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X size={24} />
-              </button>
-            </div>
+      {showBuscarNormaModal && (() => {
+        // Filtrar normas por búsqueda
+        const normasFiltradas = normasDisponibles.filter(norma => 
+          norma.nombreNorma?.toLowerCase().includes(normaSearchTerm.toLowerCase()) ||
+          norma.numero?.toLowerCase().includes(normaSearchTerm.toLowerCase())
+        );
 
-            <div className="p-6">
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Número</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {normasDisponibles.map((norma) => (
-                      <tr key={norma.normaId} className="hover:bg-gray-50">
-                        <td className="px-4 py-2 text-sm text-gray-900">{norma.numero}</td>
-                        <td className="px-4 py-2 text-sm text-gray-900">{norma.nombreNorma}</td>
-                        <td className="px-4 py-2 text-sm text-gray-900">{norma.tipoNorma}</td>
-                        <td className="px-4 py-2">
-                          <button
-                            onClick={() => handleSeleccionarNorma(norma)}
-                            className="btn-primary text-sm"
-                          >
-                            Seleccionar
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+        // Paginación
+        const indexOfLastNorma = paginaNormas * normasPorPagina;
+        const indexOfFirstNorma = indexOfLastNorma - normasPorPagina;
+        const normasPaginadas = normasFiltradas.slice(indexOfFirstNorma, indexOfLastNorma);
+        const totalPaginasNormas = Math.ceil(normasFiltradas.length / normasPorPagina);
 
-                {normasDisponibles.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
-                    No se encontraron normas
-                  </div>
-                )}
+        return (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-[60] flex items-center justify-center p-4">
+            <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[85vh] flex flex-col">
+              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-900">Seleccionar Norma</h3>
+                <button
+                  onClick={() => {
+                    setShowBuscarNormaModal(false);
+                    setNormaSearchTerm('');
+                    setPaginaNormas(1);
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X size={24} />
+                </button>
               </div>
+
+              <div className="p-6 flex-1 overflow-auto">
+                {/* Buscador */}
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    value={normaSearchTerm}
+                    onChange={(e) => {
+                      setNormaSearchTerm(e.target.value);
+                      setPaginaNormas(1); // Reset a primera página al buscar
+                    }}
+                    placeholder="Buscar por nombre o número de norma..."
+                    className="input-field"
+                  />
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Número</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {normasPaginadas.map((norma) => (
+                        <tr key={norma.normaId} className="hover:bg-gray-50">
+                          <td className="px-4 py-2 text-sm text-gray-900">{norma.numero}</td>
+                          <td className="px-4 py-2 text-sm text-gray-900">{norma.nombreNorma}</td>
+                          <td className="px-4 py-2 text-sm text-gray-900">{norma.tipoNorma}</td>
+                          <td className="px-4 py-2">
+                            <button
+                              onClick={() => handleSeleccionarNorma(norma)}
+                              className="btn-primary text-sm"
+                            >
+                              Seleccionar
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                  {normasPaginadas.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      {normaSearchTerm ? 'No se encontraron normas que coincidan con tu búsqueda' : 'No se encontraron normas'}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Paginación */}
+              {totalPaginasNormas > 1 && (
+                <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                  <div className="text-sm text-gray-700">
+                    Mostrando <span className="font-medium">{indexOfFirstNorma + 1}</span> a{' '}
+                    <span className="font-medium">{Math.min(indexOfLastNorma, normasFiltradas.length)}</span> de{' '}
+                    <span className="font-medium">{normasFiltradas.length}</span> normas
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setPaginaNormas(prev => Math.max(prev - 1, 1))}
+                      disabled={paginaNormas === 1}
+                      className="px-3 py-1 rounded border border-gray-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+                    >
+                      Anterior
+                    </button>
+                    {[...Array(totalPaginasNormas)].map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setPaginaNormas(index + 1)}
+                        className={`px-3 py-1 rounded text-sm ${
+                          paginaNormas === index + 1
+                            ? 'bg-primary text-white'
+                            : 'border border-gray-300 hover:bg-gray-100'
+                        }`}
+                      >
+                        {index + 1}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setPaginaNormas(prev => Math.min(prev + 1, totalPaginasNormas))}
+                      disabled={paginaNormas === totalPaginasNormas}
+                      className="px-3 py-1 rounded border border-gray-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+                    >
+                      Siguiente
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 };

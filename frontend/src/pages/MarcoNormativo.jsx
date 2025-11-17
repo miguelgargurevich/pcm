@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { marcoNormativoService } from '../services/marcoNormativoService';
 import { catalogosService } from '../services/catalogosService';
-import { showConfirmToast, showSuccessToast, showErrorToast, showInfoToast } from '../utils/toast.jsx';
+import { showConfirmToast, showSuccessToast, showErrorToast } from '../utils/toast.jsx';
 import { Plus, Edit2, Trash2, X, Save, FilterX, Search, FileText, ExternalLink, Eye } from 'lucide-react';
 
 const MarcoNormativo = () => {
