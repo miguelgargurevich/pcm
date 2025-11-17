@@ -49,15 +49,15 @@ public class CreateMarcoNormativoHandler : IRequestHandler<CreateMarcoNormativoC
 
             // Obtener descripciones de catálogos
             var tipoNorma = await _context.Database
-                .SqlQuery<CatalogoResult>($"SELECT descripcion as Descripcion FROM tabla_tablas WHERE tabla_id = {request.TipoNormaId} AND nombre_tabla = 'TIPO_NORMA'")
+                .SqlQuery<CatalogoResult>($"SELECT descripcion FROM tabla_tablas WHERE tabla_id = {request.TipoNormaId} AND nombre_tabla = 'TIPO_NORMA'")
                 .FirstOrDefaultAsync(cancellationToken);
 
             var nivelGobierno = await _context.Database
-                .SqlQuery<CatalogoResult>($"SELECT descripcion as Descripcion FROM tabla_tablas WHERE tabla_id = {request.NivelGobiernoId} AND nombre_tabla = 'NIVEL_GOBIERNO'")
+                .SqlQuery<CatalogoResult>($"SELECT descripcion FROM tabla_tablas WHERE tabla_id = {request.NivelGobiernoId} AND nombre_tabla = 'NIVEL_GOBIERNO'")
                 .FirstOrDefaultAsync(cancellationToken);
 
             var sector = await _context.Database
-                .SqlQuery<CatalogoResult>($"SELECT descripcion as Descripcion FROM tabla_tablas WHERE tabla_id = {request.SectorId} AND nombre_tabla = 'SECTOR'")
+                .SqlQuery<CatalogoResult>($"SELECT descripcion FROM tabla_tablas WHERE tabla_id = {request.SectorId} AND nombre_tabla = 'SECTOR'")
                 .FirstOrDefaultAsync(cancellationToken);
 
             var marcoNormativoDto = new MarcoNormativoDetailDto
@@ -66,11 +66,11 @@ public class CreateMarcoNormativoHandler : IRequestHandler<CreateMarcoNormativoC
                 NombreNorma = marcoNormativo.NombreNorma,
                 Numero = marcoNormativo.Numero,
                 TipoNormaId = marcoNormativo.TipoNormaId,
-                TipoNorma = tipoNorma?.Descripcion ?? "No especificado",
+                TipoNorma = tipoNorma?.descripcion ?? "No especificado",
                 NivelGobiernoId = marcoNormativo.NivelGobiernoId,
-                NivelGobierno = nivelGobierno?.Descripcion ?? "No especificado",
+                NivelGobierno = nivelGobierno?.descripcion ?? "No especificado",
                 SectorId = marcoNormativo.SectorId,
-                Sector = sector?.Descripcion ?? "No especificado",
+                Sector = sector?.descripcion ?? "No especificado",
                 FechaPublicacion = marcoNormativo.FechaPublicacion,
                 Descripcion = marcoNormativo.Descripcion,
                 Url = marcoNormativo.Url,
@@ -91,6 +91,6 @@ public class CreateMarcoNormativoHandler : IRequestHandler<CreateMarcoNormativoC
 
     private class CatalogoResult
     {
-        public string Descripcion { get; set; } = string.Empty;
+        public string descripcion { get; set; } = string.Empty;
     }
 }
