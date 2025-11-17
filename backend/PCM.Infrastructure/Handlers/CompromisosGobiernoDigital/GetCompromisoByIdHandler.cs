@@ -27,6 +27,13 @@ public class GetCompromisoByIdHandler : IRequestHandler<GetCompromisoByIdQuery, 
             var compromiso = await _context.CompromisosGobiernoDigital
                 .Include(c => c.Normativas)
                     .ThenInclude(n => n.Norma)
+                        .ThenInclude(norma => norma.TipoNorma)
+                .Include(c => c.Normativas)
+                    .ThenInclude(n => n.Norma)
+                        .ThenInclude(norma => norma.NivelGobierno)
+                .Include(c => c.Normativas)
+                    .ThenInclude(n => n.Norma)
+                        .ThenInclude(norma => norma.Sector)
                 .Include(c => c.CriteriosEvaluacion)
                 .FirstOrDefaultAsync(c => c.CompromisoId == request.CompromisoId, cancellationToken);
 
@@ -71,6 +78,10 @@ public class GetCompromisoByIdHandler : IRequestHandler<GetCompromisoByIdQuery, 
                 NombreNorma = n.Norma?.NombreNorma,
                 Numero = n.Norma?.Numero,
                 TipoNormaId = n.Norma?.TipoNormaId,
+                TipoNorma = n.Norma?.TipoNorma?.Nombre,
+                NivelGobierno = n.Norma?.NivelGobierno?.Nombre,
+                Sector = n.Norma?.Sector?.Nombre,
+                FechaPublicacion = n.Norma?.FechaPublicacion,
                 CreatedAt = n.CreatedAt
             }).ToList(),
             CriteriosEvaluacion = compromiso.CriteriosEvaluacion?.Select(c => new CriterioEvaluacionResponseDto

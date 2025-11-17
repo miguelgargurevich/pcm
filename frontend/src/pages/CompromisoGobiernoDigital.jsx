@@ -158,13 +158,17 @@ const CompromisoGobiernoDigital = () => {
 
   const handleEdit = (compromiso) => {
     setEditingCompromiso(compromiso);
+    
+    // Convertir el estado ID al nombre del estado
+    const estadoNombre = estados.find(e => e.estadoId === compromiso.estado)?.nombre || 'pendiente';
+    
     setFormData({
       nombreCompromiso: compromiso.nombreCompromiso || '',
       descripcion: compromiso.descripcion || '',
       alcances: compromiso.alcances || [],
       fechaInicio: compromiso.fechaInicio ? compromiso.fechaInicio.split('T')[0] : '',
       fechaFin: compromiso.fechaFin ? compromiso.fechaFin.split('T')[0] : '',
-      estado: compromiso.estado || 'pendiente',
+      estado: estadoNombre,
       normativas: compromiso.normativas || [],
       criteriosEvaluacion: compromiso.criteriosEvaluacion || []
     });
@@ -547,8 +551,8 @@ const CompromisoGobiernoDigital = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadgeClass(compromiso.estado)}`}>
-                      {estados.find(e => e.nombre === compromiso.estado)?.nombre || compromiso.estado}
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadgeClass(estados.find(e => e.estadoId === compromiso.estado)?.nombre || 'pendiente')}`}>
+                      {estados.find(e => e.estadoId === compromiso.estado)?.nombre || compromiso.estado}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
@@ -912,34 +916,41 @@ const CompromisoGobiernoDigital = () => {
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {formData.criteriosEvaluacion.map((criterio, index) => (
-                          <tr key={criterio.id}>
-                            <td className="px-4 py-2 text-sm text-gray-900">{criterio.descripcion}</td>
-                            <td className="px-4 py-2">
-                              <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadgeClass(criterio.estado)}`}>
-                                {estados.find(e => e.nombre === criterio.estado)?.nombre || criterio.estado}
-                              </span>
-                            </td>
-                            <td className="px-4 py-2 space-x-2">
-                              <button
-                                type="button"
-                                onClick={() => handleEditarCriterio(index)}
-                                className="text-primary hover:text-primary-dark"
-                                title="Editar"
-                              >
-                                <Edit2 size={16} />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleEliminarCriterio(index)}
-                                className="text-red-600 hover:text-red-800"
-                                title="Eliminar"
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
+                        {formData.criteriosEvaluacion.map((criterio, index) => {
+                          // Criterio.estado puede ser un ID (número) o nombre (string)
+                          const estadoNombre = typeof criterio.estado === 'number' 
+                            ? estados.find(e => e.estadoId === criterio.estado)?.nombre 
+                            : criterio.estado;
+                          
+                          return (
+                            <tr key={criterio.id}>
+                              <td className="px-4 py-2 text-sm text-gray-900">{criterio.descripcion}</td>
+                              <td className="px-4 py-2">
+                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadgeClass(estadoNombre || 'pendiente')}`}>
+                                  {estadoNombre || criterio.estado}
+                                </span>
+                              </td>
+                              <td className="px-4 py-2 space-x-2">
+                                <button
+                                  type="button"
+                                  onClick={() => handleEditarCriterio(index)}
+                                  className="text-primary hover:text-primary-dark"
+                                  title="Editar"
+                                >
+                                  <Edit2 size={16} />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleEliminarCriterio(index)}
+                                  className="text-red-600 hover:text-red-800"
+                                  title="Eliminar"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
