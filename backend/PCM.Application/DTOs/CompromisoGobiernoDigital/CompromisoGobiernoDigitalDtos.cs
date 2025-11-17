@@ -11,7 +11,7 @@ public class CreateCompromisoRequest
     public List<string> Alcances { get; set; } = new();
     public DateTime FechaInicio { get; set; }
     public DateTime FechaFin { get; set; }
-    public string Estado { get; set; } = "pendiente";
+    public int Estado { get; set; } = 1; // FK a estado_compromiso (1=pendiente)
     public List<CompromisoNormativaDto> Normativas { get; set; } = new();
     public List<CriterioEvaluacionDto> CriteriosEvaluacion { get; set; } = new();
 }
@@ -24,7 +24,7 @@ public class UpdateCompromisoRequest
     public List<string> Alcances { get; set; } = new();
     public DateTime FechaInicio { get; set; }
     public DateTime FechaFin { get; set; }
-    public string Estado { get; set; } = "pendiente";
+    public int Estado { get; set; } = 1; // FK a estado_compromiso (1=pendiente)
     public List<CompromisoNormativaDto> Normativas { get; set; } = new();
     public List<CriterioEvaluacionDto> CriteriosEvaluacion { get; set; } = new();
 }
@@ -38,7 +38,7 @@ public class CompromisoResponseDto
     public List<string> Alcances { get; set; } = new();
     public DateTime FechaInicio { get; set; }
     public DateTime FechaFin { get; set; }
-    public string Estado { get; set; } = string.Empty;
+    public int Estado { get; set; } // FK a estado_compromiso
     public bool Activo { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
@@ -70,7 +70,7 @@ public class CriterioEvaluacionDto
 {
     public int? CriterioEvaluacionId { get; set; }
     public string Descripcion { get; set; } = string.Empty;
-    public string Estado { get; set; } = "pendiente";
+    public int Estado { get; set; } = 1; // FK a estado_compromiso (1=pendiente)
 }
 
 public class CriterioEvaluacionResponseDto
@@ -78,7 +78,7 @@ public class CriterioEvaluacionResponseDto
     public int CriterioEvaluacionId { get; set; }
     public int CompromisoId { get; set; }
     public string Descripcion { get; set; } = string.Empty;
-    public string Estado { get; set; } = string.Empty;
+    public int Estado { get; set; } // FK a estado_compromiso
     public bool Activo { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

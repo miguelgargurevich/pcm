@@ -31,7 +31,7 @@ public class CompromisoGobiernoDigitalController : ControllerBase
     public async Task<IActionResult> GetAllCompromisos(
         [FromQuery] string? nombre,
         [FromQuery] string? alcance,
-        [FromQuery] string? estado)
+        [FromQuery] int? estado)
     {
         try
         {

@@ -41,9 +41,9 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                 query = query.Where(c => EF.Functions.ILike(c.Alcances, $"%{request.Alcance}%"));
             }
 
-            if (!string.IsNullOrEmpty(request.Estado))
+            if (request.Estado.HasValue)
             {
-                query = query.Where(c => c.Estado == request.Estado);
+                query = query.Where(c => c.IdEstado == request.Estado.Value);
             }
             
             // Only show active records
@@ -77,7 +77,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                 : compromiso.Alcances.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
             FechaInicio = compromiso.FechaInicio,
             FechaFin = compromiso.FechaFin,
-            Estado = compromiso.Estado,
+            Estado = compromiso.IdEstado,
             Activo = compromiso.Activo,
             CreatedAt = compromiso.CreatedAt,
             UpdatedAt = compromiso.UpdatedAt,
@@ -96,7 +96,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                 CriterioEvaluacionId = c.CriterioEvaluacionId,
                 CompromisoId = c.CompromisoId,
                 Descripcion = c.Descripcion,
-                Estado = c.Estado,
+                Estado = c.IdEstado,
                 Activo = c.Activo,
                 CreatedAt = c.CreatedAt,
                 UpdatedAt = c.UpdatedAt

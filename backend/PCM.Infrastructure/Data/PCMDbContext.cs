@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PCM.Domain.Entities;
+using System.Linq;
 
 namespace PCM.Infrastructure.Data;
 
@@ -17,6 +18,10 @@ public class PCMDbContext : DbContext
     public DbSet<Clasificacion> Clasificaciones { get; set; }
     public DbSet<NivelGobierno> NivelesGobierno { get; set; }
     public DbSet<Sector> Sectores { get; set; }
+    public DbSet<TipoNorma> TiposNorma { get; set; }
+    // NOTA: EstadoCompromiso NO se expone como DbSet para evitar que EF Core infiera navegaciones automáticas
+    // Se puede acceder mediante: context.Set<EstadoCompromiso>() cuando sea necesario
+    public DbSet<TablaTablas> TablaTablas { get; set; }
     public DbSet<MarcoNormativo> MarcosNormativos { get; set; }
     public DbSet<CompromisoGobiernoDigital> CompromisosGobiernoDigital { get; set; }
     public DbSet<CompromisoNormativa> CompromisosNormativas { get; set; }
@@ -258,6 +263,74 @@ public class PCMDbContext : DbContext
             );
         });
 
+        // Configuración de TipoNorma
+        modelBuilder.Entity<TipoNorma>(entity =>
+        {
+            entity.ToTable("tipo_norma");
+            entity.HasKey(e => e.TipoNormaId);
+            entity.Property(e => e.TipoNormaId).HasColumnName("tipo_norma_id");
+            entity.Property(e => e.Nombre).HasColumnName("nombre").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Descripcion).HasColumnName("descripcion").HasMaxLength(200);
+            entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasIndex(e => e.Nombre).IsUnique();
+
+            // Seed data
+            entity.HasData(
+                new TipoNorma { TipoNormaId = 1, Nombre = "Ley", Descripcion = "Norma con rango de Ley", Activo = true },
+                new TipoNorma { TipoNormaId = 2, Nombre = "Decreto Supremo", Descripcion = "Norma del Poder Ejecutivo", Activo = true },
+                new TipoNorma { TipoNormaId = 3, Nombre = "Resolución Ministerial", Descripcion = "Norma de nivel ministerial", Activo = true },
+                new TipoNorma { TipoNormaId = 4, Nombre = "Resolución Directoral", Descripcion = "Norma de nivel directoral", Activo = true },
+                new TipoNorma { TipoNormaId = 5, Nombre = "Ordenanza", Descripcion = "Norma de gobierno local o regional", Activo = true },
+                new TipoNorma { TipoNormaId = 6, Nombre = "Decreto Legislativo", Descripcion = "Norma con rango de Ley emitida por el Ejecutivo", Activo = true },
+                new TipoNorma { TipoNormaId = 7, Nombre = "Resolución Jefatural", Descripcion = "Norma de nivel jefatural", Activo = true }
+            );
+        });
+
+        // NOTA: EstadoCompromiso se comenta completamente para evitar que EF Core lo incluya en el modelo
+        // y genere relaciones automáticas. La tabla existe en la BD y se puede consultar directamente con SQL.
+        
+        /*
+        // Configuración de EstadoCompromiso
+        modelBuilder.Entity<EstadoCompromiso>(entity =>
+        {
+            entity.ToTable("estado_compromiso");
+            entity.HasKey(e => e.EstadoId);
+            entity.Property(e => e.EstadoId).HasColumnName("estado_id");
+            entity.Property(e => e.Nombre).HasColumnName("nombre").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Descripcion).HasColumnName("descripcion").HasMaxLength(200);
+            entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasIndex(e => e.Nombre).IsUnique();
+
+            // Seed data
+            entity.HasData(
+                new EstadoCompromiso { EstadoId = 1, Nombre = "pendiente", Descripcion = "Compromiso pendiente de ejecución", Activo = true },
+                new EstadoCompromiso { EstadoId = 2, Nombre = "en_proceso", Descripcion = "Compromiso en proceso de ejecución", Activo = true },
+                new EstadoCompromiso { EstadoId = 3, Nombre = "completado", Descripcion = "Compromiso completado exitosamente", Activo = true },
+                new EstadoCompromiso { EstadoId = 4, Nombre = "cancelado", Descripcion = "Compromiso cancelado", Activo = true }
+            );
+        });
+        */
+
+        // Configuración de TablaTablas
+        modelBuilder.Entity<TablaTablas>(entity =>
+        {
+            entity.ToTable("tabla_tablas");
+            entity.HasKey(e => e.TablaId);
+            entity.Property(e => e.TablaId).HasColumnName("tabla_id");
+            entity.Property(e => e.NombreTabla).HasColumnName("nombre_tabla").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.ColumnaId).HasColumnName("columna_id").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.Descripcion).HasColumnName("descripcion").HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Valor).HasColumnName("valor").HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Orden).HasColumnName("orden").HasDefaultValue((short)0);
+            entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
+
+            entity.HasIndex(e => e.NombreTabla);
+        });
+
         // Configuración de CompromisoGobiernoDigital
         modelBuilder.Entity<CompromisoGobiernoDigital>(entity =>
         {
@@ -269,7 +342,7 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.Alcances).HasColumnName("alcances").HasMaxLength(500).IsRequired();
             entity.Property(e => e.FechaInicio).HasColumnName("fecha_inicio").IsRequired();
             entity.Property(e => e.FechaFin).HasColumnName("fecha_fin").IsRequired();
-            entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(50).HasDefaultValue("pendiente");
+            entity.Property(e => e.IdEstado).HasColumnName("estado").IsRequired().HasDefaultValue(1);
             entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
@@ -304,7 +377,7 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.CriterioEvaluacionId).HasColumnName("criterio_evaluacion_id");
             entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id").IsRequired();
             entity.Property(e => e.Descripcion).HasColumnName("descripcion").HasColumnType("text").IsRequired();
-            entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(50).HasDefaultValue("pendiente");
+            entity.Property(e => e.IdEstado).HasColumnName("estado").IsRequired().HasDefaultValue(1);
             entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");

@@ -40,7 +40,7 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
             compromiso.Alcances = string.Join(",", request.Alcances); // Convert list to comma-separated string
             compromiso.FechaInicio = request.FechaInicio;
             compromiso.FechaFin = request.FechaFin;
-            compromiso.Estado = request.Estado;
+            compromiso.IdEstado = request.Estado;
             compromiso.UpdatedAt = DateTime.UtcNow;
 
             // Update normativas - remove old ones and add new ones
@@ -71,7 +71,7 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
                     {
                         CompromisoId = compromiso.CompromisoId,
                         Descripcion = criterioDto.Descripcion,
-                        Estado = criterioDto.Estado,
+                        IdEstado = criterioDto.Estado,
                         Activo = true,
                         CreatedAt = DateTime.UtcNow
                     };
@@ -112,7 +112,7 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
                 : compromiso.Alcances.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
             FechaInicio = compromiso.FechaInicio,
             FechaFin = compromiso.FechaFin,
-            Estado = compromiso.Estado,
+            Estado = compromiso.IdEstado,
             Activo = compromiso.Activo,
             CreatedAt = compromiso.CreatedAt,
             UpdatedAt = compromiso.UpdatedAt,
@@ -131,7 +131,7 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
                 CriterioEvaluacionId = c.CriterioEvaluacionId,
                 CompromisoId = c.CompromisoId,
                 Descripcion = c.Descripcion,
-                Estado = c.Estado,
+                Estado = c.IdEstado,
                 Activo = c.Activo,
                 CreatedAt = c.CreatedAt,
                 UpdatedAt = c.UpdatedAt

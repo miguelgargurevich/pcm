@@ -11,7 +11,7 @@ public class CompromisoGobiernoDigital
     public string Alcances { get; set; } = string.Empty; // Almacenado como JSON o CSV
     public DateTime FechaInicio { get; set; }
     public DateTime FechaFin { get; set; }
-    public string Estado { get; set; } = "pendiente"; // pendiente, en_proceso, completado, vencido
+    public int IdEstado { get; set; } = 1; // FK a estado_compromiso (1=pendiente por defecto)
     public bool Activo { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }

@@ -12,7 +12,7 @@ public class UpdateCompromisoCommand : IRequest<Result<CompromisoResponseDto>>
     public List<string> Alcances { get; set; } = new();
     public DateTime FechaInicio { get; set; }
     public DateTime FechaFin { get; set; }
-    public string Estado { get; set; } = "pendiente";
+    public int Estado { get; set; } = 1; // FK a estado_compromiso (1=pendiente por defecto)
     public List<CompromisoNormativaDto> Normativas { get; set; } = new();
     public List<CriterioEvaluacionDto> CriteriosEvaluacion { get; set; } = new();
 }

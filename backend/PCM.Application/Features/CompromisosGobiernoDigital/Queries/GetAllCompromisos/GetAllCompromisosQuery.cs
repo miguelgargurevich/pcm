@@ -8,5 +8,5 @@ public class GetAllCompromisosQuery : IRequest<Result<List<CompromisoResponseDto
 {
     public string? Nombre { get; set; }
     public string? Alcance { get; set; }
-    public string? Estado { get; set; }
+    public int? Estado { get; set; } // FK a estado_compromiso
 }

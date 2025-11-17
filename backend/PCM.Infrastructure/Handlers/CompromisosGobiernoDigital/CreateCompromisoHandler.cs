@@ -32,7 +32,7 @@ public class CreateCompromisoHandler : IRequestHandler<CreateCompromisoCommand, 
                 Alcances = string.Join(",", request.Alcances), // Convert list to comma-separated string
                 FechaInicio = request.FechaInicio,
                 FechaFin = request.FechaFin,
-                Estado = request.Estado,
+                IdEstado = request.Estado,
                 Activo = true,
                 CreatedAt = DateTime.UtcNow
             };
@@ -64,7 +64,7 @@ public class CreateCompromisoHandler : IRequestHandler<CreateCompromisoCommand, 
                     {
                         CompromisoId = compromiso.CompromisoId,
                         Descripcion = criterioDto.Descripcion,
-                        Estado = criterioDto.Estado,
+                        IdEstado = criterioDto.Estado,
                         Activo = true,
                         CreatedAt = DateTime.UtcNow
                     };
@@ -105,7 +105,7 @@ public class CreateCompromisoHandler : IRequestHandler<CreateCompromisoCommand, 
                 : compromiso.Alcances.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
             FechaInicio = compromiso.FechaInicio,
             FechaFin = compromiso.FechaFin,
-            Estado = compromiso.Estado,
+            Estado = compromiso.IdEstado,
             Activo = compromiso.Activo,
             CreatedAt = compromiso.CreatedAt,
             UpdatedAt = compromiso.UpdatedAt,
@@ -124,7 +124,7 @@ public class CreateCompromisoHandler : IRequestHandler<CreateCompromisoCommand, 
                 CriterioEvaluacionId = c.CriterioEvaluacionId,
                 CompromisoId = c.CompromisoId,
                 Descripcion = c.Descripcion,
-                Estado = c.Estado,
+                Estado = c.IdEstado,
                 Activo = c.Activo,
                 CreatedAt = c.CreatedAt,
                 UpdatedAt = c.UpdatedAt
