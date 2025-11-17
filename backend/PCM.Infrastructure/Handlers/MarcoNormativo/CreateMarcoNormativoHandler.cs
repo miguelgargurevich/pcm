@@ -30,6 +30,11 @@ public class CreateMarcoNormativoHandler : IRequestHandler<CreateMarcoNormativoC
             }
 
             // Crear marco normativo
+            // Convertir la fecha a UTC si viene sin especificar
+            var fechaPublicacionUtc = request.FechaPublicacion.Kind == DateTimeKind.Unspecified 
+                ? DateTime.SpecifyKind(request.FechaPublicacion, DateTimeKind.Utc)
+                : request.FechaPublicacion.ToUniversalTime();
+
             var marcoNormativo = new Domain.Entities.MarcoNormativo
             {
                 Numero = request.Numero,
@@ -37,7 +42,7 @@ public class CreateMarcoNormativoHandler : IRequestHandler<CreateMarcoNormativoC
                 TipoNormaId = request.TipoNormaId,
                 NivelGobiernoId = request.NivelGobiernoId,
                 SectorId = request.SectorId,
-                FechaPublicacion = request.FechaPublicacion,
+                FechaPublicacion = fechaPublicacionUtc,
                 Descripcion = request.Descripcion,
                 Url = request.Url,
                 Activo = true,

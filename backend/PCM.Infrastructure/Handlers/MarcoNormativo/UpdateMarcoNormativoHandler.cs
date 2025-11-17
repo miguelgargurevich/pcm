@@ -38,12 +38,17 @@ public class UpdateMarcoNormativoHandler : IRequestHandler<UpdateMarcoNormativoC
             }
 
             // Actualizar datos
+            // Convertir la fecha a UTC si viene sin especificar
+            var fechaPublicacionUtc = request.FechaPublicacion.Kind == DateTimeKind.Unspecified 
+                ? DateTime.SpecifyKind(request.FechaPublicacion, DateTimeKind.Utc)
+                : request.FechaPublicacion.ToUniversalTime();
+
             marcoNormativo.Numero = request.Numero;
             marcoNormativo.NombreNorma = request.NombreNorma;
             marcoNormativo.TipoNormaId = request.TipoNormaId;
             marcoNormativo.NivelGobiernoId = request.NivelGobiernoId;
             marcoNormativo.SectorId = request.SectorId;
-            marcoNormativo.FechaPublicacion = request.FechaPublicacion;
+            marcoNormativo.FechaPublicacion = fechaPublicacionUtc;
             marcoNormativo.Descripcion = request.Descripcion;
             marcoNormativo.Url = request.Url;
 
