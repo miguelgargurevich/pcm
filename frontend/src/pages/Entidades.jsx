@@ -532,8 +532,7 @@ const Entidades = () => {
       )}
 
       {/* Filtros */}
-      <div className="card">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Filtros de Búsqueda</h2>
+      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
