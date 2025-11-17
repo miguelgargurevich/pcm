@@ -346,9 +346,9 @@ const Entidades = () => {
       email: entidad.email || '',
       web: entidad.web || '',
       ubigeoId: entidad.ubigeoId || '',
-      nivelGobiernoId: entidad.nivelGobiernoId || '',
-      sectorId: entidad.sectorId || '',
-      clasificacionId: entidad.clasificacionId || '',
+      nivelGobiernoId: entidad.nivelGobiernoId ? String(entidad.nivelGobiernoId) : '',
+      sectorId: entidad.sectorId ? String(entidad.sectorId) : '',
+      clasificacionId: entidad.clasificacionId ? String(entidad.clasificacionId) : '',
       nombreAlcalde: entidad.nombreAlcalde || '',
       apePatAlcalde: entidad.apePatAlcalde || '',
       apeMatAlcalde: entidad.apeMatAlcalde || '',
@@ -385,16 +385,33 @@ const Entidades = () => {
     try {
       let response;
       
+      // Preparar datos con conversión de tipos
+      const dataToSend = {
+        ruc: formData.ruc,
+        nombre: formData.nombre,
+        direccion: formData.direccion,
+        telefono: formData.telefono,
+        email: formData.email,
+        web: formData.web || null,
+        ubigeoId: formData.ubigeoId,
+        nivelGobiernoId: parseInt(formData.nivelGobiernoId),
+        sectorId: parseInt(formData.sectorId),
+        clasificacionId: parseInt(formData.clasificacionId),
+        nombreAlcalde: formData.nombreAlcalde,
+        apePatAlcalde: formData.apePatAlcalde,
+        apeMatAlcalde: formData.apeMatAlcalde,
+        emailAlcalde: formData.emailAlcalde,
+      };
+      
       if (editingEntidad) {
         // Para actualizar: incluir entidadId en el body
-        const dataToSend = {
+        response = await entidadesService.update(editingEntidad.entidadId, {
           entidadId: editingEntidad.entidadId,
-          ...formData
-        };
-        response = await entidadesService.update(editingEntidad.entidadId, dataToSend);
+          ...dataToSend
+        });
       } else {
         // Para crear: no incluir entidadId
-        response = await entidadesService.create(formData);
+        response = await entidadesService.create(dataToSend);
       }
 
       const isSuccess = response.isSuccess || response.IsSuccess;
