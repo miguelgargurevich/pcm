@@ -56,24 +56,25 @@ public class GetAllMarcoNormativoHandler : IRequestHandler<GetAllMarcoNormativoQ
                 .OrderByDescending(m => m.FechaPublicacion)
                 .ToListAsync(cancellationToken);
 
-            // Obtener tipos de norma
-            var tiposNorma = await _context.Database
-                .SqlQuery<TipoNormaResult>($"SELECT tabla_id as TipoNormaId, descripcion FROM tabla_tablas WHERE nombre_tabla = 'TIPO_NORMA'")
+            // Obtener tipos de norma desde la tabla tipo_norma
+            var tiposNorma = await _context.TiposNorma
+                .Where(t => t.Activo)
                 .ToListAsync(cancellationToken);
 
-            var tiposNormaDict = tiposNorma.ToDictionary(t => t.TipoNormaId, t => t.descripcion);
+            var tiposNormaDict = tiposNorma.ToDictionary(t => t.TipoNormaId, t => t.Nombre);
 
-            // Obtener niveles de gobierno y sectores
-            var nivelesGobierno = await _context.Database
-                .SqlQuery<CatalogoResult>($"SELECT tabla_id as Id, descripcion FROM tabla_tablas WHERE nombre_tabla = 'NIVEL_GOBIERNO'")
+            // Obtener niveles de gobierno desde la tabla nivel_gobierno
+            var nivelesGobierno = await _context.NivelesGobierno
+                .Where(n => n.Activo)
                 .ToListAsync(cancellationToken);
             
-            var sectores = await _context.Database
-                .SqlQuery<CatalogoResult>($"SELECT tabla_id as Id, descripcion FROM tabla_tablas WHERE nombre_tabla = 'SECTOR'")
+            // Obtener sectores desde la tabla sector
+            var sectores = await _context.Sectores
+                .Where(s => s.Activo)
                 .ToListAsync(cancellationToken);
 
-            var nivelesDict = nivelesGobierno.ToDictionary(n => n.Id, n => n.descripcion);
-            var sectoresDict = sectores.ToDictionary(s => s.Id, s => s.descripcion);
+            var nivelesDict = nivelesGobierno.ToDictionary(n => n.NivelGobiernoId, n => n.Nombre);
+            var sectoresDict = sectores.ToDictionary(s => s.SectorId, s => s.Nombre);
 
             var result = marcosNormativos.Select(m => new MarcoNormativoListDto
             {
@@ -101,17 +102,5 @@ public class GetAllMarcoNormativoHandler : IRequestHandler<GetAllMarcoNormativoQ
                 new List<string> { ex.Message }
             );
         }
-    }
-
-    private class TipoNormaResult
-    {
-        public int TipoNormaId { get; set; }
-        public string descripcion { get; set; } = string.Empty;
-    }
-
-    private class CatalogoResult
-    {
-        public int Id { get; set; }
-        public string descripcion { get; set; } = string.Empty;
     }
 }
