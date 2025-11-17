@@ -29,7 +29,10 @@ public class UbigeoController : ControllerBase
         try
         {
             var departamentos = await _context.Ubigeos
-                .Where(u => u.Activo && u.UBPRV == "00" && u.UBDIS == "00")
+                .Where(u => u.Activo 
+                    && u.UBPRV == "00" 
+                    && u.UBDIS == "00"
+                    && (u.CCOD_TIPO_UBI == "NACIONAL" || u.CCOD_TIPO_UBI == "LOCAL"))
                 .Select(u => u.NODEP)
                 .Distinct()
                 .OrderBy(d => d)
@@ -56,8 +59,11 @@ public class UbigeoController : ControllerBase
         try
         {
             var provincias = await _context.Ubigeos
-                .Where(u => u.Activo && u.NODEP == departamento && u.UBDIS == "00" 
-                         && !string.IsNullOrEmpty(u.NOPRV))
+                .Where(u => u.Activo 
+                    && u.NODEP == departamento 
+                    && u.UBDIS == "00" 
+                    && !string.IsNullOrEmpty(u.NOPRV)
+                    && (u.CCOD_TIPO_UBI == "NACIONAL" || u.CCOD_TIPO_UBI == "LOCAL"))
                 .Select(u => u.NOPRV)
                 .Distinct()
                 .OrderBy(p => p)
@@ -84,8 +90,11 @@ public class UbigeoController : ControllerBase
         try
         {
             var distritos = await _context.Ubigeos
-                .Where(u => u.Activo && u.NODEP == departamento && u.NOPRV == provincia 
-                         && !string.IsNullOrEmpty(u.NODIS))
+                .Where(u => u.Activo 
+                    && u.NODEP == departamento 
+                    && u.NOPRV == provincia 
+                    && !string.IsNullOrEmpty(u.NODIS)
+                    && (u.CCOD_TIPO_UBI == "NACIONAL" || u.CCOD_TIPO_UBI == "LOCAL"))
                 .Select(u => new
                 {
                     ubigeoId = u.UbigeoId,

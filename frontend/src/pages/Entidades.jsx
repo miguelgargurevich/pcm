@@ -85,34 +85,11 @@ const Entidades = () => {
       // Filtrar por departamento
       if (filtros.departamento) {
         filtered = filtered.filter((e) => e.departamento === filtros.departamento);
-        
-        // Actualizar provincias disponibles
-        const provinciasUnicas = [...new Set(
-          entidades
-            .filter(e => e.departamento === filtros.departamento)
-            .map(e => e.provincia)
-            .filter(Boolean)
-        )];
-        setProvincias(provinciasUnicas);
-      } else {
-        setProvincias([]);
-        setDistritos([]);
       }
 
       // Filtrar por provincia
       if (filtros.provincia) {
         filtered = filtered.filter((e) => e.provincia === filtros.provincia);
-        
-        // Actualizar distritos disponibles
-        const distritosUnicos = [...new Set(
-          entidades
-            .filter(e => e.departamento === filtros.departamento && e.provincia === filtros.provincia)
-            .map(e => e.distrito)
-            .filter(Boolean)
-        )];
-        setDistritos(distritosUnicos);
-      } else if (filtros.departamento) {
-        setDistritos([]);
       }
 
       // Filtrar por distrito
@@ -192,10 +169,10 @@ const Entidades = () => {
     }
   };
 
-  const handleFiltroChange = (e) => {
+  const handleFiltroChange = async (e) => {
     const { name, value } = e.target;
     
-    // Si cambia el departamento, limpiar provincia y distrito
+    // Si cambia el departamento, limpiar provincia y distrito y cargar provincias
     if (name === 'departamento') {
       setFiltros({
         ...filtros,
@@ -203,14 +180,49 @@ const Entidades = () => {
         provincia: '',
         distrito: '',
       });
+      setDistritos([]);
+      
+      if (value) {
+        try {
+          const response = await ubigeoService.getProvincias(value);
+          if (response.isSuccess || response.IsSuccess) {
+            const provData = response.data || response.Data;
+            setProvincias(Array.isArray(provData) ? provData : []);
+          }
+        } catch (error) {
+          console.error('Error al cargar provincias:', error);
+          setProvincias([]);
+        }
+      } else {
+        setProvincias([]);
+      }
     }
-    // Si cambia la provincia, limpiar distrito
+    // Si cambia la provincia, limpiar distrito y cargar distritos
     else if (name === 'provincia') {
       setFiltros({
         ...filtros,
         [name]: value,
         distrito: '',
       });
+      
+      if (value && filtros.departamento) {
+        try {
+          const response = await ubigeoService.getDistritos(filtros.departamento, value);
+          if (response.isSuccess || response.IsSuccess) {
+            const distData = response.data || response.Data;
+            // Extraer solo nombres de distritos
+            const distritosNombres = Array.isArray(distData) 
+              ? distData.map(d => d.distrito || d)
+              : [];
+            setDistritos(distritosNombres);
+          }
+        } catch (error) {
+          console.error('Error al cargar distritos:', error);
+          setDistritos([]);
+        }
+      } else {
+        setDistritos([]);
+      }
     }
     else {
       setFiltros({
