@@ -129,21 +129,51 @@ public class PCMDbContext : DbContext
             entity.HasIndex(e => e.Nombre).IsUnique();
         });
 
-        // Configuración de Ubigeo
+        // Configuración de Ubigeo (estructura INEI)
         modelBuilder.Entity<Ubigeo>(entity =>
         {
             entity.ToTable("ubigeo");
             entity.HasKey(e => e.UbigeoId);
             entity.Property(e => e.UbigeoId).HasColumnName("ubigeo_id").HasDefaultValueSql("gen_random_uuid()");
-            entity.Property(e => e.Codigo).HasColumnName("codigo").HasMaxLength(6).IsRequired();
-            entity.Property(e => e.Departamento).HasColumnName("departamento").HasMaxLength(100).IsRequired();
-            entity.Property(e => e.Provincia).HasColumnName("provincia").HasMaxLength(100).IsRequired();
-            entity.Property(e => e.Distrito).HasColumnName("distrito").HasMaxLength(100).IsRequired();
+            
+            // Códigos INEI (tamaños flexibles)
+            entity.Property(e => e.UBDEP).HasColumnName("UBDEP").HasMaxLength(10);
+            entity.Property(e => e.UBPRV).HasColumnName("UBPRV").HasMaxLength(10);
+            entity.Property(e => e.UBDIS).HasColumnName("UBDIS").HasMaxLength(10);
+            entity.Property(e => e.UBLOC).HasColumnName("UBLOC").HasMaxLength(20);
+            entity.Property(e => e.COREG).HasColumnName("COREG").HasMaxLength(10);
+            
+            // Nombres
+            entity.Property(e => e.NODEP).HasColumnName("NODEP").HasMaxLength(150).IsRequired();
+            entity.Property(e => e.NOPRV).HasColumnName("NOPRV").HasMaxLength(150).IsRequired();
+            entity.Property(e => e.NODIS).HasColumnName("NODIS").HasMaxLength(150).IsRequired();
+            
+            // Código postal
+            entity.Property(e => e.CPDIS).HasColumnName("CPDIS").HasMaxLength(20);
+            
+            // Estados
+            entity.Property(e => e.STUBI).HasColumnName("STUBI").HasMaxLength(20);
+            entity.Property(e => e.STSOB).HasColumnName("STSOB").HasMaxLength(20);
+            
+            // Información adicional
+            entity.Property(e => e.FERES).HasColumnName("FERES").HasMaxLength(50);
+            entity.Property(e => e.INUBI).HasColumnName("INUBI").HasMaxLength(300);
+            entity.Property(e => e.UB_INEI).HasColumnName("UB_INEI").HasMaxLength(20);
+            entity.Property(e => e.CCOD_TIPO_UBI).HasColumnName("CCOD_TIPO_UBI").HasMaxLength(10);
+            
+            // Propiedades calculadas (no se mapean a la BD)
+            entity.Ignore(e => e.Codigo);
+            entity.Ignore(e => e.Departamento);
+            entity.Ignore(e => e.Provincia);
+            entity.Ignore(e => e.Distrito);
+            
             entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            entity.HasIndex(e => e.Codigo).IsUnique();
+            // Índices (UBDIS no es único porque el CSV del INEI puede tener duplicados)
+            entity.HasIndex(e => e.UBDIS);
+            entity.HasIndex(e => new { e.UBDEP, e.UBPRV, e.UBDIS });
         });
 
         // Configuración de Clasificacion
