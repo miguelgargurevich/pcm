@@ -38,8 +38,8 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
             compromiso.NombreCompromiso = request.NombreCompromiso;
             compromiso.Descripcion = request.Descripcion;
             compromiso.Alcances = string.Join(",", request.Alcances); // Convert list to comma-separated string
-            compromiso.FechaInicio = request.FechaInicio;
-            compromiso.FechaFin = request.FechaFin;
+            compromiso.FechaInicio = DateTime.SpecifyKind(request.FechaInicio, DateTimeKind.Utc);
+            compromiso.FechaFin = DateTime.SpecifyKind(request.FechaFin, DateTimeKind.Utc);
             compromiso.IdEstado = request.Estado;
             compromiso.UpdatedAt = DateTime.UtcNow;
 

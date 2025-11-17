@@ -30,8 +30,8 @@ public class CreateCompromisoHandler : IRequestHandler<CreateCompromisoCommand, 
                 NombreCompromiso = request.NombreCompromiso,
                 Descripcion = request.Descripcion,
                 Alcances = string.Join(",", request.Alcances), // Convert list to comma-separated string
-                FechaInicio = request.FechaInicio,
-                FechaFin = request.FechaFin,
+                FechaInicio = DateTime.SpecifyKind(request.FechaInicio, DateTimeKind.Utc),
+                FechaFin = DateTime.SpecifyKind(request.FechaFin, DateTimeKind.Utc),
                 IdEstado = request.Estado,
                 Activo = true,
                 CreatedAt = DateTime.UtcNow
