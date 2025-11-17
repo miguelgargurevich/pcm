@@ -29,7 +29,7 @@ public class UbigeoController : ControllerBase
         try
         {
             var departamentos = await _context.Ubigeos
-                .Where(u => u.Activo)
+                .Where(u => u.Activo && u.UBPRV == "00" && u.UBDIS == "00")
                 .Select(u => u.NODEP)
                 .Distinct()
                 .OrderBy(d => d)
@@ -56,7 +56,8 @@ public class UbigeoController : ControllerBase
         try
         {
             var provincias = await _context.Ubigeos
-                .Where(u => u.Activo && u.NODEP == departamento)
+                .Where(u => u.Activo && u.NODEP == departamento && u.UBDIS == "00" 
+                         && !string.IsNullOrEmpty(u.NOPRV))
                 .Select(u => u.NOPRV)
                 .Distinct()
                 .OrderBy(p => p)
@@ -83,7 +84,8 @@ public class UbigeoController : ControllerBase
         try
         {
             var distritos = await _context.Ubigeos
-                .Where(u => u.Activo && u.NODEP == departamento && u.NOPRV == provincia)
+                .Where(u => u.Activo && u.NODEP == departamento && u.NOPRV == provincia 
+                         && !string.IsNullOrEmpty(u.NODIS))
                 .Select(u => new
                 {
                     ubigeoId = u.UbigeoId,
