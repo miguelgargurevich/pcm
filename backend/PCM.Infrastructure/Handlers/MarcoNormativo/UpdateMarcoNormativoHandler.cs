@@ -53,8 +53,16 @@ public class UpdateMarcoNormativoHandler : IRequestHandler<UpdateMarcoNormativoC
             marcoNormativo.Descripcion = request.Descripcion;
             marcoNormativo.Url = request.Url;
 
-            // Marcar explícitamente la entidad como modificada
-            _context.Entry(marcoNormativo).State = EntityState.Modified;
+            // Marcar explícitamente cada propiedad como modificada (excepto created_at y activo)
+            var entry = _context.Entry(marcoNormativo);
+            entry.Property(e => e.Numero).IsModified = true;
+            entry.Property(e => e.NombreNorma).IsModified = true;
+            entry.Property(e => e.TipoNormaId).IsModified = true;
+            entry.Property(e => e.NivelGobiernoId).IsModified = true;
+            entry.Property(e => e.SectorId).IsModified = true;
+            entry.Property(e => e.FechaPublicacion).IsModified = true;
+            entry.Property(e => e.Descripcion).IsModified = true;
+            entry.Property(e => e.Url).IsModified = true;
             
             await _context.SaveChangesAsync(cancellationToken);
 
