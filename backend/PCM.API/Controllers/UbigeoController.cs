@@ -30,7 +30,7 @@ public class UbigeoController : ControllerBase
         {
             var departamentos = await _context.Ubigeos
                 .Where(u => u.Activo)
-                .Select(u => u.Departamento)
+                .Select(u => u.NODEP)
                 .Distinct()
                 .OrderBy(d => d)
                 .ToListAsync();
@@ -56,8 +56,8 @@ public class UbigeoController : ControllerBase
         try
         {
             var provincias = await _context.Ubigeos
-                .Where(u => u.Activo && u.Departamento == departamento)
-                .Select(u => u.Provincia)
+                .Where(u => u.Activo && u.NODEP == departamento)
+                .Select(u => u.NOPRV)
                 .Distinct()
                 .OrderBy(p => p)
                 .ToListAsync();
@@ -83,14 +83,14 @@ public class UbigeoController : ControllerBase
         try
         {
             var distritos = await _context.Ubigeos
-                .Where(u => u.Activo && u.Departamento == departamento && u.Provincia == provincia)
+                .Where(u => u.Activo && u.NODEP == departamento && u.NOPRV == provincia)
                 .Select(u => new
                 {
                     ubigeoId = u.UbigeoId,
-                    codigo = u.Codigo,
-                    distrito = u.Distrito,
-                    departamento = u.Departamento,
-                    provincia = u.Provincia
+                    codigo = u.UBDIS,
+                    distrito = u.NODIS,
+                    departamento = u.NODEP,
+                    provincia = u.NOPRV
                 })
                 .OrderBy(d => d.distrito)
                 .ToListAsync();
@@ -117,14 +117,14 @@ public class UbigeoController : ControllerBase
         try
         {
             var ubigeo = await _context.Ubigeos
-                .Where(u => u.Codigo == codigo)
+                .Where(u => u.UBDIS == codigo)
                 .Select(u => new
                 {
                     ubigeoId = u.UbigeoId,
-                    codigo = u.Codigo,
-                    departamento = u.Departamento,
-                    provincia = u.Provincia,
-                    distrito = u.Distrito
+                    codigo = u.UBDIS,
+                    departamento = u.NODEP,
+                    provincia = u.NOPRV,
+                    distrito = u.NODIS
                 })
                 .FirstOrDefaultAsync();
 
@@ -157,16 +157,16 @@ public class UbigeoController : ControllerBase
         try
         {
             var ubigeo = await _context.Ubigeos
-                .Where(u => u.Departamento == departamento 
-                         && u.Provincia == provincia 
-                         && u.Distrito == distrito)
+                .Where(u => u.NODEP == departamento 
+                         && u.NOPRV == provincia 
+                         && u.NODIS == distrito)
                 .Select(u => new
                 {
                     ubigeoId = u.UbigeoId,
-                    codigo = u.Codigo,
-                    departamento = u.Departamento,
-                    provincia = u.Provincia,
-                    distrito = u.Distrito
+                    codigo = u.UBDIS,
+                    departamento = u.NODEP,
+                    provincia = u.NOPRV,
+                    distrito = u.NODIS
                 })
                 .FirstOrDefaultAsync();
 
