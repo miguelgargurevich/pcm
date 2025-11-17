@@ -80,7 +80,8 @@ public class CreateMarcoNormativoHandler : IRequestHandler<CreateMarcoNormativoC
                 Descripcion = marcoNormativo.Descripcion,
                 Url = marcoNormativo.Url,
                 Activo = marcoNormativo.Activo,
-                CreatedAt = marcoNormativo.CreatedAt
+                CreatedAt = marcoNormativo.CreatedAt,
+                UpdatedAt = marcoNormativo.UpdatedAt
             };
 
             return Result<MarcoNormativoDetailDto>.Success(marcoNormativoDto, "Marco normativo creado exitosamente");

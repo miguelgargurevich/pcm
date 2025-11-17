@@ -41,6 +41,7 @@ public record MarcoNormativoDetailDto
     public string? Url { get; init; }
     public bool Activo { get; init; }
     public DateTime CreatedAt { get; init; }
+    public DateTime? UpdatedAt { get; init; }
 }
 
 public record MarcoNormativoListDto

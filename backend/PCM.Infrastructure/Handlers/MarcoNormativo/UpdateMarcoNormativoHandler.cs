@@ -21,14 +21,6 @@ public class UpdateMarcoNormativoHandler : IRequestHandler<UpdateMarcoNormativoC
     {
         try
         {
-            var marcoNormativo = await _context.MarcosNormativos
-                .FirstOrDefaultAsync(m => m.NormaId == request.NormaId, cancellationToken);
-
-            if (marcoNormativo == null)
-            {
-                return Result<MarcoNormativoDetailDto>.Failure("Marco normativo no encontrado");
-            }
-
             // Validar número único (excepto el actual)
             var existeNumero = await _context.MarcosNormativos
                 .AnyAsync(m => m.Numero == request.Numero && m.NormaId != request.NormaId, cancellationToken);
@@ -36,6 +28,15 @@ public class UpdateMarcoNormativoHandler : IRequestHandler<UpdateMarcoNormativoC
             if (existeNumero)
             {
                 return Result<MarcoNormativoDetailDto>.Failure("El número de norma ya está registrado");
+            }
+
+            // Buscar la entidad
+            var marcoNormativo = await _context.MarcosNormativos
+                .FirstOrDefaultAsync(m => m.NormaId == request.NormaId, cancellationToken);
+
+            if (marcoNormativo == null)
+            {
+                return Result<MarcoNormativoDetailDto>.Failure("Marco normativo no encontrado");
             }
 
             // Actualizar datos
@@ -52,6 +53,13 @@ public class UpdateMarcoNormativoHandler : IRequestHandler<UpdateMarcoNormativoC
             marcoNormativo.FechaPublicacion = fechaPublicacionUtc;
             marcoNormativo.Descripcion = request.Descripcion;
             marcoNormativo.Url = request.Url;
+            marcoNormativo.UpdatedAt = DateTime.UtcNow;
+
+            // Forzar la actualización de todas las propiedades
+            _context.Entry(marcoNormativo).State = EntityState.Modified;
+            // Pero excluir created_at y activo de la actualización
+            _context.Entry(marcoNormativo).Property(e => e.CreatedAt).IsModified = false;
+            _context.Entry(marcoNormativo).Property(e => e.Activo).IsModified = false;
 
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -83,7 +91,8 @@ public class UpdateMarcoNormativoHandler : IRequestHandler<UpdateMarcoNormativoC
                 Descripcion = marcoNormativo.Descripcion,
                 Url = marcoNormativo.Url,
                 Activo = marcoNormativo.Activo,
-                CreatedAt = marcoNormativo.CreatedAt
+                CreatedAt = marcoNormativo.CreatedAt,
+                UpdatedAt = marcoNormativo.UpdatedAt
             };
 
             return Result<MarcoNormativoDetailDto>.Success(marcoNormativoDto, "Marco normativo actualizado exitosamente");
