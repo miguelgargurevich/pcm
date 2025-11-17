@@ -69,14 +69,24 @@ public record EntidadListDto
     public Guid EntidadId { get; init; }
     public string Ruc { get; init; } = string.Empty;
     public string Nombre { get; init; } = string.Empty;
+    public string Direccion { get; init; } = string.Empty;
+    public Guid UbigeoId { get; init; }
     public string Departamento { get; init; } = string.Empty;
     public string Provincia { get; init; } = string.Empty;
     public string Distrito { get; init; } = string.Empty;
+    public int NivelGobiernoId { get; init; }
     public string NivelGobierno { get; init; } = string.Empty;
+    public int SectorId { get; init; }
     public string NombreSector { get; init; } = string.Empty;
+    public int ClasificacionId { get; init; }
     public string NombreClasificacion { get; init; } = string.Empty;
     public string Email { get; init; } = string.Empty;
     public string Telefono { get; init; } = string.Empty;
+    public string? Web { get; init; }
+    public string NombreAlcalde { get; init; } = string.Empty;
+    public string ApePatAlcalde { get; init; } = string.Empty;
+    public string ApeMatAlcalde { get; init; } = string.Empty;
+    public string EmailAlcalde { get; init; } = string.Empty;
     public bool Activo { get; init; }
 }
 
