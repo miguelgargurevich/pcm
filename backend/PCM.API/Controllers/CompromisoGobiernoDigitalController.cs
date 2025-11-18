@@ -94,9 +94,11 @@ public class CompromisoGobiernoDigitalController : ControllerBase
             var command = new CreateCompromisoCommand
             {
                 NombreCompromiso = request.NombreCompromiso,
+                Descripcion = request.Descripcion,
                 Alcances = request.Alcances,
                 FechaInicio = request.FechaInicio,
                 FechaFin = request.FechaFin,
+                Estado = request.Estado,
                 Normativas = request.Normativas,
                 CriteriosEvaluacion = request.CriteriosEvaluacion
             };
@@ -132,9 +134,11 @@ public class CompromisoGobiernoDigitalController : ControllerBase
             {
                 CompromisoId = id,
                 NombreCompromiso = request.NombreCompromiso,
+                Descripcion = request.Descripcion,
                 Alcances = request.Alcances,
                 FechaInicio = request.FechaInicio,
                 FechaFin = request.FechaFin,
+                Estado = request.Estado,
                 Normativas = request.Normativas,
                 CriteriosEvaluacion = request.CriteriosEvaluacion
             };
