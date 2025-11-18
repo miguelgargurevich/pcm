@@ -157,13 +157,14 @@ const CompromisoGobiernoDigital = () => {
   };
 
   const handleEdit = (compromiso) => {
-    //console.log('Compromiso a editar:', compromiso); // Debug
+    console.log('🔍 Compromiso recibido para editar:', compromiso);
+    console.log('📝 Descripción del compromiso:', compromiso.descripcion);
     setEditingCompromiso(compromiso);
     
     // Convertir el estado ID al nombre del estado
     const estadoNombre = estados.find(e => e.estadoId === compromiso.estado)?.nombre || 'pendiente';
     
-    setFormData({
+    const newFormData = {
       nombreCompromiso: compromiso.nombreCompromiso || '',
       descripcion: compromiso.descripcion || '',
       alcances: compromiso.alcances || [],
@@ -172,7 +173,12 @@ const CompromisoGobiernoDigital = () => {
       estado: estadoNombre,
       normativas: compromiso.normativas || [],
       criteriosEvaluacion: compromiso.criteriosEvaluacion || []
-    });
+    };
+    
+    console.log('📋 FormData preparado:', newFormData);
+    console.log('📋 Descripción en formData:', newFormData.descripcion);
+    
+    setFormData(newFormData);
     setShowModal(true);
   };
 
@@ -228,16 +234,20 @@ const CompromisoGobiernoDigital = () => {
         })
       };
 
-      // console.log('FormData:', formData); // Debug
-      // console.log('Datos a enviar:', dataToSend); // Debug
+      console.log('📤 FormData actual:', formData);
+      console.log('📤 Descripción en formData:', formData.descripcion);
+      console.log('📤 Datos a enviar al backend:', dataToSend);
+      console.log('📤 Descripción en dataToSend:', dataToSend.descripcion);
 
       let response;
       if (editingCompromiso) {
         dataToSend.compromisoId = editingCompromiso.compromisoId;
-        //console.log('Actualizando compromiso ID:', editingCompromiso.compromisoId); // Debug
+        console.log('✏️ Actualizando compromiso ID:', editingCompromiso.compromisoId);
+        console.log('✏️ Datos completos a actualizar:', JSON.stringify(dataToSend, null, 2));
         response = await compromisosService.update(editingCompromiso.compromisoId, dataToSend);
       } else {
-        //console.log('Creando nuevo compromiso'); // Debug
+        console.log('➕ Creando nuevo compromiso');
+        console.log('➕ Datos completos a crear:', JSON.stringify(dataToSend, null, 2));
         response = await compromisosService.create(dataToSend);
       }
 
