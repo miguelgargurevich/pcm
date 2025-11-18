@@ -647,7 +647,7 @@ const CompromisoGobiernoDigital = () => {
 
       {/* Modal Crear/Editar */}
       {showModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
           <div className="relative bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[95vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10">
               <h3 className="text-lg font-semibold text-gray-900">
@@ -1008,7 +1008,7 @@ const CompromisoGobiernoDigital = () => {
         const totalPaginasNormas = Math.ceil(normasFiltradas.length / normasPorPagina);
 
         return (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-[60] flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-[60] flex items-center justify-center p-4">
             <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[85vh] flex flex-col">
               <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-gray-900">Seleccionar Norma</h3>
