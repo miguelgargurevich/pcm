@@ -117,19 +117,50 @@ const CumplimientoNormativo = () => {
 
   return (
     <div className="p-6">
-      <div className="mb-6 flex justify-between items-start">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Gestión de Cumplimiento Normativo</h1>
-          <p className="text-gray-600 mt-1">Gestión del cumplimiento de compromisos de Gobierno Digital</p>
-        </div>
-        <button
-          onClick={() => navigate('/dashboard/cumplimiento/nuevo')}
-          className="btn-primary flex items-center gap-2"
-        >
-          <FileText size={20} />
-          Nuevo Cumplimiento
-        </button>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Gestión de Cumplimiento Normativo</h1>
+        <p className="text-gray-600 mt-1">Selecciona un compromiso para registrar su cumplimiento</p>
       </div>
+
+      {/* Cards de Compromisos Pre-cargados */}
+      {compromisos.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Compromisos de Gobierno Digital</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {compromisos.map((compromiso, index) => (
+              <button
+                key={compromiso.compromisoId}
+                onClick={() => navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`)}
+                className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-6 text-left border-2 border-transparent hover:border-primary group"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
+                    <span className="text-xl font-bold text-primary group-hover:text-white">
+                      {index + 1}
+                    </span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">
+                      {compromiso.nombreCompromiso}
+                    </h3>
+                    <p className="text-xs text-gray-500 line-clamp-2">
+                      {compromiso.descripcion || 'Haz clic para registrar el cumplimiento'}
+                    </p>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Título de sección de cumplimientos */}
+      {cumplimientos.length > 0 && (
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-gray-800">Cumplimientos Registrados</h2>
+          <p className="text-sm text-gray-600">Revisa y gestiona los cumplimientos ya reportados</p>
+        </div>
+      )}
 
       {/* Filtros */}
       <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
@@ -279,14 +310,32 @@ const CumplimientoNormativo = () => {
           {currentItems.length === 0 && (
             <div className="text-center py-12 text-gray-500">
               <FileText size={48} className="mx-auto mb-4 text-gray-300" />
-              <p>No se encontraron cumplimientos normativos</p>
-              {(filtros.compromiso || filtros.estado) && (
-                <button
-                  onClick={limpiarFiltros}
-                  className="mt-2 text-primary hover:text-primary-dark text-sm"
-                >
-                  Limpiar filtros
-                </button>
+              {(filtros.compromiso || filtros.estado) ? (
+                <>
+                  <p className="mb-2">No se encontraron cumplimientos con los filtros aplicados</p>
+                  <button
+                    onClick={limpiarFiltros}
+                    className="mt-2 text-primary hover:text-primary-dark text-sm"
+                  >
+                    Limpiar filtros
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="text-lg font-medium text-gray-700 mb-2">
+                    Aún no hay cumplimientos normativos registrados
+                  </p>
+                  <p className="text-sm text-gray-500 mb-4">
+                    Comienza registrando el primer cumplimiento de tu entidad
+                  </p>
+                  <button
+                    onClick={() => navigate('/dashboard/cumplimiento/nuevo')}
+                    className="btn-primary inline-flex items-center gap-2"
+                  >
+                    <FileText size={20} />
+                    Registrar Primer Cumplimiento
+                  </button>
+                </>
               )}
             </div>
           )}

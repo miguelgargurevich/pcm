@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import cumplimientoService from '../services/cumplimientoService';
 import { compromisosService } from '../services/compromisosService';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
@@ -8,14 +8,17 @@ import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Sav
 
 const CumplimientoNormativoDetalle = () => {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const isEdit = !!id;
+  const compromisoIdFromUrl = searchParams.get('compromiso');
 
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [pasoActual, setPasoActual] = useState(1);
   
   const [compromisos, setCompromisos] = useState([]);
+  const [compromisoSeleccionado, setCompromisoSeleccionado] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [showPdfViewer, setShowPdfViewer] = useState(false);
 
@@ -63,7 +66,17 @@ const CumplimientoNormativoDetalle = () => {
       const response = await compromisosService.getAll();
       if (response.isSuccess || response.IsSuccess) {
         const data = response.data || response.Data || [];
-        setCompromisos(Array.isArray(data) ? data : []);
+        const compromisosArray = Array.isArray(data) ? data : [];
+        setCompromisos(compromisosArray);
+        
+        // Si viene compromisoId por URL, pre-seleccionarlo
+        if (compromisoIdFromUrl) {
+          const compromiso = compromisosArray.find(c => c.compromisoId === parseInt(compromisoIdFromUrl));
+          if (compromiso) {
+            setCompromisoSeleccionado(compromiso);
+            setFormData(prev => ({ ...prev, compromisoId: compromisoIdFromUrl }));
+          }
+        }
       }
     } catch (error) {
       console.error('Error al cargar compromisos:', error);
@@ -102,6 +115,12 @@ const CumplimientoNormativoDetalle = () => {
         // Si hay documento, establecer la URL
         if (data.documentoUrl) {
           setPdfUrl(data.documentoUrl);
+        }
+
+        // Establecer el compromiso seleccionado
+        const compromiso = compromisos.find(c => c.compromisoId === data.compromisoId);
+        if (compromiso) {
+          setCompromisoSeleccionado(compromiso);
         }
       } else {
         showErrorToast(response.message || 'Error al cargar el cumplimiento');
@@ -160,7 +179,11 @@ const CumplimientoNormativoDetalle = () => {
     const nuevosErrores = {};
 
     if (paso === 1) {
-      if (!formData.compromisoId) nuevosErrores.compromisoId = 'Seleccione un compromiso';
+      if (!formData.compromisoId) {
+        showErrorToast('Debe seleccionar un compromiso desde la página principal');
+        navigate('/dashboard/cumplimiento');
+        return false;
+      }
       if (!formData.nroDni) nuevosErrores.nroDni = 'Ingrese el DNI';
       if (formData.nroDni && formData.nroDni.length !== 8) nuevosErrores.nroDni = 'El DNI debe tener 8 dígitos';
       if (!formData.nombres) nuevosErrores.nombres = 'Ingrese los nombres';
@@ -307,9 +330,17 @@ const CumplimientoNormativoDetalle = () => {
     <div className="p-6 max-w-4xl mx-auto">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
-          {isEdit ? 'Editar Cumplimiento Normativo' : 'Nuevo Cumplimiento Normativo'}
+          {isEdit ? 'Editar Cumplimiento Normativo' : 'Registrar Cumplimiento Normativo'}
         </h1>
-        <p className="text-gray-600 mt-1">Complete la información en los 3 pasos siguientes</p>
+        {compromisoSeleccionado && (
+          <div className="mt-3 p-4 bg-primary/5 border-l-4 border-primary rounded-r-lg">
+            <p className="text-sm text-gray-600 mb-1">Compromiso seleccionado:</p>
+            <p className="text-lg font-semibold text-primary">
+              {compromisoSeleccionado.nombreCompromiso}
+            </p>
+          </div>
+        )}
+        <p className="text-gray-600 mt-3">Complete la información en los 3 pasos siguientes</p>
       </div>
 
       {/* Indicador de pasos */}
@@ -353,29 +384,6 @@ const CumplimientoNormativoDetalle = () => {
         {pasoActual === 1 && (
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Paso 1: Datos Generales del Líder</h2>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Compromiso <span className="text-red-500">*</span>
-              </label>
-              <select
-                name="compromisoId"
-                value={formData.compromisoId}
-                onChange={handleInputChange}
-                className={`input-field ${errores.compromisoId ? 'border-red-500' : ''}`}
-                disabled={isEdit}
-              >
-                <option value="">Seleccione un compromiso</option>
-                {compromisos.map((compromiso) => (
-                  <option key={compromiso.compromisoId} value={compromiso.compromisoId}>
-                    {compromiso.nombreCompromiso}
-                  </option>
-                ))}
-              </select>
-              {errores.compromisoId && (
-                <p className="text-red-500 text-xs mt-1">{errores.compromisoId}</p>
-              )}
-            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -723,7 +731,7 @@ const CumplimientoNormativoDetalle = () => {
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div className="text-gray-600">Compromiso:</div>
                 <div className="font-medium">
-                  {compromisos.find(c => c.compromisoId === parseInt(formData.compromisoId))?.nombreCompromiso || '-'}
+                  {compromisoSeleccionado?.nombreCompromiso || '-'}
                 </div>
                 <div className="text-gray-600">Líder:</div>
                 <div className="font-medium">
