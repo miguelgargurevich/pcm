@@ -2,25 +2,24 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import cumplimientoService from '../services/cumplimientoService';
 import { compromisosService } from '../services/compromisosService';
-import { FilterX, Edit2, Eye, FileText, Calendar } from 'lucide-react';
+import { FilterX, Edit2, Eye, FileText, Calendar, Search } from 'lucide-react';
 
 const CumplimientoNormativo = () => {
   const navigate = useNavigate();
   const [cumplimientos, setCumplimientos] = useState([]);
-  const [cumplimientosFiltrados, setCumplimientosFiltrados] = useState([]);
   const [compromisos, setCompromisos] = useState([]);
+  const [compromisosFiltrados, setCompromisosFiltrados] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  // Filtros
-  const [filtros, setFiltros] = useState({
-    compromiso: '',
-    estado: ''
-  });
 
   // Paginación
   const [paginaActual, setPaginaActual] = useState(1);
   const itemsPorPagina = 10;
+
+  // Filtros
+  const [filtros, setFiltros] = useState({
+    nombreCompromiso: '',
+    estado: ''
+  });
 
   const estados = cumplimientoService.getEstados();
 
@@ -30,26 +29,45 @@ const CumplimientoNormativo = () => {
 
   // Aplicar filtros
   useEffect(() => {
-    let filtered = [...cumplimientos];
+    let filtered = [...compromisos];
 
-    if (filtros.compromiso) {
-      filtered = filtered.filter((c) => c.compromisoId === parseInt(filtros.compromiso));
+    if (filtros.nombreCompromiso.trim()) {
+      const busqueda = filtros.nombreCompromiso.toLowerCase();
+      filtered = filtered.filter((c) =>
+        c.nombreCompromiso?.toLowerCase().includes(busqueda)
+      );
     }
 
     if (filtros.estado) {
-      filtered = filtered.filter((c) => c.estado === parseInt(filtros.estado));
+      filtered = filtered.filter((c) => {
+        const cumplimiento = cumplimientos.find(cum => cum.compromisoId === c.compromisoId);
+        if (filtros.estado === 'sin_registrar') {
+          return !cumplimiento;
+        }
+        return cumplimiento && cumplimiento.estado === parseInt(filtros.estado);
+      });
     }
 
-    setCumplimientosFiltrados(filtered);
-    setPaginaActual(1);
-  }, [cumplimientos, filtros]);
+    setCompromisosFiltrados(filtered);
+    setPaginaActual(1); // Reset página cuando cambian los filtros
+  }, [compromisos, cumplimientos, filtros]);
+
+  // Lógica de paginación
+  const indiceUltimo = paginaActual * itemsPorPagina;
+  const indicePrimero = indiceUltimo - itemsPorPagina;
+  const compromisosPaginados = compromisosFiltrados.slice(indicePrimero, indiceUltimo);
+  const totalPaginas = Math.ceil(compromisosFiltrados.length / itemsPorPagina);
+
+  const cambiarPagina = (numeroPagina) => {
+    setPaginaActual(numeroPagina);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const loadData = async () => {
     try {
       setLoading(true);
-      setError('');
 
-      // Cargar compromisos para el filtro
+      // Cargar compromisos
       const compromisosResponse = await compromisosService.getAll();
       if (compromisosResponse.isSuccess || compromisosResponse.IsSuccess) {
         const compromisosData = compromisosResponse.data || compromisosResponse.Data || [];
@@ -62,12 +80,10 @@ const CumplimientoNormativo = () => {
         const cumplimientosData = cumplimientosResponse.data || cumplimientosResponse.Data || [];
         setCumplimientos(Array.isArray(cumplimientosData) ? cumplimientosData : []);
       } else {
-        setError(cumplimientosResponse.message || 'Error al cargar cumplimientos');
         setCumplimientos([]);
       }
     } catch (error) {
       console.error('Error al cargar datos:', error);
-      setError('Error al conectar con el servidor');
       setCumplimientos([]);
     } finally {
       setLoading(false);
@@ -80,7 +96,8 @@ const CumplimientoNormativo = () => {
   };
 
   const limpiarFiltros = () => {
-    setFiltros({ compromiso: '', estado: '' });
+    setFiltros({ nombreCompromiso: '', estado: '' });
+    setPaginaActual(1); // Reset página al limpiar filtros
   };
 
   const handleVerEditar = (cumplimientoId) => {
@@ -101,12 +118,6 @@ const CumplimientoNormativo = () => {
     return estado ? estado.nombre : 'Desconocido';
   };
 
-  // Paginación
-  const indexOfLastItem = paginaActual * itemsPorPagina;
-  const indexOfFirstItem = indexOfLastItem - itemsPorPagina;
-  const currentItems = cumplimientosFiltrados.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(cumplimientosFiltrados.length / itemsPorPagina);
-
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -119,71 +130,29 @@ const CumplimientoNormativo = () => {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Gestión de Cumplimiento Normativo</h1>
-        <p className="text-gray-600 mt-1">Selecciona un compromiso para registrar su cumplimiento</p>
+        <p className="text-gray-600 mt-1">Compromisos de Gobierno Digital</p>
       </div>
-
-      {/* Cards de Compromisos Pre-cargados */}
-      {compromisos.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Compromisos de Gobierno Digital</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {compromisos.map((compromiso, index) => (
-              <button
-                key={compromiso.compromisoId}
-                onClick={() => navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`)}
-                className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-6 text-left border-2 border-transparent hover:border-primary group"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
-                    <span className="text-xl font-bold text-primary group-hover:text-white">
-                      {index + 1}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">
-                      {compromiso.nombreCompromiso}
-                    </h3>
-                    <p className="text-xs text-gray-500 line-clamp-2">
-                      {compromiso.descripcion || 'Haz clic para registrar el cumplimiento'}
-                    </p>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Título de sección de cumplimientos */}
-      {cumplimientos.length > 0 && (
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">Cumplimientos Registrados</h2>
-          <p className="text-sm text-gray-600">Revisa y gestiona los cumplimientos ya reportados</p>
-        </div>
-      )}
 
       {/* Filtros */}
       <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-1">
+          {/* Filtro por nombre */}
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nombre del Compromiso
+              <Search size={16} className="inline mr-1" />
+              Buscar por nombre
             </label>
-            <select
-              name="compromiso"
-              value={filtros.compromiso}
+            <input
+              type="text"
+              name="nombreCompromiso"
+              value={filtros.nombreCompromiso}
               onChange={handleFiltroChange}
-              className="input-field"
-            >
-              <option value="">Todos los compromisos</option>
-              {compromisos.map((compromiso) => (
-                <option key={compromiso.compromisoId} value={compromiso.compromisoId}>
-                  {compromiso.nombreCompromiso}
-                </option>
-              ))}
-            </select>
+              placeholder="Buscar compromiso..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            />
           </div>
 
+          {/* Filtro por estado */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Estado
@@ -192,196 +161,230 @@ const CumplimientoNormativo = () => {
               name="estado"
               value={filtros.estado}
               onChange={handleFiltroChange}
-              className="input-field"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="">Todos los estados</option>
+              <option value="sin_registrar">Sin registrar</option>
               {estados.map((estado) => (
-                <option key={estado.id} value={estado.id}>{estado.nombre}</option>
+                <option key={estado.id} value={estado.id}>
+                  {estado.nombre}
+                </option>
               ))}
             </select>
           </div>
 
+          {/* Botón limpiar filtros */}
           <div className="flex items-end">
             <button
               onClick={limpiarFiltros}
-              className="btn-secondary flex items-center gap-2 w-full"
-              title="Limpiar filtros"
+              className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 flex items-center justify-center gap-2"
             >
-              <FilterX size={20} />
-              Limpiar filtros
+              <FilterX size={16} />
+              Limpiar Filtros
             </button>
           </div>
         </div>
 
-        <div className="mt-4 text-sm text-gray-600">
-          Mostrando {currentItems.length} de {cumplimientosFiltrados.length} cumplimientos
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-sm text-gray-600">
+            Mostrando {compromisosPaginados.length} de {compromisosFiltrados.length} compromisos
+          </div>
         </div>
       </div>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
-          {error}
-        </div>
-      )}
-
-      {/* Tabla */}
+      {/* Tabla de Compromisos */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Nombre del Compromiso
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Estado
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fecha de Registro
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {currentItems.map((cumplimiento) => (
-                <tr key={cumplimiento.cumplimientoId} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-start">
-                      <FileText className="text-primary mr-2 mt-1" size={18} />
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">
-                          {cumplimiento.nombreCompromiso}
-                        </div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          Entidad: {cumplimiento.nombreEntidad}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          Líder: {cumplimiento.nombreLider}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadgeClass(cumplimiento.estado)}`}>
-                      {getEstadoNombre(cumplimiento.estado)}
-                    </span>
-                    {cumplimiento.tieneDocumento && (
-                      <div className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                        <FileText size={12} />
-                        Documento adjunto
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="flex items-center gap-1">
-                      <Calendar size={14} />
-                      {new Date(cumplimiento.createdAt).toLocaleDateString('es-PE', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <button
-                      onClick={() => handleVerEditar(cumplimiento.cumplimientoId)}
-                      className="text-primary hover:text-primary-dark inline-flex items-center gap-1"
-                      title="Ver"
-                    >
-                      <Eye size={18} />
-                      <span>Ver</span>
-                    </button>
-                    <button
-                      onClick={() => handleVerEditar(cumplimiento.cumplimientoId)}
-                      className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
-                      title="Editar"
-                    >
-                      <Edit2 size={18} />
-                      <span>Editar</span>
-                    </button>
-                  </td>
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    #
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Nombre del Compromiso
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Descripción
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Estado
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Acciones
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {compromisosPaginados.map((compromiso, index) => {
+                  // Buscar si existe un cumplimiento para este compromiso
+                  const cumplimiento = cumplimientos.find(c => c.compromisoId === compromiso.compromisoId);
+                  
+                  return (
+                    <tr key={compromiso.compromisoId} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <span className="text-sm font-bold text-primary">{indicePrimero + index + 1}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-start">
+                          {/* <FileText className="text-primary mr-2 mt-1" size={18} /> */}
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {compromiso.nombreCompromiso}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="text-sm text-gray-600 line-clamp-2">
+                          {compromiso.descripcion || 'Sin descripción'}
+                        </p>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {cumplimiento ? (
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadgeClass(cumplimiento.estado)}`}>
+                            {getEstadoNombre(cumplimiento.estado)}
+                          </span>
+                        ) : (
+                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                            Sin registrar
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                        <div className="flex justify-center gap-2">
+                          <button
+                            onClick={() => cumplimiento 
+                              ? handleVerEditar(cumplimiento.cumplimientoId)
+                              : navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`)
+                            }
+                            className="text-primary hover:text-primary-dark inline-flex items-center gap-1 p-2 rounded-md hover:bg-gray-100"
+                            title="Ver"
+                          >
+                            <Eye size={18} />
+                          </button>
+                          <button
+                            onClick={() => cumplimiento 
+                              ? handleVerEditar(cumplimiento.cumplimientoId)
+                              : navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`)
+                            }
+                            className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 p-2 rounded-md hover:bg-gray-100"
+                            title="Editar"
+                          >
+                            <Edit2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
 
-          {currentItems.length === 0 && (
-            <div className="text-center py-12 text-gray-500">
-              <FileText size={48} className="mx-auto mb-4 text-gray-300" />
-              {(filtros.compromiso || filtros.estado) ? (
-                <>
-                  <p className="mb-2">No se encontraron cumplimientos con los filtros aplicados</p>
-                  <button
-                    onClick={limpiarFiltros}
-                    className="mt-2 text-primary hover:text-primary-dark text-sm"
-                  >
-                    Limpiar filtros
-                  </button>
-                </>
-              ) : (
-                <>
-                  <p className="text-lg font-medium text-gray-700 mb-2">
-                    Aún no hay cumplimientos normativos registrados
-                  </p>
-                  <p className="text-sm text-gray-500 mb-4">
-                    Comienza registrando el primer cumplimiento de tu entidad
-                  </p>
-                  <button
-                    onClick={() => navigate('/dashboard/cumplimiento/nuevo')}
-                    className="btn-primary inline-flex items-center gap-2"
-                  >
-                    <FileText size={20} />
-                    Registrar Primer Cumplimiento
-                  </button>
-                </>
-              )}
-            </div>
-          )}
-        </div>
+            {compromisosFiltrados.length === 0 && !loading && (
+              <div className="text-center py-12 text-gray-500">
+                <FileText size={48} className="mx-auto mb-4 text-gray-300" />
+                <p className="text-lg font-medium text-gray-700 mb-2">
+                  No se encontraron compromisos
+                </p>
+                <p className="text-sm text-gray-500">
+                  {compromisos.length === 0 
+                    ? '⚠️ Verifique que los compromisos base estén insertados en la base de datos'
+                    : 'Intente ajustar los filtros de búsqueda'}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Paginación */}
-        {totalPages > 1 && (
-          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-            <div className="flex-1 flex justify-between sm:hidden">
+        {totalPaginas > 1 && (
+          <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+            <div className="flex flex-1 justify-between sm:hidden">
               <button
-                onClick={() => setPaginaActual(prev => Math.max(prev - 1, 1))}
+                onClick={() => cambiarPagina(paginaActual - 1)}
                 disabled={paginaActual === 1}
-                className="btn-secondary"
+                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Anterior
               </button>
               <button
-                onClick={() => setPaginaActual(prev => Math.min(prev + 1, totalPages))}
-                disabled={paginaActual === totalPages}
-                className="btn-secondary"
+                onClick={() => cambiarPagina(paginaActual + 1)}
+                disabled={paginaActual === totalPaginas}
+                className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Siguiente
               </button>
             </div>
-            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm text-gray-700">
-                  Mostrando <span className="font-medium">{indexOfFirstItem + 1}</span> a{' '}
-                  <span className="font-medium">{Math.min(indexOfLastItem, cumplimientosFiltrados.length)}</span> de{' '}
-                  <span className="font-medium">{cumplimientosFiltrados.length}</span> resultados
+                  Mostrando <span className="font-medium">{indicePrimero + 1}</span> a{' '}
+                  <span className="font-medium">
+                    {Math.min(indiceUltimo, compromisosFiltrados.length)}
+                  </span>{' '}
+                  de <span className="font-medium">{compromisosFiltrados.length}</span> resultados
                 </p>
               </div>
-              <div className="flex gap-2">
-                {[...Array(totalPages)].map((_, index) => (
+              <div>
+                <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
                   <button
-                    key={index}
-                    onClick={() => setPaginaActual(index + 1)}
-                    className={`px-3 py-1 rounded ${
-                      paginaActual === index + 1
-                        ? 'bg-primary text-white'
-                        : 'bg-white text-gray-700 hover:bg-gray-50 border'
-                    }`}
+                    onClick={() => cambiarPagina(paginaActual - 1)}
+                    disabled={paginaActual === 1}
+                    className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {index + 1}
+                    <span className="sr-only">Anterior</span>
+                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                    </svg>
                   </button>
-                ))}
+                  {[...Array(totalPaginas)].map((_, index) => {
+                    const numeroPagina = index + 1;
+                    // Mostrar siempre la primera página, última página, y páginas cerca de la actual
+                    if (
+                      numeroPagina === 1 ||
+                      numeroPagina === totalPaginas ||
+                      (numeroPagina >= paginaActual - 1 && numeroPagina <= paginaActual + 1)
+                    ) {
+                      return (
+                        <button
+                          key={numeroPagina}
+                          onClick={() => cambiarPagina(numeroPagina)}
+                          className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
+                            paginaActual === numeroPagina
+                              ? 'z-10 bg-blue-600 text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
+                              : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
+                          }`}
+                        >
+                          {numeroPagina}
+                        </button>
+                      );
+                    } else if (
+                      numeroPagina === paginaActual - 2 ||
+                      numeroPagina === paginaActual + 2
+                    ) {
+                      return <span key={numeroPagina} className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">...</span>;
+                    }
+                    return null;
+                  })}
+                  <button
+                    onClick={() => cambiarPagina(paginaActual + 1)}
+                    disabled={paginaActual === totalPaginas}
+                    className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className="sr-only">Siguiente</span>
+                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </nav>
               </div>
             </div>
           </div>

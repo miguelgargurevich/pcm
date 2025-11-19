@@ -21,10 +21,7 @@ public class GetAllEntidadesHandler : IRequestHandler<GetAllEntidadesQuery, Resu
         try
         {
             var query = _context.Entidades
-                .Include(e => e.Ubigeo)
-                .Include(e => e.Clasificacion)
-                .Include(e => e.NivelGobierno)
-                .Include(e => e.Sector)
+                .AsNoTracking()
                 .AsQueryable();
 
             // Filtros opcionales
@@ -71,15 +68,33 @@ public class GetAllEntidadesHandler : IRequestHandler<GetAllEntidadesQuery, Resu
                     Nombre = e.Nombre,
                     Direccion = e.Direccion ?? "",
                     UbigeoId = e.UbigeoId,
-                    Departamento = e.Ubigeo == null ? "" : e.Ubigeo.NODEP,
-                    Provincia = e.Ubigeo == null ? "" : e.Ubigeo.NOPRV,
-                    Distrito = e.Ubigeo == null ? "" : e.Ubigeo.NODIS,
+                    Departamento = _context.Ubigeos
+                        .Where(u => u.UbigeoId == e.UbigeoId)
+                        .Select(u => u.NODEP)
+                        .FirstOrDefault() ?? "",
+                    Provincia = _context.Ubigeos
+                        .Where(u => u.UbigeoId == e.UbigeoId)
+                        .Select(u => u.NOPRV)
+                        .FirstOrDefault() ?? "",
+                    Distrito = _context.Ubigeos
+                        .Where(u => u.UbigeoId == e.UbigeoId)
+                        .Select(u => u.NODIS)
+                        .FirstOrDefault() ?? "",
                     NivelGobiernoId = e.NivelGobiernoId,
-                    NivelGobierno = e.NivelGobierno == null ? "" : e.NivelGobierno.Nombre,
+                    NivelGobierno = _context.NivelesGobierno
+                        .Where(ng => ng.NivelGobiernoId == e.NivelGobiernoId)
+                        .Select(ng => ng.Nombre)
+                        .FirstOrDefault() ?? "",
                     SectorId = e.SectorId,
-                    NombreSector = e.Sector == null ? "" : e.Sector.Nombre,
+                    NombreSector = _context.Sectores
+                        .Where(s => s.SectorId == e.SectorId)
+                        .Select(s => s.Nombre)
+                        .FirstOrDefault() ?? "",
                     ClasificacionId = e.ClasificacionId,
-                    NombreClasificacion = e.Clasificacion == null ? "" : e.Clasificacion.Nombre,
+                    NombreClasificacion = _context.Clasificaciones
+                        .Where(c => c.ClasificacionId == e.ClasificacionId)
+                        .Select(c => c.Nombre)
+                        .FirstOrDefault() ?? "",
                     Email = e.Email ?? "",
                     Telefono = e.Telefono ?? "",
                     Web = e.Web,

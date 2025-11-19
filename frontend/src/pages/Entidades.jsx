@@ -260,20 +260,56 @@ const Entidades = () => {
   const loadEntidades = async () => {
     try {
       setLoading(true);
+      setError(''); // Limpiar error anterior
+      console.log('🔄 Iniciando carga de entidades...');
+      
       const response = await entidadesService.getAll();
+      console.log('✅ Response from getAll:', response);
+      
       const isSuccess = response.isSuccess || response.IsSuccess;
+      console.log('IsSuccess:', isSuccess);
       
       if (isSuccess) {
         const data = response.data || response.Data;
-        setEntidades(Array.isArray(data) ? data : []);
+        console.log('📦 Entidades data:', data);
+        console.log('📊 Type of data:', typeof data, 'Is array:', Array.isArray(data));
+        
+        const entidadesArray = Array.isArray(data) ? data : [];
+        setEntidades(entidadesArray);
+        console.log(`✅ Entidades cargadas exitosamente: ${entidadesArray.length} registros`);
+        
+        if (entidadesArray.length === 0) {
+          console.warn('⚠️ La respuesta fue exitosa pero no hay entidades en la base de datos');
+        }
       } else {
-        setError(response.message || 'Error al cargar entidades');
+        const errorMsg = response.message || response.Message || 'Error al cargar entidades';
+        setError(`Error del servidor: ${errorMsg}`);
+        console.error('❌ Error response:', response);
+        setEntidades([]);
       }
     } catch (err) {
-      setError(err.message || 'Error al cargar entidades');
-      console.error('Error:', err);
+      console.error('❌ Error completo:', err);
+      
+      let errorMsg = 'Error de conexión con el servidor';
+      
+      if (err.message) {
+        errorMsg = err.message;
+      }
+      
+      if (err.response) {
+        errorMsg = `Error ${err.response.status}: ${err.response.statusText}`;
+      }
+      
+      if (!navigator.onLine) {
+        errorMsg = 'No hay conexión a internet';
+      }
+      
+      setError(errorMsg);
+      console.error('💥 Error loading entidades:', err);
+      setEntidades([]);
     } finally {
       setLoading(false);
+      console.log('🏁 Carga de entidades finalizada');
     }
   };
 

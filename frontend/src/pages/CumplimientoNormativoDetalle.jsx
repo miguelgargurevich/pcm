@@ -311,11 +311,8 @@ const CumplimientoNormativoDetalle = () => {
     }
   };
 
-  const handleCancelar = async () => {
-    const confirmed = await showConfirmToast('¿Desea cancelar? Se perderán los cambios no guardados');
-    if (confirmed) {
-      navigate('/dashboard/cumplimiento');
-    }
+  const handleCancelar = () => {
+    navigate('/dashboard/cumplimiento');
   };
 
   if (loading) {
@@ -327,7 +324,7 @@ const CumplimientoNormativoDetalle = () => {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
           {isEdit ? 'Editar Cumplimiento Normativo' : 'Registrar Cumplimiento Normativo'}
