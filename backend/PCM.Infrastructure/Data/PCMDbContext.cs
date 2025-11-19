@@ -26,6 +26,7 @@ public class PCMDbContext : DbContext
     public DbSet<CompromisoGobiernoDigital> CompromisosGobiernoDigital { get; set; }
     public DbSet<CompromisoNormativa> CompromisosNormativas { get; set; }
     public DbSet<CriterioEvaluacion> CriteriosEvaluacion { get; set; }
+    public DbSet<CumplimientoNormativo> CumplimientosNormativos { get; set; }
     public DbSet<LogAuditoria> LogAuditoria { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -423,6 +424,64 @@ public class PCMDbContext : DbContext
                 .WithMany(c => c.CriteriosEvaluacion)
                 .HasForeignKey(e => e.CompromisoId)
                 .HasConstraintName("fk_criterio_evaluacion_compromiso");
+        });
+
+        // Configuración de CumplimientoNormativo
+        modelBuilder.Entity<CumplimientoNormativo>(entity =>
+        {
+            entity.ToTable("cumplimiento_normativo");
+            entity.HasKey(e => e.CumplimientoId);
+            entity.Property(e => e.CumplimientoId).HasColumnName("cumplimiento_id");
+            entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id").IsRequired();
+            entity.Property(e => e.EntidadId).HasColumnName("entidad_id").IsRequired();
+            
+            // Paso 1: Datos Generales
+            entity.Property(e => e.NroDni).HasColumnName("nro_dni").HasMaxLength(8).IsRequired();
+            entity.Property(e => e.Nombres).HasColumnName("nombres").HasMaxLength(200).IsRequired();
+            entity.Property(e => e.ApellidoPaterno).HasColumnName("apellido_paterno").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.ApellidoMaterno).HasColumnName("apellido_materno").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.CorreoElectronico).HasColumnName("correo_electronico").HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Telefono).HasColumnName("telefono").HasMaxLength(20);
+            entity.Property(e => e.Rol).HasColumnName("rol").HasMaxLength(100);
+            entity.Property(e => e.Cargo).HasColumnName("cargo").HasMaxLength(200);
+            entity.Property(e => e.FechaInicio).HasColumnName("fecha_inicio").IsRequired();
+            
+            // Paso 2: Normativa
+            entity.Property(e => e.DocumentoUrl).HasColumnName("documento_url").HasColumnType("text");
+            entity.Property(e => e.DocumentoNombre).HasColumnName("documento_nombre").HasMaxLength(500);
+            entity.Property(e => e.DocumentoTamano).HasColumnName("documento_tamano");
+            entity.Property(e => e.DocumentoTipo).HasColumnName("documento_tipo").HasMaxLength(100);
+            entity.Property(e => e.DocumentoFechaSubida).HasColumnName("documento_fecha_subida");
+            entity.Property(e => e.ValidacionResolucionAutoridad).HasColumnName("validacion_resolucion_autoridad").HasDefaultValue(false);
+            entity.Property(e => e.ValidacionLiderFuncionario).HasColumnName("validacion_lider_funcionario").HasDefaultValue(false);
+            entity.Property(e => e.ValidacionDesignacionArticulo).HasColumnName("validacion_designacion_articulo").HasDefaultValue(false);
+            entity.Property(e => e.ValidacionFuncionesDefinidas).HasColumnName("validacion_funciones_definidas").HasDefaultValue(false);
+            
+            // Paso 3: Confirmación
+            entity.Property(e => e.AceptaPoliticaPrivacidad).HasColumnName("acepta_politica_privacidad").HasDefaultValue(false);
+            entity.Property(e => e.AceptaDeclaracionJurada).HasColumnName("acepta_declaracion_jurada").HasDefaultValue(false);
+            
+            // Metadatos
+            entity.Property(e => e.Estado).HasColumnName("estado").IsRequired().HasDefaultValue(1);
+            entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+
+            // Relaciones
+            entity.HasOne(e => e.Compromiso)
+                .WithMany()
+                .HasForeignKey(e => e.CompromisoId)
+                .HasConstraintName("fk_cumplimiento_compromiso");
+
+            entity.HasOne(e => e.Entidad)
+                .WithMany()
+                .HasForeignKey(e => e.EntidadId)
+                .HasConstraintName("fk_cumplimiento_entidad");
+
+            // Constraint único: una entidad solo puede tener un cumplimiento por compromiso
+            entity.HasIndex(e => new { e.EntidadId, e.CompromisoId })
+                .IsUnique()
+                .HasDatabaseName("uq_cumplimiento_entidad_compromiso");
         });
     }
 }
