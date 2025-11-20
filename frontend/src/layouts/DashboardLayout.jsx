@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Outlet, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { usePermissions } from '../hooks/usePermissions';
 import {
   Users,
   Building2,
@@ -19,8 +20,9 @@ import {
 const Sidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { permisos, loading } = usePermissions();
 
-  const menuItems = [
+  const allMenuItems = [
     { icon: Users, label: 'Gestionar Usuario', path: '/dashboard/usuarios' },
     { icon: Building2, label: 'Gestionar Entidades', path: '/dashboard/entidades' },
     { icon: FileText, label: 'Gestionar Marco Normativo', path: '/dashboard/marco-normativo' },
@@ -30,6 +32,19 @@ const Sidebar = ({ isOpen, onClose }) => {
     { icon: BarChart3, label: 'Evaluación y Cumplimiento', path: '/dashboard/evaluacion' },
     { icon: Search, label: 'Consultas y Reportes', path: '/dashboard/reportes' },
   ];
+
+  // Filtrar menú según permisos del usuario
+  const menuItems = useMemo(() => {
+    if (loading || !permisos || permisos.length === 0) {
+      return [];
+    }
+
+    return allMenuItems.filter(item => {
+      const permiso = permisos.find(p => p.rutaModulo === item.path);
+      return permiso && permiso.tipoAcceso !== 'N';
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [permisos, loading]);
 
   const handleLogout = async () => {
     await logout();

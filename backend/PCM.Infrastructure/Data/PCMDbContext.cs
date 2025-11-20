@@ -23,6 +23,8 @@ public class PCMDbContext : DbContext
     // Se puede acceder mediante: context.Set<EstadoCompromiso>() cuando sea necesario
     public DbSet<TablaTablas> TablaTablas { get; set; }
     public DbSet<MarcoNormativo> MarcosNormativos { get; set; }
+    public DbSet<PermisoModulo> PermisosModulos { get; set; }
+    public DbSet<PerfilPermiso> PerfilesPermisos { get; set; }
     public DbSet<CompromisoGobiernoDigital> CompromisosGobiernoDigital { get; set; }
     public DbSet<CompromisoNormativa> CompromisosNormativas { get; set; }
     public DbSet<CriterioEvaluacion> CriteriosEvaluacion { get; set; }
@@ -482,6 +484,61 @@ public class PCMDbContext : DbContext
             entity.HasIndex(e => new { e.EntidadId, e.CompromisoId })
                 .IsUnique()
                 .HasDatabaseName("uq_cumplimiento_entidad_compromiso");
+        });
+
+        // Configuración de PermisoModulo
+        modelBuilder.Entity<PermisoModulo>(entity =>
+        {
+            entity.ToTable("permisos_modulos");
+            entity.HasKey(e => e.PermisoModuloId);
+            entity.Property(e => e.PermisoModuloId).HasColumnName("permiso_modulo_id");
+            entity.Property(e => e.Codigo).HasColumnName("codigo").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Nombre).HasColumnName("nombre").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Descripcion).HasColumnName("descripcion");
+            entity.Property(e => e.Ruta).HasColumnName("ruta").HasMaxLength(200);
+            entity.Property(e => e.Icono).HasColumnName("icono").HasMaxLength(50);
+            entity.Property(e => e.Orden).HasColumnName("orden").HasDefaultValue(0);
+            entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasIndex(e => e.Codigo).IsUnique();
+        });
+
+        // Configuración de PerfilPermiso
+        modelBuilder.Entity<PerfilPermiso>(entity =>
+        {
+            entity.ToTable("perfiles_permisos");
+            entity.HasKey(e => e.PerfilPermisoId);
+            entity.Property(e => e.PerfilPermisoId).HasColumnName("perfil_permiso_id");
+            entity.Property(e => e.PerfilId).HasColumnName("perfil_id").IsRequired();
+            entity.Property(e => e.PermisoModuloId).HasColumnName("permiso_modulo_id").IsRequired();
+            entity.Property(e => e.TipoAcceso).HasColumnName("tipo_acceso").HasMaxLength(1).HasDefaultValue('N');
+            entity.Property(e => e.PuedeCrear).HasColumnName("puede_crear").HasDefaultValue(false);
+            entity.Property(e => e.PuedeEditar).HasColumnName("puede_editar").HasDefaultValue(false);
+            entity.Property(e => e.PuedeEliminar).HasColumnName("puede_eliminar").HasDefaultValue(false);
+            entity.Property(e => e.PuedeConsultar).HasColumnName("puede_consultar").HasDefaultValue(false);
+            entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            // Relaciones
+            entity.HasOne(e => e.Perfil)
+                .WithMany()
+                .HasForeignKey(e => e.PerfilId)
+                .HasConstraintName("fk_perfiles_permisos_perfil")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.PermisoModulo)
+                .WithMany(pm => pm.PerfilesPermisos)
+                .HasForeignKey(e => e.PermisoModuloId)
+                .HasConstraintName("fk_perfiles_permisos_modulo")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Constraint único: un perfil solo puede tener un permiso por módulo
+            entity.HasIndex(e => new { e.PerfilId, e.PermisoModuloId })
+                .IsUnique()
+                .HasDatabaseName("uk_perfil_modulo");
         });
     }
 }
