@@ -75,15 +75,15 @@ public class GetCompromisoByIdHandler : IRequestHandler<GetCompromisoByIdQuery, 
                 CompromisoNormativaId = n.CompromisoNormativaId,
                 CompromisoId = n.CompromisoId,
                 NormaId = n.NormaId,
-                NombreNorma = n.Norma?.NombreNorma,
-                Numero = n.Norma?.Numero,
+                NombreNorma = n.Norma?.NombreNorma ?? string.Empty,
+                Numero = n.Norma?.Numero ?? string.Empty,
                 TipoNormaId = n.Norma?.TipoNormaId,
-                TipoNorma = n.Norma?.TipoNorma?.Nombre,
-                NivelGobierno = n.Norma?.NivelGobierno?.Nombre,
-                Sector = n.Norma?.Sector?.Nombre,
+                TipoNorma = n.Norma?.TipoNorma?.Nombre ?? string.Empty,
+                NivelGobierno = n.Norma?.NivelGobierno?.Nombre ?? string.Empty,
+                Sector = n.Norma?.Sector?.Nombre ?? string.Empty,
                 FechaPublicacion = n.Norma?.FechaPublicacion,
                 CreatedAt = n.CreatedAt
-            }).ToList(),
+            }).ToList() ?? new List<CompromisoNormativaResponseDto>(),
             CriteriosEvaluacion = compromiso.CriteriosEvaluacion?.Select(c => new CriterioEvaluacionResponseDto
             {
                 CriterioEvaluacionId = c.CriterioEvaluacionId,
@@ -93,7 +93,7 @@ public class GetCompromisoByIdHandler : IRequestHandler<GetCompromisoByIdQuery, 
                 Activo = c.Activo,
                 CreatedAt = c.CreatedAt,
                 UpdatedAt = c.UpdatedAt
-            }).ToList()
+            }).ToList() ?? new List<CriterioEvaluacionResponseDto>()
         };
     }
 }
