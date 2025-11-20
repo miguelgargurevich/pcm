@@ -160,7 +160,7 @@ const DashboardLayout = () => {
                   {user?.nombreCompleto || 'Usuario'}
                 </p>
                 <p className="text-xs text-gray-300">
-                  {user?.perfil?.nombre || 'Administrador'}
+                  {user?.nombrePerfil || 'Sin perfil'}
                 </p>
               </div>
               <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">
