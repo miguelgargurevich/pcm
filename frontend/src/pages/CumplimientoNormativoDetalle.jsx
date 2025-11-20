@@ -218,13 +218,82 @@ const CumplimientoNormativoDetalle = () => {
     return Object.keys(nuevosErrores).length === 0;
   };
 
-  const handleSiguiente = () => {
+  const handleSiguiente = async () => {
     if (validarPaso(pasoActual)) {
-      if (pasoActual < 3) {
+      // Guardar progreso antes de avanzar
+      const guardado = await guardarProgreso();
+      
+      if (guardado && pasoActual < 3) {
         setPasoActual(pasoActual + 1);
       }
     } else {
       showErrorToast('Por favor complete todos los campos requeridos');
+    }
+  };
+
+  const guardarProgreso = async () => {
+    try {
+      setSaving(true);
+
+      // Primero subir el documento si hay uno nuevo en el paso 2
+      let documentoUrl = pdfUrl;
+      if (pasoActual === 2 && formData.documentoFile && !pdfUrl) {
+        const uploadResponse = await cumplimientoService.uploadDocument(formData.documentoFile);
+        documentoUrl = uploadResponse.url || uploadResponse.Url;
+        setPdfUrl(documentoUrl);
+      }
+
+      // Preparar datos para enviar (incluyendo campos completados hasta ahora)
+      const dataToSend = {
+        compromisoId: parseInt(formData.compromisoId),
+        nroDni: formData.nroDni || '',
+        nombres: formData.nombres || '',
+        apellidoPaterno: formData.apellidoPaterno || '',
+        apellidoMaterno: formData.apellidoMaterno || '',
+        correo: formData.correo || '',
+        telefono: formData.telefono || '',
+        rol: formData.rol || '',
+        cargo: formData.cargo || '',
+        fechaInicio: formData.fechaInicio || '',
+        documentoUrl: documentoUrl || '',
+        validacion1: formData.validacion1 || false,
+        validacion2: formData.validacion2 || false,
+        validacion3: formData.validacion3 || false,
+        validacion4: formData.validacion4 || false,
+        aceptaPolitica: formData.aceptaPolitica || false,
+        aceptaDeclaracion: formData.aceptaDeclaracion || false,
+        estado: formData.estado || 1
+      };
+
+      let response;
+      if (isEdit || id) {
+        // Si ya existe, actualizar
+        response = await cumplimientoService.update(id, dataToSend);
+      } else {
+        // Si es nuevo, crear y guardar el ID
+        response = await cumplimientoService.create(dataToSend);
+        if (response.isSuccess || response.IsSuccess) {
+          const newId = response.data?.cumplimientoId || response.Data?.cumplimientoId;
+          if (newId) {
+            // Actualizar la URL con el ID del cumplimiento creado
+            navigate(`/dashboard/cumplimiento/${newId}?compromiso=${formData.compromisoId}`, { replace: true });
+          }
+        }
+      }
+
+      if (response.isSuccess || response.IsSuccess) {
+        showSuccessToast('Progreso guardado exitosamente');
+        return true;
+      } else {
+        showErrorToast(response.message || 'Error al guardar el progreso');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error al guardar progreso:', error);
+      showErrorToast('Error al guardar el progreso');
+      return false;
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -235,79 +304,28 @@ const CumplimientoNormativoDetalle = () => {
   };
 
   const handleGuardar = async () => {
-    if (!validarPaso(pasoActual)) {
-      showErrorToast('Por favor complete todos los campos requeridos del paso actual');
+    // Validar todos los pasos
+    const paso1Valid = validarPaso(1);
+    const paso2Valid = validarPaso(2);
+    const paso3Valid = validarPaso(3);
+
+    if (!paso1Valid || !paso2Valid || !paso3Valid) {
+      showErrorToast('Por favor complete todos los campos requeridos en todos los pasos');
       return;
     }
 
-    // Si estamos en el paso 3, validar todos los pasos
-    if (pasoActual === 3) {
-      const paso1Valid = validarPaso(1);
-      const paso2Valid = validarPaso(2);
-      const paso3Valid = validarPaso(3);
-
-      if (!paso1Valid || !paso2Valid || !paso3Valid) {
-        showErrorToast('Por favor complete todos los campos requeridos en todos los pasos');
-        return;
-      }
-    }
-
     const confirmed = await showConfirmToast(
-      isEdit ? '¿Desea actualizar el cumplimiento normativo?' : '¿Desea crear el cumplimiento normativo?'
+      '¿Desea finalizar y guardar el cumplimiento normativo?'
     );
 
     if (!confirmed) return;
 
-    try {
-      setSaving(true);
-
-      // Primero subir el documento si hay uno nuevo
-      let documentoUrl = pdfUrl;
-      if (formData.documentoFile) {
-        const uploadResponse = await cumplimientoService.uploadDocument(formData.documentoFile);
-        documentoUrl = uploadResponse.url || uploadResponse.Url;
-      }
-
-      // Preparar datos para enviar
-      const dataToSend = {
-        compromisoId: parseInt(formData.compromisoId),
-        nroDni: formData.nroDni,
-        nombres: formData.nombres,
-        apellidoPaterno: formData.apellidoPaterno,
-        apellidoMaterno: formData.apellidoMaterno,
-        correo: formData.correo,
-        telefono: formData.telefono,
-        rol: formData.rol,
-        cargo: formData.cargo,
-        fechaInicio: formData.fechaInicio,
-        documentoUrl: documentoUrl,
-        validacion1: formData.validacion1,
-        validacion2: formData.validacion2,
-        validacion3: formData.validacion3,
-        validacion4: formData.validacion4,
-        aceptaPolitica: formData.aceptaPolitica,
-        aceptaDeclaracion: formData.aceptaDeclaracion,
-        estado: formData.estado
-      };
-
-      let response;
-      if (isEdit) {
-        response = await cumplimientoService.update(id, dataToSend);
-      } else {
-        response = await cumplimientoService.create(dataToSend);
-      }
-
-      if (response.isSuccess || response.IsSuccess) {
-        showSuccessToast(isEdit ? 'Cumplimiento actualizado exitosamente' : 'Cumplimiento creado exitosamente');
-        navigate('/dashboard/cumplimiento');
-      } else {
-        showErrorToast(response.message || 'Error al guardar el cumplimiento');
-      }
-    } catch (error) {
-      console.error('Error al guardar:', error);
-      showErrorToast('Error al guardar el cumplimiento');
-    } finally {
-      setSaving(false);
+    // Guardar con estado final
+    const guardado = await guardarProgreso();
+    
+    if (guardado) {
+      showSuccessToast('Cumplimiento guardado exitosamente');
+      navigate('/dashboard/cumplimiento');
     }
   };
 

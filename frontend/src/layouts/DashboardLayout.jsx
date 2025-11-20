@@ -56,7 +56,10 @@ const Sidebar = ({ isOpen, onClose }) => {
           {/* Logo */}
           <div className="p-4 border-b border-primary-700">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3 ml-6">
+              <div 
+                className="flex items-center space-x-3 ml-6 cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => navigate('/dashboard')}
+              >
                 <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-md">
                   <Shield className="text-primary-700" size={24} />
                 </div>
