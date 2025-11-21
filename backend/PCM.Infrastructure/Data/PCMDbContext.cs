@@ -28,6 +28,7 @@ public class PCMDbContext : DbContext
     public DbSet<CompromisoGobiernoDigital> CompromisosGobiernoDigital { get; set; }
     public DbSet<CompromisoNormativa> CompromisosNormativas { get; set; }
     public DbSet<CriterioEvaluacion> CriteriosEvaluacion { get; set; }
+    public DbSet<AlcanceCompromiso> AlcancesCompromisos { get; set; }
     public DbSet<CumplimientoNormativo> CumplimientosNormativos { get; set; }
     public DbSet<LogAuditoria> LogAuditoria { get; set; }
 
@@ -426,6 +427,30 @@ public class PCMDbContext : DbContext
                 .WithMany(c => c.CriteriosEvaluacion)
                 .HasForeignKey(e => e.CompromisoId)
                 .HasConstraintName("fk_criterio_evaluacion_compromiso");
+        });
+
+        // Configuración de AlcanceCompromiso
+        modelBuilder.Entity<AlcanceCompromiso>(entity =>
+        {
+            entity.ToTable("alcance_compromisos");
+            entity.HasKey(e => e.AlcanceCompromisoId);
+            entity.Property(e => e.AlcanceCompromisoId).HasColumnName("alcance_compromiso_id");
+            entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id").IsRequired();
+            entity.Property(e => e.ClasificacionId).HasColumnName("clasificacion_id").IsRequired();
+            entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(e => e.Compromiso)
+                .WithMany(c => c.AlcancesCompromisos)
+                .HasForeignKey(e => e.CompromisoId)
+                .HasConstraintName("fk_alcance_compromiso_compromiso");
+
+            entity.HasOne(e => e.Clasificacion)
+                .WithMany()
+                .HasForeignKey(e => e.ClasificacionId)
+                .HasConstraintName("fk_alcance_compromiso_clasificacion");
+
+            entity.HasIndex(e => new { e.CompromisoId, e.ClasificacionId }).IsUnique();
         });
 
         // Configuración de CumplimientoNormativo

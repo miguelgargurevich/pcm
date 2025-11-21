@@ -40,7 +40,7 @@ const CompromisoGobiernoDigital = () => {
     alcances: [],
     fechaInicio: '',
     fechaFin: '',
-    estado: 'pendiente',
+    estado: 1, // ID de estado pendiente
     normativas: [],
     criteriosEvaluacion: []
   });
@@ -56,7 +56,8 @@ const CompromisoGobiernoDigital = () => {
   // Estados para nuevo criterio
   const [nuevoCriterio, setNuevoCriterio] = useState({
     descripcion: '',
-    estado: 'pendiente'
+    estado: 1, // ID de estado pendiente
+    activo: true
   });
 
   const [editingCriterioIndex, setEditingCriterioIndex] = useState(null);
@@ -149,7 +150,7 @@ const CompromisoGobiernoDigital = () => {
       alcances: [],
       fechaInicio: '',
       fechaFin: '',
-      estado: 'pendiente',
+      estado: 1, // ID de estado pendiente
       normativas: [],
       criteriosEvaluacion: []
     });
@@ -161,16 +162,13 @@ const CompromisoGobiernoDigital = () => {
     console.log('📝 Descripción del compromiso:', compromiso.descripcion);
     setEditingCompromiso(compromiso);
     
-    // Convertir el estado ID al nombre del estado
-    const estadoNombre = estados.find(e => e.estadoId === compromiso.estado)?.nombre || 'pendiente';
-    
     const newFormData = {
       nombreCompromiso: compromiso.nombreCompromiso || '',
       descripcion: compromiso.descripcion || '',
       alcances: compromiso.alcances || [],
       fechaInicio: compromiso.fechaInicio ? compromiso.fechaInicio.split('T')[0] : '',
       fechaFin: compromiso.fechaFin ? compromiso.fechaFin.split('T')[0] : '',
-      estado: estadoNombre,
+      estado: compromiso.estado || 1, // Mantener el ID de estado
       normativas: compromiso.normativas || [],
       criteriosEvaluacion: compromiso.criteriosEvaluacion || []
     };
@@ -212,26 +210,20 @@ const CompromisoGobiernoDigital = () => {
     }
 
     try {
-      // Encontrar el estadoId del string de estado
-      const estadoEncontrado = estados.find(e => e.nombre === formData.estado);
-      const estadoId = estadoEncontrado ? estadoEncontrado.estadoId : 1; // Default pendiente
-
       const dataToSend = {
         nombreCompromiso: formData.nombreCompromiso,
         descripcion: formData.descripcion || null,
         alcances: formData.alcances,
         fechaInicio: formData.fechaInicio,
         fechaFin: formData.fechaFin,
-        estado: estadoId, // Enviar el ID, no el nombre
-        normativas: formData.normativas.map(n => ({ normaId: n.normaId || n.id })), // Solo enviar normaId
-        criteriosEvaluacion: formData.criteriosEvaluacion.map(c => {
-          const criterioEstado = estados.find(e => e.nombre === c.estado);
-          return {
-            criterioEvaluacionId: c.criterioEvaluacionId,
-            descripcion: c.descripcion,
-            estado: criterioEstado ? criterioEstado.estadoId : 1 // Convertir estado a ID
-          };
-        })
+        estado: formData.estado, // Ya es un ID
+        normativas: formData.normativas.map(n => ({ normaId: n.normaId || n.id })),
+        criteriosEvaluacion: formData.criteriosEvaluacion.map(c => ({
+          criterioEvaluacionId: c.criterioEvaluacionId,
+          descripcion: c.descripcion,
+          estado: c.estado || 1, // Ya es un ID
+          activo: c.activo !== undefined ? c.activo : true
+        }))
       };
 
       console.log('📤 FormData actual:', formData);
@@ -374,9 +366,11 @@ const CompromisoGobiernoDigital = () => {
       }));
       setEditingCriterioIndex(null);
     } else {
-      // Agregar nuevo criterio
+      // Agregar nuevo criterio - inicia con estado=1 (pendiente) y activo=true
       const criterio = {
-        ...nuevoCriterio,
+        descripcion: nuevoCriterio.descripcion,
+        estado: 1,
+        activo: true,
         id: Date.now()
       };
       setFormData(prev => ({
@@ -387,12 +381,18 @@ const CompromisoGobiernoDigital = () => {
 
     setNuevoCriterio({
       descripcion: '',
-      estado: 'pendiente'
+      estado: 1,
+      activo: true
     });
   };
 
   const handleEditarCriterio = (index) => {
-    setNuevoCriterio(formData.criteriosEvaluacion[index]);
+    const criterio = formData.criteriosEvaluacion[index];
+    setNuevoCriterio({
+      ...criterio,
+      estado: typeof criterio.estado === 'number' ? criterio.estado : 1,
+      activo: typeof criterio.activo === 'boolean' ? criterio.activo : true
+    });
     setEditingCriterioIndex(index);
   };
 
@@ -469,7 +469,7 @@ const CompromisoGobiernoDigital = () => {
             >
               <option value="">Todos</option>
               {alcances.map((alcance) => (
-                <option key={alcance.id} value={alcance.id}>{alcance.nombre}</option>
+                <option key={alcance.clasificacionId} value={alcance.clasificacionId}>{alcance.nombre}</option>
               ))}
             </select>
           </div>
@@ -685,11 +685,11 @@ const CompromisoGobiernoDigital = () => {
                   </label>
                   <div className="grid grid-cols-2 gap-2 p-3 border border-gray-300 rounded-lg">
                     {alcances.map((alcance) => (
-                      <label key={alcance.id} className="flex items-center space-x-2">
+                      <label key={alcance.clasificacionId} className="flex items-center space-x-2">
                         <input
                           type="checkbox"
-                          checked={formData.alcances.includes(alcance.id)}
-                          onChange={() => handleAlcanceToggle(alcance.id)}
+                          checked={formData.alcances.includes(alcance.clasificacionId)}
+                          onChange={() => handleAlcanceToggle(alcance.clasificacionId)}
                           className="rounded border-gray-300 text-primary focus:ring-primary"
                         />
                         <span className="text-sm text-gray-700">{alcance.nombre}</span>
@@ -742,7 +742,7 @@ const CompromisoGobiernoDigital = () => {
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Estado <span className="text-red-500">*</span>
+                    Estado del Compromiso <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="estado"
@@ -752,9 +752,10 @@ const CompromisoGobiernoDigital = () => {
                     className="input-field"
                   >
                     {estados.map((estado) => (
-                      <option key={estado.estadoId} value={estado.nombre}>{estado.nombre}</option>
+                      <option key={estado.estadoId} value={estado.estadoId}>{estado.nombre}</option>
                     ))}
                   </select>
+                  <p className="text-xs text-gray-500 mt-1">Estado de progreso del compromiso (diferente de activo/inactivo)</p>
                 </div>
               </div>
 
@@ -877,43 +878,61 @@ const CompromisoGobiernoDigital = () => {
                 <h4 className="text-md font-semibold text-gray-800 mb-4">CRITERIO DE EVALUACIÓN</h4>
                 
                 <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Descripción
-                      </label>
-                      <input
-                        type="text"
-                        value={nuevoCriterio.descripcion}
-                        onChange={(e) => setNuevoCriterio(prev => ({ ...prev, descripcion: e.target.value }))}
-                        className="input-field"
-                        placeholder="Descripción del criterio"
-                      />
-                    </div>
+                  <div className="grid grid-cols-1 gap-3 mb-3">
+                    <div className={editingCriterioIndex !== null ? "grid grid-cols-1 md:grid-cols-3 gap-3" : ""}>
+                      <div className={editingCriterioIndex !== null ? "md:col-span-2" : ""}>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Descripción
+                        </label>
+                        <input
+                          type="text"
+                          value={nuevoCriterio.descripcion}
+                          onChange={(e) => setNuevoCriterio(prev => ({ ...prev, descripcion: e.target.value }))}
+                          className="input-field"
+                          placeholder="Descripción del criterio"
+                        />
+                      </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Estado
-                      </label>
-                      <div className="flex items-end gap-2">
-                        <select
-                          value={nuevoCriterio.estado}
-                          onChange={(e) => setNuevoCriterio(prev => ({ ...prev, estado: e.target.value }))}
-                          className="input-field flex-1"
-                        >
-                          {estados.map((estado) => (
-                            <option key={estado.estadoId} value={estado.nombre}>{estado.nombre}</option>
-                          ))}
-                        </select>
+                      {editingCriterioIndex !== null && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Estado
+                          </label>
+                          <select
+                            value={nuevoCriterio.estado}
+                            onChange={(e) => setNuevoCriterio(prev => ({ ...prev, estado: parseInt(e.target.value) }))}
+                            className="input-field"
+                          >
+                            {estados.map((estado) => (
+                              <option key={estado.estadoId} value={estado.estadoId}>{estado.nombre}</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex justify-end gap-2">
+                      {editingCriterioIndex !== null && (
                         <button
                           type="button"
-                          onClick={handleAgregarCriterio}
-                          className="btn-primary flex items-center gap-2"
+                          onClick={() => {
+                            setNuevoCriterio({ descripcion: '', estado: 1, activo: true });
+                            setEditingCriterioIndex(null);
+                          }}
+                          className="btn-secondary flex items-center gap-2"
                         >
-                          <Plus size={18} />
-                          {editingCriterioIndex !== null ? 'Actualizar' : 'Agregar'}
+                          <X size={18} />
+                          Cancelar
                         </button>
-                      </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={handleAgregarCriterio}
+                        className="btn-primary flex items-center gap-2"
+                      >
+                        <Plus size={18} />
+                        {editingCriterioIndex !== null ? 'Actualizar' : 'Agregar'}
+                      </button>
                     </div>
                   </div>
                 </div>

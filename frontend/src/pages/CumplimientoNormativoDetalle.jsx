@@ -5,11 +5,13 @@ import { compromisosService } from '../services/compromisosService';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
 import PDFViewer from '../components/PDFViewer';
 import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 const CumplimientoNormativoDetalle = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const isEdit = !!id;
   const compromisoIdFromUrl = searchParams.get('compromiso');
 
@@ -246,6 +248,7 @@ const CumplimientoNormativoDetalle = () => {
       // Preparar datos para enviar (incluyendo campos completados hasta ahora)
       const dataToSend = {
         compromisoId: parseInt(formData.compromisoId),
+        entidadId: user?.entidadId || '', // Obtener del usuario autenticado
         nroDni: formData.nroDni || '',
         nombres: formData.nombres || '',
         apellidoPaterno: formData.apellidoPaterno || '',
@@ -310,7 +313,18 @@ const CumplimientoNormativoDetalle = () => {
     const paso3Valid = validarPaso(3);
 
     if (!paso1Valid || !paso2Valid || !paso3Valid) {
-      showErrorToast('Por favor complete todos los campos requeridos en todos los pasos');
+      const pasosInvalidos = [];
+      if (!paso1Valid) pasosInvalidos.push('Paso 1 (Datos Generales)');
+      if (!paso2Valid) pasosInvalidos.push('Paso 2 (Normativa)');
+      if (!paso3Valid) pasosInvalidos.push('Paso 3 (Confirmación)');
+      
+      showErrorToast(`Por favor complete los campos requeridos en: ${pasosInvalidos.join(', ')}`);
+      
+      // Ir al primer paso con errores
+      if (!paso1Valid) setPasoActual(1);
+      else if (!paso2Valid) setPasoActual(2);
+      else if (!paso3Valid) setPasoActual(3);
+      
       return;
     }
 

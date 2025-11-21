@@ -19,4 +19,5 @@ public class CompromisoGobiernoDigital
     // Relaciones
     public ICollection<CompromisoNormativa> Normativas { get; set; } = new List<CompromisoNormativa>();
     public ICollection<CriterioEvaluacion> CriteriosEvaluacion { get; set; } = new List<CriterioEvaluacion>();
+    public ICollection<AlcanceCompromiso> AlcancesCompromisos { get; set; } = new List<AlcanceCompromiso>();
 }

@@ -198,14 +198,15 @@ public class CatalogosController : ControllerBase
     {
         try
         {
-            var alcances = await _context.TablaTablas
-                .Where(t => t.NombreTabla == "ALCANCE" && t.Activo)
-                .OrderBy(t => t.Orden)
-                .Select(t => new
+            // Ahora los alcances vienen de la tabla clasificacion
+            var alcances = await _context.Clasificaciones
+                .Where(c => c.Activo)
+                .OrderBy(c => c.Nombre)
+                .Select(c => new
                 {
-                    id = t.Valor,
-                    nombre = t.Descripcion,
-                    valor = t.Valor
+                    clasificacionId = c.ClasificacionId,
+                    nombre = c.Nombre,
+                    descripcion = c.Descripcion
                 })
                 .ToListAsync();
 
