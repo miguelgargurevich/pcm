@@ -81,7 +81,10 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
             Descripcion = compromiso.Descripcion,
             Alcances = string.IsNullOrEmpty(compromiso.Alcances) 
                 ? new List<string>() 
-                : compromiso.Alcances.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
+                : compromiso.Alcances.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(a => a.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList(),
             FechaInicio = compromiso.FechaInicio,
             FechaFin = compromiso.FechaFin,
             Estado = compromiso.IdEstado,

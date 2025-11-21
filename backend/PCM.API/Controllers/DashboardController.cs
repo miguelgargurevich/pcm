@@ -20,7 +20,11 @@ public class DashboardController : ControllerBase
     [HttpGet("stats")]
     public async Task<IActionResult> GetStats()
     {
-        var result = await _mediator.Send(new GetDashboardStatsQuery());
+        var entidadIdClaim = User.FindFirst("entidad_id")?.Value;
+        Guid? entidadId = string.IsNullOrEmpty(entidadIdClaim) ? null : Guid.Parse(entidadIdClaim);
+        var perfilNombre = User.FindFirst("perfil_nombre")?.Value;
+
+        var result = await _mediator.Send(new GetDashboardStatsQuery(entidadId, perfilNombre));
         return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

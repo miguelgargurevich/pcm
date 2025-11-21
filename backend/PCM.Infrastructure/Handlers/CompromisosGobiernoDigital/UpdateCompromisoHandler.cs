@@ -37,7 +37,7 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
             // Update main properties
             compromiso.NombreCompromiso = request.NombreCompromiso;
             compromiso.Descripcion = request.Descripcion;
-            compromiso.Alcances = string.Join(",", request.Alcances); // Convert list to comma-separated string
+            compromiso.Alcances = string.Join(",", request.Alcances.Select(a => a.Trim()).Distinct(StringComparer.OrdinalIgnoreCase)); // Convert list to comma-separated string
             compromiso.FechaInicio = DateTime.SpecifyKind(request.FechaInicio, DateTimeKind.Utc);
             compromiso.FechaFin = DateTime.SpecifyKind(request.FechaFin, DateTimeKind.Utc);
             compromiso.IdEstado = request.Estado;
@@ -131,7 +131,10 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
             Descripcion = compromiso.Descripcion,
             Alcances = string.IsNullOrEmpty(compromiso.Alcances) 
                 ? new List<string>() 
-                : compromiso.Alcances.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
+                : compromiso.Alcances.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(a => a.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList(),
             FechaInicio = compromiso.FechaInicio,
             FechaFin = compromiso.FechaFin,
             Estado = compromiso.IdEstado,

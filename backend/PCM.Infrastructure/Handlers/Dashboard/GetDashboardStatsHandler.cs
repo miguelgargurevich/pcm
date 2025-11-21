@@ -21,14 +21,28 @@ public class GetDashboardStatsHandler : IRequestHandler<GetDashboardStatsQuery, 
         try
         {
             // Obtener totales
-            var totalUsuarios = await _context.Usuarios.CountAsync(cancellationToken);
-            var totalEntidades = await _context.Entidades.CountAsync(cancellationToken);
+            int totalUsuarios;
+            int totalEntidades;
+            int usuariosActivos;
+            int entidadesActivas;
+
+            if (request.PerfilNombre == "Entidad" && request.EntidadId.HasValue)
+            {
+                totalUsuarios = await _context.Usuarios.CountAsync(u => u.EntidadId == request.EntidadId, cancellationToken);
+                totalEntidades = 1;
+                usuariosActivos = await _context.Usuarios.CountAsync(u => u.EntidadId == request.EntidadId && u.Activo, cancellationToken);
+                entidadesActivas = 1;
+            }
+            else
+            {
+                totalUsuarios = await _context.Usuarios.CountAsync(cancellationToken);
+                totalEntidades = await _context.Entidades.CountAsync(cancellationToken);
+                usuariosActivos = await _context.Usuarios.CountAsync(u => u.Activo, cancellationToken);
+                entidadesActivas = await _context.Entidades.CountAsync(e => e.Activo, cancellationToken);
+            }
+
             var totalMarcoNormativo = await _context.MarcosNormativos.CountAsync(cancellationToken);
             var totalCompromisos = await _context.CompromisosGobiernoDigital.CountAsync(cancellationToken);
-
-            // Obtener activos
-            var usuariosActivos = await _context.Usuarios.CountAsync(u => u.Activo, cancellationToken);
-            var entidadesActivas = await _context.Entidades.CountAsync(e => e.Activo, cancellationToken);
             var compromisosActivos = await _context.CompromisosGobiernoDigital.CountAsync(c => c.Activo, cancellationToken);
 
             // Obtener compromisos por estado
