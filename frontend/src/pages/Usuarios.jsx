@@ -592,30 +592,21 @@ const Usuarios = () => {
 
       {/* Modal */}
       {showModal && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setShowModal(false);
-            }
-          }}
-        >
-          <div className="min-h-screen flex items-start justify-center p-4 pt-8">
-            <div className="bg-white rounded-lg max-w-2xl w-full shadow-xl relative my-8">
-            {/* Botón cerrar */}
-            <button
-              type="button"
-              onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10"
-              title="Cerrar"
-            >
-              <X size={24} />
-            </button>
+        <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+          <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900">
+                {editingUsuario ? 'Editar Usuario' : 'Nuevo Usuario'}
+              </h3>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={24} />
+              </button>
+            </div>
 
             <div className="p-6">
-              <h2 className="text-xl font-bold mb-4 pr-8">
-                {editingUsuario ? 'Editar Usuario' : 'Nuevo Usuario'}
-              </h2>
 
               {error && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -812,7 +803,6 @@ const Usuarios = () => {
                   </button>
                 </div>
               </form>
-            </div>
             </div>
           </div>
         </div>

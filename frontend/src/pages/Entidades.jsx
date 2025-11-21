@@ -887,30 +887,21 @@ const Entidades = () => {
 
       {/* Modal */}
       {showModal && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setShowModal(false);
-            }
-          }}
-        >
-          <div className="min-h-screen flex items-start justify-center p-4 pt-8">
-            <div className="bg-white rounded-lg max-w-5xl w-full shadow-xl relative my-8">
-            {/* Botón cerrar */}
-            <button
-              type="button"
-              onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10"
-              title="Cerrar"
-            >
-              <X size={24} />
-            </button>
-
-            <div className="p-8">
-              <h2 className="text-2xl font-bold mb-6 text-gray-900 pr-8">
+        <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+          <div className="relative bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900">
                 {editingEntidad ? 'Editar Entidad' : 'Nueva Entidad'}
-              </h2>
+              </h3>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="p-6">
 
               {error && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -918,10 +909,10 @@ const Entidades = () => {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Información Básica */}
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <div className="bg-gray-50 p-5 rounded-lg">
+                  <h3 className="text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
                     <span className="w-2 h-6 bg-primary-600 rounded"></span>
                     Información de la Entidad
                   </h3>
@@ -1168,8 +1159,8 @@ const Entidades = () => {
                 </div>
 
                 {/* Información del Alcalde */}
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <div className="bg-gray-50 p-5 rounded-lg">
+                  <h3 className="text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
                     <span className="w-2 h-6 bg-primary-600 rounded"></span>
                     Información del Alcalde o Responsable
                   </h3>
@@ -1271,7 +1262,6 @@ const Entidades = () => {
                   </button>
                 </div>
               </form>
-            </div>
             </div>
           </div>
         </div>

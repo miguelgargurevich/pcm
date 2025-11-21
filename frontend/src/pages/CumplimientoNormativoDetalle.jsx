@@ -236,6 +236,15 @@ const CumplimientoNormativoDetalle = () => {
   };
 
   const handleSiguiente = async () => {
+    // En modo lectura, solo avanzar sin validar ni guardar
+    if (viewMode) {
+      if (pasoActual < 3) {
+        setPasoActual(pasoActual + 1);
+      }
+      return;
+    }
+
+    // Modo edición: validar y guardar
     if (validarPaso(pasoActual)) {
       // Guardar progreso antes de avanzar
       const guardado = await guardarProgreso();
