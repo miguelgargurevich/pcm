@@ -63,6 +63,16 @@ const CumplimientoNormativoDetalle = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
+  // Establecer compromiso seleccionado cuando ambos datos estén disponibles
+  useEffect(() => {
+    if (formData.compromisoId && _compromisos.length > 0 && !compromisoSeleccionado) {
+      const compromiso = _compromisos.find(c => c.compromisoId === parseInt(formData.compromisoId));
+      if (compromiso) {
+        setCompromisoSeleccionado(compromiso);
+      }
+    }
+  }, [formData.compromisoId, _compromisos, compromisoSeleccionado]);
+
   const loadCompromisos = async () => {
     try {
       const response = await compromisosService.getAll();
@@ -101,8 +111,10 @@ const CumplimientoNormativoDetalle = () => {
       
       if (response.isSuccess || response.IsSuccess) {
         const data = response.data || response.Data;
+        const compromisoIdValue = data.compromisoId || '';
+        
         setFormData({
-          compromisoId: data.compromisoId || '',
+          compromisoId: compromisoIdValue,
           nroDni: data.nroDni || '',
           nombres: data.nombres || '',
           apellidoPaterno: data.apellidoPaterno || '',
@@ -126,9 +138,6 @@ const CumplimientoNormativoDetalle = () => {
         if (data.documentoUrl) {
           setPdfUrl(data.documentoUrl);
         }
-
-        // Guardar compromisoId para buscar el compromiso después
-        // El compromiso se establecerá en loadCompromisos
       } else {
         showErrorToast(response.message || 'Error al cargar el cumplimiento');
         navigate('/dashboard/cumplimiento');
