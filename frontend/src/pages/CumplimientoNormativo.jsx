@@ -100,7 +100,11 @@ const CumplimientoNormativo = () => {
     setPaginaActual(1); // Reset página al limpiar filtros
   };
 
-  const handleVerEditar = (cumplimientoId) => {
+  const handleVer = (cumplimientoId) => {
+    navigate(`/dashboard/cumplimiento/${cumplimientoId}?mode=view`);
+  };
+
+  const handleEditar = (cumplimientoId) => {
     navigate(`/dashboard/cumplimiento/${cumplimientoId}`);
   };
 
@@ -262,7 +266,7 @@ const CumplimientoNormativo = () => {
                         <div className="flex justify-center gap-2">
                           <button
                             onClick={() => cumplimiento 
-                              ? handleVerEditar(cumplimiento.cumplimientoId)
+                              ? handleVer(cumplimiento.cumplimientoId)
                               : navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`)
                             }
                             className="text-primary hover:text-primary-dark inline-flex items-center gap-1 p-2 rounded-md hover:bg-gray-100"
@@ -272,7 +276,7 @@ const CumplimientoNormativo = () => {
                           </button>
                           <button
                             onClick={() => cumplimiento 
-                              ? handleVerEditar(cumplimiento.cumplimientoId)
+                              ? handleEditar(cumplimiento.cumplimientoId)
                               : navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`)
                             }
                             className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 p-2 rounded-md hover:bg-gray-100"
