@@ -826,7 +826,7 @@ const CumplimientoNormativoDetalle = () => {
           </button>
 
           <div className="flex gap-2">
-            {pasoActual > 1 && !viewMode && (
+            {pasoActual > 1 && (
               <button
                 onClick={handleAnterior}
                 className="btn-secondary flex items-center gap-2"
@@ -837,7 +837,7 @@ const CumplimientoNormativoDetalle = () => {
               </button>
             )}
 
-            {!viewMode && (pasoActual < 3 ? (
+            {pasoActual < 3 ? (
               <button
                 onClick={handleSiguiente}
                 className="btn-primary flex items-center gap-2"
@@ -847,24 +847,26 @@ const CumplimientoNormativoDetalle = () => {
                 <ChevronRight size={20} />
               </button>
             ) : (
-              <button
-                onClick={handleGuardar}
-                className="btn-primary flex items-center gap-2"
-                disabled={saving}
-              >
-                {saving ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    Guardando...
-                  </>
-                ) : (
-                  <>
-                    <Save size={20} />
-                    {isEdit ? 'Actualizar' : 'Guardar'}
-                  </>
-                )}
-              </button>
-            ))}
+              !viewMode && (
+                <button
+                  onClick={handleGuardar}
+                  className="btn-primary flex items-center gap-2"
+                  disabled={saving}
+                >
+                  {saving ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Guardando...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={20} />
+                      {isEdit ? 'Actualizar' : 'Guardar'}
+                    </>
+                  )}
+                </button>
+              )
+            )}
           </div>
         </div>
       </div>
