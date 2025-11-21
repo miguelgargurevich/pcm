@@ -14,6 +14,7 @@ const CumplimientoNormativoDetalle = () => {
   const { user } = useAuth();
   const isEdit = !!id;
   const compromisoIdFromUrl = searchParams.get('compromiso');
+  const viewMode = searchParams.get('mode') === 'view'; // Modo solo lectura
 
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
@@ -376,7 +377,7 @@ const CumplimientoNormativoDetalle = () => {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
-          {isEdit ? 'Editar Cumplimiento Normativo' : 'Registrar Cumplimiento Normativo'}
+          {viewMode ? 'Ver Cumplimiento Normativo' : (isEdit ? 'Editar Cumplimiento Normativo' : 'Registrar Cumplimiento Normativo')}
         </h1>
         {compromisoSeleccionado && (
           <div className="mt-3 p-4 bg-primary/5 border-l-4 border-primary rounded-r-lg">
@@ -444,6 +445,7 @@ const CumplimientoNormativoDetalle = () => {
                   maxLength="8"
                   className={`input-field ${errores.nroDni ? 'border-red-500' : ''}`}
                   placeholder="12345678"
+                  disabled={viewMode}
                 />
                 {errores.nroDni && (
                   <p className="text-red-500 text-xs mt-1">{errores.nroDni}</p>
@@ -461,6 +463,7 @@ const CumplimientoNormativoDetalle = () => {
                   onChange={handleInputChange}
                   className={`input-field ${errores.nombres ? 'border-red-500' : ''}`}
                   placeholder="Juan Carlos"
+                  disabled={viewMode}
                 />
                 {errores.nombres && (
                   <p className="text-red-500 text-xs mt-1">{errores.nombres}</p>
@@ -478,6 +481,7 @@ const CumplimientoNormativoDetalle = () => {
                   onChange={handleInputChange}
                   className={`input-field ${errores.apellidoPaterno ? 'border-red-500' : ''}`}
                   placeholder="García"
+                  disabled={viewMode}
                 />
                 {errores.apellidoPaterno && (
                   <p className="text-red-500 text-xs mt-1">{errores.apellidoPaterno}</p>
@@ -495,6 +499,7 @@ const CumplimientoNormativoDetalle = () => {
                   onChange={handleInputChange}
                   className={`input-field ${errores.apellidoMaterno ? 'border-red-500' : ''}`}
                   placeholder="López"
+                  disabled={viewMode}
                 />
                 {errores.apellidoMaterno && (
                   <p className="text-red-500 text-xs mt-1">{errores.apellidoMaterno}</p>
@@ -512,6 +517,7 @@ const CumplimientoNormativoDetalle = () => {
                   onChange={handleInputChange}
                   className={`input-field ${errores.correoElectronico ? 'border-red-500' : ''}`}
                   placeholder="ejemplo@gob.pe"
+                  disabled={viewMode}
                 />
                 {errores.correoElectronico && (
                   <p className="text-red-500 text-xs mt-1">{errores.correoElectronico}</p>
@@ -529,6 +535,7 @@ const CumplimientoNormativoDetalle = () => {
                   onChange={handleInputChange}
                   className={`input-field ${errores.telefono ? 'border-red-500' : ''}`}
                   placeholder="999 999 999"
+                  disabled={viewMode}
                 />
                 {errores.telefono && (
                   <p className="text-red-500 text-xs mt-1">{errores.telefono}</p>
@@ -546,6 +553,7 @@ const CumplimientoNormativoDetalle = () => {
                   onChange={handleInputChange}
                   className={`input-field ${errores.rol ? 'border-red-500' : ''}`}
                   placeholder="Responsable de Tecnología"
+                  disabled={viewMode}
                 />
                 {errores.rol && (
                   <p className="text-red-500 text-xs mt-1">{errores.rol}</p>
@@ -563,6 +571,7 @@ const CumplimientoNormativoDetalle = () => {
                   onChange={handleInputChange}
                   className={`input-field ${errores.cargo ? 'border-red-500' : ''}`}
                   placeholder="Jefe de Sistemas"
+                  disabled={viewMode}
                 />
                 {errores.cargo && (
                   <p className="text-red-500 text-xs mt-1">{errores.cargo}</p>
@@ -579,6 +588,7 @@ const CumplimientoNormativoDetalle = () => {
                   value={formData.fechaInicio}
                   onChange={handleInputChange}
                   className={`input-field ${errores.fechaInicio ? 'border-red-500' : ''}`}
+                  disabled={viewMode}
                 />
                 {errores.fechaInicio && (
                   <p className="text-red-500 text-xs mt-1">{errores.fechaInicio}</p>
@@ -611,10 +621,13 @@ const CumplimientoNormativoDetalle = () => {
                     onChange={handleFileChange}
                     className="hidden"
                     id="file-upload"
+                    disabled={viewMode}
                   />
-                  <label htmlFor="file-upload" className="btn-primary cursor-pointer inline-block">
-                    Seleccionar archivo
-                  </label>
+                  {!viewMode && (
+                    <label htmlFor="file-upload" className="btn-primary cursor-pointer inline-block">
+                      Seleccionar archivo
+                    </label>
+                  )}
                   <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
                 </div>
               ) : (
@@ -626,13 +639,15 @@ const CumplimientoNormativoDetalle = () => {
                         {formData.documentoFile ? formData.documentoFile.name : 'Documento cargado'}
                       </span>
                     </div>
-                    <button
-                      onClick={removeFile}
-                      className="text-red-500 hover:text-red-700"
-                      title="Eliminar documento"
-                    >
-                      <X size={20} />
-                    </button>
+                    {!viewMode && (
+                      <button
+                        onClick={removeFile}
+                        className="text-red-500 hover:text-red-700"
+                        title="Eliminar documento"
+                      >
+                        <X size={20} />
+                      </button>
+                    )}
                   </div>
                   <button
                     onClick={() => setShowPdfViewer(true)}
@@ -661,6 +676,7 @@ const CumplimientoNormativoDetalle = () => {
                     checked={formData.validacionResolucionAutoridad}
                     onChange={handleInputChange}
                     className="mt-1"
+                    disabled={viewMode}
                   />
                   <span className="text-sm text-gray-700">
                     La Resolución ha sido emitida por la autoridad competente de la entidad
@@ -677,6 +693,7 @@ const CumplimientoNormativoDetalle = () => {
                     checked={formData.validacionLiderFuncionario}
                     onChange={handleInputChange}
                     className="mt-1"
+                    disabled={viewMode}
                   />
                   <span className="text-sm text-gray-700">
                     El Líder de Gobierno Digital es un funcionario de la entidad
@@ -693,6 +710,7 @@ const CumplimientoNormativoDetalle = () => {
                     checked={formData.validacionDesignacionArticulo}
                     onChange={handleInputChange}
                     className="mt-1"
+                    disabled={viewMode}
                   />
                   <span className="text-sm text-gray-700">
                     La Resolución indica el artículo específico de designación del Líder
@@ -709,6 +727,7 @@ const CumplimientoNormativoDetalle = () => {
                     checked={formData.validacionFuncionesDefinidas}
                     onChange={handleInputChange}
                     className="mt-1"
+                    disabled={viewMode}
                   />
                   <span className="text-sm text-gray-700">
                     Las funciones del Líder están claramente definidas en la Resolución
@@ -740,6 +759,7 @@ const CumplimientoNormativoDetalle = () => {
                     checked={formData.aceptaPoliticaPrivacidad}
                     onChange={handleInputChange}
                     className="mt-1"
+                    disabled={viewMode}
                   />
                   <span className="text-sm text-gray-700">
                     <strong>Acepto la Política de Privacidad:</strong> Declaro haber leído y aceptado la política de
@@ -758,6 +778,7 @@ const CumplimientoNormativoDetalle = () => {
                     checked={formData.aceptaDeclaracionJurada}
                     onChange={handleInputChange}
                     className="mt-1"
+                    disabled={viewMode}
                   />
                   <span className="text-sm text-gray-700">
                     <strong>Declaración Jurada:</strong> Declaro bajo juramento que la información proporcionada es
@@ -805,7 +826,7 @@ const CumplimientoNormativoDetalle = () => {
           </button>
 
           <div className="flex gap-2">
-            {pasoActual > 1 && (
+            {pasoActual > 1 && !viewMode && (
               <button
                 onClick={handleAnterior}
                 className="btn-secondary flex items-center gap-2"
@@ -816,7 +837,7 @@ const CumplimientoNormativoDetalle = () => {
               </button>
             )}
 
-            {pasoActual < 3 ? (
+            {!viewMode && (pasoActual < 3 ? (
               <button
                 onClick={handleSiguiente}
                 className="btn-primary flex items-center gap-2"
@@ -843,7 +864,7 @@ const CumplimientoNormativoDetalle = () => {
                   </>
                 )}
               </button>
-            )}
+            ))}
           </div>
         </div>
       </div>
