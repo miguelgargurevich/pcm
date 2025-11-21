@@ -31,7 +31,6 @@ const Usuarios = () => {
 
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
     numDni: '',
     nombres: '',
     apePaterno: '',
@@ -67,7 +66,7 @@ const Usuarios = () => {
 
       // Filtrar por entidad
       if (filtros.entidadId) {
-        filtered = filtered.filter((u) => u.entidadId === filtros.entidadId);
+        filtered = filtered.filter((u) => u.entidadId === parseInt(filtros.entidadId));
       }
 
       // Filtrar por perfil
@@ -179,7 +178,6 @@ const Usuarios = () => {
     setEditingUsuario(null);
     setFormData({
       email: '',
-      password: '',
       numDni: '',
       nombres: '',
       apePaterno: '',
@@ -196,7 +194,6 @@ const Usuarios = () => {
     setEditingUsuario(usuario);
     setFormData({
       email: usuario.email || '',
-      password: '', // No cargar password en edición
       numDni: usuario.numDni || '',
       nombres: usuario.nombres || '',
       apePaterno: usuario.apePaterno || '',
@@ -237,18 +234,10 @@ const Usuarios = () => {
       let response;
       
       if (editingUsuario) {
-        // Para actualizar: incluir userId en el body y excluir password si está vacío
+        // Para actualizar: incluir userId en el body
         const dataToSend = {
           userId: editingUsuario.userId,
-          email: formData.email,
-          numDni: formData.numDni,
-          nombres: formData.nombres,
-          apePaterno: formData.apePaterno,
-          apeMaterno: formData.apeMaterno,
-          direccion: formData.direccion,
-          entidadId: formData.entidadId,
-          perfilId: formData.perfilId,
-          activo: formData.activo
+          ...formData
         };
         response = await usuariosService.update(editingUsuario.userId, dataToSend);
       } else {
@@ -490,7 +479,7 @@ const Usuarios = () => {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleEdit(usuario)}
-                          className="text-blue-600 hover:text-blue-900 flex items-center gap-1"
+                          className="text-primary-600 hover:text-blue-900 flex items-center gap-1"
                           title="Editar"
                         >
                           <Edit2 size={16} />
@@ -715,25 +704,6 @@ const Usuarios = () => {
                     />
                   </div>
                 </div>
-
-                {/* Contraseña (solo al crear) */}
-                {!editingUsuario && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Contraseña *
-                    </label>
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      className="input-field"
-                      required={!editingUsuario}
-                      minLength="8"
-                      placeholder="Mínimo 8 caracteres"
-                    />
-                  </div>
-                )}
 
                 {/* Correo Electrónico, Entidad */}
                 <div className="grid grid-cols-2 gap-4">

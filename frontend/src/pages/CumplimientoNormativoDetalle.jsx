@@ -374,15 +374,15 @@ const CumplimientoNormativoDetalle = () => {
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">
-          {viewMode ? 'Ver Cumplimiento Normativo' : (isEdit ? 'Editar Cumplimiento Normativo' : 'Registrar Cumplimiento Normativo')}
+    <div className="p-4">
+      <div className="mb-4">
+        <h1 className="text-xl font-bold text-gray-800">
+          {viewMode ? 'Ver Cumplimiento Normativo' : (isEdit ? 'Editar Cumplimiento Normativo' : 'Nuevo Cumplimiento Normativo')}
         </h1>
         {compromisoSeleccionado && (
           <div className="mt-3 p-4 bg-primary/5 border-l-4 border-primary rounded-r-lg">
             <p className="text-sm text-gray-600 mb-1">Compromiso seleccionado:</p>
-            <p className="text-lg font-semibold text-primary">
+            <p className="text-base font-semibold text-primary">
               {compromisoSeleccionado.nombreCompromiso}
             </p>
           </div>
@@ -426,11 +426,11 @@ const CumplimientoNormativoDetalle = () => {
       </div>
 
       {/* Formulario */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-white rounded-lg shadow-sm p-5">
         {/* Paso 1: Datos Generales */}
         {pasoActual === 1 && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Paso 1: Datos Generales del Líder</h2>
+          <div className="space-y-3">
+            <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos Generales del Líder</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -600,8 +600,8 @@ const CumplimientoNormativoDetalle = () => {
 
         {/* Paso 2: Normativa */}
         {pasoActual === 2 && (
-          <div className="space-y-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Paso 2: Documento Normativo y Validaciones</h2>
+          <div className="space-y-4">
+            <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 2: Documento Normativo y Validaciones</h2>
 
             {/* Upload de documento */}
             <div>
@@ -743,8 +743,8 @@ const CumplimientoNormativoDetalle = () => {
 
         {/* Paso 3: Confirmación */}
         {pasoActual === 3 && (
-          <div className="space-y-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Paso 3: Confirmación y Aceptación</h2>
+          <div className="space-y-4">
+            <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 3: Confirmación y Aceptación</h2>
 
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
               <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">

@@ -285,7 +285,7 @@ const MarcoNormativo = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Gestionar Marco Normativo</h1>
+          <h1 className="text-xl font-bold text-gray-800">Gestionar Marco Normativo</h1>
           <p className="text-gray-600 mt-1">Administración de normas y documentos legales</p>
         </div>
         <button onClick={handleCreate} className="btn-primary flex items-center gap-2">

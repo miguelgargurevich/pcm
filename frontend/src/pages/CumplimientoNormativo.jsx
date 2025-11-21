@@ -133,7 +133,7 @@ const CumplimientoNormativo = () => {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Gestión de Cumplimiento Normativo</h1>
+        <h1 className="text-xl font-bold text-gray-800">Gestión de Cumplimiento Normativo</h1>
         <p className="text-gray-600 mt-1">Compromisos de Gobierno Digital</p>
       </div>
 
@@ -279,7 +279,7 @@ const CumplimientoNormativo = () => {
                               ? handleEditar(cumplimiento.cumplimientoId)
                               : navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`)
                             }
-                            className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 p-2 rounded-md hover:bg-gray-100"
+                            className="text-primary hover:text-primary-dark"
                             title="Editar"
                           >
                             <Edit2 size={18} />

@@ -569,7 +569,7 @@ const Entidades = () => {
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Gestión de Entidades</h1>
+            <h1 className="text-xl font-bold text-gray-800">Gestión de Entidades</h1>
             <p className="text-gray-600 mt-1">Administración de entidades del Estado</p>
           </div>
           <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
@@ -805,7 +805,7 @@ const Entidades = () => {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleEdit(entidad)}
-                          className="text-blue-600 hover:text-blue-900 flex items-center gap-1"
+                          className="text-primary-600 hover:text-blue-900 flex items-center gap-1"
                           title="Editar"
                         >
                           <Edit2 size={16} />
