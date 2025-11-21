@@ -48,9 +48,15 @@ public class GetAllUsuariosHandler : IRequestHandler<GetAllUsuariosQuery, Result
                     UserId = u.UserId,
                     Email = u.Email,
                     NombreCompleto = $"{u.Nombres} {u.ApePaterno} {u.ApeMaterno}",
+                    Nombres = u.Nombres,
+                    ApePaterno = u.ApePaterno,
+                    ApeMaterno = u.ApeMaterno,
                     NumDni = u.NumDni,
-                    NombreEntidad = u.Entidad!.Nombre,
-                    NombrePerfil = u.Perfil!.Nombre,
+                    Direccion = u.Direccion,
+                    EntidadId = u.EntidadId,
+                    NombreEntidad = u.Entidad != null ? u.Entidad.Nombre : string.Empty,
+                    PerfilId = u.PerfilId,
+                    NombrePerfil = u.Perfil != null ? u.Perfil.Nombre : string.Empty,
                     Activo = u.Activo,
                     LastLogin = u.LastLogin
                 })

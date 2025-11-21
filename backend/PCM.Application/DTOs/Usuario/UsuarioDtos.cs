@@ -52,8 +52,14 @@ public record UsuarioListDto
     public Guid UserId { get; init; }
     public string Email { get; init; } = string.Empty;
     public string NombreCompleto { get; init; } = string.Empty;
+    public string Nombres { get; init; } = string.Empty;
+    public string ApePaterno { get; init; } = string.Empty;
+    public string ApeMaterno { get; init; } = string.Empty;
     public string NumDni { get; init; } = string.Empty;
+    public string? Direccion { get; init; }
+    public Guid? EntidadId { get; init; }
     public string NombreEntidad { get; init; } = string.Empty;
+    public int PerfilId { get; init; }
     public string NombrePerfil { get; init; } = string.Empty;
     public bool Activo { get; init; }
     public DateTime? LastLogin { get; init; }
