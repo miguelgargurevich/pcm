@@ -342,19 +342,22 @@ const CumplimientoNormativoDetalle = () => {
       return;
     }
 
-    const confirmed = await showConfirmToast(
-      '¿Desea finalizar y guardar el cumplimiento normativo?'
-    );
-
-    if (!confirmed) return;
-
-    // Guardar con estado final
-    const guardado = await guardarProgreso();
-    
-    if (guardado) {
-      showSuccessToast('Cumplimiento guardado exitosamente');
-      navigate('/dashboard/cumplimiento');
-    }
+    showConfirmToast({
+      title: '¿Desea finalizar y guardar el cumplimiento normativo?',
+      confirmText: 'Guardar',
+      cancelText: 'Cancelar',
+      loadingText: 'Guardando...',
+      confirmButtonClass: 'px-3 py-1 text-sm bg-primary text-white rounded hover:bg-primary-dark transition-colors',
+      onConfirm: async () => {
+        // Guardar con estado final
+        const guardado = await guardarProgreso();
+        
+        if (guardado) {
+          showSuccessToast('Cumplimiento guardado exitosamente');
+          navigate('/dashboard/cumplimiento');
+        }
+      }
+    });
   };
 
   const handleCancelar = () => {
