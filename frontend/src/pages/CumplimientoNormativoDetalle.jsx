@@ -19,7 +19,7 @@ const CumplimientoNormativoDetalle = () => {
   const [saving, setSaving] = useState(false);
   const [pasoActual, setPasoActual] = useState(1);
   
-  const [compromisos, setCompromisos] = useState([]);
+  const [_compromisos, setCompromisos] = useState([]);
   const [compromisoSeleccionado, setCompromisoSeleccionado] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [showPdfViewer, setShowPdfViewer] = useState(false);
@@ -32,7 +32,7 @@ const CumplimientoNormativoDetalle = () => {
     nombres: '',
     apellidoPaterno: '',
     apellidoMaterno: '',
-    correo: '',
+    correoElectronico: '',
     telefono: '',
     rol: '',
     cargo: '',
@@ -40,14 +40,14 @@ const CumplimientoNormativoDetalle = () => {
     
     // Paso 2: Normativa
     documentoFile: null,
-    validacion1: false,
-    validacion2: false,
-    validacion3: false,
-    validacion4: false,
+    validacionResolucionAutoridad: false,
+    validacionLiderFuncionario: false,
+    validacionDesignacionArticulo: false,
+    validacionFuncionesDefinidas: false,
     
     // Paso 3: Confirmación
-    aceptaPolitica: false,
-    aceptaDeclaracion: false,
+    aceptaPoliticaPrivacidad: false,
+    aceptaDeclaracionJurada: false,
     
     // Estado
     estado: 1 // Por defecto bandeja
@@ -79,6 +79,14 @@ const CumplimientoNormativoDetalle = () => {
             setFormData(prev => ({ ...prev, compromisoId: compromisoIdFromUrl }));
           }
         }
+        
+        // Si está editando, establecer el compromiso seleccionado desde formData
+        if (isEdit && formData.compromisoId) {
+          const compromiso = compromisosArray.find(c => c.compromisoId === parseInt(formData.compromisoId));
+          if (compromiso) {
+            setCompromisoSeleccionado(compromiso);
+          }
+        }
       }
     } catch (error) {
       console.error('Error al cargar compromisos:', error);
@@ -99,18 +107,18 @@ const CumplimientoNormativoDetalle = () => {
           nombres: data.nombres || '',
           apellidoPaterno: data.apellidoPaterno || '',
           apellidoMaterno: data.apellidoMaterno || '',
-          correo: data.correo || '',
+          correoElectronico: data.correoElectronico || '',
           telefono: data.telefono || '',
           rol: data.rol || '',
           cargo: data.cargo || '',
           fechaInicio: data.fechaInicio ? data.fechaInicio.split('T')[0] : '',
           documentoFile: null,
-          validacion1: data.validacion1 || false,
-          validacion2: data.validacion2 || false,
-          validacion3: data.validacion3 || false,
-          validacion4: data.validacion4 || false,
-          aceptaPolitica: data.aceptaPolitica || false,
-          aceptaDeclaracion: data.aceptaDeclaracion || false,
+          validacionResolucionAutoridad: data.validacionResolucionAutoridad || false,
+          validacionLiderFuncionario: data.validacionLiderFuncionario || false,
+          validacionDesignacionArticulo: data.validacionDesignacionArticulo || false,
+          validacionFuncionesDefinidas: data.validacionFuncionesDefinidas || false,
+          aceptaPoliticaPrivacidad: data.aceptaPoliticaPrivacidad || false,
+          aceptaDeclaracionJurada: data.aceptaDeclaracionJurada || false,
           estado: data.estado || 1
         });
 
@@ -119,11 +127,8 @@ const CumplimientoNormativoDetalle = () => {
           setPdfUrl(data.documentoUrl);
         }
 
-        // Establecer el compromiso seleccionado
-        const compromiso = compromisos.find(c => c.compromisoId === data.compromisoId);
-        if (compromiso) {
-          setCompromisoSeleccionado(compromiso);
-        }
+        // Guardar compromisoId para buscar el compromiso después
+        // El compromiso se establecerá en loadCompromisos
       } else {
         showErrorToast(response.message || 'Error al cargar el cumplimiento');
         navigate('/dashboard/cumplimiento');
@@ -191,9 +196,9 @@ const CumplimientoNormativoDetalle = () => {
       if (!formData.nombres) nuevosErrores.nombres = 'Ingrese los nombres';
       if (!formData.apellidoPaterno) nuevosErrores.apellidoPaterno = 'Ingrese el apellido paterno';
       if (!formData.apellidoMaterno) nuevosErrores.apellidoMaterno = 'Ingrese el apellido materno';
-      if (!formData.correo) nuevosErrores.correo = 'Ingrese el correo';
-      if (formData.correo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) {
-        nuevosErrores.correo = 'Ingrese un correo válido';
+      if (!formData.correoElectronico) nuevosErrores.correoElectronico = 'Ingrese el correo';
+      if (formData.correoElectronico && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoElectronico)) {
+        nuevosErrores.correoElectronico = 'Ingrese un correo válido';
       }
       if (!formData.telefono) nuevosErrores.telefono = 'Ingrese el teléfono';
       if (!formData.rol) nuevosErrores.rol = 'Ingrese el rol';
@@ -205,15 +210,15 @@ const CumplimientoNormativoDetalle = () => {
       if (!isEdit && !formData.documentoFile && !pdfUrl) {
         nuevosErrores.documentoFile = 'Debe adjuntar el documento normativo (PDF)';
       }
-      if (!formData.validacion1) nuevosErrores.validacion1 = 'Debe aceptar esta validación';
-      if (!formData.validacion2) nuevosErrores.validacion2 = 'Debe aceptar esta validación';
-      if (!formData.validacion3) nuevosErrores.validacion3 = 'Debe aceptar esta validación';
-      if (!formData.validacion4) nuevosErrores.validacion4 = 'Debe aceptar esta validación';
+      if (!formData.validacionResolucionAutoridad) nuevosErrores.validacionResolucionAutoridad = 'Debe aceptar esta validación';
+      if (!formData.validacionLiderFuncionario) nuevosErrores.validacionLiderFuncionario = 'Debe aceptar esta validación';
+      if (!formData.validacionDesignacionArticulo) nuevosErrores.validacionDesignacionArticulo = 'Debe aceptar esta validación';
+      if (!formData.validacionFuncionesDefinidas) nuevosErrores.validacionFuncionesDefinidas = 'Debe aceptar esta validación';
     }
 
     if (paso === 3) {
-      if (!formData.aceptaPolitica) nuevosErrores.aceptaPolitica = 'Debe aceptar la política de privacidad';
-      if (!formData.aceptaDeclaracion) nuevosErrores.aceptaDeclaracion = 'Debe aceptar la declaración jurada';
+      if (!formData.aceptaPoliticaPrivacidad) nuevosErrores.aceptaPoliticaPrivacidad = 'Debe aceptar la política de privacidad';
+      if (!formData.aceptaDeclaracionJurada) nuevosErrores.aceptaDeclaracionJurada = 'Debe aceptar la declaración jurada';
     }
 
     setErrores(nuevosErrores);
@@ -253,18 +258,18 @@ const CumplimientoNormativoDetalle = () => {
         nombres: formData.nombres || '',
         apellidoPaterno: formData.apellidoPaterno || '',
         apellidoMaterno: formData.apellidoMaterno || '',
-        correo: formData.correo || '',
+        correoElectronico: formData.correoElectronico || '',
         telefono: formData.telefono || '',
         rol: formData.rol || '',
         cargo: formData.cargo || '',
         fechaInicio: formData.fechaInicio || '',
         documentoUrl: documentoUrl || '',
-        validacion1: formData.validacion1 || false,
-        validacion2: formData.validacion2 || false,
-        validacion3: formData.validacion3 || false,
-        validacion4: formData.validacion4 || false,
-        aceptaPolitica: formData.aceptaPolitica || false,
-        aceptaDeclaracion: formData.aceptaDeclaracion || false,
+        validacionResolucionAutoridad: formData.validacionResolucionAutoridad || false,
+        validacionLiderFuncionario: formData.validacionLiderFuncionario || false,
+        validacionDesignacionArticulo: formData.validacionDesignacionArticulo || false,
+        validacionFuncionesDefinidas: formData.validacionFuncionesDefinidas || false,
+        aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+        aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
         estado: formData.estado || 1
       };
 
@@ -490,14 +495,14 @@ const CumplimientoNormativoDetalle = () => {
                 </label>
                 <input
                   type="email"
-                  name="correo"
-                  value={formData.correo}
+                  name="correoElectronico"
+                  value={formData.correoElectronico}
                   onChange={handleInputChange}
-                  className={`input-field ${errores.correo ? 'border-red-500' : ''}`}
+                  className={`input-field ${errores.correoElectronico ? 'border-red-500' : ''}`}
                   placeholder="ejemplo@gob.pe"
                 />
-                {errores.correo && (
-                  <p className="text-red-500 text-xs mt-1">{errores.correo}</p>
+                {errores.correoElectronico && (
+                  <p className="text-red-500 text-xs mt-1">{errores.correoElectronico}</p>
                 )}
               </div>
 
@@ -640,8 +645,8 @@ const CumplimientoNormativoDetalle = () => {
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    name="validacion1"
-                    checked={formData.validacion1}
+                    name="validacionResolucionAutoridad"
+                    checked={formData.validacionResolucionAutoridad}
                     onChange={handleInputChange}
                     className="mt-1"
                   />
@@ -649,15 +654,15 @@ const CumplimientoNormativoDetalle = () => {
                     La Resolución ha sido emitida por la autoridad competente de la entidad
                   </span>
                 </label>
-                {errores.validacion1 && (
-                  <p className="text-red-500 text-xs ml-6">{errores.validacion1}</p>
+                {errores.validacionResolucionAutoridad && (
+                  <p className="text-red-500 text-xs ml-6">{errores.validacionResolucionAutoridad}</p>
                 )}
 
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    name="validacion2"
-                    checked={formData.validacion2}
+                    name="validacionLiderFuncionario"
+                    checked={formData.validacionLiderFuncionario}
                     onChange={handleInputChange}
                     className="mt-1"
                   />
@@ -665,15 +670,15 @@ const CumplimientoNormativoDetalle = () => {
                     El Líder de Gobierno Digital es un funcionario de la entidad
                   </span>
                 </label>
-                {errores.validacion2 && (
-                  <p className="text-red-500 text-xs ml-6">{errores.validacion2}</p>
+                {errores.validacionLiderFuncionario && (
+                  <p className="text-red-500 text-xs ml-6">{errores.validacionLiderFuncionario}</p>
                 )}
 
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    name="validacion3"
-                    checked={formData.validacion3}
+                    name="validacionDesignacionArticulo"
+                    checked={formData.validacionDesignacionArticulo}
                     onChange={handleInputChange}
                     className="mt-1"
                   />
@@ -681,15 +686,15 @@ const CumplimientoNormativoDetalle = () => {
                     La Resolución indica el artículo específico de designación del Líder
                   </span>
                 </label>
-                {errores.validacion3 && (
-                  <p className="text-red-500 text-xs ml-6">{errores.validacion3}</p>
+                {errores.validacionDesignacionArticulo && (
+                  <p className="text-red-500 text-xs ml-6">{errores.validacionDesignacionArticulo}</p>
                 )}
 
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    name="validacion4"
-                    checked={formData.validacion4}
+                    name="validacionFuncionesDefinidas"
+                    checked={formData.validacionFuncionesDefinidas}
                     onChange={handleInputChange}
                     className="mt-1"
                   />
@@ -697,8 +702,8 @@ const CumplimientoNormativoDetalle = () => {
                     Las funciones del Líder están claramente definidas en la Resolución
                   </span>
                 </label>
-                {errores.validacion4 && (
-                  <p className="text-red-500 text-xs ml-6">{errores.validacion4}</p>
+                {errores.validacionFuncionesDefinidas && (
+                  <p className="text-red-500 text-xs ml-6">{errores.validacionFuncionesDefinidas}</p>
                 )}
               </div>
             </div>
@@ -719,8 +724,8 @@ const CumplimientoNormativoDetalle = () => {
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    name="aceptaPolitica"
-                    checked={formData.aceptaPolitica}
+                    name="aceptaPoliticaPrivacidad"
+                    checked={formData.aceptaPoliticaPrivacidad}
                     onChange={handleInputChange}
                     className="mt-1"
                   />
@@ -730,15 +735,15 @@ const CumplimientoNormativoDetalle = () => {
                     Ley N° 29733 - Ley de Protección de Datos Personales.
                   </span>
                 </label>
-                {errores.aceptaPolitica && (
-                  <p className="text-red-500 text-xs ml-6">{errores.aceptaPolitica}</p>
+                {errores.aceptaPoliticaPrivacidad && (
+                  <p className="text-red-500 text-xs ml-6">{errores.aceptaPoliticaPrivacidad}</p>
                 )}
 
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    name="aceptaDeclaracion"
-                    checked={formData.aceptaDeclaracion}
+                    name="aceptaDeclaracionJurada"
+                    checked={formData.aceptaDeclaracionJurada}
                     onChange={handleInputChange}
                     className="mt-1"
                   />
@@ -748,8 +753,8 @@ const CumplimientoNormativoDetalle = () => {
                     Digital. Asumo responsabilidad por la veracidad de la información registrada.
                   </span>
                 </label>
-                {errores.aceptaDeclaracion && (
-                  <p className="text-red-500 text-xs ml-6">{errores.aceptaDeclaracion}</p>
+                {errores.aceptaDeclaracionJurada && (
+                  <p className="text-red-500 text-xs ml-6">{errores.aceptaDeclaracionJurada}</p>
                 )}
               </div>
             </div>
@@ -769,7 +774,7 @@ const CumplimientoNormativoDetalle = () => {
                 <div className="text-gray-600">DNI:</div>
                 <div className="font-medium">{formData.nroDni}</div>
                 <div className="text-gray-600">Correo:</div>
-                <div className="font-medium">{formData.correo}</div>
+                <div className="font-medium">{formData.correoElectronico}</div>
                 <div className="text-gray-600">Documento:</div>
                 <div className="font-medium">{pdfUrl ? 'Adjuntado ✓' : 'No adjuntado'}</div>
               </div>
