@@ -62,6 +62,16 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
                 {
                     if (int.TryParse(alcanceIdStr, out int alcanceId))
                     {
+                        // Verificar que el ClasificacionId existe
+                        var clasificacionExists = await _context.Clasificaciones
+                            .AnyAsync(c => c.ClasificacionId == alcanceId, cancellationToken);
+                        
+                        if (!clasificacionExists)
+                        {
+                            _logger.LogWarning("ClasificacionId {AlcanceId} no existe en la tabla clasificacion", alcanceId);
+                            continue; // Skip this alcance
+                        }
+
                         var alcanceCompromiso = new AlcanceCompromiso
                         {
                             CompromisoId = compromiso.CompromisoId,

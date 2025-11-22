@@ -19,7 +19,6 @@ const CompromisoGobiernoDigital = () => {
   const normasPorPagina = 5;
 
   // Catálogos dinámicos
-  const [estados, setEstados] = useState([]);
   const [tiposNorma, setTiposNorma] = useState([]);
   const [alcances, setAlcances] = useState([]);
   
@@ -68,15 +67,11 @@ const CompromisoGobiernoDigital = () => {
 
   const loadCatalogos = async () => {
     try {
-      const [estadosResponse, tiposResponse, alcancesResponse] = await Promise.all([
-        catalogosService.getEstados(),
+      const [tiposResponse, alcancesResponse] = await Promise.all([
         catalogosService.getTiposNorma(),
         catalogosService.getAlcances()
       ]);
 
-      if (estadosResponse.isSuccess) {
-        setEstados(estadosResponse.data || []);
-      }
       if (tiposResponse.isSuccess) {
         setTiposNorma(tiposResponse.data || []);
       }
@@ -512,6 +507,9 @@ const CompromisoGobiernoDigital = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  #
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Nombre Compromiso
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -529,8 +527,13 @@ const CompromisoGobiernoDigital = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {currentItems.map((compromiso) => (
+              {currentItems.map((compromiso, index) => (
                 <tr key={compromiso.compromisoId} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                      <span className="text-sm font-bold text-primary">{indexOfFirstItem + index + 1}</span>
+                    </div>
+                  </td>
                   <td className="px-6 py-4">
                     <div className="flex items-start">
                       <FileCheck className="text-primary mr-2 mt-1" size={18} />

@@ -34,11 +34,20 @@ public class CumplimientoNormativoController : ControllerBase
     {
         try
         {
+            // Extraer UserId del JWT token
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            Guid? userId = null;
+            if (!string.IsNullOrEmpty(userIdClaim) && Guid.TryParse(userIdClaim, out var parsedUserId))
+            {
+                userId = parsedUserId;
+            }
+
             var query = new GetAllCumplimientosQuery
             {
                 CompromisoId = compromisoId,
                 Estado = estado,
-                EntidadId = entidadId
+                EntidadId = entidadId,
+                UserId = userId
             };
 
             var result = await _mediator.Send(query);

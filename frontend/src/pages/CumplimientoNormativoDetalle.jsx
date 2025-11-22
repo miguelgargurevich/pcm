@@ -41,10 +41,7 @@ const CumplimientoNormativoDetalle = () => {
     
     // Paso 2: Normativa
     documentoFile: null,
-    validacionResolucionAutoridad: false,
-    validacionLiderFuncionario: false,
-    validacionDesignacionArticulo: false,
-    validacionFuncionesDefinidas: false,
+    criteriosEvaluados: [], // Array de { criterioId, cumple: boolean }
     
     // Paso 3: Confirmación
     aceptaPoliticaPrivacidad: false,
@@ -220,10 +217,18 @@ const CumplimientoNormativoDetalle = () => {
       if (!isEdit && !formData.documentoFile && !pdfUrl) {
         nuevosErrores.documentoFile = 'Debe adjuntar el documento normativo (PDF)';
       }
-      if (!formData.validacionResolucionAutoridad) nuevosErrores.validacionResolucionAutoridad = 'Debe aceptar esta validación';
-      if (!formData.validacionLiderFuncionario) nuevosErrores.validacionLiderFuncionario = 'Debe aceptar esta validación';
-      if (!formData.validacionDesignacionArticulo) nuevosErrores.validacionDesignacionArticulo = 'Debe aceptar esta validación';
-      if (!formData.validacionFuncionesDefinidas) nuevosErrores.validacionFuncionesDefinidas = 'Debe aceptar esta validación';
+      // Validar que todos los criterios activos del compromiso estén marcados
+      if (compromisoSeleccionado?.criteriosEvaluacion) {
+        const criteriosActivos = compromisoSeleccionado.criteriosEvaluacion.filter(c => c.activo);
+        const criteriosFaltantes = criteriosActivos.filter(criterio => {
+          const evaluado = formData.criteriosEvaluados.find(c => c.criterioId === criterio.criterioEvaluacionId);
+          return !evaluado || !evaluado.cumple;
+        });
+        
+        if (criteriosFaltantes.length > 0) {
+          nuevosErrores.criteriosEvaluacion = `Debe cumplir con todos los criterios de evaluación (${criteriosFaltantes.length} pendientes)`;
+        }
+      }
     }
 
     if (paso === 3) {
@@ -423,9 +428,9 @@ const CumplimientoNormativoDetalle = () => {
                   {pasoActual > paso ? <Check size={20} /> : paso}
                 </div>
                 <span className={`text-xs mt-2 ${pasoActual === paso ? 'text-primary font-semibold' : 'text-gray-600'}`}>
-                  {paso === 1 && 'Datos Generales'}
-                  {paso === 2 && 'Normativa'}
-                  {paso === 3 && 'Confirmación'}
+                  {paso === 1 && 'Registrar Compromiso'}
+                  {paso === 2 && 'Registrar Normativa'}
+                  {paso === 3 && 'Confirmar Veracidad de Información'}
                 </span>
               </div>
               {paso < 3 && (
@@ -442,10 +447,10 @@ const CumplimientoNormativoDetalle = () => {
 
       {/* Formulario */}
       <div className="bg-white rounded-lg shadow-sm p-5">
-        {/* Paso 1: Datos Generales */}
+        {/* Paso 1: Registrar Compromiso */}
         {pasoActual === 1 && (
           <div className="space-y-3">
-            <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos Generales del Líder</h2>
+            <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Registrar Compromiso - Datos Generales del Líder</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -613,10 +618,10 @@ const CumplimientoNormativoDetalle = () => {
           </div>
         )}
 
-        {/* Paso 2: Normativa */}
+        {/* Paso 2: Registrar Normativa */}
         {pasoActual === 2 && (
           <div className="space-y-4">
-            <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 2: Documento Normativo y Validaciones</h2>
+            <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 2: Registrar Normativa - Documento y Validaciones</h2>
 
             {/* Upload de documento */}
             <div>
@@ -677,89 +682,54 @@ const CumplimientoNormativoDetalle = () => {
               )}
             </div>
 
-            {/* Validaciones */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                <AlertCircle className="text-blue-600" size={20} />
-                Validaciones Requeridas
-              </h3>
-              <div className="space-y-3">
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="validacionResolucionAutoridad"
-                    checked={formData.validacionResolucionAutoridad}
-                    onChange={handleInputChange}
-                    className="mt-1"
-                    disabled={viewMode}
-                  />
-                  <span className="text-sm text-gray-700">
-                    La Resolución ha sido emitida por la autoridad competente de la entidad
-                  </span>
-                </label>
-                {errores.validacionResolucionAutoridad && (
-                  <p className="text-red-500 text-xs ml-6">{errores.validacionResolucionAutoridad}</p>
-                )}
-
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="validacionLiderFuncionario"
-                    checked={formData.validacionLiderFuncionario}
-                    onChange={handleInputChange}
-                    className="mt-1"
-                    disabled={viewMode}
-                  />
-                  <span className="text-sm text-gray-700">
-                    El Líder de Gobierno Digital es un funcionario de la entidad
-                  </span>
-                </label>
-                {errores.validacionLiderFuncionario && (
-                  <p className="text-red-500 text-xs ml-6">{errores.validacionLiderFuncionario}</p>
-                )}
-
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="validacionDesignacionArticulo"
-                    checked={formData.validacionDesignacionArticulo}
-                    onChange={handleInputChange}
-                    className="mt-1"
-                    disabled={viewMode}
-                  />
-                  <span className="text-sm text-gray-700">
-                    La Resolución indica el artículo específico de designación del Líder
-                  </span>
-                </label>
-                {errores.validacionDesignacionArticulo && (
-                  <p className="text-red-500 text-xs ml-6">{errores.validacionDesignacionArticulo}</p>
-                )}
-
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="validacionFuncionesDefinidas"
-                    checked={formData.validacionFuncionesDefinidas}
-                    onChange={handleInputChange}
-                    className="mt-1"
-                    disabled={viewMode}
-                  />
-                  <span className="text-sm text-gray-700">
-                    Las funciones del Líder están claramente definidas en la Resolución
-                  </span>
-                </label>
-                {errores.validacionFuncionesDefinidas && (
-                  <p className="text-red-500 text-xs ml-6">{errores.validacionFuncionesDefinidas}</p>
+            {/* Criterios de Evaluación del Compromiso */}
+            {compromisoSeleccionado?.criteriosEvaluacion && compromisoSeleccionado.criteriosEvaluacion.length > 0 && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  <AlertCircle className="text-blue-600" size={20} />
+                  Criterios de Evaluación
+                </h3>
+                <div className="space-y-3">
+                  {compromisoSeleccionado.criteriosEvaluacion
+                    .filter(criterio => criterio.activo)
+                    .map((criterio, index) => {
+                      const criterioEvaluado = formData.criteriosEvaluados.find(c => c.criterioId === criterio.criterioEvaluacionId);
+                      return (
+                        <div key={criterio.criterioEvaluacionId}>
+                          <label className="flex items-start gap-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={criterioEvaluado?.cumple || false}
+                              onChange={(e) => {
+                                const criteriosActualizados = formData.criteriosEvaluados.filter(c => c.criterioId !== criterio.criterioEvaluacionId);
+                                if (e.target.checked) {
+                                  criteriosActualizados.push({ criterioId: criterio.criterioEvaluacionId, cumple: true });
+                                }
+                                setFormData(prev => ({ ...prev, criteriosEvaluados: criteriosActualizados }));
+                              }}
+                              className="mt-1"
+                              disabled={viewMode}
+                            />
+                            <span className="text-sm text-gray-700">
+                              <span className="font-medium">#{index + 1}:</span> {criterio.descripcion}
+                            </span>
+                          </label>
+                        </div>
+                      );
+                    })}
+                </div>
+                {errores.criteriosEvaluacion && (
+                  <p className="text-red-500 text-sm mt-2">{errores.criteriosEvaluacion}</p>
                 )}
               </div>
-            </div>
+            )}
           </div>
         )}
 
-        {/* Paso 3: Confirmación */}
+        {/* Paso 3: Confirmar Veracidad de Información */}
         {pasoActual === 3 && (
           <div className="space-y-4">
-            <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 3: Confirmación y Aceptación</h2>
+            <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 3: Confirmar Veracidad de Información</h2>
 
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
               <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">

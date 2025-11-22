@@ -9,4 +9,5 @@ public class GetAllCumplimientosQuery : IRequest<Result<List<CumplimientoListIte
     public int? CompromisoId { get; set; } // Filtro por compromiso
     public int? Estado { get; set; } // Filtro por estado
     public Guid? EntidadId { get; set; } // Filtro por entidad
+    public Guid? UserId { get; set; } // ID del usuario autenticado para filtrar por alcance
 }

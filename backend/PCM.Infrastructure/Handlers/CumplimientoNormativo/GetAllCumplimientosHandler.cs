@@ -23,10 +23,31 @@ public class GetAllCumplimientosHandler : IRequestHandler<GetAllCumplimientosQue
     {
         try
         {
+            // Obtener la clasificación de la entidad del usuario (si está autenticado)
+            int? userClasificacionId = null;
+            if (request.UserId.HasValue)
+            {
+                var usuario = await _context.Usuarios
+                    .Include(u => u.Entidad)
+                    .FirstOrDefaultAsync(u => u.UserId == request.UserId.Value, cancellationToken);
+                
+                if (usuario?.Entidad != null)
+                {
+                    userClasificacionId = usuario.Entidad.ClasificacionId;
+                }
+            }
+
             var query = _context.CumplimientosNormativos
                 .Include(c => c.Compromiso)
+                    .ThenInclude(comp => comp.AlcancesCompromisos)
                 .Include(c => c.Entidad)
                 .Where(c => c.Activo);
+
+            // Filtrar por clasificación de la entidad del usuario
+            if (userClasificacionId.HasValue)
+            {
+                query = query.Where(c => c.Compromiso.AlcancesCompromisos.Any(ac => ac.ClasificacionId == userClasificacionId.Value && ac.Activo));
+            }
 
             // Aplicar filtros
             if (request.CompromisoId.HasValue)

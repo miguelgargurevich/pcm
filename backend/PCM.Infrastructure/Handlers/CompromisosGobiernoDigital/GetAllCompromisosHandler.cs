@@ -50,6 +50,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                         .ThenInclude(norma => norma.Sector)
                 .Include(c => c.CriteriosEvaluacion)
                 .Include(c => c.AlcancesCompromisos)
+                    .ThenInclude(ac => ac.Clasificacion)
                 .AsQueryable();
 
             // Filtrar por clasificación de la entidad del usuario
@@ -100,12 +101,12 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
             CompromisoId = compromiso.CompromisoId,
             NombreCompromiso = compromiso.NombreCompromiso,
             Descripcion = compromiso.Descripcion,
-            Alcances = string.IsNullOrEmpty(compromiso.Alcances) 
-                ? new List<string>() 
-                : compromiso.Alcances.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(a => a.Trim())
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .ToList(),
+            Alcances = compromiso.AlcancesCompromisos?
+                .Where(ac => ac.Activo)
+                .Select(ac => ac.Clasificacion?.Nombre ?? string.Empty)
+                .Where(nombre => !string.IsNullOrEmpty(nombre))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList() ?? new List<string>(),
             FechaInicio = compromiso.FechaInicio,
             FechaFin = compromiso.FechaFin,
             Estado = compromiso.IdEstado,

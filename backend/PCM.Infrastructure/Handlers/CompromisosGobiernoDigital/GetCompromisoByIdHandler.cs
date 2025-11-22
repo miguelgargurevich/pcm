@@ -35,6 +35,8 @@ public class GetCompromisoByIdHandler : IRequestHandler<GetCompromisoByIdQuery, 
                     .ThenInclude(n => n.Norma)
                         .ThenInclude(norma => norma.Sector)
                 .Include(c => c.CriteriosEvaluacion)
+                .Include(c => c.AlcancesCompromisos)
+                    .ThenInclude(ac => ac.Clasificacion)
                 .FirstOrDefaultAsync(c => c.CompromisoId == request.CompromisoId, cancellationToken);
 
             if (compromiso == null)
@@ -61,12 +63,12 @@ public class GetCompromisoByIdHandler : IRequestHandler<GetCompromisoByIdQuery, 
             CompromisoId = compromiso.CompromisoId,
             NombreCompromiso = compromiso.NombreCompromiso,
             Descripcion = compromiso.Descripcion,
-            Alcances = string.IsNullOrEmpty(compromiso.Alcances) 
-                ? new List<string>() 
-                : compromiso.Alcances.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(a => a.Trim())
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .ToList(),
+            Alcances = compromiso.AlcancesCompromisos?
+                .Where(ac => ac.Activo)
+                .Select(ac => ac.Clasificacion?.Nombre ?? string.Empty)
+                .Where(nombre => !string.IsNullOrEmpty(nombre))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList() ?? new List<string>(),
             FechaInicio = compromiso.FechaInicio,
             FechaFin = compromiso.FechaFin,
             Estado = compromiso.IdEstado,
