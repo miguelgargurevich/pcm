@@ -227,15 +227,15 @@ public class CumplimientoNormativoController : ControllerBase
             var bucketName = Environment.GetEnvironmentVariable("SUPABASE_S3_BUCKET_NAME") ?? "cumplimiento-documentos";
             var accessKey = Environment.GetEnvironmentVariable("SUPABASE_S3_ACCESS_KEY") ?? "f78de9bdc3c970c96fbe4d2256b1f834";
             var secretKey = Environment.GetEnvironmentVariable("SUPABASE_S3_SECRET_KEY") ?? "5003c01d4c235bb31f197e932bcf89528f180ba45b478d8d51dca1021fd86660";
-            var endpoint = Environment.GetEnvironmentVariable("SUPABASE_S3_ENDPOINT") ?? "https://amzwfwfhllwhjffkqxhn.storage.supabase.co";
-            var region = Environment.GetEnvironmentVariable("SUPABASE_S3_REGION") ?? "us-east-1";
+            var endpoint = Environment.GetEnvironmentVariable("SUPABASE_S3_ENDPOINT") ?? "https://amzwfwfhllwhjffkqxhn.storage.supabase.co/storage/v1/s3";
+            var regionName = Environment.GetEnvironmentVariable("SUPABASE_S3_REGION") ?? "us-east-1";
 
             var credentials = new BasicAWSCredentials(accessKey, secretKey);
             var config = new AmazonS3Config
             {
                 ServiceURL = endpoint,
-                ForcePathStyle = true,
-                SignatureVersion = "4"
+                AuthenticationRegion = regionName,
+                ForcePathStyle = true
             };
 
             using var s3Client = new AmazonS3Client(credentials, config);
