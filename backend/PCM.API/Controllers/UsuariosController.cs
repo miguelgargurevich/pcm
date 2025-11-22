@@ -126,7 +126,8 @@ public class UsuariosController : ControllerBase
             ApeMaterno = dto.ApeMaterno,
             Direccion = dto.Direccion,
             EntidadId = dto.EntidadId,
-            PerfilId = dto.PerfilId
+            PerfilId = dto.PerfilId,
+            Activo = dto.Activo
         };
 
         var result = await _mediator.Send(command);

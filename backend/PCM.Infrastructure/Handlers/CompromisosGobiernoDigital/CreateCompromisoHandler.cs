@@ -40,6 +40,25 @@ public class CreateCompromisoHandler : IRequestHandler<CreateCompromisoCommand, 
             _context.CompromisosGobiernoDigital.Add(compromiso);
             await _context.SaveChangesAsync(cancellationToken);
 
+            // Add alcances to alcances_compromisos table
+            if (request.Alcances != null && request.Alcances.Any())
+            {
+                foreach (var alcanceIdStr in request.Alcances)
+                {
+                    if (int.TryParse(alcanceIdStr, out int alcanceId))
+                    {
+                        var alcanceCompromiso = new AlcanceCompromiso
+                        {
+                            CompromisoId = compromiso.CompromisoId,
+                            ClasificacionId = alcanceId,
+                            Activo = true,
+                            CreatedAt = DateTime.UtcNow
+                        };
+                        _context.AlcancesCompromisos.Add(alcanceCompromiso);
+                    }
+                }
+            }
+
             // Add normativas if provided
             if (request.Normativas != null && request.Normativas.Any())
             {
@@ -64,8 +83,8 @@ public class CreateCompromisoHandler : IRequestHandler<CreateCompromisoCommand, 
                     {
                         CompromisoId = compromiso.CompromisoId,
                         Descripcion = criterioDto.Descripcion,
-                        IdEstado = criterioDto.Estado,
-                        Activo = true,
+                        IdEstado = 1, // Default pendiente
+                        Activo = criterioDto.Activo,
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = null  // Explicitly set to null to avoid unspecified DateTime
                     };

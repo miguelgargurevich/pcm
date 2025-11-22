@@ -75,6 +75,7 @@ public class UpdateUsuarioHandler : IRequestHandler<UpdateUsuarioCommand, Result
             usuario.Direccion = request.Direccion;
             usuario.EntidadId = request.EntidadId;
             usuario.PerfilId = request.PerfilId;
+            usuario.Activo = request.Activo;
             usuario.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync(cancellationToken);

@@ -70,7 +70,7 @@ public class CriterioEvaluacionDto
 {
     public int? CriterioEvaluacionId { get; set; }
     public string Descripcion { get; set; } = string.Empty;
-    public int Estado { get; set; } = 1; // FK a estado_compromiso (1=pendiente)
+    public bool Activo { get; set; } = true;
 }
 
 public class CriterioEvaluacionResponseDto

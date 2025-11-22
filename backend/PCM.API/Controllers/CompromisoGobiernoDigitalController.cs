@@ -35,8 +35,17 @@ public class CompromisoGobiernoDigitalController : ControllerBase
     {
         try
         {
+            // Obtener UserId del usuario autenticado
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            Guid? userId = null;
+            if (!string.IsNullOrEmpty(userIdClaim) && Guid.TryParse(userIdClaim, out var parsedUserId))
+            {
+                userId = parsedUserId;
+            }
+
             var query = new GetAllCompromisosQuery
             {
+                UserId = userId,
                 Nombre = nombre,
                 Alcance = alcance,
                 Estado = estado

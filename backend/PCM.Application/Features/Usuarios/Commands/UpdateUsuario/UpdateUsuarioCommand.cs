@@ -15,4 +15,5 @@ public record UpdateUsuarioCommand : IRequest<Result<UsuarioDetailDto>>
     public string? Direccion { get; init; }
     public required Guid? EntidadId { get; init; }
     public required int PerfilId { get; init; }
+    public bool Activo { get; init; } = true;
 }

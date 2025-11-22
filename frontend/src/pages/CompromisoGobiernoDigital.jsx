@@ -56,7 +56,6 @@ const CompromisoGobiernoDigital = () => {
   // Estados para nuevo criterio
   const [nuevoCriterio, setNuevoCriterio] = useState({
     descripcion: '',
-    estado: 1, // ID de estado pendiente
     activo: true
   });
 
@@ -225,7 +224,6 @@ const CompromisoGobiernoDigital = () => {
         criteriosEvaluacion: formData.criteriosEvaluacion.map(c => ({
           criterioEvaluacionId: c.criterioEvaluacionId,
           descripcion: c.descripcion,
-          estado: c.estado || 1, // Ya es un ID
           activo: c.activo !== undefined ? c.activo : true
         }))
       };
@@ -365,7 +363,8 @@ const CompromisoGobiernoDigital = () => {
       const criteriosActualizados = [...formData.criteriosEvaluacion];
       criteriosActualizados[editingCriterioIndex] = {
         ...nuevoCriterio,
-        id: criteriosActualizados[editingCriterioIndex].id
+        id: criteriosActualizados[editingCriterioIndex].id,
+        criterioEvaluacionId: criteriosActualizados[editingCriterioIndex].criterioEvaluacionId
       };
       setFormData(prev => ({
         ...prev,
@@ -373,10 +372,9 @@ const CompromisoGobiernoDigital = () => {
       }));
       setEditingCriterioIndex(null);
     } else {
-      // Agregar nuevo criterio - inicia con estado=1 (pendiente) y activo=true
+      // Agregar nuevo criterio - siempre activo por defecto
       const criterio = {
         descripcion: nuevoCriterio.descripcion,
-        estado: 1,
         activo: true,
         id: Date.now()
       };
@@ -388,7 +386,6 @@ const CompromisoGobiernoDigital = () => {
 
     setNuevoCriterio({
       descripcion: '',
-      estado: 1,
       activo: true
     });
   };
@@ -396,8 +393,7 @@ const CompromisoGobiernoDigital = () => {
   const handleEditarCriterio = (index) => {
     const criterio = formData.criteriosEvaluacion[index];
     setNuevoCriterio({
-      ...criterio,
-      estado: typeof criterio.estado === 'number' ? criterio.estado : 1,
+      descripcion: criterio.descripcion,
       activo: typeof criterio.activo === 'boolean' ? criterio.activo : true
     });
     setEditingCriterioIndex(index);
@@ -415,16 +411,6 @@ const CompromisoGobiernoDigital = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPorPagina;
   const currentItems = compromisosFiltrados.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(compromisosFiltrados.length / itemsPorPagina);
-
-  const getEstadoBadgeClass = (estado) => {
-    const classes = {
-      pendiente: 'bg-yellow-100 text-yellow-800',
-      en_proceso: 'bg-blue-100 text-blue-800',
-      completado: 'bg-green-100 text-green-800',
-      vencido: 'bg-red-100 text-red-800'
-    };
-    return classes[estado] || 'bg-gray-100 text-gray-800';
-  };
 
   if (loading) {
     return (
@@ -883,36 +869,17 @@ const CompromisoGobiernoDigital = () => {
                 
                 <div className="bg-gray-50 p-4 rounded-lg mb-4">
                   <div className="grid grid-cols-1 gap-3 mb-3">
-                    <div className={editingCriterioIndex !== null ? "grid grid-cols-1 md:grid-cols-3 gap-3" : ""}>
-                      <div className={editingCriterioIndex !== null ? "md:col-span-2" : ""}>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Descripción
-                        </label>
-                        <input
-                          type="text"
-                          value={nuevoCriterio.descripcion}
-                          onChange={(e) => setNuevoCriterio(prev => ({ ...prev, descripcion: e.target.value }))}
-                          className="input-field"
-                          placeholder="Descripción del criterio"
-                        />
-                      </div>
-
-                      {editingCriterioIndex !== null && (
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Estado
-                          </label>
-                          <select
-                            value={nuevoCriterio.estado}
-                            onChange={(e) => setNuevoCriterio(prev => ({ ...prev, estado: parseInt(e.target.value) }))}
-                            className="input-field"
-                          >
-                            {estados.map((estado) => (
-                              <option key={estado.estadoId} value={estado.estadoId}>{estado.nombre}</option>
-                            ))}
-                          </select>
-                        </div>
-                      )}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Descripción
+                      </label>
+                      <input
+                        type="text"
+                        value={nuevoCriterio.descripcion}
+                        onChange={(e) => setNuevoCriterio(prev => ({ ...prev, descripcion: e.target.value }))}
+                        className="input-field"
+                        placeholder="Descripción del criterio"
+                      />
                     </div>
                     
                     <div className="flex justify-end gap-2">
@@ -920,7 +887,7 @@ const CompromisoGobiernoDigital = () => {
                         <button
                           type="button"
                           onClick={() => {
-                            setNuevoCriterio({ descripcion: '', estado: 1, activo: true });
+                            setNuevoCriterio({ descripcion: '', activo: true });
                             setEditingCriterioIndex(null);
                           }}
                           className="btn-secondary flex items-center gap-2"
@@ -947,6 +914,7 @@ const CompromisoGobiernoDigital = () => {
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
+                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">#</th>
                           <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Descripción</th>
                           <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
                           <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
@@ -954,17 +922,13 @@ const CompromisoGobiernoDigital = () => {
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {formData.criteriosEvaluacion.map((criterio, index) => {
-                          // Criterio.estado puede ser un ID (número) o nombre (string)
-                          const estadoNombre = typeof criterio.estado === 'number' 
-                            ? estados.find(e => e.estadoId === criterio.estado)?.nombre 
-                            : criterio.estado;
-                          
                           return (
-                            <tr key={criterio.id}>
+                            <tr key={criterio.id || index}>
+                              <td className="px-4 py-2 text-sm text-gray-700">{index + 1}</td>
                               <td className="px-4 py-2 text-sm text-gray-900">{criterio.descripcion}</td>
                               <td className="px-4 py-2">
-                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadgeClass(estadoNombre || 'pendiente')}`}>
-                                  {estadoNombre || criterio.estado}
+                                <span className={criterio.activo ? 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold' : 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold'}>
+                                  {criterio.activo ? 'Activo' : 'Inactivo'}
                                 </span>
                               </td>
                               <td className="px-4 py-2 space-x-2">

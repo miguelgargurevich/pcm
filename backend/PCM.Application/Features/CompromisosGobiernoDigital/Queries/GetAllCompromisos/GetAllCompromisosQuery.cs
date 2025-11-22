@@ -6,6 +6,7 @@ namespace PCM.Application.Features.CompromisosGobiernoDigital.Queries.GetAllComp
 
 public class GetAllCompromisosQuery : IRequest<Result<List<CompromisoResponseDto>>>
 {
+    public Guid? UserId { get; set; }
     public string? Nombre { get; set; }
     public string? Alcance { get; set; }
     public int? Estado { get; set; } // FK a estado_compromiso

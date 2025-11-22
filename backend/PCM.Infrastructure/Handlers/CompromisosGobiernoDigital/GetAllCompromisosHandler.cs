@@ -24,6 +24,20 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
     {
         try
         {
+            // Obtener la clasificación de la entidad del usuario (si está autenticado)
+            int? userClasificacionId = null;
+            if (request.UserId.HasValue)
+            {
+                var usuario = await _context.Usuarios
+                    .Include(u => u.Entidad)
+                    .FirstOrDefaultAsync(u => u.UserId == request.UserId.Value, cancellationToken);
+                
+                if (usuario?.Entidad != null)
+                {
+                    userClasificacionId = usuario.Entidad.ClasificacionId;
+                }
+            }
+
             var query = _context.CompromisosGobiernoDigital
                 .Include(c => c.Normativas)
                     .ThenInclude(n => n.Norma)
@@ -35,7 +49,14 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .ThenInclude(n => n.Norma)
                         .ThenInclude(norma => norma.Sector)
                 .Include(c => c.CriteriosEvaluacion)
+                .Include(c => c.AlcancesCompromisos)
                 .AsQueryable();
+
+            // Filtrar por clasificación de la entidad del usuario
+            if (userClasificacionId.HasValue)
+            {
+                query = query.Where(c => c.AlcancesCompromisos.Any(ac => ac.ClasificacionId == userClasificacionId.Value && ac.Activo));
+            }
 
             // Apply filters
             if (!string.IsNullOrEmpty(request.Nombre))

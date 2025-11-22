@@ -27,6 +27,7 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
             var compromiso = await _context.CompromisosGobiernoDigital
                 .Include(c => c.Normativas)
                 .Include(c => c.CriteriosEvaluacion)
+                .Include(c => c.AlcancesCompromisos)
                 .FirstOrDefaultAsync(c => c.CompromisoId == request.CompromisoId, cancellationToken);
 
             if (compromiso == null)
@@ -51,6 +52,27 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
             _context.Entry(compromiso).Property(c => c.FechaFin).IsModified = true;
             _context.Entry(compromiso).Property(c => c.Activo).IsModified = true;
             _context.Entry(compromiso).Property(c => c.UpdatedAt).IsModified = true;
+
+            // Update alcances - remove old ones and add new ones
+            _context.AlcancesCompromisos.RemoveRange(compromiso.AlcancesCompromisos);
+
+            if (request.Alcances != null && request.Alcances.Any())
+            {
+                foreach (var alcanceIdStr in request.Alcances)
+                {
+                    if (int.TryParse(alcanceIdStr, out int alcanceId))
+                    {
+                        var alcanceCompromiso = new AlcanceCompromiso
+                        {
+                            CompromisoId = compromiso.CompromisoId,
+                            ClasificacionId = alcanceId,
+                            Activo = true,
+                            CreatedAt = DateTime.UtcNow
+                        };
+                        _context.AlcancesCompromisos.Add(alcanceCompromiso);
+                    }
+                }
+            }
 
             // Update normativas - remove old ones and add new ones
             _context.CompromisosNormativas.RemoveRange(compromiso.Normativas);
@@ -80,8 +102,8 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
                     {
                         CompromisoId = compromiso.CompromisoId,
                         Descripcion = criterioDto.Descripcion,
-                        IdEstado = criterioDto.Estado,
-                        Activo = true,
+                        IdEstado = 1, // Default pendiente
+                        Activo = criterioDto.Activo,
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = null  // Explicitly set to null to avoid unspecified DateTime
                     };
