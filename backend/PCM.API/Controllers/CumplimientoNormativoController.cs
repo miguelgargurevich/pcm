@@ -191,4 +191,84 @@ public class CumplimientoNormativoController : ControllerBase
             return StatusCode(500, new { isSuccess = false, message = "Error interno del servidor" });
         }
     }
+
+    /// <summary>
+    /// Sube un documento PDF a Supabase Storage
+    /// </summary>
+    [HttpPost("upload")]
+    public async Task<IActionResult> UploadDocument([FromForm] IFormFile file)
+    {
+        try
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { isSuccess = false, message = "No se recibió ningún archivo" });
+            }
+
+            // Validar que sea PDF
+            if (file.ContentType != "application/pdf")
+            {
+                return BadRequest(new { isSuccess = false, message = "Solo se permiten archivos PDF" });
+            }
+
+            // Validar tamaño (10MB máximo)
+            if (file.Length > 10 * 1024 * 1024)
+            {
+                return BadRequest(new { isSuccess = false, message = "El archivo no puede superar los 10MB" });
+            }
+
+            // Generar nombre único para el archivo
+            var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+            var bucketName = "cumplimiento-documentos";
+
+            // Configurar Supabase
+            var supabaseUrl = Environment.GetEnvironmentVariable("SUPABASE_URL") ?? "https://amzwfwfhllwhjffkqxhn.supabase.co";
+            var supabaseKey = Environment.GetEnvironmentVariable("SUPABASE_KEY") ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtenhmd2ZobGx3aGpmZmtxeGhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE5NzQ4MDMsImV4cCI6MjA0NzU1MDgwM30.q3ZE0Zd8N4vKMH7A8LoQdW4fKoI3KgZqvxBCz8EHpzY";
+
+            var options = new Supabase.SupabaseOptions
+            {
+                AutoConnectRealtime = false
+            };
+
+            var supabase = new Supabase.Client(supabaseUrl, supabaseKey, options);
+            await supabase.InitializeAsync();
+
+            // Convertir IFormFile a byte array
+            using var memoryStream = new MemoryStream();
+            await file.CopyToAsync(memoryStream);
+            var fileBytes = memoryStream.ToArray();
+
+            // Subir archivo a Supabase Storage
+            var uploadResult = await supabase.Storage
+                .From(bucketName)
+                .Upload(fileBytes, fileName, new Supabase.Storage.FileOptions
+                {
+                    ContentType = file.ContentType,
+                    Upsert = false
+                });
+
+            // Obtener URL pública del archivo
+            var publicUrl = supabase.Storage.From(bucketName).GetPublicUrl(fileName);
+
+            _logger.LogInformation("Documento subido exitosamente: {FileName}", fileName);
+
+            return Ok(new
+            {
+                isSuccess = true,
+                data = new
+                {
+                    url = publicUrl,
+                    nombre = file.FileName,
+                    tamano = file.Length,
+                    tipo = file.ContentType
+                },
+                message = "Documento subido exitosamente"
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al subir documento");
+            return StatusCode(500, new { isSuccess = false, message = $"Error al subir el documento: {ex.Message}" });
+        }
+    }
 }

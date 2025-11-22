@@ -98,32 +98,16 @@ const cumplimientoService = {
    * @returns {Promise} URL del archivo subido
    */
   uploadDocument: async (file) => {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      // TODO: Implementar endpoint de upload en el backend
-      // Por ahora retornamos una URL simulada
-      // En producción, esto debería subir a Supabase Storage o servidor de archivos
-      const response = await apiClient.post('/CumplimientoNormativo/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error al subir documento:', error);
-      // Fallback: retornar URL simulada para desarrollo
-      return {
-        isSuccess: true,
-        data: {
-          url: URL.createObjectURL(file),
-          nombre: file.name,
-          tamano: file.size,
-          tipo: file.type
-        }
-      };
-    }
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await apiClient.post('/CumplimientoNormativo/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    return response.data;
   },
 
   /**

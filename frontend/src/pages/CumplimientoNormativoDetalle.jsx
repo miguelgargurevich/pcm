@@ -263,10 +263,13 @@ const CumplimientoNormativoDetalle = () => {
 
       // Primero subir el documento si hay uno nuevo en el paso 2
       let documentoUrl = pdfUrl;
-      if (pasoActual === 2 && formData.documentoFile && !pdfUrl) {
+      // Verificar si hay un archivo nuevo (blob URL local) que necesita ser subido
+      if (formData.documentoFile && pdfUrl && pdfUrl.startsWith('blob:')) {
         const uploadResponse = await cumplimientoService.uploadDocument(formData.documentoFile);
         documentoUrl = uploadResponse.url || uploadResponse.Url;
         setPdfUrl(documentoUrl);
+        // Limpiar el blob URL local
+        URL.revokeObjectURL(pdfUrl);
       }
 
       // Preparar datos para enviar (incluyendo campos completados hasta ahora)
