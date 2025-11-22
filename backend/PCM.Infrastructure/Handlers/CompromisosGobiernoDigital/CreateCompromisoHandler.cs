@@ -32,8 +32,8 @@ public class CreateCompromisoHandler : IRequestHandler<CreateCompromisoCommand, 
                 Alcances = string.Join(",", request.Alcances.Select(a => a.Trim()).Distinct(StringComparer.OrdinalIgnoreCase)), // Convert list to comma-separated string
                 FechaInicio = DateTime.SpecifyKind(request.FechaInicio, DateTimeKind.Utc),
                 FechaFin = DateTime.SpecifyKind(request.FechaFin, DateTimeKind.Utc),
-                IdEstado = request.Estado,
-                Activo = true,
+                IdEstado = 1, // Default pendiente
+                Activo = request.Activo,
                 CreatedAt = DateTime.UtcNow
             };
 

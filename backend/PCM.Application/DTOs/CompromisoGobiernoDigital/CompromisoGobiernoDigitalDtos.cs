@@ -11,7 +11,7 @@ public class CreateCompromisoRequest
     public List<string> Alcances { get; set; } = new();
     public DateTime FechaInicio { get; set; }
     public DateTime FechaFin { get; set; }
-    public int Estado { get; set; } = 1; // FK a estado_compromiso (1=pendiente)
+    public bool Activo { get; set; } = true;
     public List<CompromisoNormativaDto> Normativas { get; set; } = new();
     public List<CriterioEvaluacionDto> CriteriosEvaluacion { get; set; } = new();
 }
@@ -24,7 +24,7 @@ public class UpdateCompromisoRequest
     public List<string> Alcances { get; set; } = new();
     public DateTime FechaInicio { get; set; }
     public DateTime FechaFin { get; set; }
-    public int Estado { get; set; } = 1; // FK a estado_compromiso (1=pendiente)
+    public bool Activo { get; set; } = true;
     public List<CompromisoNormativaDto> Normativas { get; set; } = new();
     public List<CriterioEvaluacionDto> CriteriosEvaluacion { get; set; } = new();
 }

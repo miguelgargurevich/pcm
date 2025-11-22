@@ -40,7 +40,7 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
             compromiso.Alcances = string.Join(",", request.Alcances.Select(a => a.Trim()).Distinct(StringComparer.OrdinalIgnoreCase)); // Convert list to comma-separated string
             compromiso.FechaInicio = DateTime.SpecifyKind(request.FechaInicio, DateTimeKind.Utc);
             compromiso.FechaFin = DateTime.SpecifyKind(request.FechaFin, DateTimeKind.Utc);
-            compromiso.IdEstado = request.Estado;
+            compromiso.Activo = request.Activo;
             compromiso.UpdatedAt = DateTime.UtcNow;
             
             // Mark specific properties as modified (not the entire entity to avoid updating CreatedAt)
@@ -49,7 +49,7 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
             _context.Entry(compromiso).Property(c => c.Alcances).IsModified = true;
             _context.Entry(compromiso).Property(c => c.FechaInicio).IsModified = true;
             _context.Entry(compromiso).Property(c => c.FechaFin).IsModified = true;
-            _context.Entry(compromiso).Property(c => c.IdEstado).IsModified = true;
+            _context.Entry(compromiso).Property(c => c.Activo).IsModified = true;
             _context.Entry(compromiso).Property(c => c.UpdatedAt).IsModified = true;
 
             // Update normativas - remove old ones and add new ones

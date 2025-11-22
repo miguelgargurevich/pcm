@@ -98,7 +98,7 @@ public class CompromisoGobiernoDigitalController : ControllerBase
                 Alcances = request.Alcances,
                 FechaInicio = request.FechaInicio,
                 FechaFin = request.FechaFin,
-                Estado = request.Estado,
+                Activo = request.Activo,
                 Normativas = request.Normativas,
                 CriteriosEvaluacion = request.CriteriosEvaluacion
             };
@@ -138,7 +138,7 @@ public class CompromisoGobiernoDigitalController : ControllerBase
                 Alcances = request.Alcances,
                 FechaInicio = request.FechaInicio,
                 FechaFin = request.FechaFin,
-                Estado = request.Estado,
+                Activo = request.Activo,
                 Normativas = request.Normativas,
                 CriteriosEvaluacion = request.CriteriosEvaluacion
             };
