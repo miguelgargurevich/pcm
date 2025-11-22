@@ -107,7 +107,11 @@ const CompromisoGobiernoDigital = () => {
     }
 
     if (filtros.estado) {
-      filtered = filtered.filter((c) => c.estado === filtros.estado);
+      if (filtros.estado === 'activo') {
+        filtered = filtered.filter((c) => c.activo === true);
+      } else if (filtros.estado === 'inactivo') {
+        filtered = filtered.filter((c) => c.activo === false);
+      }
     }
 
     setCompromisosFiltrados(filtered);
@@ -485,9 +489,8 @@ const CompromisoGobiernoDigital = () => {
               className="input-field"
             >
               <option value="">Todos</option>
-              {estados.map((estado) => (
-                <option key={estado.estadoId} value={estado.nombre}>{estado.nombre}</option>
-              ))}
+              <option value="activo">Activo</option>
+              <option value="inactivo">Inactivo</option>
             </select>
           </div>
         </div>
@@ -565,8 +568,8 @@ const CompromisoGobiernoDigital = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadgeClass(estados.find(e => e.estadoId === compromiso.estado)?.nombre || 'pendiente')}`}>
-                      {estados.find(e => e.estadoId === compromiso.estado)?.nombre || compromiso.estado}
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${compromiso.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                      {compromiso.activo ? 'Activo' : 'Inactivo'}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
@@ -742,20 +745,18 @@ const CompromisoGobiernoDigital = () => {
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Estado del Compromiso <span className="text-red-500">*</span>
+                    Estado <span className="text-red-500">*</span>
                   </label>
                   <select
-                    name="estado"
-                    value={formData.estado}
-                    onChange={handleInputChange}
+                    name="activo"
+                    value={formData.activo ? 'true' : 'false'}
+                    onChange={(e) => setFormData({ ...formData, activo: e.target.value === 'true' })}
                     required
                     className="input-field"
                   >
-                    {estados.map((estado) => (
-                      <option key={estado.estadoId} value={estado.estadoId}>{estado.nombre}</option>
-                    ))}
+                    <option value="true">Activo</option>
+                    <option value="false">Inactivo</option>
                   </select>
-                  <p className="text-xs text-gray-500 mt-1">Estado de progreso del compromiso (diferente de activo/inactivo)</p>
                 </div>
               </div>
 
