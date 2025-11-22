@@ -6,9 +6,6 @@ using PCM.Application.Features.CumplimientoNormativo.Commands.CreateCumplimiento
 using PCM.Application.Features.CumplimientoNormativo.Commands.UpdateCumplimiento;
 using PCM.Application.Features.CumplimientoNormativo.Queries.GetAllCumplimientos;
 using PCM.Application.Features.CumplimientoNormativo.Queries.GetCumplimientoById;
-using Amazon.S3;
-using Amazon.S3.Model;
-using Amazon.Runtime;
 
 namespace PCM.API.Controllers;
 
@@ -222,40 +219,38 @@ public class CumplimientoNormativoController : ControllerBase
 
             // Generar nombre único para el archivo
             var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
-
-            // Configurar S3 Client para Supabase Storage
             var bucketName = Environment.GetEnvironmentVariable("SUPABASE_S3_BUCKET_NAME") ?? "cumplimiento-documentos";
-            var accessKey = Environment.GetEnvironmentVariable("SUPABASE_S3_ACCESS_KEY") ?? "f78de9bdc3c970c96fbe4d2256b1f834";
-            var secretKey = Environment.GetEnvironmentVariable("SUPABASE_S3_SECRET_KEY") ?? "5003c01d4c235bb31f197e932bcf89528f180ba45b478d8d51dca1021fd86660";
-            var endpoint = Environment.GetEnvironmentVariable("SUPABASE_S3_ENDPOINT") ?? "https://amzwfwfhllwhjffkqxhn.storage.supabase.co/storage/v1/s3";
-            var regionName = Environment.GetEnvironmentVariable("SUPABASE_S3_REGION") ?? "us-east-1";
+            var supabaseUrl = "https://amzwfwfhllwhjffkqxhn.supabase.co";
+            var supabaseKey = Environment.GetEnvironmentVariable("SUPABASE_SERVICE_KEY") ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtenhmd2ZobGx3aGpmZmtxeGhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE5NzQ4MDMsImV4cCI6MjA0NzU1MDgwM30.q3ZE0Zd8N4vKMH7A8LoQdW4fKoI3KgZqvxBCz8EHpzY";
 
-            var credentials = new BasicAWSCredentials(accessKey, secretKey);
-            var config = new AmazonS3Config
+            // Subir archivo usando Supabase Storage REST API
+            using var httpClient = new HttpClient();
+            using var content = new MultipartFormDataContent();
+            
+            // Convertir IFormFile a ByteArrayContent
+            using var memoryStream = new MemoryStream();
+            await file.CopyToAsync(memoryStream);
+            var fileContent = new ByteArrayContent(memoryStream.ToArray());
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+            
+            content.Add(fileContent, "file", fileName);
+
+            // Configurar headers de autenticación
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {supabaseKey}");
+            httpClient.DefaultRequestHeaders.Add("apikey", supabaseKey);
+
+            // Subir archivo
+            var uploadUrl = $"{supabaseUrl}/storage/v1/object/{bucketName}/{fileName}";
+            var response = await httpClient.PostAsync(uploadUrl, content);
+
+            if (!response.IsSuccessStatusCode)
             {
-                ServiceURL = endpoint,
-                AuthenticationRegion = regionName,
-                ForcePathStyle = true
-            };
-
-            using var s3Client = new AmazonS3Client(credentials, config);
-
-            // Convertir IFormFile a Stream
-            using var fileStream = file.OpenReadStream();
-
-            // Subir archivo a Supabase Storage usando S3 API
-            var putRequest = new PutObjectRequest
-            {
-                BucketName = bucketName,
-                Key = fileName,
-                InputStream = fileStream,
-                ContentType = file.ContentType
-            };
-
-            await s3Client.PutObjectAsync(putRequest);
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Error uploading to Supabase: {response.StatusCode} - {errorContent}");
+            }
 
             // Construir URL pública del archivo
-            var publicUrl = $"https://amzwfwfhllwhjffkqxhn.supabase.co/storage/v1/object/public/{bucketName}/{fileName}";
+            var publicUrl = $"{supabaseUrl}/storage/v1/object/public/{bucketName}/{fileName}";
 
             _logger.LogInformation("Documento subido exitosamente: {FileName}", fileName);
 
