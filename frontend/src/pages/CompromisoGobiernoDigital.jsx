@@ -40,7 +40,7 @@ const CompromisoGobiernoDigital = () => {
     alcances: [],
     fechaInicio: '',
     fechaFin: '',
-    estado: 1, // ID de estado pendiente
+    activo: true,
     normativas: [],
     criteriosEvaluacion: []
   });
@@ -172,7 +172,7 @@ const CompromisoGobiernoDigital = () => {
       alcances: compromiso.alcances || [],
       fechaInicio: compromiso.fechaInicio ? compromiso.fechaInicio.split('T')[0] : '',
       fechaFin: compromiso.fechaFin ? compromiso.fechaFin.split('T')[0] : '',
-      estado: compromiso.estado || 1, // Mantener el ID de estado
+      activo: compromiso.activo !== undefined ? compromiso.activo : true,
       normativas: compromiso.normativas || [],
       criteriosEvaluacion: compromiso.criteriosEvaluacion || []
     };
@@ -220,7 +220,7 @@ const CompromisoGobiernoDigital = () => {
         alcances: formData.alcances,
         fechaInicio: formData.fechaInicio,
         fechaFin: formData.fechaFin,
-        estado: formData.estado, // Ya es un ID
+        activo: formData.activo,
         normativas: formData.normativas.map(n => ({ normaId: n.normaId || n.id })),
         criteriosEvaluacion: formData.criteriosEvaluacion.map(c => ({
           criterioEvaluacionId: c.criterioEvaluacionId,
