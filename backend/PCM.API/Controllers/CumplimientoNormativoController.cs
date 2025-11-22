@@ -222,9 +222,9 @@ public class CumplimientoNormativoController : ControllerBase
 
             // Generar nombre único para el archivo
             var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
-            var bucketName = "cumplimiento-documentos";
 
             // Configurar S3 Client para Supabase Storage
+            var bucketName = Environment.GetEnvironmentVariable("SUPABASE_S3_BUCKET_NAME") ?? "cumplimiento-documentos";
             var accessKey = Environment.GetEnvironmentVariable("SUPABASE_S3_ACCESS_KEY") ?? "f78de9bdc3c970c96fbe4d2256b1f834";
             var secretKey = Environment.GetEnvironmentVariable("SUPABASE_S3_SECRET_KEY") ?? "5003c01d4c235bb31f197e932bcf89528f180ba45b478d8d51dca1021fd86660";
             var endpoint = Environment.GetEnvironmentVariable("SUPABASE_S3_ENDPOINT") ?? "https://amzwfwfhllwhjffkqxhn.storage.supabase.co";
