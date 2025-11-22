@@ -6,6 +6,9 @@ using PCM.Application.Features.CumplimientoNormativo.Commands.CreateCumplimiento
 using PCM.Application.Features.CumplimientoNormativo.Commands.UpdateCumplimiento;
 using PCM.Application.Features.CumplimientoNormativo.Queries.GetAllCumplimientos;
 using PCM.Application.Features.CumplimientoNormativo.Queries.GetCumplimientoById;
+using Amazon.S3;
+using Amazon.S3.Model;
+using Amazon.Runtime;
 
 namespace PCM.API.Controllers;
 
@@ -221,34 +224,38 @@ public class CumplimientoNormativoController : ControllerBase
             var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
             var bucketName = "cumplimiento-documentos";
 
-            // Configurar Supabase
-            var supabaseUrl = Environment.GetEnvironmentVariable("SUPABASE_URL") ?? "https://amzwfwfhllwhjffkqxhn.supabase.co";
-            var supabaseKey = Environment.GetEnvironmentVariable("SUPABASE_KEY") ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtenhmd2ZobGx3aGpmZmtxeGhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE5NzQ4MDMsImV4cCI6MjA0NzU1MDgwM30.q3ZE0Zd8N4vKMH7A8LoQdW4fKoI3KgZqvxBCz8EHpzY";
+            // Configurar S3 Client para Supabase Storage
+            var accessKey = Environment.GetEnvironmentVariable("SUPABASE_S3_ACCESS_KEY") ?? "f78de9bdc3c970c96fbe4d2256b1f834";
+            var secretKey = Environment.GetEnvironmentVariable("SUPABASE_S3_SECRET_KEY") ?? "5003c01d4c235bb31f197e932bcf89528f180ba45b478d8d51dca1021fd86660";
+            var endpoint = Environment.GetEnvironmentVariable("SUPABASE_S3_ENDPOINT") ?? "https://amzwfwfhllwhjffkqxhn.storage.supabase.co";
+            var region = Environment.GetEnvironmentVariable("SUPABASE_S3_REGION") ?? "us-east-1";
 
-            var options = new Supabase.SupabaseOptions
+            var credentials = new BasicAWSCredentials(accessKey, secretKey);
+            var config = new AmazonS3Config
             {
-                AutoConnectRealtime = false
+                ServiceURL = endpoint,
+                ForcePathStyle = true,
+                SignatureVersion = "4"
             };
 
-            var supabase = new Supabase.Client(supabaseUrl, supabaseKey, options);
-            await supabase.InitializeAsync();
+            using var s3Client = new AmazonS3Client(credentials, config);
 
-            // Convertir IFormFile a byte array
-            using var memoryStream = new MemoryStream();
-            await file.CopyToAsync(memoryStream);
-            var fileBytes = memoryStream.ToArray();
+            // Convertir IFormFile a Stream
+            using var fileStream = file.OpenReadStream();
 
-            // Subir archivo a Supabase Storage
-            var uploadResult = await supabase.Storage
-                .From(bucketName)
-                .Upload(fileBytes, fileName, new Supabase.Storage.FileOptions
-                {
-                    ContentType = file.ContentType,
-                    Upsert = false
-                });
+            // Subir archivo a Supabase Storage usando S3 API
+            var putRequest = new PutObjectRequest
+            {
+                BucketName = bucketName,
+                Key = fileName,
+                InputStream = fileStream,
+                ContentType = file.ContentType
+            };
 
-            // Obtener URL pública del archivo
-            var publicUrl = supabase.Storage.From(bucketName).GetPublicUrl(fileName);
+            await s3Client.PutObjectAsync(putRequest);
+
+            // Construir URL pública del archivo
+            var publicUrl = $"https://amzwfwfhllwhjffkqxhn.supabase.co/storage/v1/object/public/{bucketName}/{fileName}";
 
             _logger.LogInformation("Documento subido exitosamente: {FileName}", fileName);
 
