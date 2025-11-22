@@ -31,6 +31,7 @@ const Usuarios = () => {
 
   const [formData, setFormData] = useState({
     email: '',
+    password: '',
     numDni: '',
     nombres: '',
     apePaterno: '',
@@ -735,6 +736,25 @@ const Usuarios = () => {
                   </div>
 
                 </div>
+
+                {/* Contraseña - solo requerida para usuarios nuevos */}
+                {!editingUsuario && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Contraseña *
+                    </label>
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="input-field"
+                      required={!editingUsuario}
+                      minLength="6"
+                      placeholder="Mínimo 6 caracteres"
+                    />
+                  </div>
+                )}
 
                 {/* Dirección */}
                 <div>
