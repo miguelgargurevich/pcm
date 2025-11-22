@@ -217,7 +217,7 @@ const CompromisoGobiernoDigital = () => {
       const dataToSend = {
         nombreCompromiso: formData.nombreCompromiso,
         descripcion: formData.descripcion || null,
-        alcances: formData.alcances,
+        alcances: formData.alcances.map(a => String(a)), // Convertir IDs a strings
         fechaInicio: formData.fechaInicio,
         fechaFin: formData.fechaFin,
         activo: formData.activo,
@@ -258,6 +258,9 @@ const CompromisoGobiernoDigital = () => {
       }
     } catch (error) {
       console.error('Error al guardar compromiso:', error);
+      console.error('Error response:', error.response);
+      console.error('Error response data:', error.response?.data);
+      console.error('Error status:', error.response?.status);
       showErrorToast(error.response?.data?.message || error.message || 'Error al conectar con el servidor');
     }
   };
