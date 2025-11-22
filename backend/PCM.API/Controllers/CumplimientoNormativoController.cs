@@ -221,25 +221,24 @@ public class CumplimientoNormativoController : ControllerBase
             var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
             var bucketName = Environment.GetEnvironmentVariable("SUPABASE_S3_BUCKET_NAME") ?? "cumplimiento-documentos";
             var supabaseUrl = "https://amzwfwfhllwhjffkqxhn.supabase.co";
-            var supabaseKey = Environment.GetEnvironmentVariable("SUPABASE_SERVICE_KEY") ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtenhmd2ZobGx3aGpmZmtxeGhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE5NzQ4MDMsImV4cCI6MjA0NzU1MDgwM30.q3ZE0Zd8N4vKMH7A8LoQdW4fKoI3KgZqvxBCz8EHpzY";
+            var supabaseKey = Environment.GetEnvironmentVariable("SUPABASE_SERVICE_KEY") ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtendmd2ZobGx3aGpmZmtxeGhuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjM4ODIyOSwiZXhwIjoyMDc3OTY0MjI5fQ.VZSvk3sxYB9mRjHaAu5McySAGQurO7c-eJIl6ET_MCQ";
 
             // Subir archivo usando Supabase Storage REST API
             using var httpClient = new HttpClient();
-            using var content = new MultipartFormDataContent();
             
-            // Convertir IFormFile a ByteArrayContent
+            // Convertir IFormFile a byte array
             using var memoryStream = new MemoryStream();
             await file.CopyToAsync(memoryStream);
-            var fileContent = new ByteArrayContent(memoryStream.ToArray());
-            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+            var fileBytes = memoryStream.ToArray();
             
-            content.Add(fileContent, "file", fileName);
+            var content = new ByteArrayContent(fileBytes);
+            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
 
             // Configurar headers de autenticación
             httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {supabaseKey}");
             httpClient.DefaultRequestHeaders.Add("apikey", supabaseKey);
 
-            // Subir archivo
+            // Subir archivo (usar POST sin multipart)
             var uploadUrl = $"{supabaseUrl}/storage/v1/object/{bucketName}/{fileName}";
             var response = await httpClient.PostAsync(uploadUrl, content);
 
