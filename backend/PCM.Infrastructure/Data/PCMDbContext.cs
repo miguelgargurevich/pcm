@@ -30,6 +30,7 @@ public class PCMDbContext : DbContext
     public DbSet<CriterioEvaluacion> CriteriosEvaluacion { get; set; }
     public DbSet<AlcanceCompromiso> AlcancesCompromisos { get; set; }
     public DbSet<CumplimientoNormativo> CumplimientosNormativos { get; set; }
+    public DbSet<Com1LiderGTD> Com1LiderGTD { get; set; }
     public DbSet<LogAuditoria> LogAuditoria { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -509,6 +510,46 @@ public class PCMDbContext : DbContext
             entity.HasIndex(e => new { e.EntidadId, e.CompromisoId })
                 .IsUnique()
                 .HasDatabaseName("uq_cumplimiento_entidad_compromiso");
+        });
+
+        // Configuración de Com1LiderGTD (Compromiso 1)
+        modelBuilder.Entity<Com1LiderGTD>(entity =>
+        {
+            entity.ToTable("com1_liderg_td");
+            entity.HasKey(e => e.ComlgtdEntId);
+            entity.Property(e => e.ComlgtdEntId).HasColumnName("comlgtd_ent_id");
+            entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id").IsRequired();
+            entity.Property(e => e.EntidadId).HasColumnName("entidad_id").IsRequired();
+            entity.Property(e => e.EtapaFormulario).HasColumnName("etapa_formulario").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(15).IsRequired();
+            entity.Property(e => e.CheckPrivacidad).HasColumnName("check_privacidad").IsRequired();
+            entity.Property(e => e.CheckDdjj).HasColumnName("check_ddjj").IsRequired();
+            entity.Property(e => e.EstadoPCM).HasColumnName("estado_PCM").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.ObservacionesPCM).HasColumnName("observaciones_PCM").HasMaxLength(500).IsRequired();
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").IsRequired();
+            entity.Property(e => e.FecRegistro).HasColumnName("fec_registro").IsRequired();
+            entity.Property(e => e.UsuarioRegistra).HasColumnName("usuario_registra").IsRequired();
+            entity.Property(e => e.Activo).HasColumnName("activo").IsRequired();
+            entity.Property(e => e.DniLider).HasColumnName("dni_lider").HasMaxLength(12).IsRequired();
+            entity.Property(e => e.NombreLider).HasColumnName("nombre_lider").HasMaxLength(60).IsRequired();
+            entity.Property(e => e.ApePatLider).HasColumnName("ape_pat_lider").HasMaxLength(60).IsRequired();
+            entity.Property(e => e.ApeMatLider).HasColumnName("ape_mat_lider").HasMaxLength(60).IsRequired();
+            entity.Property(e => e.EmailLider).HasColumnName("email_lider").HasMaxLength(30).IsRequired();
+            entity.Property(e => e.TelefonoLider).HasColumnName("telefono_lider").HasMaxLength(30).IsRequired();
+            entity.Property(e => e.RolLider).HasColumnName("rol_lider").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.CargoLider).HasColumnName("cargo_lider").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.FecIniLider).HasColumnName("fec_ini_lider").IsRequired();
+
+            // Relaciones
+            entity.HasOne(e => e.Compromiso)
+                .WithMany()
+                .HasForeignKey(e => e.CompromisoId)
+                .HasConstraintName("com1_liderg_td_fk1");
+
+            entity.HasOne(e => e.Entidad)
+                .WithMany()
+                .HasForeignKey(e => e.EntidadId)
+                .HasConstraintName("com1_liderg_td_fk2");
         });
 
         // Configuración de PermisoModulo

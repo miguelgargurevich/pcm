@@ -63,12 +63,32 @@ export const showConfirmToast = ({
 
 /**
  * Muestra un toast de éxito
- * @param {string} message - Mensaje de éxito
+ * @param {string} titleOrMessage - Título o mensaje simple de éxito
+ * @param {string} [message] - Mensaje detallado opcional
  */
-export const showSuccessToast = (message) => {
-  toast.success(message, {
-    duration: 3000,
-  });
+export const showSuccessToast = (titleOrMessage, message) => {
+  if (message) {
+    // Si hay dos parámetros, mostrar toast personalizado con título y mensaje
+    toast.success(
+      (t) => (
+        <div className="flex flex-col gap-1">
+          <p className="font-semibold text-gray-900">{titleOrMessage}</p>
+          <p className="text-sm text-gray-600">{message}</p>
+        </div>
+      ),
+      {
+        duration: 5000,
+        style: {
+          minWidth: '350px',
+        },
+      }
+    );
+  } else {
+    // Comportamiento original con un solo parámetro
+    toast.success(titleOrMessage, {
+      duration: 3000,
+    });
+  }
 };
 
 /**

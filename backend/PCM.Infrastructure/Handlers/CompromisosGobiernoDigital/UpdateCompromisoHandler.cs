@@ -53,8 +53,12 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
             _context.Entry(compromiso).Property(c => c.Activo).IsModified = true;
             _context.Entry(compromiso).Property(c => c.UpdatedAt).IsModified = true;
 
-            // Update alcances - remove old ones and add new ones
-            _context.AlcancesCompromisos.RemoveRange(compromiso.AlcancesCompromisos);
+            // Update alcances - remove old ones first, then save, then add new ones
+            if (compromiso.AlcancesCompromisos != null && compromiso.AlcancesCompromisos.Any())
+            {
+                _context.AlcancesCompromisos.RemoveRange(compromiso.AlcancesCompromisos);
+                await _context.SaveChangesAsync(cancellationToken); // Save deletion first
+            }
 
             if (request.Alcances != null && request.Alcances.Any())
             {

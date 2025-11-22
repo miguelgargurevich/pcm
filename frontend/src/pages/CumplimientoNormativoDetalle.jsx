@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import cumplimientoService from '../services/cumplimientoService';
+import com1LiderGTDService from '../services/com1LiderGTDService';
 import { compromisosService } from '../services/compromisosService';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
 import PDFViewer from '../components/PDFViewer';
@@ -19,11 +20,19 @@ const CumplimientoNormativoDetalle = () => {
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [pasoActual, setPasoActual] = useState(1);
+  const [com1RecordId, setCom1RecordId] = useState(null); // ID del registro en com1_liderg_td
   
   const [_compromisos, setCompromisos] = useState([]);
   const [compromisoSeleccionado, setCompromisoSeleccionado] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [showPdfViewer, setShowPdfViewer] = useState(false);
+  const [documentoActualUrl, setDocumentoActualUrl] = useState(null); // URL del documento que se está viendo
+  const [haVistoPolitica, setHaVistoPolitica] = useState(false);
+  const [haVistoDeclaracion, setHaVistoDeclaracion] = useState(false);
+
+  // URLs de los documentos en Supabase Storage
+  const POLITICA_PRIVACIDAD_URL = 'https://amzwfwfhllwhjffkqxhn.supabase.co/storage/v1/object/public/documentos-normativos/politicas/politica-privacidad.pdf';
+  const DECLARACION_JURADA_URL = 'https://amzwfwfhllwhjffkqxhn.supabase.co/storage/v1/object/public/documentos-normativos/politicas/declaracion-jurada.pdf';
 
   // Formulario con los 3 pasos
   const [formData, setFormData] = useState({
@@ -105,6 +114,48 @@ const CumplimientoNormativoDetalle = () => {
   const loadCumplimiento = async () => {
     try {
       setLoading(true);
+      
+      // Si es Compromiso 1 y tenemos entidadId, usar API específica
+      const compromisoId = parseInt(compromisoIdFromUrl || formData.compromisoId);
+      if (compromisoId === 1 && user?.entidadId) {
+        const response = await com1LiderGTDService.getByEntidad(1, user.entidadId);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          
+          if (data) {
+            // Mapear campos de Com1 a formData
+            setCom1RecordId(data.comlgtdEntId);
+            setFormData({
+              compromisoId: '1',
+              nroDni: data.dniLider || '',
+              nombres: data.nombreLider || '',
+              apellidoPaterno: data.apePatLider || '',
+              apellidoMaterno: data.apeMatLider || '',
+              correoElectronico: data.emailLider || '',
+              telefono: data.telefonoLider || '',
+              rol: data.rolLider || '',
+              cargo: data.cargoLider || '',
+              fechaInicio: data.fecIniLider ? data.fecIniLider.split('T')[0] : '',
+              documentoFile: null,
+              criteriosEvaluados: [],
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+          } else {
+            // No existe registro, inicializar con valores predeterminados
+            setFormData(prev => ({ ...prev, compromisoId: '1' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+      
+      // Caso genérico para otros compromisos
       const response = await cumplimientoService.getById(id);
       
       if (response.isSuccess || response.IsSuccess) {
@@ -123,10 +174,7 @@ const CumplimientoNormativoDetalle = () => {
           cargo: data.cargo || '',
           fechaInicio: data.fechaInicio ? data.fechaInicio.split('T')[0] : '',
           documentoFile: null,
-          validacionResolucionAutoridad: data.validacionResolucionAutoridad || false,
-          validacionLiderFuncionario: data.validacionLiderFuncionario || false,
-          validacionDesignacionArticulo: data.validacionDesignacionArticulo || false,
-          validacionFuncionesDefinidas: data.validacionFuncionesDefinidas || false,
+          criteriosEvaluados: data.criteriosEvaluados || [],
           aceptaPoliticaPrivacidad: data.aceptaPoliticaPrivacidad || false,
           aceptaDeclaracionJurada: data.aceptaDeclaracionJurada || false,
           estado: data.estado || 1
@@ -304,11 +352,42 @@ const CumplimientoNormativoDetalle = () => {
       };
 
       let response;
-      if (isEdit || id) {
-        // Si ya existe, actualizar
+      
+      // Si es Compromiso 1, usar API específica
+      if (parseInt(formData.compromisoId) === 1) {
+        const com1Data = {
+          compromisoId: 1,
+          entidadId: user.entidadId,
+          etapaFormulario: pasoActual === 3 ? 'completado' : `paso${pasoActual}`,
+          estado: formData.estado === 1 ? 'bandeja' : formData.estado === 2 ? 'sin_reportar' : 'publicado',
+          dniLider: formData.nroDni,
+          nombreLider: formData.nombres,
+          apePatLider: formData.apellidoPaterno,
+          apeMatLider: formData.apellidoMaterno,
+          emailLider: formData.correoElectronico,
+          telefonoLider: formData.telefono,
+          rolLider: formData.rol,
+          cargoLider: formData.cargo,
+          fecIniLider: formData.fechaInicio,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad,
+          checkDdjj: formData.aceptaDeclaracionJurada
+        };
+        
+        if (com1RecordId) {
+          // Actualizar registro existente
+          response = await com1LiderGTDService.update(com1RecordId, com1Data);
+        } else {
+          // Crear nuevo registro
+          response = await com1LiderGTDService.create(com1Data);
+          if (response.isSuccess && response.data) {
+            setCom1RecordId(response.data.comlgtdEntId);
+          }
+        }
+      } else if (isEdit || id) {
+        // Si ya existe, actualizar (genérico)
         response = await cumplimientoService.update(id, dataToSend);
       } else {
-        // Si es nuevo, crear y guardar el ID
+        // Si es nuevo, crear y guardar el ID (genérico)
         response = await cumplimientoService.create(dataToSend);
         if (response.isSuccess || response.IsSuccess) {
           const newId = response.data?.cumplimientoId || response.Data?.cumplimientoId;
@@ -374,7 +453,10 @@ const CumplimientoNormativoDetalle = () => {
         const guardado = await guardarProgreso();
         
         if (guardado) {
-          showSuccessToast('Cumplimiento guardado exitosamente');
+          showSuccessToast(
+            '¡Información Recepcionada Exitosamente!',
+            'Estimada Entidad, su información ha sido recepcionada de forma exitosa. Se procederá a su validación y recibirá una notificación una vez completado el proceso.'
+          );
           navigate('/dashboard/cumplimiento');
         }
       }
@@ -734,46 +816,80 @@ const CumplimientoNormativoDetalle = () => {
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
               <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
                 <Check className="text-green-600" size={20} />
-                Declaraciones Requeridas
+                Aceptaciones Requeridas
               </h3>
               <div className="space-y-4">
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="aceptaPoliticaPrivacidad"
-                    checked={formData.aceptaPoliticaPrivacidad}
-                    onChange={handleInputChange}
-                    className="mt-1"
-                    disabled={viewMode}
-                  />
-                  <span className="text-sm text-gray-700">
-                    <strong>Acepto la Política de Privacidad:</strong> Declaro haber leído y aceptado la política de
-                    privacidad y protección de datos personales. Autorizo el tratamiento de mis datos conforme a la
-                    Ley N° 29733 - Ley de Protección de Datos Personales.
-                  </span>
-                </label>
-                {errores.aceptaPoliticaPrivacidad && (
-                  <p className="text-red-500 text-xs ml-6">{errores.aceptaPoliticaPrivacidad}</p>
-                )}
+                {/* Política de Privacidad */}
+                <div className="space-y-2">
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      name="aceptaPoliticaPrivacidad"
+                      checked={formData.aceptaPoliticaPrivacidad}
+                      onChange={handleInputChange}
+                      className="mt-1"
+                      disabled={viewMode || !haVistoPolitica}
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm text-gray-700">
+                        <strong>Acepto la política y privacidad</strong> <span className="text-red-500">*</span>
+                      </span>
+                      {!haVistoPolitica && (
+                        <p className="text-xs text-orange-600 mt-1">Debe revisar el documento antes de aceptar</p>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDocumentoActualUrl(POLITICA_PRIVACIDAD_URL);
+                      setShowPdfViewer(true);
+                      setHaVistoPolitica(true);
+                    }}
+                    className="btn-secondary text-sm ml-6"
+                  >
+                    Ver documento
+                  </button>
+                  {errores.aceptaPoliticaPrivacidad && (
+                    <p className="text-red-500 text-xs ml-6">{errores.aceptaPoliticaPrivacidad}</p>
+                  )}
+                </div>
 
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="aceptaDeclaracionJurada"
-                    checked={formData.aceptaDeclaracionJurada}
-                    onChange={handleInputChange}
-                    className="mt-1"
-                    disabled={viewMode}
-                  />
-                  <span className="text-sm text-gray-700">
-                    <strong>Declaración Jurada:</strong> Declaro bajo juramento que la información proporcionada es
-                    verídica y que el documento adjunto corresponde a la designación oficial del Líder de Gobierno
-                    Digital. Asumo responsabilidad por la veracidad de la información registrada.
-                  </span>
-                </label>
-                {errores.aceptaDeclaracionJurada && (
-                  <p className="text-red-500 text-xs ml-6">{errores.aceptaDeclaracionJurada}</p>
-                )}
+                {/* Declaración Jurada */}
+                <div className="space-y-2">
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      name="aceptaDeclaracionJurada"
+                      checked={formData.aceptaDeclaracionJurada}
+                      onChange={handleInputChange}
+                      className="mt-1"
+                      disabled={viewMode || !haVistoDeclaracion}
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm text-gray-700">
+                        <strong>Acepto la declaración jurada de la veracidad de información</strong> <span className="text-red-500">*</span>
+                      </span>
+                      {!haVistoDeclaracion && (
+                        <p className="text-xs text-orange-600 mt-1">Debe revisar el documento antes de aceptar</p>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDocumentoActualUrl(DECLARACION_JURADA_URL);
+                      setShowPdfViewer(true);
+                      setHaVistoDeclaracion(true);
+                    }}
+                    className="btn-secondary text-sm ml-6"
+                  >
+                    Ver documento
+                  </button>
+                  {errores.aceptaDeclaracionJurada && (
+                    <p className="text-red-500 text-xs ml-6">{errores.aceptaDeclaracionJurada}</p>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -857,11 +973,14 @@ const CumplimientoNormativoDetalle = () => {
       </div>
 
       {/* Visor de PDF */}
-      {showPdfViewer && pdfUrl && (
+      {showPdfViewer && (documentoActualUrl || pdfUrl) && (
         <PDFViewer
-          pdfUrl={pdfUrl}
-          onClose={() => setShowPdfViewer(false)}
-          title="Vista Previa del Documento Normativo"
+          pdfUrl={documentoActualUrl || pdfUrl}
+          onClose={() => {
+            setShowPdfViewer(false);
+            setDocumentoActualUrl(null);
+          }}
+          title={documentoActualUrl ? "Documento Legal" : "Vista Previa del Documento Normativo"}
         />
       )}
     </div>
