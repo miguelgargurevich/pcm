@@ -5,6 +5,11 @@ import com1LiderGTDService from '../services/com1LiderGTDService';
 import com2CGTDService from '../services/com2CGTDService';
 import com4PEIService from '../services/com4PEIService';
 import com5EstrategiaDigitalService from '../services/com5EstrategiaDigitalService';
+import com6MigracionGobPeService from '../services/com6MigracionGobPeService';
+import com7ImplementacionMPDService from '../services/com7ImplementacionMPDService';
+import com8PublicacionTUPAService from '../services/com8PublicacionTUPAService';
+import com9ModeloGestionDocumentalService from '../services/com9ModeloGestionDocumentalService';
+import com10DatosAbiertosService from '../services/com10DatosAbiertosService';
 import { compromisosService } from '../services/compromisosService';
 import { getCatalogoOptions } from '../services/catalogoService';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
@@ -28,6 +33,11 @@ const CumplimientoNormativoDetalle = () => {
   const [com2RecordId, setCom2RecordId] = useState(null); // ID del registro en com2_cgtd
   const [com4RecordId, setCom4RecordId] = useState(null); // ID del registro en com4_pei
   const [com5RecordId, setCom5RecordId] = useState(null); // ID del registro en com5_estrategia_digital
+  const [com6RecordId, setCom6RecordId] = useState(null); // ID del registro en com6_mpgobpe
+  const [com7RecordId, setCom7RecordId] = useState(null); // ID del registro en com7_impd
+  const [com8RecordId, setCom8RecordId] = useState(null); // ID del registro en com8_ptupa
+  const [com9RecordId, setCom9RecordId] = useState(null); // ID del registro en com9_mgd
+  const [com10RecordId, setCom10RecordId] = useState(null); // ID del registro en com10_da
   
   // Estado para Compromiso 2: Miembros del comité
   const [miembrosComite, setMiembrosComite] = useState([]);
@@ -109,13 +119,12 @@ const CumplimientoNormativoDetalle = () => {
     };
     
     loadCatalogos();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     loadCompromisos();
-    // Cargar datos si está editando O si es Compromiso 1, 2, 4 o 5 (que usan tablas especiales)
-    if (isEdit || (['1', '2', '4', '5'].includes(compromisoIdFromUrl) && user?.entidadId)) {
+    // Cargar datos si está editando O si es Compromiso 1-10 (que usan tablas especiales)
+    if (isEdit || (['1', '2', '4', '5', '6', '7', '8', '9', '10'].includes(compromisoIdFromUrl) && user?.entidadId)) {
       loadCumplimiento();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -364,6 +373,302 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
       
+      // COMPROMISO 6: Migración GOB.PE
+      if (compromisoId === 6 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 6, user.entidadId);
+        const response = await com6MigracionGobPeService.getByEntidad(6, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom6RecordId(data.commpgobpeEntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '6',
+              urlPortalGobPe: data.urlGobpe || '',
+              fechaMigracion: data.fechaMigracionGobpe ? data.fechaMigracionGobpe.split('T')[0] : '',
+              fechaUltimaActualizacion: data.fechaActualizacionGobpe ? data.fechaActualizacionGobpe.split('T')[0] : '',
+              nombreResponsable: data.responsableGobpe || '',
+              correoResponsable: data.correoResponsableGobpe || '',
+              telefonoResponsable: data.telefonoResponsableGobpe || '',
+              tipoMigracion: data.tipoMigracionGobpe || '',
+              observacionesMigracion: data.observacionGobpe || '',
+              documentoFile: null,
+              criteriosEvaluados: criteriosParsed,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.rutaPdfGobpe) {
+              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfGobpe);
+              setPdfUrl(data.rutaPdfGobpe);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '6' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+      
+      // COMPROMISO 7: Implementación MPD
+      if (compromisoId === 7 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 7, user.entidadId);
+        const response = await com7ImplementacionMPDService.getByEntidad(7, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom7RecordId(data.comimpdEntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '7',
+              urlMpd: data.urlMpd || '',
+              fechaImplementacionMpd: data.fechaImplementacionMpd ? data.fechaImplementacionMpd.split('T')[0] : '',
+              responsableMpd: data.responsableMpd || '',
+              cargoResponsableMpd: data.cargoResponsableMpd || '',
+              correoResponsableMpd: data.correoResponsableMpd || '',
+              telefonoResponsableMpd: data.telefonoResponsableMpd || '',
+              tipoMpd: data.tipoMpd || '',
+              interoperabilidadMpd: data.interoperabilidadMpd || false,
+              observacionesMpd: data.observacionMpd || '',
+              documentoFile: null,
+              criteriosEvaluados: criteriosParsed,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.rutaPdfMpd) {
+              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfMpd);
+              setPdfUrl(data.rutaPdfMpd);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '7' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+      
+      // COMPROMISO 8: Publicación TUPA
+      if (compromisoId === 8 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 8, user.entidadId);
+        const response = await com8PublicacionTUPAService.getByEntidad(8, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom8RecordId(data.comptupaEntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '8',
+              urlTupa: data.urlTupa || '',
+              numeroResolucionTupa: data.numeroResolucionTupa || '',
+              fechaAprobacionTupa: data.fechaAprobacionTupa ? data.fechaAprobacionTupa.split('T')[0] : '',
+              responsableTupa: data.responsableTupa || '',
+              cargoResponsableTupa: data.cargoResponsableTupa || '',
+              correoResponsableTupa: data.correoResponsableTupa || '',
+              telefonoResponsableTupa: data.telefonoResponsableTupa || '',
+              actualizadoTupa: data.actualizadoTupa || false,
+              observacionesTupa: data.observacionTupa || '',
+              documentoFile: null,
+              criteriosEvaluados: criteriosParsed,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.rutaPdfTupa) {
+              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfTupa);
+              setPdfUrl(data.rutaPdfTupa);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '8' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+      
+      // COMPROMISO 9: Modelo de Gestión Documental
+      if (compromisoId === 9 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 9, user.entidadId);
+        const response = await com9ModeloGestionDocumentalService.getByEntidad(9, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom9RecordId(data.commgdEntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '9',
+              fechaAprobacionMgd: data.fechaAprobacionMgd ? data.fechaAprobacionMgd.split('T')[0] : '',
+              numeroResolucionMgd: data.numeroResolucionMgd || '',
+              responsableMgd: data.responsableMgd || '',
+              cargoResponsableMgd: data.cargoResponsableMgd || '',
+              correoResponsableMgd: data.correoResponsableMgd || '',
+              telefonoResponsableMgd: data.telefonoResponsableMgd || '',
+              sistemaPlataformaMgd: data.sistemaPlataformaMgd || '',
+              tipoImplantacionMgd: data.tipoImplantacionMgd || '',
+              interoperaSistemasMgd: data.interoperaSistemasMgd || false,
+              observacionesMgd: data.observacionMgd || '',
+              documentoFile: null,
+              criteriosEvaluados: criteriosParsed,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.rutaPdfMgd) {
+              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfMgd);
+              setPdfUrl(data.rutaPdfMgd);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '9' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+      
+      // COMPROMISO 10: Datos Abiertos
+      if (compromisoId === 10 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 10, user.entidadId);
+        const response = await com10DatosAbiertosService.getByEntidad(10, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom10RecordId(data.comdaEntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '10',
+              urlDatosAbiertos: data.urlDatosAbiertos || '',
+              totalDatasets: data.totalDatasets || '',
+              fechaUltimaActualizacionDa: data.fechaUltimaActualizacionDa ? data.fechaUltimaActualizacionDa.split('T')[0] : '',
+              responsableDa: data.responsableDa || '',
+              cargoDa: data.cargoResponsableDa || '',
+              correoDa: data.correoResponsableDa || '',
+              telefonoDa: data.telefonoResponsableDa || '',
+              numeroNormaResolucionDa: data.numeroNormaResolucionDa || '',
+              fechaAprobacionDa: data.fechaAprobacionDa ? data.fechaAprobacionDa.split('T')[0] : '',
+              observacionesDa: data.observacionDa || '',
+              documentoFile: null,
+              criteriosEvaluados: criteriosParsed,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.rutaPdfDa) {
+              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfDa);
+              setPdfUrl(data.rutaPdfDa);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '10' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+      
       // COMPROMISO 1: Líder GTD
       if (compromisoId === 1 && user?.entidadId) {
         console.log('📞 Llamando getByEntidad con:', 1, user.entidadId);
@@ -587,6 +892,130 @@ const CumplimientoNormativoDetalle = () => {
         }
         if (!formData.estadoImplementacion || formData.estadoImplementacion.trim() === '') {
           nuevosErrores.estadoImplementacion = 'Seleccione el estado de implementación';
+        }
+      }
+      // Validación específica para Compromiso 6 (Migración a GOB.PE)
+      else if (parseInt(formData.compromisoId) === 6) {
+        if (!formData.urlPortalGobPe || formData.urlPortalGobPe.trim() === '') {
+          nuevosErrores.urlPortalGobPe = 'Ingrese la URL del portal en GOB.PE';
+        } else if (!/^https?:\/\/.+/.test(formData.urlPortalGobPe)) {
+          nuevosErrores.urlPortalGobPe = 'Ingrese una URL válida';
+        }
+        if (!formData.fechaMigracion) {
+          nuevosErrores.fechaMigracion = 'Seleccione la fecha de migración';
+        }
+        if (!formData.fechaUltimaActualizacion) {
+          nuevosErrores.fechaUltimaActualizacion = 'Seleccione la fecha de última actualización';
+        }
+        if (!formData.nombreResponsable || formData.nombreResponsable.trim() === '') {
+          nuevosErrores.nombreResponsable = 'Ingrese el nombre del responsable';
+        }
+        if (!formData.correoResponsable || formData.correoResponsable.trim() === '') {
+          nuevosErrores.correoResponsable = 'Ingrese el correo del responsable';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoResponsable)) {
+          nuevosErrores.correoResponsable = 'Ingrese un correo válido';
+        }
+        if (!formData.tipoMigracion || formData.tipoMigracion.trim() === '') {
+          nuevosErrores.tipoMigracion = 'Seleccione el tipo de migración';
+        }
+      }
+      // Validación específica para Compromiso 7 (Implementación MPD)
+      else if (parseInt(formData.compromisoId) === 7) {
+        if (!formData.urlMpd || formData.urlMpd.trim() === '') {
+          nuevosErrores.urlMpd = 'Ingrese la URL de la Mesa de Partes Digital';
+        } else if (!/^https?:\/\/.+/.test(formData.urlMpd)) {
+          nuevosErrores.urlMpd = 'Ingrese una URL válida';
+        }
+        if (!formData.fechaImplementacionMpd) {
+          nuevosErrores.fechaImplementacionMpd = 'Seleccione la fecha de implementación';
+        }
+        if (!formData.tipoMpd || formData.tipoMpd.trim() === '') {
+          nuevosErrores.tipoMpd = 'Seleccione el tipo de MPD';
+        }
+        if (!formData.responsableMpd || formData.responsableMpd.trim() === '') {
+          nuevosErrores.responsableMpd = 'Ingrese el nombre del responsable';
+        }
+        if (formData.correoResponsableMpd && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoResponsableMpd)) {
+          nuevosErrores.correoResponsableMpd = 'Ingrese un correo válido';
+        }
+      }
+      // Validación específica para Compromiso 8 (Publicación TUPA)
+      else if (parseInt(formData.compromisoId) === 8) {
+        if (!formData.urlTupa || formData.urlTupa.trim() === '') {
+          nuevosErrores.urlTupa = 'Ingrese la URL del TUPA publicado';
+        } else if (!/^https?:\/\/.+/.test(formData.urlTupa)) {
+          nuevosErrores.urlTupa = 'Ingrese una URL válida';
+        }
+        if (!formData.numeroResolucionTupa || formData.numeroResolucionTupa.trim() === '') {
+          nuevosErrores.numeroResolucionTupa = 'Ingrese el número de resolución';
+        }
+        if (!formData.fechaAprobacionTupa) {
+          nuevosErrores.fechaAprobacionTupa = 'Seleccione la fecha de aprobación';
+        }
+        if (!formData.responsableTupa || formData.responsableTupa.trim() === '') {
+          nuevosErrores.responsableTupa = 'Ingrese el nombre del responsable';
+        }
+        if (formData.correoResponsableTupa && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoResponsableTupa)) {
+          nuevosErrores.correoResponsableTupa = 'Ingrese un correo válido';
+        }
+      }
+      // Validación específica para Compromiso 9 (Modelo de Gestión Documental)
+      else if (parseInt(formData.compromisoId) === 9) {
+        if (!formData.fechaAprobacionMgd) {
+          nuevosErrores.fechaAprobacionMgd = 'Seleccione la fecha de aprobación del MGD';
+        }
+        if (!formData.numeroResolucionMgd || formData.numeroResolucionMgd.trim() === '') {
+          nuevosErrores.numeroResolucionMgd = 'Ingrese el número de resolución';
+        }
+        if (!formData.responsableMgd || formData.responsableMgd.trim() === '') {
+          nuevosErrores.responsableMgd = 'Ingrese el nombre del responsable';
+        }
+        if (!formData.cargoResponsableMgd || formData.cargoResponsableMgd.trim() === '') {
+          nuevosErrores.cargoResponsableMgd = 'Ingrese el cargo del responsable';
+        }
+        if (!formData.correoResponsableMgd || formData.correoResponsableMgd.trim() === '') {
+          nuevosErrores.correoResponsableMgd = 'Ingrese el correo del responsable';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoResponsableMgd)) {
+          nuevosErrores.correoResponsableMgd = 'Ingrese un correo válido';
+        }
+        if (!formData.sistemaPlataformaMgd || formData.sistemaPlataformaMgd.trim() === '') {
+          nuevosErrores.sistemaPlataformaMgd = 'Ingrese el sistema o plataforma usada';
+        }
+        if (!formData.tipoImplantacionMgd || formData.tipoImplantacionMgd.trim() === '') {
+          nuevosErrores.tipoImplantacionMgd = 'Seleccione el tipo de implantación';
+        }
+      }
+      // Validación específica para Compromiso 10 (Datos Abiertos)
+      else if (parseInt(formData.compromisoId) === 10) {
+        if (!formData.urlDatosAbiertos || formData.urlDatosAbiertos.trim() === '') {
+          nuevosErrores.urlDatosAbiertos = 'Ingrese la URL de los datos abiertos';
+        } else if (!/^https?:\/\/.+/.test(formData.urlDatosAbiertos)) {
+          nuevosErrores.urlDatosAbiertos = 'Ingrese una URL válida';
+        }
+        if (!formData.totalDatasets || formData.totalDatasets === '') {
+          nuevosErrores.totalDatasets = 'Ingrese el total de datasets publicados';
+        } else if (parseInt(formData.totalDatasets) < 0) {
+          nuevosErrores.totalDatasets = 'El total de datasets debe ser un número positivo';
+        }
+        if (!formData.fechaUltimaActualizacionDa) {
+          nuevosErrores.fechaUltimaActualizacionDa = 'Seleccione la fecha de última actualización';
+        }
+        if (!formData.responsableDa || formData.responsableDa.trim() === '') {
+          nuevosErrores.responsableDa = 'Ingrese el nombre completo del responsable';
+        }
+        if (!formData.cargoDa || formData.cargoDa.trim() === '') {
+          nuevosErrores.cargoDa = 'Ingrese el cargo del responsable';
+        }
+        if (!formData.correoDa || formData.correoDa.trim() === '') {
+          nuevosErrores.correoDa = 'Ingrese el correo del responsable';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoDa)) {
+          nuevosErrores.correoDa = 'Ingrese un correo válido';
+        }
+        if (!formData.numeroNormaResolucionDa || formData.numeroNormaResolucionDa.trim() === '') {
+          nuevosErrores.numeroNormaResolucionDa = 'Ingrese el número de norma o resolución';
+        }
+        if (!formData.fechaAprobacionDa) {
+          nuevosErrores.fechaAprobacionDa = 'Seleccione la fecha de aprobación';
         }
       }
       else {
@@ -973,6 +1402,322 @@ const CumplimientoNormativoDetalle = () => {
           
           if (response.data.rutaPdfEstrategia) {
             setPdfUrl(response.data.rutaPdfEstrategia);
+            if (blobUrlToRevoke) {
+              console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
+          }
+          
+          if (response.data.criteriosEvaluados) {
+            try {
+              const criteriosParsed = JSON.parse(response.data.criteriosEvaluados);
+              setFormData(prev => ({ ...prev, criteriosEvaluados: criteriosParsed }));
+            } catch (e) {
+              console.error('❌ Error al parsear criterios:', e);
+            }
+          }
+        }
+      }
+      // COMPROMISO 6: Migración GOB.PE
+      else if (parseInt(formData.compromisoId) === 6) {
+        console.log('🚀 Preparando datos para Com6 Migración GOB.PE');
+        
+        const com6Data = {
+          compromisoId: 6,
+          entidadId: user.entidadId,
+          urlGobpe: formData.urlPortalGobPe || null,
+          fechaMigracionGobpe: formData.fechaMigracion || null,
+          fechaActualizacionGobpe: formData.fechaUltimaActualizacion || null,
+          responsableGobpe: formData.nombreResponsable || null,
+          correoResponsableGobpe: formData.correoResponsable || null,
+          telefonoResponsableGobpe: formData.telefonoResponsable || null,
+          tipoMigracionGobpe: formData.tipoMigracion || null,
+          observacionGobpe: formData.observacionesMigracion || null,
+          rutaPdfGobpe: documentoUrl || null,
+          criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3'
+        };
+        
+        console.log('Datos Com6 a enviar:', com6Data);
+        
+        if (com6RecordId) {
+          console.log('Actualizando registro existente Com6:', com6RecordId);
+          response = await com6MigracionGobPeService.update(com6RecordId, com6Data);
+        } else {
+          console.log('Creando nuevo registro Com6');
+          response = await com6MigracionGobPeService.create(com6Data);
+          console.log('Respuesta create Com6:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com6:', response.data.commpgobpeEntId);
+            setCom6RecordId(response.data.commpgobpeEntId);
+          }
+        }
+        
+        console.log('Respuesta final Com6:', response);
+        
+        // Actualizar estado local con datos guardados
+        if (response.isSuccess && response.data) {
+          console.log('✅ Actualizando estado local Com6');
+          
+          if (response.data.rutaPdfGobpe) {
+            setPdfUrl(response.data.rutaPdfGobpe);
+            if (blobUrlToRevoke) {
+              console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
+          }
+          
+          if (response.data.criteriosEvaluados) {
+            try {
+              const criteriosParsed = JSON.parse(response.data.criteriosEvaluados);
+              setFormData(prev => ({ ...prev, criteriosEvaluados: criteriosParsed }));
+            } catch (e) {
+              console.error('❌ Error al parsear criterios:', e);
+            }
+          }
+        }
+      }
+      // COMPROMISO 7: Implementación MPD
+      else if (parseInt(formData.compromisoId) === 7) {
+        console.log('🚀 Preparando datos para Com7 Implementación MPD');
+        
+        const com7Data = {
+          compromisoId: 7,
+          entidadId: user.entidadId,
+          urlMpd: formData.urlMpd || null,
+          fechaImplementacionMpd: formData.fechaImplementacionMpd || null,
+          responsableMpd: formData.responsableMpd || null,
+          cargoResponsableMpd: formData.cargoResponsableMpd || null,
+          correoResponsableMpd: formData.correoResponsableMpd || null,
+          telefonoResponsableMpd: formData.telefonoResponsableMpd || null,
+          tipoMpd: formData.tipoMpd || null,
+          interoperabilidadMpd: formData.interoperabilidadMpd || false,
+          observacionMpd: formData.observacionesMpd || null,
+          rutaPdfMpd: documentoUrl || null,
+          criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3'
+        };
+        
+        console.log('Datos Com7 a enviar:', com7Data);
+        
+        if (com7RecordId) {
+          console.log('Actualizando registro existente Com7:', com7RecordId);
+          response = await com7ImplementacionMPDService.update(com7RecordId, com7Data);
+        } else {
+          console.log('Creando nuevo registro Com7');
+          response = await com7ImplementacionMPDService.create(com7Data);
+          console.log('Respuesta create Com7:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com7:', response.data.comimpdEntId);
+            setCom7RecordId(response.data.comimpdEntId);
+          }
+        }
+        
+        console.log('Respuesta final Com7:', response);
+        
+        // Actualizar estado local con datos guardados
+        if (response.isSuccess && response.data) {
+          console.log('✅ Actualizando estado local Com7');
+          
+          if (response.data.rutaPdfMpd) {
+            setPdfUrl(response.data.rutaPdfMpd);
+            if (blobUrlToRevoke) {
+              console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
+          }
+          
+          if (response.data.criteriosEvaluados) {
+            try {
+              const criteriosParsed = JSON.parse(response.data.criteriosEvaluados);
+              setFormData(prev => ({ ...prev, criteriosEvaluados: criteriosParsed }));
+            } catch (e) {
+              console.error('❌ Error al parsear criterios:', e);
+            }
+          }
+        }
+      }
+      // COMPROMISO 8: Publicación TUPA
+      else if (parseInt(formData.compromisoId) === 8) {
+        console.log('🚀 Preparando datos para Com8 Publicación TUPA');
+        
+        const com8Data = {
+          compromisoId: 8,
+          entidadId: user.entidadId,
+          urlTupa: formData.urlTupa || null,
+          numeroResolucionTupa: formData.numeroResolucionTupa || null,
+          fechaAprobacionTupa: formData.fechaAprobacionTupa || null,
+          responsableTupa: formData.responsableTupa || null,
+          cargoResponsableTupa: formData.cargoResponsableTupa || null,
+          correoResponsableTupa: formData.correoResponsableTupa || null,
+          telefonoResponsableTupa: formData.telefonoResponsableTupa || null,
+          actualizadoTupa: formData.actualizadoTupa || false,
+          observacionTupa: formData.observacionesTupa || null,
+          rutaPdfTupa: documentoUrl || null,
+          criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3'
+        };
+        
+        console.log('Datos Com8 a enviar:', com8Data);
+        
+        if (com8RecordId) {
+          console.log('Actualizando registro existente Com8:', com8RecordId);
+          response = await com8PublicacionTUPAService.update(com8RecordId, com8Data);
+        } else {
+          console.log('Creando nuevo registro Com8');
+          response = await com8PublicacionTUPAService.create(com8Data);
+          console.log('Respuesta create Com8:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com8:', response.data.comptupaEntId);
+            setCom8RecordId(response.data.comptupaEntId);
+          }
+        }
+        
+        console.log('Respuesta final Com8:', response);
+        
+        // Actualizar estado local con datos guardados
+        if (response.isSuccess && response.data) {
+          console.log('✅ Actualizando estado local Com8');
+          
+          if (response.data.rutaPdfTupa) {
+            setPdfUrl(response.data.rutaPdfTupa);
+            if (blobUrlToRevoke) {
+              console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
+          }
+          
+          if (response.data.criteriosEvaluados) {
+            try {
+              const criteriosParsed = JSON.parse(response.data.criteriosEvaluados);
+              setFormData(prev => ({ ...prev, criteriosEvaluados: criteriosParsed }));
+            } catch (e) {
+              console.error('❌ Error al parsear criterios:', e);
+            }
+          }
+        }
+      }
+      // COMPROMISO 9: Modelo de Gestión Documental
+      else if (parseInt(formData.compromisoId) === 9) {
+        console.log('🚀 Preparando datos para Com9 MGD');
+        
+        const com9Data = {
+          compromisoId: 9,
+          entidadId: user.entidadId,
+          fechaAprobacionMgd: formData.fechaAprobacionMgd || null,
+          numeroResolucionMgd: formData.numeroResolucionMgd || null,
+          responsableMgd: formData.responsableMgd || null,
+          cargoResponsableMgd: formData.cargoResponsableMgd || null,
+          correoResponsableMgd: formData.correoResponsableMgd || null,
+          telefonoResponsableMgd: formData.telefonoResponsableMgd || null,
+          sistemaPlataformaMgd: formData.sistemaPlataformaMgd || null,
+          tipoImplantacionMgd: formData.tipoImplantacionMgd || null,
+          interoperaSistemasMgd: formData.interoperaSistemasMgd || false,
+          observacionMgd: formData.observacionesMgd || null,
+          rutaPdfMgd: documentoUrl || null,
+          criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3'
+        };
+        
+        console.log('Datos Com9 a enviar:', com9Data);
+        
+        if (com9RecordId) {
+          console.log('Actualizando registro existente Com9:', com9RecordId);
+          response = await com9ModeloGestionDocumentalService.update(com9RecordId, com9Data);
+        } else {
+          console.log('Creando nuevo registro Com9');
+          response = await com9ModeloGestionDocumentalService.create(com9Data);
+          console.log('Respuesta create Com9:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com9:', response.data.commgdEntId);
+            setCom9RecordId(response.data.commgdEntId);
+          }
+        }
+        
+        console.log('Respuesta final Com9:', response);
+        
+        // Actualizar estado local con datos guardados
+        if (response.isSuccess && response.data) {
+          console.log('✅ Actualizando estado local Com9');
+          
+          if (response.data.rutaPdfMgd) {
+            setPdfUrl(response.data.rutaPdfMgd);
+            if (blobUrlToRevoke) {
+              console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
+          }
+          
+          if (response.data.criteriosEvaluados) {
+            try {
+              const criteriosParsed = JSON.parse(response.data.criteriosEvaluados);
+              setFormData(prev => ({ ...prev, criteriosEvaluados: criteriosParsed }));
+            } catch (e) {
+              console.error('❌ Error al parsear criterios:', e);
+            }
+          }
+        }
+      }
+      // COMPROMISO 10: Datos Abiertos
+      else if (parseInt(formData.compromisoId) === 10) {
+        console.log('🚀 Preparando datos para Com10 Datos Abiertos');
+        
+        const com10Data = {
+          compromisoId: 10,
+          entidadId: user.entidadId,
+          urlDatosAbiertos: formData.urlDatosAbiertos || null,
+          totalDatasets: formData.totalDatasets ? parseInt(formData.totalDatasets) : null,
+          fechaUltimaActualizacionDa: formData.fechaUltimaActualizacionDa || null,
+          responsableDa: formData.responsableDa || null,
+          cargoResponsableDa: formData.cargoDa || null,
+          correoResponsableDa: formData.correoDa || null,
+          telefonoResponsableDa: formData.telefonoDa || null,
+          numeroNormaResolucionDa: formData.numeroNormaResolucionDa || null,
+          fechaAprobacionDa: formData.fechaAprobacionDa || null,
+          observacionDa: formData.observacionesDa || null,
+          rutaPdfDa: documentoUrl || null,
+          criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3'
+        };
+        
+        console.log('Datos Com10 a enviar:', com10Data);
+        
+        if (com10RecordId) {
+          console.log('Actualizando registro existente Com10:', com10RecordId);
+          response = await com10DatosAbiertosService.update(com10RecordId, com10Data);
+        } else {
+          console.log('Creando nuevo registro Com10');
+          response = await com10DatosAbiertosService.create(com10Data);
+          console.log('Respuesta create Com10:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com10:', response.data.comdaEntId);
+            setCom10RecordId(response.data.comdaEntId);
+          }
+        }
+        
+        console.log('Respuesta final Com10:', response);
+        
+        // Actualizar estado local con datos guardados
+        if (response.isSuccess && response.data) {
+          console.log('✅ Actualizando estado local Com10');
+          
+          if (response.data.rutaPdfDa) {
+            setPdfUrl(response.data.rutaPdfDa);
             if (blobUrlToRevoke) {
               console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
               URL.revokeObjectURL(blobUrlToRevoke);
@@ -1629,6 +2374,1111 @@ const CumplimientoNormativoDetalle = () => {
                         )}
                       </tbody>
                     </table>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 6 ? (
+              // COMPROMISO 6: Migración a GOB.PE
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos de Migración a GOB.PE</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* URL del portal en GOB.PE */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      URL del portal en GOB.PE <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="url"
+                      name="urlPortalGobPe"
+                      value={formData.urlPortalGobPe}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.urlPortalGobPe ? 'border-red-500' : ''}`}
+                      placeholder="https://www.gob.pe/institucion/nombre-entidad"
+                      disabled={viewMode}
+                    />
+                    {errores.urlPortalGobPe && (
+                      <p className="text-red-500 text-xs mt-1">{errores.urlPortalGobPe}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de migración */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de migración <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaMigracion"
+                      value={formData.fechaMigracion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaMigracion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaMigracion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaMigracion}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de última actualización */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de última actualización <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaUltimaActualizacion"
+                      value={formData.fechaUltimaActualizacion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaUltimaActualizacion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaUltimaActualizacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaUltimaActualizacion}</p>
+                    )}
+                  </div>
+
+                  {/* Separador */}
+                  <div className="md:col-span-2 border-t border-gray-200 my-2">
+                    <h3 className="text-sm font-medium text-gray-700 mt-4 mb-3">Datos del Responsable</h3>
+                  </div>
+
+                  {/* Responsable de la gestión del portal */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Responsable de la gestión del portal <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="nombreResponsable"
+                      value={formData.nombreResponsable}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.nombreResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Nombre completo del responsable"
+                      disabled={viewMode}
+                    />
+                    {errores.nombreResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.nombreResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Correo del responsable */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo del responsable <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="correoResponsable"
+                      value={formData.correoResponsable}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.correoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="correo@entidad.gob.pe"
+                      disabled={viewMode}
+                    />
+                    {errores.correoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono
+                    </label>
+                    <input
+                      type="tel"
+                      name="telefonoResponsable"
+                      value={formData.telefonoResponsable}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="999 999 999"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Tipo de migración */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Tipo de migración <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="tipoMigracion"
+                      value={formData.tipoMigracion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.tipoMigracion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    >
+                      <option value="">Seleccione el tipo de migración</option>
+                      <option value="completa">Migración completa</option>
+                      <option value="parcial">Migración parcial</option>
+                      <option value="en_proceso">En proceso</option>
+                    </select>
+                    {errores.tipoMigracion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.tipoMigracion}</p>
+                    )}
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones
+                    </label>
+                    <textarea
+                      name="observacionesMigracion"
+                      value={formData.observacionesMigracion}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Observaciones adicionales sobre la migración..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observacionesMigracion?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Documento de evidencia (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Documento de evidencia (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento de evidencia de la migración en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 7 ? (
+              // COMPROMISO 7: Implementación MPD
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos de Implementación de Mesa de Partes Digital</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* URL de la MPD */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      URL de la Mesa de Partes Digital <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="url"
+                      name="urlMpd"
+                      value={formData.urlMpd}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.urlMpd ? 'border-red-500' : ''}`}
+                      placeholder="https://mesadepartes.entidad.gob.pe"
+                      disabled={viewMode}
+                    />
+                    {errores.urlMpd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.urlMpd}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de implementación */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de implementación <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaImplementacionMpd"
+                      value={formData.fechaImplementacionMpd}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaImplementacionMpd ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaImplementacionMpd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaImplementacionMpd}</p>
+                    )}
+                  </div>
+
+                  {/* Tipo de MPD */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Tipo de MPD <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="tipoMpd"
+                      value={formData.tipoMpd}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.tipoMpd ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    >
+                      <option value="">Seleccione el tipo</option>
+                      <option value="propia">Propia</option>
+                      <option value="terceros">De terceros</option>
+                      <option value="integrada">Integrada</option>
+                    </select>
+                    {errores.tipoMpd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.tipoMpd}</p>
+                    )}
+                  </div>
+
+                  {/* Interoperabilidad */}
+                  <div className="md:col-span-2">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        name="interoperabilidadMpd"
+                        checked={formData.interoperabilidadMpd || false}
+                        onChange={handleInputChange}
+                        className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        disabled={viewMode}
+                      />
+                      <span className="text-sm font-medium text-gray-700">
+                        ¿La MPD interopera con PIDE u otros sistemas?
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Separador */}
+                  <div className="md:col-span-2 border-t border-gray-200 my-2">
+                    <h3 className="text-sm font-medium text-gray-700 mt-4 mb-3">Datos del Responsable</h3>
+                  </div>
+
+                  {/* Responsable */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Responsable de la MPD <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="responsableMpd"
+                      value={formData.responsableMpd}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.responsableMpd ? 'border-red-500' : ''}`}
+                      placeholder="Nombre completo del responsable"
+                      disabled={viewMode}
+                    />
+                    {errores.responsableMpd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsableMpd}</p>
+                    )}
+                  </div>
+
+                  {/* Cargo */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cargo del responsable
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoResponsableMpd"
+                      value={formData.cargoResponsableMpd}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="Cargo"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Correo */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo del responsable
+                    </label>
+                    <input
+                      type="email"
+                      name="correoResponsableMpd"
+                      value={formData.correoResponsableMpd}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.correoResponsableMpd ? 'border-red-500' : ''}`}
+                      placeholder="correo@entidad.gob.pe"
+                      disabled={viewMode}
+                    />
+                    {errores.correoResponsableMpd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsableMpd}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono del responsable
+                    </label>
+                    <input
+                      type="tel"
+                      name="telefonoResponsableMpd"
+                      value={formData.telefonoResponsableMpd}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="999 999 999"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones
+                    </label>
+                    <textarea
+                      name="observacionesMpd"
+                      value={formData.observacionesMpd}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Observaciones adicionales sobre la implementación..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observacionesMpd?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Documento de evidencia (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Documento de evidencia (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento de evidencia de la implementación en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 8 ? (
+              // COMPROMISO 8: Publicación TUPA
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos de Publicación del TUPA</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* URL del TUPA */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      URL del TUPA publicado <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="url"
+                      name="urlTupa"
+                      value={formData.urlTupa}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.urlTupa ? 'border-red-500' : ''}`}
+                      placeholder="https://www.entidad.gob.pe/tupa"
+                      disabled={viewMode}
+                    />
+                    {errores.urlTupa && (
+                      <p className="text-red-500 text-xs mt-1">{errores.urlTupa}</p>
+                    )}
+                  </div>
+
+                  {/* Número de resolución */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Número de Resolución <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="numeroResolucionTupa"
+                      value={formData.numeroResolucionTupa}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.numeroResolucionTupa ? 'border-red-500' : ''}`}
+                      placeholder="R.M. N° 123-2024"
+                      disabled={viewMode}
+                    />
+                    {errores.numeroResolucionTupa && (
+                      <p className="text-red-500 text-xs mt-1">{errores.numeroResolucionTupa}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de aprobación */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de aprobación <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaAprobacionTupa"
+                      value={formData.fechaAprobacionTupa}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaAprobacionTupa ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaAprobacionTupa && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaAprobacionTupa}</p>
+                    )}
+                  </div>
+
+                  {/* TUPA actualizado */}
+                  <div className="md:col-span-2">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        name="actualizadoTupa"
+                        checked={formData.actualizadoTupa || false}
+                        onChange={handleInputChange}
+                        className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        disabled={viewMode}
+                      />
+                      <span className="text-sm font-medium text-gray-700">
+                        ¿El TUPA está actualizado?
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Separador */}
+                  <div className="md:col-span-2 border-t border-gray-200 my-2">
+                    <h3 className="text-sm font-medium text-gray-700 mt-4 mb-3">Datos del Responsable</h3>
+                  </div>
+
+                  {/* Responsable */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Responsable del TUPA <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="responsableTupa"
+                      value={formData.responsableTupa}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.responsableTupa ? 'border-red-500' : ''}`}
+                      placeholder="Nombre completo del responsable"
+                      disabled={viewMode}
+                    />
+                    {errores.responsableTupa && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsableTupa}</p>
+                    )}
+                  </div>
+
+                  {/* Cargo */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cargo del responsable
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoResponsableTupa"
+                      value={formData.cargoResponsableTupa}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="Cargo"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Correo */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo del responsable
+                    </label>
+                    <input
+                      type="email"
+                      name="correoResponsableTupa"
+                      value={formData.correoResponsableTupa}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.correoResponsableTupa ? 'border-red-500' : ''}`}
+                      placeholder="correo@entidad.gob.pe"
+                      disabled={viewMode}
+                    />
+                    {errores.correoResponsableTupa && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsableTupa}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono del responsable
+                    </label>
+                    <input
+                      type="tel"
+                      name="telefonoResponsableTupa"
+                      value={formData.telefonoResponsableTupa}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="999 999 999"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones
+                    </label>
+                    <textarea
+                      name="observacionesTupa"
+                      value={formData.observacionesTupa}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Observaciones adicionales sobre el TUPA..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observacionesTupa?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Documento de evidencia (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Documento de evidencia (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento del TUPA en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 9 ? (
+              // COMPROMISO 9: Modelo de Gestión Documental
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos de Implementación del Modelo de Gestión Documental</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Fecha de aprobación */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de aprobación del MGD <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaAprobacionMgd"
+                      value={formData.fechaAprobacionMgd}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaAprobacionMgd ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaAprobacionMgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaAprobacionMgd}</p>
+                    )}
+                  </div>
+
+                  {/* Número de resolución */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Número de resolución <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="numeroResolucionMgd"
+                      value={formData.numeroResolucionMgd}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.numeroResolucionMgd ? 'border-red-500' : ''}`}
+                      placeholder="R.M. N° 123-2024"
+                      disabled={viewMode}
+                    />
+                    {errores.numeroResolucionMgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.numeroResolucionMgd}</p>
+                    )}
+                  </div>
+
+                  {/* Separador */}
+                  <div className="md:col-span-2 border-t border-gray-200 my-2">
+                    <h3 className="text-sm font-medium text-gray-700 mt-4 mb-3">Datos del Responsable</h3>
+                  </div>
+
+                  {/* Responsable */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Responsable del MGD <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="responsableMgd"
+                      value={formData.responsableMgd}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.responsableMgd ? 'border-red-500' : ''}`}
+                      placeholder="Nombre completo del responsable"
+                      disabled={viewMode}
+                    />
+                    {errores.responsableMgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsableMgd}</p>
+                    )}
+                  </div>
+
+                  {/* Cargo */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cargo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoResponsableMgd"
+                      value={formData.cargoResponsableMgd}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.cargoResponsableMgd ? 'border-red-500' : ''}`}
+                      placeholder="Cargo"
+                      disabled={viewMode}
+                    />
+                    {errores.cargoResponsableMgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsableMgd}</p>
+                    )}
+                  </div>
+
+                  {/* Correo */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="correoResponsableMgd"
+                      value={formData.correoResponsableMgd}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.correoResponsableMgd ? 'border-red-500' : ''}`}
+                      placeholder="correo@entidad.gob.pe"
+                      disabled={viewMode}
+                    />
+                    {errores.correoResponsableMgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsableMgd}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono
+                    </label>
+                    <input
+                      type="tel"
+                      name="telefonoResponsableMgd"
+                      value={formData.telefonoResponsableMgd}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="999 999 999"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Sistema o plataforma */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Sistema o plataforma usada <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="sistemaPlataformaMgd"
+                      value={formData.sistemaPlataformaMgd}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.sistemaPlataformaMgd ? 'border-red-500' : ''}`}
+                      placeholder="Nombre del sistema o plataforma"
+                      disabled={viewMode}
+                    />
+                    {errores.sistemaPlataformaMgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.sistemaPlataformaMgd}</p>
+                    )}
+                  </div>
+
+                  {/* Tipo de implantación */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Tipo de implantación <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="tipoImplantacionMgd"
+                      value={formData.tipoImplantacionMgd}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.tipoImplantacionMgd ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    >
+                      <option value="">Seleccione el tipo de implantación</option>
+                      <option value="propia">Propia</option>
+                      <option value="terceros">De terceros</option>
+                      <option value="hibrida">Híbrida</option>
+                    </select>
+                    {errores.tipoImplantacionMgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.tipoImplantacionMgd}</p>
+                    )}
+                  </div>
+
+                  {/* Interoperabilidad */}
+                  <div className="md:col-span-2">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        name="interoperaSistemasMgd"
+                        checked={formData.interoperaSistemasMgd || false}
+                        onChange={handleInputChange}
+                        className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        disabled={viewMode}
+                      />
+                      <span className="text-sm font-medium text-gray-700">
+                        ¿Interopera con otros sistemas (PIDE, MPD)?
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones
+                    </label>
+                    <textarea
+                      name="observacionesMgd"
+                      value={formData.observacionesMgd}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Observaciones adicionales..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observacionesMgd?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Documento de evidencia (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Documento de evidencia (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento del MGD en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 10 ? (
+              // COMPROMISO 10: Datos Abiertos
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos Abiertos Publicados en el Portal Nacional (PNDA)</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* URL de los datos abiertos */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      URL de los datos abiertos <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="url"
+                      name="urlDatosAbiertos"
+                      value={formData.urlDatosAbiertos}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.urlDatosAbiertos ? 'border-red-500' : ''}`}
+                      placeholder="https://www.datosabiertos.gob.pe/entidad"
+                      disabled={viewMode}
+                    />
+                    {errores.urlDatosAbiertos && (
+                      <p className="text-red-500 text-xs mt-1">{errores.urlDatosAbiertos}</p>
+                    )}
+                  </div>
+
+                  {/* Total de datasets */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Total de datasets publicados <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="totalDatasets"
+                      value={formData.totalDatasets}
+                      onChange={handleInputChange}
+                      min="0"
+                      className={`input-field ${errores.totalDatasets ? 'border-red-500' : ''}`}
+                      placeholder="0"
+                      disabled={viewMode}
+                    />
+                    {errores.totalDatasets && (
+                      <p className="text-red-500 text-xs mt-1">{errores.totalDatasets}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de última actualización */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de última actualización <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaUltimaActualizacionDa"
+                      value={formData.fechaUltimaActualizacionDa}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaUltimaActualizacionDa ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaUltimaActualizacionDa && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaUltimaActualizacionDa}</p>
+                    )}
+                  </div>
+
+                  {/* Separador */}
+                  <div className="md:col-span-2 border-t border-gray-200 my-2">
+                    <h3 className="text-sm font-medium text-gray-700 mt-4 mb-3">Responsable de Datos Abiertos</h3>
+                  </div>
+
+                  {/* Nombre completo */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nombre completo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="responsableDa"
+                      value={formData.responsableDa}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.responsableDa ? 'border-red-500' : ''}`}
+                      placeholder="Nombre completo del responsable"
+                      disabled={viewMode}
+                    />
+                    {errores.responsableDa && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsableDa}</p>
+                    )}
+                  </div>
+
+                  {/* Cargo */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cargo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoDa"
+                      value={formData.cargoDa}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.cargoDa ? 'border-red-500' : ''}`}
+                      placeholder="Cargo"
+                      disabled={viewMode}
+                    />
+                    {errores.cargoDa && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoDa}</p>
+                    )}
+                  </div>
+
+                  {/* Correo */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="correoDa"
+                      value={formData.correoDa}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.correoDa ? 'border-red-500' : ''}`}
+                      placeholder="correo@entidad.gob.pe"
+                      disabled={viewMode}
+                    />
+                    {errores.correoDa && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoDa}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono
+                    </label>
+                    <input
+                      type="tel"
+                      name="telefonoDa"
+                      value={formData.telefonoDa}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="999 999 999"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Número de norma */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      N° de norma o resolución de aprobación <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="numeroNormaResolucionDa"
+                      value={formData.numeroNormaResolucionDa}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.numeroNormaResolucionDa ? 'border-red-500' : ''}`}
+                      placeholder="R.M. N° 123-2024"
+                      disabled={viewMode}
+                    />
+                    {errores.numeroNormaResolucionDa && (
+                      <p className="text-red-500 text-xs mt-1">{errores.numeroNormaResolucionDa}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de aprobación */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de aprobación <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaAprobacionDa"
+                      value={formData.fechaAprobacionDa}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaAprobacionDa ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaAprobacionDa && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaAprobacionDa}</p>
+                    )}
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones
+                    </label>
+                    <textarea
+                      name="observacionesDa"
+                      value={formData.observacionesDa}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Observaciones adicionales..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observacionesDa?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Documento de evidencia (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Documento de evidencia (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento de evidencia en formato PDF (máximo 10 MB)
+                    </p>
                   </div>
                 </div>
               </>

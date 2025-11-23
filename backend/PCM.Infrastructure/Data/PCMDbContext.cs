@@ -35,6 +35,11 @@ public class PCMDbContext : DbContext
     public DbSet<ComiteMiembro> ComiteMiembros { get; set; }
     public DbSet<Com4PEI> Com4PEI { get; set; }
     public DbSet<Com5EstrategiaDigital> Com5EstrategiaDigital { get; set; }
+    public DbSet<Com6MigracionGobPe> Com6MigracionGobPe { get; set; }
+    public DbSet<Com7ImplementacionMPD> Com7ImplementacionMPD { get; set; }
+    public DbSet<Com8PublicacionTUPA> Com8PublicacionTUPA { get; set; }
+    public DbSet<Com9ModeloGestionDocumental> Com9ModeloGestionDocumental { get; set; }
+    public DbSet<Com10DatosAbiertos> Com10DatosAbiertos { get; set; }
     public DbSet<LogAuditoria> LogAuditoria { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
