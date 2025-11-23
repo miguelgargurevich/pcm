@@ -233,7 +233,7 @@ const CumplimientoNormativo = () => {
                     Estado
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Fecha Registro
+                    Fecha
                   </th>
                   <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Acciones
@@ -279,13 +279,18 @@ const CumplimientoNormativo = () => {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {cumplimiento && cumplimiento.createdAt
-                          ? new Date(cumplimiento.createdAt).toLocaleDateString('es-PE', { 
+                        {cumplimiento ? (
+                          // Mostrar la fecha más reciente disponible
+                          // Si hay updatedAt, usarla; sino usar createdAt
+                          (() => {
+                            const fechaMostrar = cumplimiento.updatedAt || cumplimiento.createdAt;
+                            return new Date(fechaMostrar).toLocaleDateString('es-PE', { 
                               day: '2-digit', 
                               month: '2-digit', 
                               year: 'numeric' 
-                            })
-                          : '-'}
+                            });
+                          })()
+                        ) : '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                         <div className="flex justify-center gap-2">

@@ -79,6 +79,7 @@ public class GetAllCumplimientosHandler : IRequestHandler<GetAllCumplimientosQue
                 Estado = c.Estado,
                 EstadoNombre = GetEstadoNombre(c.Estado),
                 CreatedAt = c.CreatedAt,
+                UpdatedAt = c.UpdatedAt,
                 TieneDocumento = !string.IsNullOrEmpty(c.DocumentoUrl)
             }).ToList();
 

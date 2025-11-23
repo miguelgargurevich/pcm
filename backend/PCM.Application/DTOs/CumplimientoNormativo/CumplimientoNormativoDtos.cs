@@ -132,5 +132,6 @@ public class CumplimientoListItemDto
     public int Estado { get; set; }
     public string EstadoNombre { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     public bool TieneDocumento { get; set; }
 }

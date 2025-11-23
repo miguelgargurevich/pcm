@@ -2,6 +2,30 @@ import api from './api';
 
 const com1LiderGTDService = {
   /**
+   * Obtiene todos los registros de Com1 del usuario actual (por su entidad)
+   * Para usar en la lista principal de cumplimientos
+   */
+  getAllByUser: async () => {
+    try {
+      // El backend tiene el endpoint GET /Com1LiderGTD que devuelve todos los registros
+      // filtrados por la entidad del usuario autenticado (desde JWT)
+      console.log('🔵 GET /Com1LiderGTD (all by user)');
+      const response = await api.get('/Com1LiderGTD');
+      console.log('✅ Respuesta getAllByUser:', response.data);
+      return {
+        isSuccess: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('❌ Error al obtener Com1LiderGTD (all):', error);
+      return {
+        isSuccess: false,
+        message: error.response?.data?.message || 'Error al cargar los datos'
+      };
+    }
+  },
+
+  /**
    * Obtiene el registro de Compromiso 1 para una entidad
    * @param {number} compromisoId - ID del compromiso (siempre 1)
    * @param {string} entidadId - GUID de la entidad
