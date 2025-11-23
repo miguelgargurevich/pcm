@@ -79,7 +79,7 @@ const CumplimientoNormativoDetalle = () => {
   const [_compromisos, setCompromisos] = useState([]);
   const [compromisoSeleccionado, setCompromisoSeleccionado] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
-  const [pdfUrl2, setPdfUrl2] = useState(null); // Para Com16 segundo PDF
+  // const [pdfUrl2, setPdfUrl2] = useState(null); // Para Com16 segundo PDF
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [documentoActualUrl, setDocumentoActualUrl] = useState(null); // URL del documento que se está viendo
   const [haVistoPolitica, setHaVistoPolitica] = useState(false);
@@ -957,17 +957,6 @@ const CumplimientoNormativoDetalle = () => {
             
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
-            
-            // Si hay documento guardado, establecer la URL para vista previa
-            if (data.rutaPdfPoliticasSgsi) {
-              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfPoliticasSgsi);
-              setPdfUrl(data.rutaPdfPoliticasSgsi);
-            }
-            // Si hay segundo documento guardado
-            if (data.rutaPdfCertificacionSgsi) {
-              console.log('📄 Cargando segundo PDF guardado desde:', data.rutaPdfCertificacionSgsi);
-              setPdfUrl2(data.rutaPdfCertificacionSgsi);
-            }
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '16' }));
