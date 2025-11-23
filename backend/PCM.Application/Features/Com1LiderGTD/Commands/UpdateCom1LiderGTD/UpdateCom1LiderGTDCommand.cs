@@ -1,9 +1,10 @@
 using MediatR;
 using PCM.Application.Common;
+using PCM.Application.Features.Com1LiderGTD.Commands.CreateCom1LiderGTD;
 
 namespace PCM.Application.Features.Com1LiderGTD.Commands.UpdateCom1LiderGTD;
 
-public class UpdateCom1LiderGTDCommand : IRequest<Result<bool>>
+public class UpdateCom1LiderGTDCommand : IRequest<Result<Com1LiderGTDResponse>>
 {
     public long ComlgtdEntId { get; set; }
     public string? EtapaFormulario { get; set; }
@@ -19,6 +20,10 @@ public class UpdateCom1LiderGTDCommand : IRequest<Result<bool>>
     public string? RolLider { get; set; }
     public string? CargoLider { get; set; }
     public DateTime? FecIniLider { get; set; }
+    
+    // Documento y criterios
+    public string? UrlDocUrl { get; set; }
+    public string? CriteriosEvaluados { get; set; }
     
     // Aceptaciones
     public bool? CheckPrivacidad { get; set; }

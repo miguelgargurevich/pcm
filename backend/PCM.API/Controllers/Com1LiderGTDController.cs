@@ -101,6 +101,6 @@ public class Com1LiderGTDController : ControllerBase
             return BadRequest(new { message = result.Message });
         }
 
-        return Ok(new { message = "Registro actualizado exitosamente" });
+        return Ok(result);
     }
 }
