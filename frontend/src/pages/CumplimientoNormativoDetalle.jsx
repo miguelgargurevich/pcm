@@ -5,7 +5,7 @@ import com1LiderGTDService from '../services/com1LiderGTDService';
 import { compromisosService } from '../services/compromisosService';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
 import PDFViewer from '../components/PDFViewer';
-import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save } from 'lucide-react';
+import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save, Eye, ExternalLink } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 const CumplimientoNormativoDetalle = () => {
@@ -753,8 +753,9 @@ const CumplimientoNormativoDetalle = () => {
                   </div>
                   <button
                     onClick={() => setShowPdfViewer(true)}
-                    className="btn-secondary text-sm"
+                    className="btn-secondary text-sm flex items-center gap-2"
                   >
+                    <Eye size={16} />
                     Vista previa del PDF
                   </button>
                 </div>
@@ -831,25 +832,28 @@ const CumplimientoNormativoDetalle = () => {
                       disabled={viewMode || !haVistoPolitica}
                     />
                     <div className="flex-1">
-                      <span className="text-sm text-gray-700">
-                        <strong>Acepto la política y privacidad</strong> <span className="text-red-500">*</span>
-                      </span>
-                      {!haVistoPolitica && (
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <span className="text-sm text-gray-700">
+                          <strong>Acepto la política y privacidad</strong> <span className="text-red-500">*</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(POLITICA_PRIVACIDAD_URL);
+                            setShowPdfViewer(true);
+                            setHaVistoPolitica(true);
+                          }}
+                          className="btn-secondary text-xs py-1 px-2 flex items-center gap-1"
+                        >
+                          <ExternalLink size={14} />
+                          Ver documento
+                        </button>
+                      </div>
+                      {!haVistoPolitica && !formData.aceptaPoliticaPrivacidad && (
                         <p className="text-xs text-orange-600 mt-1">Debe revisar el documento antes de aceptar</p>
                       )}
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDocumentoActualUrl(POLITICA_PRIVACIDAD_URL);
-                      setShowPdfViewer(true);
-                      setHaVistoPolitica(true);
-                    }}
-                    className="btn-secondary text-sm ml-6"
-                  >
-                    Ver documento
-                  </button>
                   {errores.aceptaPoliticaPrivacidad && (
                     <p className="text-red-500 text-xs ml-6">{errores.aceptaPoliticaPrivacidad}</p>
                   )}
@@ -867,25 +871,28 @@ const CumplimientoNormativoDetalle = () => {
                       disabled={viewMode || !haVistoDeclaracion}
                     />
                     <div className="flex-1">
-                      <span className="text-sm text-gray-700">
-                        <strong>Acepto la declaración jurada de la veracidad de información</strong> <span className="text-red-500">*</span>
-                      </span>
-                      {!haVistoDeclaracion && (
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <span className="text-sm text-gray-700">
+                          <strong>Acepto la declaración jurada de la veracidad de información</strong> <span className="text-red-500">*</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(DECLARACION_JURADA_URL);
+                            setShowPdfViewer(true);
+                            setHaVistoDeclaracion(true);
+                          }}
+                          className="btn-secondary text-xs py-1 px-2 flex items-center gap-1"
+                        >
+                          <ExternalLink size={14} />
+                          Ver documento
+                        </button>
+                      </div>
+                      {!haVistoDeclaracion && !formData.aceptaDeclaracionJurada && (
                         <p className="text-xs text-orange-600 mt-1">Debe revisar el documento antes de aceptar</p>
                       )}
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDocumentoActualUrl(DECLARACION_JURADA_URL);
-                      setShowPdfViewer(true);
-                      setHaVistoDeclaracion(true);
-                    }}
-                    className="btn-secondary text-sm ml-6"
-                  >
-                    Ver documento
-                  </button>
                   {errores.aceptaDeclaracionJurada && (
                     <p className="text-red-500 text-xs ml-6">{errores.aceptaDeclaracionJurada}</p>
                   )}

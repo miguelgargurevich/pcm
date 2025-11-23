@@ -1,7 +1,10 @@
-import { X } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const PDFViewer = ({ pdfUrl, onClose, title = 'Vista Previa del Documento' }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  
   if (!pdfUrl) return null;
 
   return (
@@ -17,11 +20,20 @@ const PDFViewer = ({ pdfUrl, onClose, title = 'Vista Previa del Documento' }) =>
             <X size={24} />
           </button>
         </div>
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-4 relative">
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 z-10">
+              <div className="flex flex-col items-center gap-3">
+                <Loader2 className="animate-spin text-primary" size={48} />
+                <p className="text-gray-600 font-medium">Cargando documento...</p>
+              </div>
+            </div>
+          )}
           <iframe
             src={pdfUrl}
             className="w-full h-full min-h-[600px] border-0"
             title={title}
+            onLoad={() => setIsLoading(false)}
           />
         </div>
         <div className="p-4 border-t bg-gray-50 flex justify-end gap-2">
