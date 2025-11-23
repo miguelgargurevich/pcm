@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import cumplimientoService from '../services/cumplimientoService';
 import com1LiderGTDService from '../services/com1LiderGTDService';
+import com2CGTDService from '../services/com2CGTDService';
 import { compromisosService } from '../services/compromisosService';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
 import PDFViewer from '../components/PDFViewer';
-import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save, Eye, ExternalLink } from 'lucide-react';
+import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save, Eye, ExternalLink, Plus, Trash2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 const CumplimientoNormativoDetalle = () => {
@@ -21,6 +22,22 @@ const CumplimientoNormativoDetalle = () => {
   const [saving, setSaving] = useState(false);
   const [pasoActual, setPasoActual] = useState(1);
   const [com1RecordId, setCom1RecordId] = useState(null); // ID del registro en com1_liderg_td
+  const [com2RecordId, setCom2RecordId] = useState(null); // ID del registro en com2_cgtd
+  
+  // Estado para Compromiso 2: Miembros del comité
+  const [miembrosComite, setMiembrosComite] = useState([]);
+  const [showModalMiembro, setShowModalMiembro] = useState(false);
+  const [miembroActual, setMiembroActual] = useState({
+    miembroId: null,
+    dni: '',
+    nombre: '',
+    apellidoPaterno: '',
+    apellidoMaterno: '',
+    cargo: '',
+    rol: '',
+    email: '',
+    telefono: ''
+  });
   
   const [_compromisos, setCompromisos] = useState([]);
   const [compromisoSeleccionado, setCompromisoSeleccionado] = useState(null);
@@ -64,8 +81,8 @@ const CumplimientoNormativoDetalle = () => {
 
   useEffect(() => {
     loadCompromisos();
-    // Cargar datos si está editando O si es Compromiso 1 (que usa tabla especial)
-    if (isEdit || (compromisoIdFromUrl === '1' && user?.entidadId)) {
+    // Cargar datos si está editando O si es Compromiso 1 o 2 (que usan tablas especiales)
+    if (isEdit || (['1', '2'].includes(compromisoIdFromUrl) && user?.entidadId)) {
       loadCumplimiento();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -128,12 +145,79 @@ const CumplimientoNormativoDetalle = () => {
     try {
       setLoading(true);
       
-      // Si es Compromiso 1 y tenemos entidadId, usar API específica
+      // Si es Compromiso 1 o 2 y tenemos entidadId, usar API específica
       const compromisoId = parseInt(compromisoIdFromUrl || formData.compromisoId);
       console.log('🔍 loadCumplimiento - compromisoId:', compromisoId);
       console.log('🔍 loadCumplimiento - user:', user);
       console.log('🔍 loadCumplimiento - compromisoIdFromUrl:', compromisoIdFromUrl);
       
+      // COMPROMISO 2: Comité GTD
+      if (compromisoId === 2 && user?.entidadId) {
+        console.log('📞 Llamando Com2CGTD.getByEntidad con:', 2, user.entidadId);
+        const response = await com2CGTDService.getByEntidad(2, user.entidadId);
+        console.log('📦 Respuesta de Com2 getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos Com2 recibidos:', data);
+          
+          if (data) {
+            setCom2RecordId(data.comcgtdEntId);
+            
+            // Cargar miembros del comité
+            if (data.miembros && Array.isArray(data.miembros)) {
+              console.log('👥 Miembros cargados:', data.miembros);
+              setMiembrosComite(data.miembros);
+            }
+            
+            // Parsear criterios evaluados
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '2',
+              nroDni: '',
+              nombres: '',
+              apellidoPaterno: '',
+              apellidoMaterno: '',
+              correoElectronico: '',
+              telefono: '',
+              rol: '',
+              cargo: '',
+              fechaInicio: '',
+              documentoFile: null,
+              criteriosEvaluados: criteriosParsed,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado
+            if (data.urlDocPcm) {
+              console.log('📄 Cargando PDF guardado desde:', data.urlDocPcm);
+              setPdfUrl(data.urlDocPcm);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '2' }));
+            setMiembrosComite([]);
+          }
+          setLoading(false);
+          return;
+        }
+      }
+      
+      // COMPROMISO 1: Líder GTD
       if (compromisoId === 1 && user?.entidadId) {
         console.log('📞 Llamando getByEntidad con:', 1, user.entidadId);
         const response = await com1LiderGTDService.getByEntidad(1, user.entidadId);
@@ -295,19 +379,29 @@ const CumplimientoNormativoDetalle = () => {
         navigate('/dashboard/cumplimiento');
         return false;
       }
-      if (!formData.nroDni) nuevosErrores.nroDni = 'Ingrese el DNI';
-      if (formData.nroDni && formData.nroDni.length !== 8) nuevosErrores.nroDni = 'El DNI debe tener 8 dígitos';
-      if (!formData.nombres) nuevosErrores.nombres = 'Ingrese los nombres';
-      if (!formData.apellidoPaterno) nuevosErrores.apellidoPaterno = 'Ingrese el apellido paterno';
-      if (!formData.apellidoMaterno) nuevosErrores.apellidoMaterno = 'Ingrese el apellido materno';
-      if (!formData.correoElectronico) nuevosErrores.correoElectronico = 'Ingrese el correo';
-      if (formData.correoElectronico && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoElectronico)) {
-        nuevosErrores.correoElectronico = 'Ingrese un correo válido';
+
+      // Validación específica para Compromiso 2 (Comité GTD)
+      if (parseInt(formData.compromisoId) === 2) {
+        if (miembrosComite.length === 0) {
+          nuevosErrores.miembrosComite = 'Debe agregar al menos un miembro del comité';
+          showErrorToast('Debe agregar al menos un miembro del comité');
+        }
+      } else {
+        // Validación para Compromiso 1 y otros (Líder)
+        if (!formData.nroDni) nuevosErrores.nroDni = 'Ingrese el DNI';
+        if (formData.nroDni && formData.nroDni.length !== 8) nuevosErrores.nroDni = 'El DNI debe tener 8 dígitos';
+        if (!formData.nombres) nuevosErrores.nombres = 'Ingrese los nombres';
+        if (!formData.apellidoPaterno) nuevosErrores.apellidoPaterno = 'Ingrese el apellido paterno';
+        if (!formData.apellidoMaterno) nuevosErrores.apellidoMaterno = 'Ingrese el apellido materno';
+        if (!formData.correoElectronico) nuevosErrores.correoElectronico = 'Ingrese el correo';
+        if (formData.correoElectronico && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoElectronico)) {
+          nuevosErrores.correoElectronico = 'Ingrese un correo válido';
+        }
+        if (!formData.telefono) nuevosErrores.telefono = 'Ingrese el teléfono';
+        if (!formData.rol) nuevosErrores.rol = 'Ingrese el rol';
+        if (!formData.cargo) nuevosErrores.cargo = 'Ingrese el cargo';
+        if (!formData.fechaInicio) nuevosErrores.fechaInicio = 'Seleccione la fecha de inicio';
       }
-      if (!formData.telefono) nuevosErrores.telefono = 'Ingrese el teléfono';
-      if (!formData.rol) nuevosErrores.rol = 'Ingrese el rol';
-      if (!formData.cargo) nuevosErrores.cargo = 'Ingrese el cargo';
-      if (!formData.fechaInicio) nuevosErrores.fechaInicio = 'Seleccione la fecha de inicio';
     }
 
     if (paso === 2) {
@@ -497,7 +591,78 @@ const CumplimientoNormativoDetalle = () => {
             }
           }
         }
-      } else if (isEdit || id) {
+      } 
+      // Si es Compromiso 2, usar API específica
+      else if (parseInt(formData.compromisoId) === 2) {
+        console.log('Es Compromiso 2 - Usando API específica');
+        
+        const com2Data = {
+          compromisoId: 2,
+          entidadId: user.entidadId,
+          etapaFormulario: pasoActual === 3 ? 'completado' : `paso${pasoActual}`,
+          estado: formData.estado === 1 ? 'bandeja' : formData.estado === 2 ? 'sin_reportar' : 'publicado',
+          urlDocUrl: documentoUrl,
+          criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados),
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad,
+          checkDdjj: formData.aceptaDeclaracionJurada,
+          miembros: miembrosComite.map(m => ({
+            miembroId: m.miembroId || null,
+            dni: m.dni,
+            nombre: m.nombre,
+            apellidoPaterno: m.apellidoPaterno,
+            apellidoMaterno: m.apellidoMaterno,
+            cargo: m.cargo,
+            rol: m.rol,
+            email: m.email,
+            telefono: m.telefono,
+            activo: true
+          }))
+        };
+        
+        console.log('Datos Com2 a enviar:', com2Data);
+        
+        if (com2RecordId) {
+          console.log('Actualizando registro existente Com2:', com2RecordId);
+          response = await com2CGTDService.update(com2RecordId, com2Data);
+        } else {
+          console.log('Creando nuevo registro Com2');
+          response = await com2CGTDService.create(com2Data);
+          console.log('Respuesta create Com2:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com2:', response.data.comcgtdEntId);
+            setCom2RecordId(response.data.comcgtdEntId);
+          }
+        }
+        
+        console.log('Respuesta final Com2:', response);
+        
+        // Actualizar estado local con datos guardados
+        if (response.isSuccess && response.data) {
+          console.log('✅ Actualizando estado local Com2');
+          
+          if (response.data.urlDocPcm) {
+            setPdfUrl(response.data.urlDocPcm);
+            if (blobUrlToRevoke) {
+              console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
+          }
+          
+          if (response.data.miembros) {
+            setMiembrosComite(response.data.miembros);
+          }
+          
+          if (response.data.criteriosEvaluados) {
+            try {
+              const criteriosParsed = JSON.parse(response.data.criteriosEvaluados);
+              setFormData(prev => ({ ...prev, criteriosEvaluados: criteriosParsed }));
+            } catch (e) {
+              console.error('❌ Error al parsear criterios:', e);
+            }
+          }
+        }
+      } 
+      else if (isEdit || id) {
         // Si ya existe, actualizar (genérico)
         response = await cumplimientoService.update(id, dataToSend);
       } else {
@@ -646,7 +811,101 @@ const CumplimientoNormativoDetalle = () => {
         {/* Paso 1: Registrar Compromiso */}
         {pasoActual === 1 && (
           <div className="space-y-3">
-            <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Registrar Compromiso - Datos Generales del Líder</h2>
+            {parseInt(formData.compromisoId) === 2 ? (
+              // COMPROMISO 2: Comité GTD
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Constituir el Comité de Gobierno y TD (CGTD)</h2>
+                
+                <div className="mb-4">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-sm font-medium text-gray-700">Miembros del Comité</h3>
+                    {!viewMode && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMiembroActual({
+                            miembroId: null,
+                            dni: '',
+                            nombre: '',
+                            apellidoPaterno: '',
+                            apellidoMaterno: '',
+                            cargo: '',
+                            rol: '',
+                            email: '',
+                            telefono: ''
+                          });
+                          setShowModalMiembro(true);
+                        }}
+                        className="flex items-center gap-2 px-3 py-2 bg-primary text-white rounded-md hover:bg-primary-dark text-sm"
+                      >
+                        <Plus size={16} />
+                        Agregar Miembro
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Tabla de miembros */}
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200 border">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">DNI</th>
+                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nombres</th>
+                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Apellidos</th>
+                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cargo</th>
+                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Rol</th>
+                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Correo</th>
+                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Teléfono</th>
+                          {!viewMode && (
+                            <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                          )}
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {miembrosComite.length === 0 ? (
+                          <tr>
+                            <td colSpan={viewMode ? 7 : 8} className="px-3 py-4 text-center text-sm text-gray-500">
+                              No hay miembros registrados. Haga clic en &quot;Agregar Miembro&quot; para comenzar.
+                            </td>
+                          </tr>
+                        ) : (
+                          miembrosComite.map((miembro, index) => (
+                            <tr key={miembro.miembroId || index} className="hover:bg-gray-50">
+                              <td className="px-3 py-2 text-sm text-gray-900">{miembro.dni}</td>
+                              <td className="px-3 py-2 text-sm text-gray-900">{miembro.nombre}</td>
+                              <td className="px-3 py-2 text-sm text-gray-900">
+                                {miembro.apellidoPaterno} {miembro.apellidoMaterno}
+                              </td>
+                              <td className="px-3 py-2 text-sm text-gray-900">{miembro.cargo}</td>
+                              <td className="px-3 py-2 text-sm text-gray-900">{miembro.rol}</td>
+                              <td className="px-3 py-2 text-sm text-gray-900">{miembro.email}</td>
+                              <td className="px-3 py-2 text-sm text-gray-900">{miembro.telefono}</td>
+                              {!viewMode && (
+                                <td className="px-3 py-2 text-center">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setMiembrosComite(miembrosComite.filter((_, i) => i !== index));
+                                    }}
+                                    className="text-red-600 hover:text-red-800"
+                                    title="Eliminar"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                </td>
+                              )}
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            ) : (
+              // COMPROMISO 1 y OTROS: Datos del Líder
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Registrar Compromiso - Datos Generales del Líder</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -811,6 +1070,8 @@ const CumplimientoNormativoDetalle = () => {
                 )}
               </div>
             </div>
+            </>
+            )}
           </div>
         )}
 
@@ -1103,6 +1364,168 @@ const CumplimientoNormativoDetalle = () => {
           }}
           title={documentoActualUrl ? "Documento Legal" : "Vista Previa del Documento Normativo"}
         />
+      )}
+
+      {/* Modal para agregar/editar miembro del comité */}
+      {showModalMiembro && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              {miembroActual.miembroId ? 'Editar' : 'Nuevo'} Miembro del Comité
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  DNI <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={miembroActual.dni}
+                  onChange={(e) => setMiembroActual({ ...miembroActual, dni: e.target.value })}
+                  maxLength="8"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="12345678"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nombres <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={miembroActual.nombre}
+                  onChange={(e) => setMiembroActual({ ...miembroActual, nombre: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Juan Carlos"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Apellido Paterno <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={miembroActual.apellidoPaterno}
+                  onChange={(e) => setMiembroActual({ ...miembroActual, apellidoPaterno: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="García"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Apellido Materno <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={miembroActual.apellidoMaterno}
+                  onChange={(e) => setMiembroActual({ ...miembroActual, apellidoMaterno: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="López"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Cargo <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={miembroActual.cargo}
+                  onChange={(e) => setMiembroActual({ ...miembroActual, cargo: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Director de TI"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Rol <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={miembroActual.rol}
+                  onChange={(e) => setMiembroActual({ ...miembroActual, rol: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="">Seleccionar...</option>
+                  <option value="Presidente">Presidente</option>
+                  <option value="Vicepresidente">Vicepresidente</option>
+                  <option value="Secretario Técnico">Secretario Técnico</option>
+                  <option value="Miembro">Miembro</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Correo <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  value={miembroActual.email}
+                  onChange={(e) => setMiembroActual({ ...miembroActual, email: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="ejemplo@gob.pe"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Teléfono <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={miembroActual.telefono}
+                  onChange={(e) => setMiembroActual({ ...miembroActual, telefono: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="987654321"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowModalMiembro(false)}
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  // Validar campos requeridos
+                  if (!miembroActual.dni || !miembroActual.nombre || !miembroActual.apellidoPaterno || 
+                      !miembroActual.apellidoMaterno || !miembroActual.cargo || !miembroActual.rol || 
+                      !miembroActual.email || !miembroActual.telefono) {
+                    showErrorToast('Todos los campos son obligatorios');
+                    return;
+                  }
+
+                  // Agregar o actualizar miembro
+                  const index = miembrosComite.findIndex(m => m.miembroId === miembroActual.miembroId);
+                  if (index >= 0) {
+                    // Actualizar existente
+                    const nuevos = [...miembrosComite];
+                    nuevos[index] = miembroActual;
+                    setMiembrosComite(nuevos);
+                  } else {
+                    // Agregar nuevo
+                    setMiembrosComite([...miembrosComite, miembroActual]);
+                  }
+                  
+                  setShowModalMiembro(false);
+                  showSuccessToast('Miembro agregado exitosamente');
+                }}
+                className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark"
+              >
+                Agregar
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
