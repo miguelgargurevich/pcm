@@ -22,33 +22,32 @@ public class UpdateCom4PEIHandler : IRequestHandler<UpdateCom4PEICommand, Result
     {
         try
         {
-            _logger.LogInformation("Actualizando registro Com4PEI con ID {CompeiEntId}", request.CompeiEntId);
+            _logger.LogInformation("Actualizando registro Com4PEI con ID {ComtdpeiEntId}", request.ComtdpeiEntId);
 
             var entity = await _context.Com4PEI
-                .FirstOrDefaultAsync(x => x.CompeiEntId == (int)request.CompeiEntId, cancellationToken);
+                .FirstOrDefaultAsync(x => x.ComtdpeiEntId == request.ComtdpeiEntId, cancellationToken);
 
             if (entity == null)
             {
-                _logger.LogWarning("No se encontró registro Com4PEI con ID {CompeiEntId}", request.CompeiEntId);
+                _logger.LogWarning("No se encontró registro Com4PEI con ID {ComtdpeiEntId}", request.ComtdpeiEntId);
                 return Result<Com4PEIResponse>.Failure("Registro no encontrado");
             }
 
             // Actualizar campos
-            entity.EtapaFormulario = ConvertirEtapaANumero(request.EtapaFormulario);
+            entity.EtapaFormulario = request.EtapaFormulario;
             entity.Estado = request.Estado;
-            entity.AnioInicio = request.AnioInicio;
-            entity.AnioFin = request.AnioFin;
-            entity.FechaAprobacion = request.FechaAprobacion;
-            entity.ObjetivoEstrategico = request.ObjetivoEstrategico;
-            entity.DescripcionIncorporacion = request.DescripcionIncorporacion;
+            entity.AnioInicioPei = request.AnioInicioPei;
+            entity.AnioFinPei = request.AnioFinPei;
+            entity.FechaAprobacionPei = request.FechaAprobacionPei;
+            entity.ObjetivoPei = request.ObjetivoPei;
+            entity.DescripcionPei = request.DescripcionPei;
             entity.AlineadoPgd = request.AlineadoPgd;
-            entity.UrlDocPei = request.UrlDocPei;
+            entity.RutaPdfPei = request.RutaPdfPei;
             entity.CriteriosEvaluados = request.CriteriosEvaluados;
             entity.CheckPrivacidad = request.CheckPrivacidad;
             entity.CheckDdjj = request.CheckDdjj;
-            entity.UpdatedAt = DateTime.UtcNow;
 
-            // Si está en paso 3 y tiene ambos checks, marcar como completado
+            // Si está en paso 3 y tiene ambos checks, marcar como publicado
             if (request.EtapaFormulario == "paso3" && request.CheckPrivacidad && request.CheckDdjj)
             {
                 entity.Estado = "publicado";
@@ -56,45 +55,38 @@ public class UpdateCom4PEIHandler : IRequestHandler<UpdateCom4PEICommand, Result
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Registro Com4PEI actualizado exitosamente con ID {CompeiEntId}", entity.CompeiEntId);
+            _logger.LogInformation("Registro Com4PEI actualizado exitosamente con ID {ComtdpeiEntId}", entity.ComtdpeiEntId);
 
             var response = new Com4PEIResponse
             {
-                CompeiEntId = entity.CompeiEntId,
+                ComtdpeiEntId = entity.ComtdpeiEntId,
                 CompromisoId = entity.CompromisoId,
                 EntidadId = entity.EntidadId,
-                EtapaFormulario = request.EtapaFormulario,
-                Estado = entity.Estado ?? "bandeja",
-                AnioInicio = entity.AnioInicio,
-                AnioFin = entity.AnioFin,
-                FechaAprobacion = entity.FechaAprobacion,
-                ObjetivoEstrategico = entity.ObjetivoEstrategico,
-                DescripcionIncorporacion = entity.DescripcionIncorporacion,
+                EtapaFormulario = entity.EtapaFormulario,
+                Estado = entity.Estado,
+                AnioInicioPei = entity.AnioInicioPei,
+                AnioFinPei = entity.AnioFinPei,
+                FechaAprobacionPei = entity.FechaAprobacionPei,
+                ObjetivoPei = entity.ObjetivoPei,
+                DescripcionPei = entity.DescripcionPei,
                 AlineadoPgd = entity.AlineadoPgd,
-                UrlDocPei = entity.UrlDocPei,
+                RutaPdfPei = entity.RutaPdfPei,
                 CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
-                CheckDdjj = entity.CheckDdjj
+                CheckDdjj = entity.CheckDdjj,
+                EstadoPCM = entity.EstadoPCM,
+                ObservacionesPCM = entity.ObservacionesPCM,
+                CreatedAt = entity.CreatedAt,
+                FecRegistro = entity.FecRegistro,
+                Activo = entity.Activo
             };
 
             return Result<Com4PEIResponse>.Success(response, "Compromiso 4 actualizado exitosamente");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al actualizar registro Com4PEI con ID {CompeiEntId}", request.CompeiEntId);
+            _logger.LogError(ex, "Error al actualizar registro Com4PEI con ID {ComtdpeiEntId}", request.ComtdpeiEntId);
             return Result<Com4PEIResponse>.Failure($"Error al actualizar el compromiso: {ex.Message}");
         }
-    }
-
-    private int ConvertirEtapaANumero(string etapa)
-    {
-        return etapa.ToLower() switch
-        {
-            "paso1" => 1,
-            "paso2" => 2,
-            "paso3" => 3,
-            "completado" => 3,
-            _ => 1
-        };
     }
 }

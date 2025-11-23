@@ -1,108 +1,92 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace PCM.Domain.Entities;
 
 /// <summary>
-/// Entidad para el Compromiso 5: Estrategia Digital
-/// Tabla: com5_estrategia_digital
+/// Compromiso 5: Estrategia Digital
+/// Tabla Supabase: com5_destrategiad
 /// </summary>
+[Table("com5_destrategiad")]
 public class Com5EstrategiaDigital
 {
-    /// <summary>
-    /// ID único del registro (PK)
-    /// </summary>
-    public int ComedEntId { get; set; }
+    [Key]
+    [Column("comded_ent_id")]
+    public long ComdedEntId { get; set; }
 
-    /// <summary>
-    /// ID del compromiso (siempre 5 para este caso)
-    /// </summary>
-    public int CompromisoId { get; set; }
+    [Column("compromiso_id")]
+    public long CompromisoId { get; set; }
 
-    /// <summary>
-    /// ID de la entidad pública (UUID)
-    /// </summary>
+    [Column("entidad_id")]
     public Guid EntidadId { get; set; }
 
-    /// <summary>
-    /// Nombre de la estrategia digital
-    /// </summary>
-    public string? NombreEstrategia { get; set; }
+    [Column("etapa_formulario")]
+    [StringLength(20)]
+    public string EtapaFormulario { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Año de inicio de la estrategia
-    /// </summary>
-    public int? AnioInicio { get; set; }
+    [Column("estado")]
+    [StringLength(15)]
+    public string Estado { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Año de fin de la estrategia
-    /// </summary>
-    public int? AnioFin { get; set; }
-
-    /// <summary>
-    /// Fecha de aprobación de la estrategia
-    /// </summary>
-    public DateTime? FechaAprobacion { get; set; }
-
-    /// <summary>
-    /// Objetivos estratégicos de la estrategia digital
-    /// </summary>
-    public string? ObjetivosEstrategicos { get; set; }
-
-    /// <summary>
-    /// Líneas de acción de la estrategia
-    /// </summary>
-    public string? LineasAccion { get; set; }
-
-    /// <summary>
-    /// Indica si está alineado con el Plan de Gobierno Digital
-    /// </summary>
-    public bool AlineadoPgd { get; set; }
-
-    /// <summary>
-    /// Estado de implementación de la estrategia
-    /// </summary>
-    public string? EstadoImplementacion { get; set; }
-
-    /// <summary>
-    /// URL del documento de la estrategia digital
-    /// </summary>
-    public string? UrlDoc { get; set; }
-
-    /// <summary>
-    /// Criterios evaluados en formato JSON
-    /// </summary>
-    public string? CriteriosEvaluados { get; set; }
-
-    /// <summary>
-    /// Check de aceptación de política de privacidad
-    /// </summary>
+    [Column("check_privacidad")]
     public bool CheckPrivacidad { get; set; }
 
-    /// <summary>
-    /// Check de declaración jurada
-    /// </summary>
+    [Column("check_ddjj")]
     public bool CheckDdjj { get; set; }
 
-    /// <summary>
-    /// ID del usuario que registra (UUID)
-    /// </summary>
-    public Guid UsuarioRegistra { get; set; }
+    [Column("estado_pcm")]
+    [StringLength(50)]
+    public string? EstadoPCM { get; set; }
 
-    /// <summary>
-    /// Estado del registro: bandeja, sin_reportar, publicado
-    /// </summary>
-    public string Estado { get; set; } = "bandeja";
+    [Column("observaciones_pcm")]
+    [StringLength(500)]
+    public string? ObservacionesPCM { get; set; }
 
-    /// <summary>
-    /// Etapa del formulario: 1, 2, 3
-    /// </summary>
-    public int EtapaFormulario { get; set; }
-
-    /// <summary>
-    /// Fecha de creación del registro
-    /// </summary>
+    [Column("created_at")]
     public DateTime CreatedAt { get; set; }
 
-    /// <summary>
-    /// Fecha de última actualización
-    /// </summary>
-    public DateTime? UpdatedAt { get; set; }
+    [Column("fec_registro")]
+    public DateTime FecRegistro { get; set; }
+
+    [Column("usuario_registra")]
+    public Guid UsuarioRegistra { get; set; }
+
+    [Column("activo")]
+    public bool Activo { get; set; }
+
+    [Column("nombre_estrategia")]
+    [StringLength(150)]
+    public string? NombreEstrategia { get; set; }
+
+    [Column("periodo_inicio_estrategia")]
+    public long? PeriodoInicioEstrategia { get; set; }
+
+    [Column("periodo_fin_estrategia")]
+    public long? PeriodoFinEstrategia { get; set; }
+
+    [Column("objetivos_estrategicos")]
+    [StringLength(2000)]
+    public string? ObjetivosEstrategicos { get; set; }
+
+    [Column("lineas_accion")]
+    [StringLength(2000)]
+    public string? LineasAccion { get; set; }
+
+    [Column("fecha_aprobacion_estrategia")]
+    public DateTime? FechaAprobacionEstrategia { get; set; }
+
+    [Column("alineado_pgd_estrategia")]
+    public bool AlineadoPgdEstrategia { get; set; }
+
+    [Column("estado_implementacion_estrategia")]
+    [StringLength(50)]
+    public string? EstadoImplementacionEstrategia { get; set; }
+
+    [Column("ruta_pdf_estrategia")]
+    [StringLength(255)]
+    public string? RutaPdfEstrategia { get; set; }
+
+    [Column("criterios_evaluados", TypeName = "jsonb")]
+    public string? CriteriosEvaluados { get; set; }
 }

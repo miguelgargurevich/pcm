@@ -6,6 +6,7 @@ import com2CGTDService from '../services/com2CGTDService';
 import com4PEIService from '../services/com4PEIService';
 import com5EstrategiaDigitalService from '../services/com5EstrategiaDigitalService';
 import { compromisosService } from '../services/compromisosService';
+import { getCatalogoOptions } from '../services/catalogoService';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
 import PDFViewer from '../components/PDFViewer';
 import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save, Eye, ExternalLink, Plus, Trash2, Edit2 } from 'lucide-react';
@@ -51,6 +52,11 @@ const CumplimientoNormativoDetalle = () => {
   const [haVistoPolitica, setHaVistoPolitica] = useState(false);
   const [haVistoDeclaracion, setHaVistoDeclaracion] = useState(false);
 
+  // Estados para catálogos dinámicos
+  const [rolesFuncionario, setRolesFuncionario] = useState([]);
+  const [rolesComite, setRolesComite] = useState([]);
+  const [loadingCatalogos, setLoadingCatalogos] = useState(true);
+
   // URLs de los documentos en Supabase Storage
   const POLITICA_PRIVACIDAD_URL = 'https://amzwfwfhllwhjffkqxhn.supabase.co/storage/v1/object/public/cumplimiento-documentos/politicas/politica-privacidad.pdf';
   const DECLARACION_JURADA_URL = 'https://amzwfwfhllwhjffkqxhn.supabase.co/storage/v1/object/public/cumplimiento-documentos/politicas/declaracion-jurada.pdf';
@@ -82,6 +88,29 @@ const CumplimientoNormativoDetalle = () => {
   });
 
   const [errores, setErrores] = useState({});
+
+  // Cargar catálogos al montar el componente
+  useEffect(() => {
+    const loadCatalogos = async () => {
+      try {
+        setLoadingCatalogos(true);
+        const [funcionario, comite] = await Promise.all([
+          getCatalogoOptions('ROL_FUNCIONARIO'),
+          getCatalogoOptions('ROL_COMITE')
+        ]);
+        setRolesFuncionario(funcionario);
+        setRolesComite(comite);
+      } catch (error) {
+        console.error('Error cargando catálogos:', error);
+        showErrorToast('Error al cargar catálogos de roles');
+      } finally {
+        setLoadingCatalogos(false);
+      }
+    };
+    
+    loadCatalogos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     loadCompromisos();
@@ -232,7 +261,7 @@ const CumplimientoNormativoDetalle = () => {
           console.log('📄 Datos recibidos:', data);
           
           if (data) {
-            setCom4RecordId(data.compeiEntId);
+            setCom4RecordId(data.comtdpeiEntId);
             
             // Parsear criterios evaluados desde JSON
             let criteriosParsed = [];
@@ -247,11 +276,11 @@ const CumplimientoNormativoDetalle = () => {
             
             setFormData({
               compromisoId: '4',
-              anioInicio: data.anioInicio || '',
-              anioFin: data.anioFin || '',
-              fechaAprobacion: data.fechaAprobacion ? data.fechaAprobacion.split('T')[0] : '',
-              objetivoEstrategico: data.objetivoEstrategico || '',
-              descripcionIncorporacion: data.descripcionIncorporacion || '',
+              anioInicio: data.anioInicioPei || '',
+              anioFin: data.anioFinPei || '',
+              fechaAprobacion: data.fechaAprobacionPei ? data.fechaAprobacionPei.split('T')[0] : '',
+              objetivoEstrategico: data.objetivoPei || '',
+              descripcionIncorporacion: data.descripcionPei || '',
               alineadoPgd: data.alineadoPgd || false,
               documentoFile: null,
               criteriosEvaluados: criteriosParsed,
@@ -264,9 +293,9 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoDeclaracion(data.checkDdjj);
             
             // Si hay documento guardado, establecer la URL para vista previa
-            if (data.urlDocPei) {
-              console.log('📄 Cargando PDF guardado desde:', data.urlDocPei);
-              setPdfUrl(data.urlDocPei);
+            if (data.rutaPdfPei) {
+              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfPei);
+              setPdfUrl(data.rutaPdfPei);
             }
           } else {
             // No existe registro, inicializar
@@ -288,7 +317,7 @@ const CumplimientoNormativoDetalle = () => {
           console.log('📄 Datos recibidos:', data);
           
           if (data) {
-            setCom5RecordId(data.comedEntId);
+            setCom5RecordId(data.comdedEntId);
             
             // Parsear criterios evaluados desde JSON
             let criteriosParsed = [];
@@ -304,13 +333,13 @@ const CumplimientoNormativoDetalle = () => {
             setFormData({
               compromisoId: '5',
               nombreEstrategia: data.nombreEstrategia || '',
-              anioInicio: data.anioInicio || '',
-              anioFin: data.anioFin || '',
-              fechaAprobacion: data.fechaAprobacion ? data.fechaAprobacion.split('T')[0] : '',
+              anioInicio: data.periodoInicioEstrategia || '',
+              anioFin: data.periodoFinEstrategia || '',
+              fechaAprobacion: data.fechaAprobacionEstrategia ? data.fechaAprobacionEstrategia.split('T')[0] : '',
               objetivosEstrategicos: data.objetivosEstrategicos || '',
               lineasAccion: data.lineasAccion || '',
-              alineadoPgd: data.alineadoPgd || false,
-              estadoImplementacion: data.estadoImplementacion || '',
+              alineadoPgd: data.alineadoPgdEstrategia || false,
+              estadoImplementacion: data.estadoImplementacionEstrategia || '',
               documentoFile: null,
               criteriosEvaluados: criteriosParsed,
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
@@ -322,9 +351,9 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoDeclaracion(data.checkDdjj);
             
             // Si hay documento guardado, establecer la URL para vista previa
-            if (data.urlDoc) {
-              console.log('📄 Cargando PDF guardado desde:', data.urlDoc);
-              setPdfUrl(data.urlDoc);
+            if (data.rutaPdfEstrategia) {
+              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfEstrategia);
+              setPdfUrl(data.rutaPdfEstrategia);
             }
           } else {
             // No existe registro, inicializar
@@ -395,7 +424,14 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
       
-      // Caso genérico para otros compromisos
+      // Si llegamos aquí sin ID, significa que es un compromiso especial sin registro aún
+      if (!id) {
+        console.log('⚠️ No hay ID para cargar, es un nuevo registro');
+        setLoading(false);
+        return;
+      }
+      
+      // Caso genérico para otros compromisos (que usan cumplimiento_normativo)
       const response = await cumplimientoService.getById(id);
       
       if (response.isSuccess || response.IsSuccess) {
@@ -565,7 +601,7 @@ const CumplimientoNormativoDetalle = () => {
           nuevosErrores.correoElectronico = 'Ingrese un correo válido';
         }
         if (!formData.telefono) nuevosErrores.telefono = 'Ingrese el teléfono';
-        if (!formData.rol) nuevosErrores.rol = 'Ingrese el rol';
+        if (!formData.rol) nuevosErrores.rol = 'Seleccione el rol';
         if (!formData.cargo) nuevosErrores.cargo = 'Ingrese el cargo';
         if (!formData.fechaInicio) nuevosErrores.fechaInicio = 'Seleccione la fecha de inicio';
       }
@@ -629,8 +665,10 @@ const CumplimientoNormativoDetalle = () => {
       console.log('User:', user);
       console.log('Paso actual:', pasoActual);
       console.log('com1RecordId:', com1RecordId);
+      console.log('formData.documentoFile:', formData.documentoFile);
+      console.log('pdfUrl:', pdfUrl);
 
-      // Primero subir el documento si hay uno nuevo en el paso 2
+      // Subir el documento si hay uno nuevo (puede ser en paso 1 o paso 2)
       let documentoUrl = null;
       let blobUrlToRevoke = null;
       
@@ -647,7 +685,7 @@ const CumplimientoNormativoDetalle = () => {
         console.log('📄 Manteniendo URL de Supabase existente:', pdfUrl);
         documentoUrl = pdfUrl;
       } else {
-        // Si tenemos blob URL pero no archivo nuevo, no enviar nada
+        // Si no hay archivo nuevo ni URL existente
         console.log('⚠️ No hay archivo para guardar');
         documentoUrl = null;
       }
@@ -836,13 +874,13 @@ const CumplimientoNormativoDetalle = () => {
         const com4Data = {
           compromisoId: 4,
           entidadId: user.entidadId,
-          anioInicio: parseInt(formData.anioInicio) || null,
-          anioFin: parseInt(formData.anioFin) || null,
-          fechaAprobacion: formData.fechaAprobacion || null,
-          objetivoEstrategico: formData.objetivoEstrategico || null,
-          descripcionIncorporacion: formData.descripcionIncorporacion || null,
+          anioInicioPei: parseInt(formData.anioInicio) || null,
+          anioFinPei: parseInt(formData.anioFin) || null,
+          fechaAprobacionPei: formData.fechaAprobacion || null,
+          objetivoPei: formData.objetivoEstrategico || null,
+          descripcionPei: formData.descripcionIncorporacion || null,
           alineadoPgd: formData.alineadoPgd || false,
-          urlDocPei: pdfUrl || null,
+          rutaPdfPei: documentoUrl || null,
           criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
           checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
           checkDdjj: formData.aceptaDeclaracionJurada || false,
@@ -860,8 +898,8 @@ const CumplimientoNormativoDetalle = () => {
           response = await com4PEIService.create(com4Data);
           console.log('Respuesta create Com4:', response);
           if (response.isSuccess && response.data) {
-            console.log('ID del nuevo registro Com4:', response.data.compeiEntId);
-            setCom4RecordId(response.data.compeiEntId);
+            console.log('ID del nuevo registro Com4:', response.data.comtdpeiEntId);
+            setCom4RecordId(response.data.comtdpeiEntId);
           }
         }
         
@@ -871,8 +909,8 @@ const CumplimientoNormativoDetalle = () => {
         if (response.isSuccess && response.data) {
           console.log('✅ Actualizando estado local Com4');
           
-          if (response.data.urlDocPei) {
-            setPdfUrl(response.data.urlDocPei);
+          if (response.data.rutaPdfPei) {
+            setPdfUrl(response.data.rutaPdfPei);
             if (blobUrlToRevoke) {
               console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
               URL.revokeObjectURL(blobUrlToRevoke);
@@ -897,14 +935,14 @@ const CumplimientoNormativoDetalle = () => {
           compromisoId: 5,
           entidadId: user.entidadId,
           nombreEstrategia: formData.nombreEstrategia || null,
-          anioInicio: parseInt(formData.anioInicio) || null,
-          anioFin: parseInt(formData.anioFin) || null,
-          fechaAprobacion: formData.fechaAprobacion || null,
+          periodoInicioEstrategia: parseInt(formData.anioInicio) || null,
+          periodoFinEstrategia: parseInt(formData.anioFin) || null,
+          fechaAprobacionEstrategia: formData.fechaAprobacion || null,
           objetivosEstrategicos: formData.objetivosEstrategicos || null,
           lineasAccion: formData.lineasAccion || null,
-          alineadoPgd: formData.alineadoPgd || false,
-          estadoImplementacion: formData.estadoImplementacion || null,
-          urlDoc: pdfUrl || null,
+          alineadoPgdEstrategia: formData.alineadoPgd || false,
+          estadoImplementacionEstrategia: formData.estadoImplementacion || null,
+          rutaPdfEstrategia: documentoUrl || null,
           criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
           checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
           checkDdjj: formData.aceptaDeclaracionJurada || false,
@@ -922,8 +960,8 @@ const CumplimientoNormativoDetalle = () => {
           response = await com5EstrategiaDigitalService.create(com5Data);
           console.log('Respuesta create Com5:', response);
           if (response.isSuccess && response.data) {
-            console.log('ID del nuevo registro Com5:', response.data.comedEntId);
-            setCom5RecordId(response.data.comedEntId);
+            console.log('ID del nuevo registro Com5:', response.data.comdedEntId);
+            setCom5RecordId(response.data.comdedEntId);
           }
         }
         
@@ -933,8 +971,8 @@ const CumplimientoNormativoDetalle = () => {
         if (response.isSuccess && response.data) {
           console.log('✅ Actualizando estado local Com5');
           
-          if (response.data.urlDoc) {
-            setPdfUrl(response.data.urlDoc);
+          if (response.data.rutaPdfEstrategia) {
+            setPdfUrl(response.data.rutaPdfEstrategia);
             if (blobUrlToRevoke) {
               console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
               URL.revokeObjectURL(blobUrlToRevoke);
@@ -1053,7 +1091,7 @@ const CumplimientoNormativoDetalle = () => {
           <div className="mt-3 p-4 bg-primary/5 border-l-4 border-primary rounded-r-lg">
             <p className="text-sm text-gray-600 mb-1">Compromiso seleccionado:</p>
             <p className="text-base font-semibold text-primary">
-              {compromisoSeleccionado.nombreCompromiso}
+              Compromiso {compromisoSeleccionado.compromisoId}: {compromisoSeleccionado.nombreCompromiso}
             </p>
           </div>
         )}
@@ -1226,6 +1264,47 @@ const CumplimientoNormativoDetalle = () => {
                       <p className="text-red-500 text-xs mt-1">{errores.descripcionIncorporacion}</p>
                     )}
                   </div>
+
+                  {/* Documento PEI (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Documento PEI (PDF) <span className="text-red-500">*</span>
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento del PEI en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
                 </div>
               </>
             ) : parseInt(formData.compromisoId) === 5 ? (
@@ -1329,10 +1408,10 @@ const CumplimientoNormativoDetalle = () => {
                       className={`input-field ${errores.estadoImplementacion ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     >
-                      <option value="">Seleccione...</option>
-                      <option value="planificacion">En Planificación</option>
-                      <option value="implementacion">En Implementación</option>
-                      <option value="completado">Completado</option>
+                      <option value="">Seleccione el estado de implementación</option>
+                      <option value="en_ejecucion">En ejecución</option>
+                      <option value="parcialmente_implementado">Parcialmente implementado</option>
+                      <option value="completamente_implementado">Completamente implementado</option>
                       <option value="suspendido">Suspendido</option>
                     </select>
                     {errores.estadoImplementacion && (
@@ -1353,6 +1432,47 @@ const CumplimientoNormativoDetalle = () => {
                       />
                       <span className="text-sm text-gray-700">¿La estrategia está alineada con el Plan de Gobierno Digital?</span>
                     </label>
+                  </div>
+
+                  {/* Documento PDF */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Documento PDF <span className="text-red-500">*</span>
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo PDF'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento de la Estrategia Digital en formato PDF (máximo 10 MB)
+                    </p>
                   </div>
 
                   {/* Objetivos Estratégicos */}
@@ -1631,15 +1751,22 @@ const CumplimientoNormativoDetalle = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Rol <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
+                <select
                   name="rol"
                   value={formData.rol}
                   onChange={handleInputChange}
                   className={`input-field ${errores.rol ? 'border-red-500' : ''}`}
-                  placeholder="Responsable de Tecnología"
-                  disabled={viewMode}
-                />
+                  disabled={viewMode || loadingCatalogos}
+                >
+                  <option value="">
+                    {loadingCatalogos ? 'Cargando roles...' : 'Seleccione un rol'}
+                  </option>
+                  {rolesFuncionario.map((rol, index) => (
+                    <option key={index} value={rol.value} title={rol.descripcion}>
+                      {rol.label}
+                    </option>
+                  ))}
+                </select>
                 {errores.rol && (
                   <p className="text-red-500 text-xs mt-1">{errores.rol}</p>
                 )}
@@ -2065,12 +2192,16 @@ const CumplimientoNormativoDetalle = () => {
                   value={miembroActual.rol}
                   onChange={(e) => setMiembroActual({ ...miembroActual, rol: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  disabled={loadingCatalogos}
                 >
-                  <option value="">Seleccionar...</option>
-                  <option value="Presidente">Presidente</option>
-                  <option value="Vicepresidente">Vicepresidente</option>
-                  <option value="Secretario Técnico">Secretario Técnico</option>
-                  <option value="Miembro">Miembro</option>
+                  <option value="">
+                    {loadingCatalogos ? 'Cargando roles...' : 'Seleccionar...'}
+                  </option>
+                  {rolesComite.map((rol, index) => (
+                    <option key={index} value={rol.value} title={rol.descripcion}>
+                      {rol.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 

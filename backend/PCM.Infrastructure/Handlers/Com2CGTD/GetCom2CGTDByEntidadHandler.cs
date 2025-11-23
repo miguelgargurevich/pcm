@@ -29,7 +29,9 @@ public class GetCom2CGTDByEntidadHandler : IRequestHandler<GetCom2CGTDByEntidadQ
 
             if (entity == null)
             {
-                return Result<Com2CGTDResponse>.Failure("No se encontró registro para esta entidad");
+                _logger.LogInformation("No se encontró registro Com2CGTD para Compromiso {CompromisoId}, Entidad {EntidadId}", 
+                    request.CompromisoId, request.EntidadId);
+                return Result<Com2CGTDResponse>.Success(null, "No se encontró registro para esta entidad");
             }
 
             // Obtener miembros del comité

@@ -36,25 +36,21 @@ namespace PCM.API.Controllers
                 return BadRequest(result);
             }
 
-            if (result.Data == null)
-            {
-                return NotFound(result);
-            }
-
+            // Si no hay datos, retornar 200 OK con Success(null) para permitir crear nuevo registro
             return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCom4PEICommand command)
         {
-            // Obtener entidad_id del claim del JWT
+            // Obtener entidad_id del claim del JWT (viene como string UUID, lo parseamos a Guid)
             var entidadIdClaim = User.FindFirst("entidad_id")?.Value;
             if (string.IsNullOrEmpty(entidadIdClaim) || !Guid.TryParse(entidadIdClaim, out var entidadId))
             {
                 return Unauthorized(new { success = false, message = "Token inválido o sin entidad_id" });
             }
 
-            // Obtener user_id del claim del JWT
+            // Obtener user_id del claim del JWT (viene como string UUID, lo parseamos a Guid)
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
             {
@@ -77,7 +73,7 @@ namespace PCM.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(long id, [FromBody] UpdateCom4PEICommand command)
         {
-            command.CompeiEntId = id;
+            command.ComtdpeiEntId = id;
 
             var result = await _mediator.Send(command);
 

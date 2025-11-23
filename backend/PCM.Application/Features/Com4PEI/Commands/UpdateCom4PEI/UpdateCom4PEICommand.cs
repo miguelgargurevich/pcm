@@ -5,18 +5,18 @@ namespace PCM.Application.Features.Com4PEI.Commands.UpdateCom4PEI;
 
 public class UpdateCom4PEICommand : IRequest<Result<Com4PEIResponse>>
 {
-    public long CompeiEntId { get; set; }
+    public long ComtdpeiEntId { get; set; }
     public string EtapaFormulario { get; set; } = "paso1";
     public string Estado { get; set; } = "bandeja";
     
-    // Campos del PEI
-    public int AnioInicio { get; set; }
-    public int AnioFin { get; set; }
-    public DateTime FechaAprobacion { get; set; }
-    public string ObjetivoEstrategico { get; set; } = string.Empty;
-    public string DescripcionIncorporacion { get; set; } = string.Empty;
+    // Campos del PEI - Supabase schema
+    public long? AnioInicioPei { get; set; }
+    public long? AnioFinPei { get; set; }
+    public DateTime? FechaAprobacionPei { get; set; }
+    public string? ObjetivoPei { get; set; }
+    public string? DescripcionPei { get; set; }
     public bool AlineadoPgd { get; set; }
-    public string? UrlDocPei { get; set; }
+    public string? RutaPdfPei { get; set; }
     public string? CriteriosEvaluados { get; set; }
     
     // Aceptaciones
@@ -26,21 +26,24 @@ public class UpdateCom4PEICommand : IRequest<Result<Com4PEIResponse>>
 
 public class Com4PEIResponse
 {
-    public long CompeiEntId { get; set; }
+    public long ComtdpeiEntId { get; set; }
     public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
     public string EtapaFormulario { get; set; } = string.Empty;
     public string Estado { get; set; } = string.Empty;
-    public int AnioInicio { get; set; }
-    public int AnioFin { get; set; }
-    public DateTime FechaAprobacion { get; set; }
-    public string ObjetivoEstrategico { get; set; } = string.Empty;
-    public string DescripcionIncorporacion { get; set; } = string.Empty;
+    public long? AnioInicioPei { get; set; }
+    public long? AnioFinPei { get; set; }
+    public DateTime? FechaAprobacionPei { get; set; }
+    public string? ObjetivoPei { get; set; }
+    public string? DescripcionPei { get; set; }
     public bool AlineadoPgd { get; set; }
-    public string? UrlDocPei { get; set; }
+    public string? RutaPdfPei { get; set; }
     public string? CriteriosEvaluados { get; set; }
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }
     public string? EstadoPCM { get; set; }
     public string? ObservacionesPCM { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime FecRegistro { get; set; }
+    public bool Activo { get; set; }
 }

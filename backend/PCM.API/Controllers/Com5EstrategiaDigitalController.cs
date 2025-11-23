@@ -33,7 +33,7 @@ public class Com5EstrategiaDigitalController : ControllerBase
     /// Obtiene el registro Com5 por compromisoId y entidadId
     /// </summary>
     [HttpGet("{compromisoId}/entidad/{entidadId}")]
-    public async Task<IActionResult> GetByEntidad(int compromisoId, Guid entidadId)
+    public async Task<IActionResult> GetByEntidad(long compromisoId, Guid entidadId)
     {
         try
         {
@@ -50,11 +50,7 @@ public class Com5EstrategiaDigitalController : ControllerBase
                 return BadRequest(result);
             }
 
-            if (result.Data == null)
-            {
-                return NotFound(new { message = "No se encontró registro para esta entidad" });
-            }
-
+            // Si no hay datos, retornar 200 OK con Success(null) para permitir crear nuevo registro
             return Ok(result);
         }
         catch (Exception ex)
@@ -72,7 +68,7 @@ public class Com5EstrategiaDigitalController : ControllerBase
     {
         try
         {
-            // Extraer entidad_id y usuario_id del JWT
+            // Extraer entidad_id y usuario_id del JWT (parsear a Guid UUID)
             var entidadIdClaim = User.FindFirst("entidad_id")?.Value;
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -81,8 +77,13 @@ public class Com5EstrategiaDigitalController : ControllerBase
                 return Unauthorized(new { message = "Token inválido o incompleto" });
             }
 
-            command.EntidadId = Guid.Parse(entidadIdClaim);
-            command.UsuarioRegistra = Guid.Parse(userIdClaim);
+            if (!Guid.TryParse(entidadIdClaim, out var entidadId) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new { message = "Token con formato inválido" });
+            }
+
+            command.EntidadId = entidadId;
+            command.UsuarioRegistra = userId;
 
             var result = await _createHandler.Handle(command);
 
@@ -104,11 +105,11 @@ public class Com5EstrategiaDigitalController : ControllerBase
     /// Actualiza un registro Com5 Estrategia Digital existente
     /// </summary>
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateCom5EstrategiaDigitalCommand command)
+    public async Task<IActionResult> Update(long id, [FromBody] UpdateCom5EstrategiaDigitalCommand command)
     {
         try
         {
-            // Extraer entidad_id y usuario_id del JWT
+            // Extraer entidad_id y usuario_id del JWT (parsear a Guid UUID)
             var entidadIdClaim = User.FindFirst("entidad_id")?.Value;
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -117,9 +118,14 @@ public class Com5EstrategiaDigitalController : ControllerBase
                 return Unauthorized(new { message = "Token inválido o incompleto" });
             }
 
-            command.ComedEntId = id;
-            command.EntidadId = Guid.Parse(entidadIdClaim);
-            command.UsuarioRegistra = Guid.Parse(userIdClaim);
+            if (!Guid.TryParse(entidadIdClaim, out var entidadId) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new { message = "Token con formato inválido" });
+            }
+
+            command.ComdedEntId = id;
+            command.EntidadId = entidadId;
+            command.UsuarioRegistra = userId;
 
             var result = await _updateHandler.Handle(command);
 

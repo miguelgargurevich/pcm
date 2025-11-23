@@ -25,48 +25,56 @@ public class CreateCom4PEIHandler : IRequestHandler<CreateCom4PEICommand, Result
             _logger.LogInformation("Creando registro Com4PEI para Compromiso {CompromisoId}, Entidad {EntidadId}", 
                 request.CompromisoId, request.EntidadId);
 
+            var now = DateTime.UtcNow;
             var entity = new Com4Entity
             {
-                CompromisoId = (int)request.CompromisoId,
+                CompromisoId = request.CompromisoId,
                 EntidadId = request.EntidadId,
-                EtapaFormulario = ConvertirEtapaANumero(request.EtapaFormulario),
+                EtapaFormulario = request.EtapaFormulario,
                 Estado = request.Estado,
-                AnioInicio = request.AnioInicio,
-                AnioFin = request.AnioFin,
-                FechaAprobacion = request.FechaAprobacion,
-                ObjetivoEstrategico = request.ObjetivoEstrategico,
-                DescripcionIncorporacion = request.DescripcionIncorporacion,
-                AlineadoPgd = request.AlineadoPgd,
-                UrlDocPei = request.UrlDocPei,
-                CriteriosEvaluados = request.CriteriosEvaluados,
                 CheckPrivacidad = request.CheckPrivacidad,
                 CheckDdjj = request.CheckDdjj,
+                CreatedAt = now,
+                FecRegistro = now,
                 UsuarioRegistra = request.UsuarioRegistra ?? Guid.Empty,
-                CreatedAt = DateTime.UtcNow
+                Activo = true,
+                AnioInicioPei = request.AnioInicioPei,
+                AnioFinPei = request.AnioFinPei,
+                ObjetivoPei = request.ObjetivoPei,
+                DescripcionPei = request.DescripcionPei,
+                AlineadoPgd = request.AlineadoPgd,
+                FechaAprobacionPei = request.FechaAprobacionPei,
+                RutaPdfPei = request.RutaPdfPei,
+                CriteriosEvaluados = request.CriteriosEvaluados
             };
 
             _context.Com4PEI.Add(entity);
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Registro Com4PEI creado exitosamente con ID {CompeiEntId}", entity.CompeiEntId);
+            _logger.LogInformation("Registro Com4PEI creado exitosamente con ID {ComtdpeiEntId}", entity.ComtdpeiEntId);
 
             var response = new Com4PEIResponse
             {
-                CompeiEntId = entity.CompeiEntId,
+                ComtdpeiEntId = entity.ComtdpeiEntId,
                 CompromisoId = entity.CompromisoId,
                 EntidadId = entity.EntidadId,
-                EtapaFormulario = request.EtapaFormulario,
-                Estado = entity.Estado ?? "bandeja",
-                AnioInicio = entity.AnioInicio,
-                AnioFin = entity.AnioFin,
-                FechaAprobacion = entity.FechaAprobacion,
-                ObjetivoEstrategico = entity.ObjetivoEstrategico,
-                DescripcionIncorporacion = entity.DescripcionIncorporacion,
+                EtapaFormulario = entity.EtapaFormulario,
+                Estado = entity.Estado,
+                AnioInicioPei = entity.AnioInicioPei,
+                AnioFinPei = entity.AnioFinPei,
+                FechaAprobacionPei = entity.FechaAprobacionPei,
+                ObjetivoPei = entity.ObjetivoPei,
+                DescripcionPei = entity.DescripcionPei,
                 AlineadoPgd = entity.AlineadoPgd,
-                UrlDocPei = entity.UrlDocPei,
+                RutaPdfPei = entity.RutaPdfPei,
                 CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
-                CheckDdjj = entity.CheckDdjj
+                CheckDdjj = entity.CheckDdjj,
+                EstadoPCM = entity.EstadoPCM,
+                ObservacionesPCM = entity.ObservacionesPCM,
+                CreatedAt = entity.CreatedAt,
+                FecRegistro = entity.FecRegistro,
+                Activo = entity.Activo
             };
 
             return Result<Com4PEIResponse>.Success(response, "Compromiso 4 creado exitosamente");
@@ -76,17 +84,5 @@ public class CreateCom4PEIHandler : IRequestHandler<CreateCom4PEICommand, Result
             _logger.LogError(ex, "Error al crear registro Com4PEI para Compromiso {CompromisoId}", request.CompromisoId);
             return Result<Com4PEIResponse>.Failure($"Error al crear el compromiso: {ex.Message}");
         }
-    }
-
-    private int ConvertirEtapaANumero(string etapa)
-    {
-        return etapa.ToLower() switch
-        {
-            "paso1" => 1,
-            "paso2" => 2,
-            "paso3" => 3,
-            "completado" => 3,
-            _ => 1
-        };
     }
 }

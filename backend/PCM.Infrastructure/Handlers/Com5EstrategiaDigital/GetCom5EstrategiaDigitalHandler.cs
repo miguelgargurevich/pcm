@@ -38,40 +38,34 @@ public class GetCom5EstrategiaDigitalHandler
                 return Result<Com5EstrategiaDigitalResponse?>.Success(null);
             }
 
-            // Convertir int etapa a string
-            string etapaString = entity.EtapaFormulario switch
-            {
-                1 => "paso1",
-                2 => "paso2",
-                3 => "paso3",
-                _ => "paso1"
-            };
-
             var response = new Com5EstrategiaDigitalResponse
             {
-                ComedEntId = entity.ComedEntId,
+                ComdedEntId = entity.ComdedEntId,
                 CompromisoId = entity.CompromisoId,
                 EntidadId = entity.EntidadId,
                 NombreEstrategia = entity.NombreEstrategia,
-                AnioInicio = entity.AnioInicio,
-                AnioFin = entity.AnioFin,
-                FechaAprobacion = entity.FechaAprobacion,
+                PeriodoInicioEstrategia = entity.PeriodoInicioEstrategia,
+                PeriodoFinEstrategia = entity.PeriodoFinEstrategia,
+                FechaAprobacionEstrategia = entity.FechaAprobacionEstrategia,
                 ObjetivosEstrategicos = entity.ObjetivosEstrategicos,
                 LineasAccion = entity.LineasAccion,
-                AlineadoPgd = entity.AlineadoPgd,
-                EstadoImplementacion = entity.EstadoImplementacion,
-                UrlDoc = entity.UrlDoc,
+                AlineadoPgdEstrategia = entity.AlineadoPgdEstrategia,
+                EstadoImplementacionEstrategia = entity.EstadoImplementacionEstrategia,
+                RutaPdfEstrategia = entity.RutaPdfEstrategia,
                 CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
                 CheckDdjj = entity.CheckDdjj,
                 UsuarioRegistra = entity.UsuarioRegistra,
                 Estado = entity.Estado,
-                EtapaFormulario = etapaString,
+                EtapaFormulario = entity.EtapaFormulario,
                 CreatedAt = entity.CreatedAt,
-                UpdatedAt = entity.UpdatedAt
+                FecRegistro = entity.FecRegistro,
+                Activo = entity.Activo,
+                EstadoPCM = entity.EstadoPCM,
+                ObservacionesPCM = entity.ObservacionesPCM
             };
 
-            _logger.LogInformation("Registro Com5 encontrado: {ComedEntId}", entity.ComedEntId);
+            _logger.LogInformation("Registro Com5 encontrado: {ComdedEntId}", entity.ComdedEntId);
             return Result<Com5EstrategiaDigitalResponse?>.Success(response);
         }
         catch (Exception ex)

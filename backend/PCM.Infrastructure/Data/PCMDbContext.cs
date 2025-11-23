@@ -601,57 +601,11 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
         });
 
-        // Configuración de Com4PEI
-        modelBuilder.Entity<Com4PEI>(entity =>
-        {
-            entity.ToTable("com4_pei");
-            entity.HasKey(e => e.CompeiEntId);
-            entity.Property(e => e.CompeiEntId).HasColumnName("compei_ent_id");
-            entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id");
-            entity.Property(e => e.EntidadId).HasColumnName("entidad_id");
-            entity.Property(e => e.EtapaFormulario).HasColumnName("etapa_formulario");
-            entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(50);
-            entity.Property(e => e.AnioInicio).HasColumnName("anio_inicio");
-            entity.Property(e => e.AnioFin).HasColumnName("anio_fin");
-            entity.Property(e => e.FechaAprobacion).HasColumnName("fecha_aprobacion");
-            entity.Property(e => e.ObjetivoEstrategico).HasColumnName("objetivo_estrategico").HasMaxLength(1000);
-            entity.Property(e => e.DescripcionIncorporacion).HasColumnName("descripcion_incorporacion").HasMaxLength(2000);
-            entity.Property(e => e.AlineadoPgd).HasColumnName("alineado_pgd");
-            entity.Property(e => e.UrlDocPei).HasColumnName("url_doc_pei").HasMaxLength(500);
-            entity.Property(e => e.CriteriosEvaluados).HasColumnName("criterios_evaluados").HasMaxLength(4000);
-            entity.Property(e => e.CheckPrivacidad).HasColumnName("check_privacidad");
-            entity.Property(e => e.CheckDdjj).HasColumnName("check_ddjj");
-            entity.Property(e => e.UsuarioRegistra).HasColumnName("usuario_registra");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
-            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
-        });
+        // Configuración de Com4PEI - Supabase: com4_tdpei
+        // Ya no necesitamos configuración manual porque usamos Data Annotations en la entidad
 
-        // Configuración de Com5EstrategiaDigital
-        modelBuilder.Entity<Com5EstrategiaDigital>(entity =>
-        {
-            entity.ToTable("com5_estrategia_digital");
-            entity.HasKey(e => e.ComedEntId);
-            entity.Property(e => e.ComedEntId).HasColumnName("comed_ent_id");
-            entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id");
-            entity.Property(e => e.EntidadId).HasColumnName("entidad_id");
-            entity.Property(e => e.EtapaFormulario).HasColumnName("etapa_formulario");
-            entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(50);
-            entity.Property(e => e.NombreEstrategia).HasColumnName("nombre_estrategia").HasMaxLength(500);
-            entity.Property(e => e.AnioInicio).HasColumnName("anio_inicio");
-            entity.Property(e => e.AnioFin).HasColumnName("anio_fin");
-            entity.Property(e => e.FechaAprobacion).HasColumnName("fecha_aprobacion");
-            entity.Property(e => e.ObjetivosEstrategicos).HasColumnName("objetivos_estrategicos").HasMaxLength(2000);
-            entity.Property(e => e.LineasAccion).HasColumnName("lineas_accion").HasMaxLength(2000);
-            entity.Property(e => e.AlineadoPgd).HasColumnName("alineado_pgd");
-            entity.Property(e => e.EstadoImplementacion).HasColumnName("estado_implementacion").HasMaxLength(100);
-            entity.Property(e => e.UrlDoc).HasColumnName("url_doc").HasMaxLength(500);
-            entity.Property(e => e.CriteriosEvaluados).HasColumnName("criterios_evaluados").HasMaxLength(4000);
-            entity.Property(e => e.CheckPrivacidad).HasColumnName("check_privacidad");
-            entity.Property(e => e.CheckDdjj).HasColumnName("check_ddjj");
-            entity.Property(e => e.UsuarioRegistra).HasColumnName("usuario_registra");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
-            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
-        });
+        // Configuración de Com5EstrategiaDigital - Supabase: com5_destrategiad
+        // Ya no necesitamos configuración manual porque usamos Data Annotations en la entidad
 
         // Configuración de PermisoModulo
         modelBuilder.Entity<PermisoModulo>(entity =>

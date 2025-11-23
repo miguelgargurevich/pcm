@@ -25,73 +25,61 @@ public class CreateCom5EstrategiaDigitalHandler
         {
             _logger.LogInformation("Creando registro Com5 Estrategia Digital para entidad {EntidadId}", command.EntidadId);
 
-            // Convertir string etapa a int
-            int etapaInt = command.EtapaFormulario.ToLower() switch
-            {
-                "paso1" => 1,
-                "paso2" => 2,
-                "paso3" => 3,
-                _ => 1
-            };
-
+            var now = DateTime.UtcNow;
             var entity = new Domain.Entities.Com5EstrategiaDigital
             {
                 CompromisoId = command.CompromisoId,
                 EntidadId = command.EntidadId,
-                NombreEstrategia = command.NombreEstrategia,
-                AnioInicio = command.AnioInicio,
-                AnioFin = command.AnioFin,
-                FechaAprobacion = command.FechaAprobacion,
-                ObjetivosEstrategicos = command.ObjetivosEstrategicos,
-                LineasAccion = command.LineasAccion,
-                AlineadoPgd = command.AlineadoPgd,
-                EstadoImplementacion = command.EstadoImplementacion,
-                UrlDoc = command.UrlDoc,
-                CriteriosEvaluados = command.CriteriosEvaluados,
+                EtapaFormulario = command.EtapaFormulario,
+                Estado = command.Estado,
                 CheckPrivacidad = command.CheckPrivacidad,
                 CheckDdjj = command.CheckDdjj,
+                CreatedAt = now,
+                FecRegistro = now,
                 UsuarioRegistra = command.UsuarioRegistra,
-                Estado = "bandeja",
-                EtapaFormulario = etapaInt,
-                CreatedAt = DateTime.UtcNow
+                Activo = true,
+                NombreEstrategia = command.NombreEstrategia,
+                PeriodoInicioEstrategia = command.PeriodoInicioEstrategia,
+                PeriodoFinEstrategia = command.PeriodoFinEstrategia,
+                ObjetivosEstrategicos = command.ObjetivosEstrategicos,
+                LineasAccion = command.LineasAccion,
+                FechaAprobacionEstrategia = command.FechaAprobacionEstrategia,
+                AlineadoPgdEstrategia = command.AlineadoPgdEstrategia,
+                EstadoImplementacionEstrategia = command.EstadoImplementacionEstrategia,
+                RutaPdfEstrategia = command.RutaPdfEstrategia,
+                CriteriosEvaluados = command.CriteriosEvaluados
             };
 
             _context.Com5EstrategiaDigital.Add(entity);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Registro Com5 creado exitosamente con ID {ComedEntId}", entity.ComedEntId);
-
-            // Convertir int etapa a string para respuesta
-            string etapaString = entity.EtapaFormulario switch
-            {
-                1 => "paso1",
-                2 => "paso2",
-                3 => "paso3",
-                _ => "paso1"
-            };
+            _logger.LogInformation("Registro Com5 creado exitosamente con ID {ComdedEntId}", entity.ComdedEntId);
 
             var response = new Com5EstrategiaDigitalResponse
             {
-                ComedEntId = entity.ComedEntId,
+                ComdedEntId = entity.ComdedEntId,
                 CompromisoId = entity.CompromisoId,
                 EntidadId = entity.EntidadId,
                 NombreEstrategia = entity.NombreEstrategia,
-                AnioInicio = entity.AnioInicio,
-                AnioFin = entity.AnioFin,
-                FechaAprobacion = entity.FechaAprobacion,
+                PeriodoInicioEstrategia = entity.PeriodoInicioEstrategia,
+                PeriodoFinEstrategia = entity.PeriodoFinEstrategia,
+                FechaAprobacionEstrategia = entity.FechaAprobacionEstrategia,
                 ObjetivosEstrategicos = entity.ObjetivosEstrategicos,
                 LineasAccion = entity.LineasAccion,
-                AlineadoPgd = entity.AlineadoPgd,
-                EstadoImplementacion = entity.EstadoImplementacion,
-                UrlDoc = entity.UrlDoc,
+                AlineadoPgdEstrategia = entity.AlineadoPgdEstrategia,
+                EstadoImplementacionEstrategia = entity.EstadoImplementacionEstrategia,
+                RutaPdfEstrategia = entity.RutaPdfEstrategia,
                 CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
                 CheckDdjj = entity.CheckDdjj,
                 UsuarioRegistra = entity.UsuarioRegistra,
                 Estado = entity.Estado,
-                EtapaFormulario = etapaString,
+                EtapaFormulario = entity.EtapaFormulario,
                 CreatedAt = entity.CreatedAt,
-                UpdatedAt = entity.UpdatedAt
+                FecRegistro = entity.FecRegistro,
+                Activo = entity.Activo,
+                EstadoPCM = entity.EstadoPCM,
+                ObservacionesPCM = entity.ObservacionesPCM
             };
 
             return Result<Com5EstrategiaDigitalResponse>.Success(response);

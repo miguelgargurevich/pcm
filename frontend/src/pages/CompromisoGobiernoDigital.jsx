@@ -852,7 +852,7 @@ const CompromisoGobiernoDigital = () => {
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {formData.normativas.map((normativa, index) => (
-                          <tr key={normativa.id}>
+                          <tr key={normativa.normaId || index}>
                             <td className="px-4 py-2 text-sm text-gray-900">
                               {tiposNorma.find(t => t.tipoNormaId === parseInt(normativa.tipoNormaId))?.nombre}
                             </td>

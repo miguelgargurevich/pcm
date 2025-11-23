@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PCM.Domain\PCM.Domain.csproj" />
+    <ProjectReference Include="..\PCM.Shared\PCM.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
