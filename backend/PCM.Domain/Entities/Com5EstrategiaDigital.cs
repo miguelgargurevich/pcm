@@ -35,11 +35,11 @@ public class Com5EstrategiaDigital
     [Column("check_ddjj")]
     public bool CheckDdjj { get; set; }
 
-    [Column("estado_pcm")]
+    [Column("estado_PCM")]
     [StringLength(50)]
     public string? EstadoPCM { get; set; }
 
-    [Column("observaciones_pcm")]
+    [Column("observaciones_PCM")]
     [StringLength(500)]
     public string? ObservacionesPCM { get; set; }
 

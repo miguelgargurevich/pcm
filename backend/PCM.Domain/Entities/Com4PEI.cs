@@ -35,12 +35,12 @@ namespace PCM.Domain.Entities
         [Column("check_ddjj")]
         public bool CheckDdjj { get; set; }
 
-        [Column("estado_pcm")]
-        [StringLength(50)]
+        [Column("estado_PCM")]
+        [MaxLength(50)]
         public string? EstadoPCM { get; set; }
 
-        [Column("observaciones_pcm")]
-        [StringLength(500)]
+        [Column("observaciones_PCM")]
+        [MaxLength(500)]
         public string? ObservacionesPCM { get; set; }
 
         [Column("created_at")]

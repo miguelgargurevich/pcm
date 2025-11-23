@@ -10,6 +10,17 @@ import com7ImplementacionMPDService from '../services/com7ImplementacionMPDServi
 import com8PublicacionTUPAService from '../services/com8PublicacionTUPAService';
 import com9ModeloGestionDocumentalService from '../services/com9ModeloGestionDocumentalService';
 import com10DatosAbiertosService from '../services/com10DatosAbiertosService';
+import com11AportacionGeoPeruService from '../services/com11AportacionGeoPeruService';
+import com12ResponsableSoftwarePublicoService from '../services/com12ResponsableSoftwarePublicoService';
+import com13InteroperabilidadPIDEService from '../services/com13InteroperabilidadPIDEService';
+import com14OficialSeguridadDigitalService from '../services/com14OficialSeguridadDigitalService';
+import com15CSIRTInstitucionalService from '../services/com15CSIRTInstitucionalService';
+import com16SistemaGestionSeguridadService from '../services/com16SistemaGestionSeguridadService';
+import com17PlanTransicionIPv6Service from '../services/com17PlanTransicionIPv6Service';
+import com18AccesoPortalTransparenciaService from '../services/com18AccesoPortalTransparenciaService';
+import com19EncuestaNacionalGobDigitalService from '../services/com19EncuestaNacionalGobDigitalService';
+import com20DigitalizacionServiciosFacilitaService from '../services/com20DigitalizacionServiciosFacilitaService';
+import com21OficialGobiernoDatosService from '../services/com21OficialGobiernoDatosService';
 import { compromisosService } from '../services/compromisosService';
 import { getCatalogoOptions } from '../services/catalogoService';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
@@ -38,6 +49,17 @@ const CumplimientoNormativoDetalle = () => {
   const [com8RecordId, setCom8RecordId] = useState(null); // ID del registro en com8_ptupa
   const [com9RecordId, setCom9RecordId] = useState(null); // ID del registro en com9_mgd
   const [com10RecordId, setCom10RecordId] = useState(null); // ID del registro en com10_da
+  const [com11RecordId, setCom11RecordId] = useState(null); // ID del registro en com11_agp
+  const [com12RecordId, setCom12RecordId] = useState(null); // ID del registro en com12_rsp
+  const [com13RecordId, setCom13RecordId] = useState(null); // ID del registro en com13_ipide
+  const [com14RecordId, setCom14RecordId] = useState(null); // ID del registro en com14_oscd
+  const [com15RecordId, setCom15RecordId] = useState(null); // ID del registro en com15_csirt
+  const [com16RecordId, setCom16RecordId] = useState(null); // ID del registro en com16_sgsi
+  const [com17RecordId, setCom17RecordId] = useState(null); // ID del registro en com17_ptipv6
+  const [com18RecordId, setCom18RecordId] = useState(null); // ID del registro en com18_apte
+  const [com19RecordId, setCom19RecordId] = useState(null); // ID del registro en com19_enad
+  const [com20RecordId, setCom20RecordId] = useState(null); // ID del registro en com20_dsfp
+  const [com21RecordId, setCom21RecordId] = useState(null); // ID del registro en com21_ogd
   
   // Estado para Compromiso 2: Miembros del comité
   const [miembrosComite, setMiembrosComite] = useState([]);
@@ -57,6 +79,7 @@ const CumplimientoNormativoDetalle = () => {
   const [_compromisos, setCompromisos] = useState([]);
   const [compromisoSeleccionado, setCompromisoSeleccionado] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfUrl2, setPdfUrl2] = useState(null); // Para Com16 segundo PDF
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [documentoActualUrl, setDocumentoActualUrl] = useState(null); // URL del documento que se está viendo
   const [haVistoPolitica, setHaVistoPolitica] = useState(false);
@@ -123,8 +146,8 @@ const CumplimientoNormativoDetalle = () => {
 
   useEffect(() => {
     loadCompromisos();
-    // Cargar datos si está editando O si es Compromiso 1-10 (que usan tablas especiales)
-    if (isEdit || (['1', '2', '4', '5', '6', '7', '8', '9', '10'].includes(compromisoIdFromUrl) && user?.entidadId)) {
+    // Cargar datos si está editando O si es Compromiso 1-21 (que usan tablas especiales)
+    if (isEdit || (['1', '2', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'].includes(compromisoIdFromUrl) && user?.entidadId)) {
       loadCumplimiento();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -669,6 +692,558 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
       
+      // COMPROMISO 11: AportacionGeoPeru
+      if (compromisoId === 11 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 11, user.entidadId);
+        const response = await com11AportacionGeoPeruService.getByEntidad(11, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom11RecordId(data.comageopEntId);
+            
+            setFormData({
+              compromisoId: '11',
+              fechaInicio: data.fechaInicio ? data.fechaInicio.split('T')[0] : '',
+              fechaFin: data.fechaFin ? data.fechaFin.split('T')[0] : '',
+              serviciosDigitalizados: data.serviciosDigitalizados || '',
+              serviciosTotal: data.serviciosTotal || '',
+              porcentajeDigitalizacion: data.porcentajeDigitalizacion || '',
+              archivoPlan: data.archivoPlan || '',
+              descripcion: data.descripcion || '',
+              beneficiariosEstimados: data.beneficiariosEstimados || '',
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay archivo de plan guardado, establecer la URL para vista previa
+            if (data.archivoPlan) {
+              console.log('📄 Cargando archivo plan guardado desde:', data.archivoPlan);
+              setPdfUrl(data.archivoPlan);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '11' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+
+      // COMPROMISO 12: ResponsableSoftwarePublico
+      if (compromisoId === 12 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 12, user.entidadId);
+        const response = await com12ResponsableSoftwarePublicoService.getByEntidad(12, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom12RecordId(data.comdrspEntId);
+            
+            setFormData({
+              compromisoId: '12',
+              fechaElaboracion: data.fechaElaboracion ? data.fechaElaboracion.split('T')[0] : '',
+              numeroDocumento: data.numeroDocumento || '',
+              archivoDocumento: data.archivoDocumento || '',
+              descripcion: data.descripcion || '',
+              requisitosSeguridad: data.requisitosSeguridad || '',
+              requisitosPrivacidad: data.requisitosPrivacidad || '',
+              fechaVigencia: data.fechaVigencia ? data.fechaVigencia.split('T')[0] : '',
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.archivoDocumento) {
+              console.log('📄 Cargando archivo documento guardado desde:', data.archivoDocumento);
+              setPdfUrl(data.archivoDocumento);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '12' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+
+      // COMPROMISO 13: InteroperabilidadPIDE
+      if (compromisoId === 13 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 13, user.entidadId);
+        const response = await com13InteroperabilidadPIDEService.getByEntidad(13, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom13RecordId(data.compcpideEntId);
+            
+            setFormData({
+              compromisoId: '13',
+              fechaAprobacion: data.fechaAprobacion ? data.fechaAprobacion.split('T')[0] : '',
+              numeroResolucion: data.numeroResolucion || '',
+              archivoPlan: data.archivoPlan || '',
+              descripcion: data.descripcion || '',
+              riesgosIdentificados: data.riesgosIdentificados || '',
+              estrategiasMitigacion: data.estrategiasMitigacion || '',
+              fechaRevision: data.fechaRevision ? data.fechaRevision.split('T')[0] : '',
+              responsable: data.responsable || '',
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.archivoPlan) {
+              console.log('📄 Cargando archivo plan guardado desde:', data.archivoPlan);
+              setPdfUrl(data.archivoPlan);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '13' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+
+      // COMPROMISO 14: OficialSeguridadDigital
+      if (compromisoId === 14 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 14, user.entidadId);
+        const response = await com14OficialSeguridadDigitalService.getByEntidad(14, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom14RecordId(data.comdoscdEntId);
+            
+            setFormData({
+              compromisoId: '14',
+              fechaElaboracion: data.fechaElaboracion ? data.fechaElaboracion.split('T')[0] : '',
+              numeroDocumento: data.numeroDocumento || '',
+              archivoDocumento: data.archivoDocumento || '',
+              descripcion: data.descripcion || '',
+              politicasSeguridad: data.politicasSeguridad || '',
+              certificaciones: data.certificaciones || '',
+              fechaVigencia: data.fechaVigencia ? data.fechaVigencia.split('T')[0] : '',
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.archivoDocumento) {
+              console.log('📄 Cargando archivo documento guardado desde:', data.archivoDocumento);
+              setPdfUrl(data.archivoDocumento);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '14' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+
+      // COMPROMISO 15: CSIRTInstitucional
+      if (compromisoId === 15 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 15, user.entidadId);
+        const response = await com15CSIRTInstitucionalService.getByEntidad(15, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom15RecordId(data.comcsirtEntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '15',
+              fechaConformacion: data.fechaConformacion ? data.fechaConformacion.split('T')[0] : '',
+              numeroResolucion: data.numeroResolucion || '',
+              responsable: data.responsable || '',
+              emailContacto: data.emailContacto || '',
+              telefonoContacto: data.telefonoContacto || '',
+              descripcion: data.descripcion || '',
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '15' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+
+      // COMPROMISO 16: SistemaGestionSeguridad
+      if (compromisoId === 16 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 16, user.entidadId);
+        const response = await com16SistemaGestionSeguridadService.getByEntidad(16, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom16RecordId(data.comsgsiEntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '16',
+              fechaImplementacion: data.fechaImplementacion ? data.fechaImplementacion.split('T')[0] : '',
+              normaAplicable: data.normaAplicable || '',
+              certificacion: data.certificacion || '',
+              fechaCertificacion: data.fechaCertificacion ? data.fechaCertificacion.split('T')[0] : '',
+              descripcion: data.descripcion || '',
+              alcance: data.alcance || '',
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.rutaPdfPoliticasSgsi) {
+              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfPoliticasSgsi);
+              setPdfUrl(data.rutaPdfPoliticasSgsi);
+            }
+            // Si hay segundo documento guardado
+            if (data.rutaPdfCertificacionSgsi) {
+              console.log('📄 Cargando segundo PDF guardado desde:', data.rutaPdfCertificacionSgsi);
+              setPdfUrl2(data.rutaPdfCertificacionSgsi);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '16' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+
+      // COMPROMISO 17: PlanTransicionIPv6
+      if (compromisoId === 17 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 17, user.entidadId);
+        const response = await com17PlanTransicionIPv6Service.getByEntidad(17, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom17RecordId(data.comptipv6EntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '17',
+              fechaInicioTransicion: data.fechaInicioTransicion ? data.fechaInicioTransicion.split('T')[0] : '',
+              fechaFinTransicion: data.fechaFinTransicion ? data.fechaFinTransicion.split('T')[0] : '',
+              porcentajeAvance: data.porcentajeAvance || '',
+              sistemasMigrados: data.sistemasMigrados || '',
+              sistemasTotal: data.sistemasTotal || '',
+              descripcion: data.descripcion || '',
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.rutaPdfPtipv6) {
+              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfPtipv6);
+              setPdfUrl(data.rutaPdfPtipv6);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '17' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+
+      // COMPROMISO 18: AccesoPortalTransparencia
+      if (compromisoId === 18 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 18, user.entidadId);
+        const response = await com18AccesoPortalTransparenciaService.getByEntidad(18, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom18RecordId(data.comapteEntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '18',
+              urlPlataforma: data.urlPlataforma || '',
+              fechaImplementacion: data.fechaImplementacion ? data.fechaImplementacion.split('T')[0] : '',
+              tramitesDisponibles: data.tramitesDisponibles || '',
+              usuariosRegistrados: data.usuariosRegistrados || '',
+              tramitesProcesados: data.tramitesProcesados || '',
+              descripcion: data.descripcion || '',
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.rutaPdfApte) {
+              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfApte);
+              setPdfUrl(data.rutaPdfApte);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '18' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+
+      // COMPROMISO 19: EncuestaNacionalGobDigital
+      if (compromisoId === 19 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 19, user.entidadId);
+        const response = await com19EncuestaNacionalGobDigitalService.getByEntidad(19, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom19RecordId(data.comenadEntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '19',
+              fechaConexion: data.fechaConexion ? data.fechaConexion.split('T')[0] : '',
+              tipoConexion: data.tipoConexion || '',
+              anchoBanda: data.anchoBanda || '',
+              proveedor: data.proveedor || '',
+              descripcion: data.descripcion || '',
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.rutaPdfEnad) {
+              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfEnad);
+              setPdfUrl(data.rutaPdfEnad);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '19' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+
+      // COMPROMISO 20: DigitalizacionServiciosFacilita
+      if (compromisoId === 20 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 20, user.entidadId);
+        const response = await com20DigitalizacionServiciosFacilitaService.getByEntidad(20, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom20RecordId(data.comdsfpEntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '20',
+              sistemasDocumentados: data.sistemasDocumentados || '',
+              sistemasTotal: data.sistemasTotal || '',
+              porcentajeDocumentacion: data.porcentajeDocumentacion || '',
+              descripcion: data.descripcion || '',
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.rutaPdfDsfp) {
+              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfDsfp);
+              setPdfUrl(data.rutaPdfDsfp);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '20' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+
+      // COMPROMISO 21: OficialGobiernoDatos
+      if (compromisoId === 21 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 21, user.entidadId);
+        const response = await com21OficialGobiernoDatosService.getByEntidad(21, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom21RecordId(data.comogdEntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '21',
+              fechaElaboracion: data.fechaElaboracion ? data.fechaElaboracion.split('T')[0] : '',
+              numeroDocumento: data.numeroDocumento || '',
+              descripcion: data.descripcion || '',
+              procedimientos: data.procedimientos || '',
+              responsables: data.responsables || '',
+              fechaVigencia: data.fechaVigencia ? data.fechaVigencia.split('T')[0] : '',
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.rutaPdfOgd) {
+              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfOgd);
+              setPdfUrl(data.rutaPdfOgd);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '21' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+      
       // COMPROMISO 1: Líder GTD
       if (compromisoId === 1 && user?.entidadId) {
         console.log('📞 Llamando getByEntidad con:', 1, user.entidadId);
@@ -1016,6 +1591,155 @@ const CumplimientoNormativoDetalle = () => {
         }
         if (!formData.fechaAprobacionDa) {
           nuevosErrores.fechaAprobacionDa = 'Seleccione la fecha de aprobación';
+        }
+      }
+      // Validación específica para Compromiso 11 (AportacionGeoPeru)
+      else if (parseInt(formData.compromisoId) === 11) {
+        if (!formData.fechaInicio) {
+          nuevosErrores.fechaInicio = 'Seleccione la fecha de inicio';
+        }
+        if (!formData.fechaFin) {
+          nuevosErrores.fechaFin = 'Seleccione la fecha de fin';
+        }
+        if (formData.fechaInicio && formData.fechaFin && formData.fechaInicio > formData.fechaFin) {
+          nuevosErrores.fechaFin = 'La fecha fin debe ser posterior a la fecha inicio';
+        }
+        if (!formData.serviciosDigitalizados || formData.serviciosDigitalizados === '') {
+          nuevosErrores.serviciosDigitalizados = 'Ingrese el número de servicios digitalizados';
+        } else if (parseInt(formData.serviciosDigitalizados) < 0) {
+          nuevosErrores.serviciosDigitalizados = 'El número debe ser positivo';
+        }
+        if (!formData.serviciosTotal || formData.serviciosTotal === '') {
+          nuevosErrores.serviciosTotal = 'Ingrese el total de servicios';
+        } else if (parseInt(formData.serviciosTotal) < 0) {
+          nuevosErrores.serviciosTotal = 'El número debe ser positivo';
+        }
+        if (formData.serviciosDigitalizados && formData.serviciosTotal && parseInt(formData.serviciosDigitalizados) > parseInt(formData.serviciosTotal)) {
+          nuevosErrores.serviciosDigitalizados = 'No puede ser mayor al total de servicios';
+        }
+        if (!formData.descripcion || formData.descripcion.trim() === '') {
+          nuevosErrores.descripcion = 'Ingrese una descripción';
+        }
+      }
+      // Validación específica para Compromiso 12 (ResponsableSoftwarePublico)
+      else if (parseInt(formData.compromisoId) === 12) {
+        if (!formData.fechaElaboracion) {
+          nuevosErrores.fechaElaboracion = 'Seleccione la fecha de elaboración';
+        }
+        if (!formData.numeroDocumento || formData.numeroDocumento.trim() === '') {
+          nuevosErrores.numeroDocumento = 'Ingrese el número de documento';
+        }
+        if (!formData.descripcion || formData.descripcion.trim() === '') {
+          nuevosErrores.descripcion = 'Ingrese una descripción';
+        }
+        if (!formData.requisitosSeguridad || formData.requisitosSeguridad.trim() === '') {
+          nuevosErrores.requisitosSeguridad = 'Ingrese los requisitos de seguridad';
+        }
+        if (!formData.requisitosPrivacidad || formData.requisitosPrivacidad.trim() === '') {
+          nuevosErrores.requisitosPrivacidad = 'Ingrese los requisitos de privacidad';
+        }
+      }
+      // Validación específica para Compromiso 13 (InteroperabilidadPIDE)
+      else if (parseInt(formData.compromisoId) === 13) {
+        if (!formData.fechaAprobacion) {
+          nuevosErrores.fechaAprobacion = 'Seleccione la fecha de aprobación';
+        }
+        if (!formData.numeroResolucion || formData.numeroResolucion.trim() === '') {
+          nuevosErrores.numeroResolucion = 'Ingrese el número de resolución';
+        }
+        if (!formData.descripcion || formData.descripcion.trim() === '') {
+          nuevosErrores.descripcion = 'Ingrese una descripción';
+        }
+        if (!formData.responsable || formData.responsable.trim() === '') {
+          nuevosErrores.responsable = 'Ingrese el nombre del responsable';
+        }
+      }
+      // Validación específica para Compromiso 14 (OficialSeguridadDigital)
+      else if (parseInt(formData.compromisoId) === 14) {
+        if (!formData.fechaElaboracion) {
+          nuevosErrores.fechaElaboracion = 'Seleccione la fecha de elaboración';
+        }
+        if (!formData.numeroDocumento || formData.numeroDocumento.trim() === '') {
+          nuevosErrores.numeroDocumento = 'Ingrese el número de documento';
+        }
+        if (!formData.descripcion || formData.descripcion.trim() === '') {
+          nuevosErrores.descripcion = 'Ingrese una descripción';
+        }
+      }
+      // Validación específica para Compromiso 15 (CSIRTInstitucional)
+      else if (parseInt(formData.compromisoId) === 15) {
+        if (!formData.fechaConformacion) {
+          nuevosErrores.fechaConformacion = 'Seleccione la fecha de conformación';
+        }
+        if (!formData.numeroResolucion || formData.numeroResolucion.trim() === '') {
+          nuevosErrores.numeroResolucion = 'Ingrese el número de resolución';
+        }
+        if (!formData.responsable || formData.responsable.trim() === '') {
+          nuevosErrores.responsable = 'Ingrese el nombre del responsable';
+        }
+        if (!formData.emailContacto || formData.emailContacto.trim() === '') {
+          nuevosErrores.emailContacto = 'Ingrese el correo del responsable';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.emailContacto)) {
+          nuevosErrores.emailContacto = 'Ingrese un correo válido';
+        }
+      }
+      // Validación específica para Compromiso 16 (SistemaGestionSeguridad)
+      else if (parseInt(formData.compromisoId) === 16) {
+        if (!formData.fechaImplementacion) {
+          nuevosErrores.fechaImplementacion = 'Seleccione la fecha de implementación';
+        }
+        if (!formData.normaAplicable || formData.normaAplicable.trim() === '') {
+          nuevosErrores.normaAplicable = 'Ingrese la norma aplicable';
+        }
+      }
+      // Validación específica para Compromiso 17 (PlanTransicionIPv6)
+      else if (parseInt(formData.compromisoId) === 17) {
+        if (!formData.fechaInicioTransicion) {
+          nuevosErrores.fechaInicioTransicion = 'Seleccione la fecha de inicio';
+        }
+        if (!formData.fechaFinTransicion) {
+          nuevosErrores.fechaFinTransicion = 'Seleccione la fecha de fin';
+        }
+        if (formData.fechaInicioTransicion && formData.fechaFinTransicion && formData.fechaInicioTransicion > formData.fechaFinTransicion) {
+          nuevosErrores.fechaFinTransicion = 'La fecha fin debe ser posterior a la fecha inicio';
+        }
+      }
+      // Validación específica para Compromiso 18 (AccesoPortalTransparencia)
+      else if (parseInt(formData.compromisoId) === 18) {
+        if (!formData.urlPlataforma || formData.urlPlataforma.trim() === '') {
+          nuevosErrores.urlPlataforma = 'Ingrese la URL de la plataforma';
+        } else if (!/^https?:\/\/.+/.test(formData.urlPlataforma)) {
+          nuevosErrores.urlPlataforma = 'Ingrese una URL válida';
+        }
+        if (!formData.fechaImplementacion) {
+          nuevosErrores.fechaImplementacion = 'Seleccione la fecha de implementación';
+        }
+      }
+      // Validación específica para Compromiso 19 (EncuestaNacionalGobDigital)
+      else if (parseInt(formData.compromisoId) === 19) {
+        if (!formData.fechaConexion) {
+          nuevosErrores.fechaConexion = 'Seleccione la fecha de conexión';
+        }
+        if (!formData.tipoConexion || formData.tipoConexion.trim() === '') {
+          nuevosErrores.tipoConexion = 'Ingrese el tipo de conexión';
+        }
+        if (!formData.proveedor || formData.proveedor.trim() === '') {
+          nuevosErrores.proveedor = 'Ingrese el proveedor';
+        }
+      }
+      // Validación específica para Compromiso 20 (DigitalizacionServiciosFacilita)
+      else if (parseInt(formData.compromisoId) === 20) {
+        if (formData.sistemasDocumentados && formData.sistemasTotal && parseInt(formData.sistemasDocumentados) > parseInt(formData.sistemasTotal)) {
+          nuevosErrores.sistemasDocumentados = 'No puede ser mayor al total de sistemas';
+        }
+      }
+      // Validación específica para Compromiso 21 (OficialGobiernoDatos)
+      else if (parseInt(formData.compromisoId) === 21) {
+        if (!formData.fechaElaboracion) {
+          nuevosErrores.fechaElaboracion = 'Seleccione la fecha de elaboración';
+        }
+        if (!formData.numeroDocumento || formData.numeroDocumento.trim() === '') {
+          nuevosErrores.numeroDocumento = 'Ingrese el número de documento';
         }
       }
       else {
@@ -1734,6 +2458,486 @@ const CumplimientoNormativoDetalle = () => {
           }
         }
       } 
+
+      // COMPROMISO 11
+      else if (parseInt(formData.compromisoId) === 11) {
+        console.log('🚀 Preparando datos para Com11');
+        
+        const com11Data = {
+          compromisoId: 11,
+          entidadId: user.entidadId,
+          fechaInicio: formData.fechaInicio || null,
+          fechaFin: formData.fechaFin || null,
+          serviciosDigitalizados: formData.serviciosDigitalizados ? parseInt(formData.serviciosDigitalizados) : null,
+          serviciosTotal: formData.serviciosTotal ? parseInt(formData.serviciosTotal) : null,
+          porcentajeDigitalizacion: formData.porcentajeDigitalizacion ? parseFloat(formData.porcentajeDigitalizacion) : null,
+          archivoPlan: documentoUrl || formData.archivoPlan || null,
+          descripcion: formData.descripcion || null,
+          beneficiariosEstimados: formData.beneficiariosEstimados ? parseInt(formData.beneficiariosEstimados) : null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3',
+          estado: 'bandeja'
+        };
+        
+        console.log('Datos Com11 a enviar:', com11Data);
+        
+        if (com11RecordId) {
+          console.log('Actualizando registro existente Com11:', com11RecordId);
+          response = await com11AportacionGeoPeruService.update(com11RecordId, com11Data);
+        } else {
+          console.log('Creando nuevo registro Com11');
+          response = await com11AportacionGeoPeruService.create(com11Data);
+          console.log('Respuesta create Com11:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com11:', response.data.comageopEntId);
+            setCom11RecordId(response.data.comageopEntId);
+          }
+        }
+        
+        console.log('Respuesta final Com11:', response);
+        
+        // Actualizar estado local con datos guardados
+        if (response.isSuccess && response.data) {
+          console.log('✅ Actualizando estado local Com11');
+          
+          if (response.data.archivoPlan) {
+            setPdfUrl(response.data.archivoPlan);
+            if (blobUrlToRevoke) {
+              console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
+          }
+        }
+      }
+
+      // COMPROMISO 12
+      else if (parseInt(formData.compromisoId) === 12) {
+        console.log('🚀 Preparando datos para Com12');
+        
+        const com12Data = {
+          compromisoId: 12,
+          entidadId: user.entidadId,
+          fechaElaboracion: formData.fechaElaboracion || null,
+          numeroDocumento: formData.numeroDocumento || null,
+          archivoDocumento: documentoUrl || formData.archivoDocumento || null,
+          descripcion: formData.descripcion || null,
+          requisitosSeguridad: formData.requisitosSeguridad || null,
+          requisitosPrivacidad: formData.requisitosPrivacidad || null,
+          fechaVigencia: formData.fechaVigencia || null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3',
+          estado: 'bandeja'
+        };
+        
+        console.log('Datos Com12 a enviar:', com12Data);
+        
+        if (com12RecordId) {
+          console.log('Actualizando registro existente Com12:', com12RecordId);
+          response = await com12ResponsableSoftwarePublicoService.update(com12RecordId, com12Data);
+        } else {
+          console.log('Creando nuevo registro Com12');
+          response = await com12ResponsableSoftwarePublicoService.create(com12Data);
+          console.log('Respuesta create Com12:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com12:', response.data.comdrspEntId);
+            setCom12RecordId(response.data.comdrspEntId);
+          }
+        }
+        
+        console.log('Respuesta final Com12:', response);
+        
+        // Actualizar estado local con datos guardados
+        if (response.isSuccess && response.data) {
+          console.log('✅ Actualizando estado local Com12');
+          
+          if (response.data.archivoDocumento) {
+            setPdfUrl(response.data.archivoDocumento);
+            if (blobUrlToRevoke) {
+              console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
+          }
+        }
+      }
+
+      // COMPROMISO 13
+      else if (parseInt(formData.compromisoId) === 13) {
+        console.log('🚀 Preparando datos para Com13');
+        
+        const com13Data = {
+          compromisoId: 13,
+          entidadId: user.entidadId,
+          fechaAprobacion: formData.fechaAprobacion || null,
+          numeroResolucion: formData.numeroResolucion || null,
+          archivoPlan: documentoUrl || formData.archivoPlan || null,
+          descripcion: formData.descripcion || null,
+          riesgosIdentificados: formData.riesgosIdentificados || null,
+          estrategiasMitigacion: formData.estrategiasMitigacion || null,
+          fechaRevision: formData.fechaRevision || null,
+          responsable: formData.responsable || null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3',
+          estado: 'bandeja'
+        };
+        
+        console.log('Datos Com13 a enviar:', com13Data);
+        
+        if (com13RecordId) {
+          console.log('Actualizando registro existente Com13:', com13RecordId);
+          response = await com13InteroperabilidadPIDEService.update(com13RecordId, com13Data);
+        } else {
+          console.log('Creando nuevo registro Com13');
+          response = await com13InteroperabilidadPIDEService.create(com13Data);
+          console.log('Respuesta create Com13:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com13:', response.data.compcpideEntId);
+            setCom13RecordId(response.data.compcpideEntId);
+          }
+        }
+        
+        console.log('Respuesta final Com13:', response);
+        
+        // Actualizar estado local con datos guardados
+        if (response.isSuccess && response.data) {
+          console.log('✅ Actualizando estado local Com13');
+          
+          if (response.data.archivoPlan) {
+            setPdfUrl(response.data.archivoPlan);
+            if (blobUrlToRevoke) {
+              console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
+          }
+        }
+      }
+
+      // COMPROMISO 14
+      else if (parseInt(formData.compromisoId) === 14) {
+        console.log('🚀 Preparando datos para Com14');
+        
+        const com14Data = {
+          compromisoId: 14,
+          entidadId: user.entidadId,
+          fechaElaboracion: formData.fechaElaboracion || null,
+          numeroDocumento: formData.numeroDocumento || null,
+          archivoDocumento: documentoUrl || formData.archivoDocumento || null,
+          descripcion: formData.descripcion || null,
+          politicasSeguridad: formData.politicasSeguridad || null,
+          certificaciones: formData.certificaciones || null,
+          fechaVigencia: formData.fechaVigencia || null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3',
+          estado: 'bandeja'
+        };
+        
+        console.log('Datos Com14 a enviar:', com14Data);
+        
+        if (com14RecordId) {
+          console.log('Actualizando registro existente Com14:', com14RecordId);
+          response = await com14OficialSeguridadDigitalService.update(com14RecordId, com14Data);
+        } else {
+          console.log('Creando nuevo registro Com14');
+          response = await com14OficialSeguridadDigitalService.create(com14Data);
+          console.log('Respuesta create Com14:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com14:', response.data.comdoscdEntId);
+            setCom14RecordId(response.data.comdoscdEntId);
+          }
+        }
+        
+        console.log('Respuesta final Com14:', response);
+        
+        // Actualizar estado local con datos guardados
+        if (response.isSuccess && response.data) {
+          console.log('✅ Actualizando estado local Com14');
+          
+          if (response.data.archivoDocumento) {
+            setPdfUrl(response.data.archivoDocumento);
+            if (blobUrlToRevoke) {
+              console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
+          }
+        }
+      }
+
+      // COMPROMISO 15
+      else if (parseInt(formData.compromisoId) === 15) {
+        console.log('🚀 Preparando datos para Com15');
+        
+        const com15Data = {
+          compromisoId: 15,
+          entidadId: user.entidadId,
+          fechaConformacion: formData.fechaConformacion || null,
+          numeroResolucion: formData.numeroResolucion || null,
+          responsable: formData.responsable || null,
+          emailContacto: formData.emailContacto || null,
+          telefonoContacto: formData.telefonoContacto || null,
+          archivoProcedimientos: documentoUrl || null,
+          descripcion: formData.descripcion || null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3',
+          estado: 'bandeja'
+        };
+        
+        console.log('Datos Com15 a enviar:', com15Data);
+        
+        if (com15RecordId) {
+          console.log('Actualizando registro existente Com15:', com15RecordId);
+          response = await com15CSIRTInstitucionalService.update(com15RecordId, com15Data);
+        } else {
+          console.log('Creando nuevo registro Com15');
+          response = await com15CSIRTInstitucionalService.create(com15Data);
+          console.log('Respuesta create Com15:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com15:', response.data.comcsirtEntId);
+            setCom15RecordId(response.data.comcsirtEntId);
+          }
+        }
+        
+        console.log('Respuesta final Com15:', response);
+      }
+
+      // COMPROMISO 16
+      else if (parseInt(formData.compromisoId) === 16) {
+        console.log('🚀 Preparando datos para Com16');
+        
+        const com16Data = {
+          compromisoId: 16,
+          entidadId: user.entidadId,
+          fechaImplementacion: formData.fechaImplementacion || null,
+          normaAplicable: formData.normaAplicable || null,
+          certificacion: formData.certificacion || null,
+          fechaCertificacion: formData.fechaCertificacion || null,
+          archivoCertificado: documentoUrl || null,
+          descripcion: formData.descripcion || null,
+          alcance: formData.alcance || null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3',
+          estado: 'bandeja'
+        };
+        
+        console.log('Datos Com16 a enviar:', com16Data);
+        
+        if (com16RecordId) {
+          console.log('Actualizando registro existente Com16:', com16RecordId);
+          response = await com16SistemaGestionSeguridadService.update(com16RecordId, com16Data);
+        } else {
+          console.log('Creando nuevo registro Com16');
+          response = await com16SistemaGestionSeguridadService.create(com16Data);
+          console.log('Respuesta create Com16:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com16:', response.data.id);
+            setCom16RecordId(response.data.id);
+          }
+        }
+        
+        console.log('Respuesta final Com16:', response);
+      }
+
+      // COMPROMISO 17
+      else if (parseInt(formData.compromisoId) === 17) {
+        console.log('🚀 Preparando datos para Com17');
+        
+        const com17Data = {
+          compromisoId: 17,
+          entidadId: user.entidadId,
+          fechaInicioTransicion: formData.fechaInicioTransicion || null,
+          fechaFinTransicion: formData.fechaFinTransicion || null,
+          porcentajeAvance: formData.porcentajeAvance ? parseFloat(formData.porcentajeAvance) : null,
+          sistemasMigrados: formData.sistemasMigrados ? parseInt(formData.sistemasMigrados) : null,
+          sistemasTotal: formData.sistemasTotal ? parseInt(formData.sistemasTotal) : null,
+          archivoPlan: documentoUrl || null,
+          descripcion: formData.descripcion || null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3',
+          estado: 'bandeja'
+        };
+        
+        console.log('Datos Com17 a enviar:', com17Data);
+        
+        if (com17RecordId) {
+          console.log('Actualizando registro existente Com17:', com17RecordId);
+          response = await com17PlanTransicionIPv6Service.update(com17RecordId, com17Data);
+        } else {
+          console.log('Creando nuevo registro Com17');
+          response = await com17PlanTransicionIPv6Service.create(com17Data);
+          console.log('Respuesta create Com17:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com17:', response.data.id);
+            setCom17RecordId(response.data.id);
+          }
+        }
+        
+        console.log('Respuesta final Com17:', response);
+      }
+
+      // COMPROMISO 18
+      else if (parseInt(formData.compromisoId) === 18) {
+        console.log('🚀 Preparando datos para Com18');
+        
+        const com18Data = {
+          compromisoId: 18,
+          entidadId: user.entidadId,
+          urlPlataforma: formData.urlPlataforma || null,
+          fechaImplementacion: formData.fechaImplementacion || null,
+          tramitesDisponibles: formData.tramitesDisponibles ? parseInt(formData.tramitesDisponibles) : null,
+          usuariosRegistrados: formData.usuariosRegistrados ? parseInt(formData.usuariosRegistrados) : null,
+          tramitesProcesados: formData.tramitesProcesados ? parseInt(formData.tramitesProcesados) : null,
+          archivoEvidencia: documentoUrl || null,
+          descripcion: formData.descripcion || null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3',
+          estado: 'bandeja'
+        };
+        
+        console.log('Datos Com18 a enviar:', com18Data);
+        
+        if (com18RecordId) {
+          console.log('Actualizando registro existente Com18:', com18RecordId);
+          response = await com18AccesoPortalTransparenciaService.update(com18RecordId, com18Data);
+        } else {
+          console.log('Creando nuevo registro Com18');
+          response = await com18AccesoPortalTransparenciaService.create(com18Data);
+          console.log('Respuesta create Com18:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com18:', response.data.id);
+            setCom18RecordId(response.data.id);
+          }
+        }
+        
+        console.log('Respuesta final Com18:', response);
+      }
+
+      // COMPROMISO 19
+      else if (parseInt(formData.compromisoId) === 19) {
+        console.log('🚀 Preparando datos para Com19');
+        
+        const com19Data = {
+          compromisoId: 19,
+          entidadId: user.entidadId,
+          fechaConexion: formData.fechaConexion || null,
+          tipoConexion: formData.tipoConexion || null,
+          anchoBanda: formData.anchoBanda || null,
+          proveedor: formData.proveedor || null,
+          archivoContrato: documentoUrl || null,
+          descripcion: formData.descripcion || null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3',
+          estado: 'bandeja'
+        };
+        
+        console.log('Datos Com19 a enviar:', com19Data);
+        
+        if (com19RecordId) {
+          console.log('Actualizando registro existente Com19:', com19RecordId);
+          response = await com19EncuestaNacionalGobDigitalService.update(com19RecordId, com19Data);
+        } else {
+          console.log('Creando nuevo registro Com19');
+          response = await com19EncuestaNacionalGobDigitalService.create(com19Data);
+          console.log('Respuesta create Com19:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com19:', response.data.id);
+            setCom19RecordId(response.data.id);
+          }
+        }
+        
+        console.log('Respuesta final Com19:', response);
+      }
+
+      // COMPROMISO 20
+      else if (parseInt(formData.compromisoId) === 20) {
+        console.log('🚀 Preparando datos para Com20');
+        
+        const com20Data = {
+          compromisoId: 20,
+          entidadId: user.entidadId,
+          sistemasDocumentados: formData.sistemasDocumentados ? parseInt(formData.sistemasDocumentados) : null,
+          sistemasTotal: formData.sistemasTotal ? parseInt(formData.sistemasTotal) : null,
+          porcentajeDocumentacion: formData.porcentajeDocumentacion ? parseFloat(formData.porcentajeDocumentacion) : null,
+          archivoRepositorio: documentoUrl || null,
+          descripcion: formData.descripcion || null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3',
+          estado: 'bandeja'
+        };
+        
+        console.log('Datos Com20 a enviar:', com20Data);
+        
+        if (com20RecordId) {
+          console.log('Actualizando registro existente Com20:', com20RecordId);
+          response = await com20DigitalizacionServiciosFacilitaService.update(com20RecordId, com20Data);
+        } else {
+          console.log('Creando nuevo registro Com20');
+          response = await com20DigitalizacionServiciosFacilitaService.create(com20Data);
+          console.log('Respuesta create Com20:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com20:', response.data.id);
+            setCom20RecordId(response.data.id);
+          }
+        }
+        
+        console.log('Respuesta final Com20:', response);
+      }
+
+      // COMPROMISO 21
+      else if (parseInt(formData.compromisoId) === 21) {
+        console.log('🚀 Preparando datos para Com21');
+        
+        const com21Data = {
+          compromisoId: 21,
+          entidadId: user.entidadId,
+          fechaElaboracion: formData.fechaElaboracion || null,
+          numeroDocumento: formData.numeroDocumento || null,
+          archivoDocumento: documentoUrl || null,
+          descripcion: formData.descripcion || null,
+          procedimientos: formData.procedimientos || null,
+          responsables: formData.responsables || null,
+          fechaVigencia: formData.fechaVigencia || null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3',
+          estado: 'bandeja'
+        };
+        
+        console.log('Datos Com21 a enviar:', com21Data);
+        
+        if (com21RecordId) {
+          console.log('Actualizando registro existente Com21:', com21RecordId);
+          response = await com21OficialGobiernoDatosService.update(com21RecordId, com21Data);
+        } else {
+          console.log('Creando nuevo registro Com21');
+          response = await com21OficialGobiernoDatosService.create(com21Data);
+          console.log('Respuesta create Com21:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com21:', response.data.id);
+            setCom21RecordId(response.data.id);
+          }
+        }
+        
+        console.log('Respuesta final Com21:', response);
+      }
       else if (isEdit || id) {
         // Si ya existe, actualizar (genérico)
         response = await cumplimientoService.update(id, dataToSend);
@@ -3440,6 +4644,2373 @@ const CumplimientoNormativoDetalle = () => {
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       {formData.observacionesDa?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Documento de evidencia (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Documento de evidencia (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento de evidencia en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 11 ? (
+              // COMPROMISO 11: Aportación de Información Geoespacial al Proyecto GeoPerú
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Aportación de Información Geoespacial al Proyecto GeoPerú</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Fecha de Inicio */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de inicio <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaInicio"
+                      value={formData.fechaInicio || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaInicio ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaInicio && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaInicio}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de Fin */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de fin <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaFin"
+                      value={formData.fechaFin || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaFin ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaFin && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaFin}</p>
+                    )}
+                  </div>
+
+                  {/* Servicios Digitalizados */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Servicios digitalizados <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="serviciosDigitalizados"
+                      value={formData.serviciosDigitalizados || ''}
+                      onChange={handleInputChange}
+                      min="0"
+                      className={`input-field ${errores.serviciosDigitalizados ? 'border-red-500' : ''}`}
+                      placeholder="0"
+                      disabled={viewMode}
+                    />
+                    {errores.serviciosDigitalizados && (
+                      <p className="text-red-500 text-xs mt-1">{errores.serviciosDigitalizados}</p>
+                    )}
+                  </div>
+
+                  {/* Total de Servicios */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Total de servicios <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="serviciosTotal"
+                      value={formData.serviciosTotal || ''}
+                      onChange={handleInputChange}
+                      min="0"
+                      className={`input-field ${errores.serviciosTotal ? 'border-red-500' : ''}`}
+                      placeholder="0"
+                      disabled={viewMode}
+                    />
+                    {errores.serviciosTotal && (
+                      <p className="text-red-500 text-xs mt-1">{errores.serviciosTotal}</p>
+                    )}
+                  </div>
+
+                  {/* Porcentaje de Digitalización */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Porcentaje de digitalización (%)
+                    </label>
+                    <input
+                      type="number"
+                      name="porcentajeDigitalizacion"
+                      value={formData.porcentajeDigitalizacion || ''}
+                      onChange={handleInputChange}
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      className={`input-field ${errores.porcentajeDigitalizacion ? 'border-red-500' : ''}`}
+                      placeholder="0.00"
+                      disabled={viewMode}
+                    />
+                    {errores.porcentajeDigitalizacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.porcentajeDigitalizacion}</p>
+                    )}
+                  </div>
+
+                  {/* Beneficiarios Estimados */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Beneficiarios estimados
+                    </label>
+                    <input
+                      type="number"
+                      name="beneficiariosEstimados"
+                      value={formData.beneficiariosEstimados || ''}
+                      onChange={handleInputChange}
+                      min="0"
+                      className={`input-field ${errores.beneficiariosEstimados ? 'border-red-500' : ''}`}
+                      placeholder="0"
+                      disabled={viewMode}
+                    />
+                    {errores.beneficiariosEstimados && (
+                      <p className="text-red-500 text-xs mt-1">{errores.beneficiariosEstimados}</p>
+                    )}
+                  </div>
+
+                  {/* Descripción */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Descripción <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="descripcion"
+                      value={formData.descripcion || ''}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className={`input-field ${errores.descripcion ? 'border-red-500' : ''}`}
+                      placeholder="Describa los detalles de la aportación..."
+                      disabled={viewMode}
+                    />
+                    {errores.descripcion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.descripcion}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.descripcion?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Archivo del Plan (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Archivo del plan (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el archivo del plan en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 12 ? (
+              // COMPROMISO 12: Responsable de Software Público
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Responsable de Software Público</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Fecha de Elaboración */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de elaboración <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaElaboracion"
+                      value={formData.fechaElaboracion || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaElaboracion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaElaboracion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaElaboracion}</p>
+                    )}
+                  </div>
+
+                  {/* Número de Documento */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Número de documento <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="numeroDocumento"
+                      value={formData.numeroDocumento || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.numeroDocumento ? 'border-red-500' : ''}`}
+                      placeholder="Ej: RES-001-2025"
+                      disabled={viewMode}
+                    />
+                    {errores.numeroDocumento && (
+                      <p className="text-red-500 text-xs mt-1">{errores.numeroDocumento}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de Vigencia */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de vigencia
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaVigencia"
+                      value={formData.fechaVigencia || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaVigencia ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaVigencia && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaVigencia}</p>
+                    )}
+                  </div>
+
+                  {/* Espacio vacío para alineación */}
+                  <div className=""></div>
+
+                  {/* Descripción */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Descripción <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="descripcion"
+                      value={formData.descripcion || ''}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className={`input-field ${errores.descripcion ? 'border-red-500' : ''}`}
+                      placeholder="Describa las responsabilidades y funciones..."
+                      disabled={viewMode}
+                    />
+                    {errores.descripcion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.descripcion}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.descripcion?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Requisitos de Seguridad */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Requisitos de seguridad <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="requisitosSeguridad"
+                      value={formData.requisitosSeguridad || ''}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className={`input-field ${errores.requisitosSeguridad ? 'border-red-500' : ''}`}
+                      placeholder="Especifique los requisitos de seguridad..."
+                      disabled={viewMode}
+                    />
+                    {errores.requisitosSeguridad && (
+                      <p className="text-red-500 text-xs mt-1">{errores.requisitosSeguridad}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.requisitosSeguridad?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Requisitos de Privacidad */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Requisitos de privacidad <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="requisitosPrivacidad"
+                      value={formData.requisitosPrivacidad || ''}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className={`input-field ${errores.requisitosPrivacidad ? 'border-red-500' : ''}`}
+                      placeholder="Especifique los requisitos de privacidad..."
+                      disabled={viewMode}
+                    />
+                    {errores.requisitosPrivacidad && (
+                      <p className="text-red-500 text-xs mt-1">{errores.requisitosPrivacidad}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.requisitosPrivacidad?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Archivo del Documento (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Archivo del documento (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el archivo del documento en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 13 ? (
+              // COMPROMISO 13: Plan de Continuidad de PIDE
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Plan de Continuidad de PIDE</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Fecha de aprobación */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de aprobación <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaAprobacion"
+                      value={formData.fechaAprobacion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaAprobacion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaAprobacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaAprobacion}</p>
+                    )}
+                  </div>
+
+                  {/* Número de resolución */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Número de resolución <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="numeroResolucion"
+                      value={formData.numeroResolucion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.numeroResolucion ? 'border-red-500' : ''}`}
+                      placeholder="Número de resolución"
+                      disabled={viewMode}
+                    />
+                    {errores.numeroResolucion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.numeroResolucion}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de revisión */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de revisión
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaRevision"
+                      value={formData.fechaRevision}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Responsable */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Responsable <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="responsable"
+                      value={formData.responsable}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.responsable ? 'border-red-500' : ''}`}
+                      placeholder="Nombre del responsable"
+                      disabled={viewMode}
+                    />
+                    {errores.responsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsable}</p>
+                    )}
+                  </div>
+
+                  {/* Descripción */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Descripción <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="descripcion"
+                      value={formData.descripcion}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className={`input-field ${errores.descripcion ? 'border-red-500' : ''}`}
+                      placeholder="Descripción del plan..."
+                      disabled={viewMode}
+                    />
+                    {errores.descripcion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.descripcion}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.descripcion?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Riesgos identificados */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Riesgos identificados
+                    </label>
+                    <textarea
+                      name="riesgosIdentificados"
+                      value={formData.riesgosIdentificados}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Descripción de riesgos..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.riesgosIdentificados?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Estrategias de mitigación */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Estrategias de mitigación
+                    </label>
+                    <textarea
+                      name="estrategiasMitigacion"
+                      value={formData.estrategiasMitigacion}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Estrategias..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.estrategiasMitigacion?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Archivo del plan (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Archivo del plan (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el plan de continuidad en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 14 ? (
+              // COMPROMISO 14: Oficial de Seguridad Digital
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Oficial de Seguridad Digital</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Fecha de elaboración */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de elaboración <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaElaboracion"
+                      value={formData.fechaElaboracion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaElaboracion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaElaboracion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaElaboracion}</p>
+                    )}
+                  </div>
+
+                  {/* Número de documento */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Número de documento <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="numeroDocumento"
+                      value={formData.numeroDocumento}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.numeroDocumento ? 'border-red-500' : ''}`}
+                      placeholder="Número de documento"
+                      disabled={viewMode}
+                    />
+                    {errores.numeroDocumento && (
+                      <p className="text-red-500 text-xs mt-1">{errores.numeroDocumento}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de vigencia */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de vigencia
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaVigencia"
+                      value={formData.fechaVigencia}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Descripción */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Descripción <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="descripcion"
+                      value={formData.descripcion}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className={`input-field ${errores.descripcion ? 'border-red-500' : ''}`}
+                      placeholder="Descripción..."
+                      disabled={viewMode}
+                    />
+                    {errores.descripcion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.descripcion}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.descripcion?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Políticas de seguridad */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Políticas de seguridad
+                    </label>
+                    <textarea
+                      name="politicasSeguridad"
+                      value={formData.politicasSeguridad}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Políticas de seguridad..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.politicasSeguridad?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Certificaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Certificaciones
+                    </label>
+                    <textarea
+                      name="certificaciones"
+                      value={formData.certificaciones}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Certificaciones..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.certificaciones?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Archivo de documento (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Archivo de documento (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 15 ? (
+              // COMPROMISO 15: CSIRT Institucional
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: CSIRT Institucional</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Fecha de conformación */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de conformación <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaConformacion"
+                      value={formData.fechaConformacion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaConformacion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaConformacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaConformacion}</p>
+                    )}
+                  </div>
+
+                  {/* Número de resolución */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Número de resolución <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="numeroResolucion"
+                      value={formData.numeroResolucion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.numeroResolucion ? 'border-red-500' : ''}`}
+                      placeholder="Número de resolución"
+                      disabled={viewMode}
+                    />
+                    {errores.numeroResolucion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.numeroResolucion}</p>
+                    )}
+                  </div>
+
+                  {/* Responsable */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Responsable <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="responsable"
+                      value={formData.responsable}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.responsable ? 'border-red-500' : ''}`}
+                      placeholder="Nombre del responsable"
+                      disabled={viewMode}
+                    />
+                    {errores.responsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsable}</p>
+                    )}
+                  </div>
+
+                  {/* Correo electrónico */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo electrónico <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="emailContacto"
+                      value={formData.emailContacto}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.emailContacto ? 'border-red-500' : ''}`}
+                      placeholder="Correo electrónico"
+                      disabled={viewMode}
+                    />
+                    {errores.emailContacto && (
+                      <p className="text-red-500 text-xs mt-1">{errores.emailContacto}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono
+                    </label>
+                    <input
+                      type="text"
+                      name="telefonoContacto"
+                      value={formData.telefonoContacto}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.telefonoContacto ? 'border-red-500' : ''}`}
+                      placeholder="Teléfono"
+                      disabled={viewMode}
+                    />
+                    {errores.telefonoContacto && (
+                      <p className="text-red-500 text-xs mt-1">{errores.telefonoContacto}</p>
+                    )}
+                  </div>
+
+                  {/* Descripción */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Descripción
+                    </label>
+                    <textarea
+                      name="descripcion"
+                      value={formData.descripcion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.descripcion ? 'border-red-500' : ''}`}
+                      placeholder="Descripción"
+                      rows="3"
+                      disabled={viewMode}
+                    />
+                    {errores.descripcion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.descripcion}</p>
+                    )}
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones 
+                    </label>
+                    <textarea
+                      name="observaciones"
+                      value={formData.observaciones}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Observaciones..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observaciones?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Documento de evidencia (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Documento de evidencia (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento de evidencia en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 16 ? (
+              // COMPROMISO 16: Sistema de Gestión de Seguridad de la Información (SGSI)
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Sistema de Gestión de Seguridad de la Información (SGSI)</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Nombre del responsable */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nombre del responsable <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="responsableSgsi"
+                      value={formData.responsableSgsi}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.responsableSgsi ? 'border-red-500' : ''}`}
+                      placeholder="Nombre del responsable"
+                      disabled={viewMode}
+                    />
+                    {errores.responsableSgsi && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsableSgsi}</p>
+                    )}
+                  </div>
+
+                  {/* Cargo */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cargo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoResponsable"
+                      value={formData.cargoResponsable}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.cargoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Cargo"
+                      disabled={viewMode}
+                    />
+                    {errores.cargoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Correo electrónico */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo electrónico <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="correoResponsable"
+                      value={formData.correoResponsable}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.correoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Correo electrónico"
+                      disabled={viewMode}
+                    />
+                    {errores.correoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono 
+                    </label>
+                    <input
+                      type="text"
+                      name="telefonoResponsable"
+                      value={formData.telefonoResponsable}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.telefonoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Teléfono"
+                      disabled={viewMode}
+                    />
+                    {errores.telefonoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.telefonoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Estado de implementación */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Estado de implementación <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="estadoImplementacion"
+                      value={formData.estadoImplementacion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.estadoImplementacion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    >
+                      <option value="">Seleccione...</option>
+                        <option value="En planificación">En planificación</option>
+                        <option value="En implementación">En implementación</option>
+                        <option value="Implementado">Implementado</option>
+                        <option value="Certificado">Certificado</option>
+                    </select>
+                    {errores.estadoImplementacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.estadoImplementacion}</p>
+                    )}
+                  </div>
+
+                  {/* Versión de la norma ISO */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Versión de la norma ISO <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="versionNorma"
+                      value={formData.versionNorma}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.versionNorma ? 'border-red-500' : ''}`}
+                      placeholder="Versión de la norma ISO"
+                      disabled={viewMode}
+                    />
+                    {errores.versionNorma && (
+                      <p className="text-red-500 text-xs mt-1">{errores.versionNorma}</p>
+                    )}
+                  </div>
+
+                  {/* Alcance del SGSI */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Alcance del SGSI 
+                    </label>
+                    <textarea
+                      name="alcanceSgsi"
+                      value={formData.alcanceSgsi}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Alcance del SGSI..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.alcanceSgsi?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Fecha de inicio */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de inicio <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaInicio"
+                      value={formData.fechaInicio}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaInicio ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaInicio && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaInicio}</p>
+                    )}
+                  </div>
+
+
+                  {/* Separador */}
+                  <div className="md:col-span-2 border-t border-gray-200 my-2">
+                    <h3 className="text-sm font-medium text-gray-700 mt-4 mb-3">Certificación</h3>
+                  </div>
+
+                  {/* ¿Certificación obtenida? */}
+                  <div className="">
+                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                      <input
+                        type="checkbox"
+                        name="certificacionObtenida"
+                        checked={formData.certificacionObtenida || false}
+                        onChange={handleInputChange}
+                        className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        disabled={viewMode}
+                      />
+                      ¿Certificación obtenida?
+                    </label>
+                  </div>
+
+                  {/* Entidad certificadora */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Entidad certificadora 
+                    </label>
+                    <input
+                      type="text"
+                      name="entidadCertificadora"
+                      value={formData.entidadCertificadora}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.entidadCertificadora ? 'border-red-500' : ''}`}
+                      placeholder="Entidad certificadora"
+                      disabled={viewMode}
+                    />
+                    {errores.entidadCertificadora && (
+                      <p className="text-red-500 text-xs mt-1">{errores.entidadCertificadora}</p>
+                    )}
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones 
+                    </label>
+                    <textarea
+                      name="observaciones"
+                      value={formData.observaciones}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Observaciones..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observaciones?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Documento de evidencia (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Documento de evidencia (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento de evidencia en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 17 ? (
+              // COMPROMISO 17: Plan de Continuidad Operativa
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Plan de Continuidad Operativa</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Nombre del responsable */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nombre del responsable <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="responsablePlan"
+                      value={formData.responsablePlan}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.responsablePlan ? 'border-red-500' : ''}`}
+                      placeholder="Nombre del responsable"
+                      disabled={viewMode}
+                    />
+                    {errores.responsablePlan && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsablePlan}</p>
+                    )}
+                  </div>
+
+                  {/* Cargo */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cargo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoResponsable"
+                      value={formData.cargoResponsable}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.cargoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Cargo"
+                      disabled={viewMode}
+                    />
+                    {errores.cargoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Correo electrónico */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo electrónico <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="correoResponsable"
+                      value={formData.correoResponsable}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.correoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Correo electrónico"
+                      disabled={viewMode}
+                    />
+                    {errores.correoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono 
+                    </label>
+                    <input
+                      type="text"
+                      name="telefonoResponsable"
+                      value={formData.telefonoResponsable}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.telefonoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Teléfono"
+                      disabled={viewMode}
+                    />
+                    {errores.telefonoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.telefonoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Estado del plan */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Estado del plan <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="estadoPlan"
+                      value={formData.estadoPlan}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.estadoPlan ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    >
+                      <option value="">Seleccione...</option>
+                        <option value="En formulación">En formulación</option>
+                        <option value="Formulado">Formulado</option>
+                        <option value="Aprobado">Aprobado</option>
+                        <option value="En implementación">En implementación</option>
+                        <option value="Implementado">Implementado</option>
+                    </select>
+                    {errores.estadoPlan && (
+                      <p className="text-red-500 text-xs mt-1">{errores.estadoPlan}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de formulación */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de formulación <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaFormulacion"
+                      value={formData.fechaFormulacion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaFormulacion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaFormulacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaFormulacion}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de aprobación */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de aprobación 
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaAprobacion"
+                      value={formData.fechaAprobacion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaAprobacion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaAprobacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaAprobacion}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de inicio de implementación */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de inicio de implementación 
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaInicio"
+                      value={formData.fechaInicio}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaInicio ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaInicio && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaInicio}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de fin prevista */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de fin prevista 
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaFin"
+                      value={formData.fechaFin}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaFin ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaFin && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaFin}</p>
+                    )}
+                  </div>
+
+                  {/* Descripción del plan */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Descripción del plan 
+                    </label>
+                    <textarea
+                      name="descripcionPlan"
+                      value={formData.descripcionPlan}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Descripción del plan..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.descripcionPlan?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones 
+                    </label>
+                    <textarea
+                      name="observaciones"
+                      value={formData.observaciones}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Observaciones..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observaciones?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Documento de evidencia (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Documento de evidencia (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento de evidencia en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 18 ? (
+              // COMPROMISO 18: Acceso al Portal de Transparencia Estándar (PTE)
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Acceso al Portal de Transparencia Estándar (PTE)</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Nombre del responsable */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nombre del responsable <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="responsableAcceso"
+                      value={formData.responsableAcceso}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.responsableAcceso ? 'border-red-500' : ''}`}
+                      placeholder="Nombre del responsable"
+                      disabled={viewMode}
+                    />
+                    {errores.responsableAcceso && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsableAcceso}</p>
+                    )}
+                  </div>
+
+                  {/* Cargo */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cargo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoResponsable"
+                      value={formData.cargoResponsable}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.cargoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Cargo"
+                      disabled={viewMode}
+                    />
+                    {errores.cargoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Correo electrónico */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo electrónico <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="correoResponsable"
+                      value={formData.correoResponsable}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.correoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Correo electrónico"
+                      disabled={viewMode}
+                    />
+                    {errores.correoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono 
+                    </label>
+                    <input
+                      type="text"
+                      name="telefonoResponsable"
+                      value={formData.telefonoResponsable}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.telefonoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Teléfono"
+                      disabled={viewMode}
+                    />
+                    {errores.telefonoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.telefonoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Número de oficio */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Número de oficio <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="numeroOficio"
+                      value={formData.numeroOficio}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.numeroOficio ? 'border-red-500' : ''}`}
+                      placeholder="Número de oficio"
+                      disabled={viewMode}
+                    />
+                    {errores.numeroOficio && (
+                      <p className="text-red-500 text-xs mt-1">{errores.numeroOficio}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de solicitud */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de solicitud <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaSolicitud"
+                      value={formData.fechaSolicitud}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaSolicitud ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaSolicitud && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaSolicitud}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de concesión */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de concesión 
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaConcesion"
+                      value={formData.fechaConcesion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaConcesion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaConcesion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaConcesion}</p>
+                    )}
+                  </div>
+
+                  {/* Estado del acceso */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Estado del acceso <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="estadoAcceso"
+                      value={formData.estadoAcceso}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.estadoAcceso ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    >
+                      <option value="">Seleccione...</option>
+                        <option value="Solicitado">Solicitado</option>
+                        <option value="En proceso">En proceso</option>
+                        <option value="Concedido">Concedido</option>
+                        <option value="Denegado">Denegado</option>
+                    </select>
+                    {errores.estadoAcceso && (
+                      <p className="text-red-500 text-xs mt-1">{errores.estadoAcceso}</p>
+                    )}
+                  </div>
+
+                  {/* Enlace al portal */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Enlace al portal 
+                    </label>
+                    <input
+                      type="url"
+                      name="enlacePortal"
+                      value={formData.enlacePortal}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.enlacePortal ? 'border-red-500' : ''}`}
+                      placeholder="https://..."
+                      disabled={viewMode}
+                    />
+                    {errores.enlacePortal && (
+                      <p className="text-red-500 text-xs mt-1">{errores.enlacePortal}</p>
+                    )}
+                  </div>
+
+                  {/* Descripción */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Descripción 
+                    </label>
+                    <textarea
+                      name="descripcion"
+                      value={formData.descripcion}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Descripción..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.descripcion?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones 
+                    </label>
+                    <textarea
+                      name="observaciones"
+                      value={formData.observaciones}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Observaciones..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observaciones?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Documento de evidencia (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Documento de evidencia (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento de evidencia en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 19 ? (
+              // COMPROMISO 19: Encuesta Nacional de Gobierno Digital
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Encuesta Nacional de Gobierno Digital</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Año de la encuesta */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Año de la encuesta <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="anioEncuesta"
+                      value={formData.anioEncuesta}
+                      onChange={handleInputChange}
+                      min="0"
+                      className={`input-field ${errores.anioEncuesta ? 'border-red-500' : ''}`}
+                      placeholder="0"
+                      disabled={viewMode}
+                    />
+                    {errores.anioEncuesta && (
+                      <p className="text-red-500 text-xs mt-1">{errores.anioEncuesta}</p>
+                    )}
+                  </div>
+
+                  {/* Nombre del responsable */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nombre del responsable <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="responsableEncuesta"
+                      value={formData.responsableEncuesta}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.responsableEncuesta ? 'border-red-500' : ''}`}
+                      placeholder="Nombre del responsable"
+                      disabled={viewMode}
+                    />
+                    {errores.responsableEncuesta && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsableEncuesta}</p>
+                    )}
+                  </div>
+
+                  {/* Cargo */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cargo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoResponsable"
+                      value={formData.cargoResponsable}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.cargoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Cargo"
+                      disabled={viewMode}
+                    />
+                    {errores.cargoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Correo electrónico */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo electrónico <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="correoResponsable"
+                      value={formData.correoResponsable}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.correoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Correo electrónico"
+                      disabled={viewMode}
+                    />
+                    {errores.correoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono 
+                    </label>
+                    <input
+                      type="text"
+                      name="telefonoResponsable"
+                      value={formData.telefonoResponsable}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.telefonoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Teléfono"
+                      disabled={viewMode}
+                    />
+                    {errores.telefonoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.telefonoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de envío */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de envío <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaEnvio"
+                      value={formData.fechaEnvio}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaEnvio ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaEnvio && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaEnvio}</p>
+                    )}
+                  </div>
+
+                  {/* Estado de la encuesta */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Estado de la encuesta <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="estadoEncuesta"
+                      value={formData.estadoEncuesta}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.estadoEncuesta ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    >
+                      <option value="">Seleccione...</option>
+                        <option value="No iniciada">No iniciada</option>
+                        <option value="En proceso">En proceso</option>
+                        <option value="Completada">Completada</option>
+                        <option value="Enviada">Enviada</option>
+                    </select>
+                    {errores.estadoEncuesta && (
+                      <p className="text-red-500 text-xs mt-1">{errores.estadoEncuesta}</p>
+                    )}
+                  </div>
+
+                  {/* Enlace a la encuesta */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Enlace a la encuesta 
+                    </label>
+                    <input
+                      type="url"
+                      name="enlaceEncuesta"
+                      value={formData.enlaceEncuesta}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.enlaceEncuesta ? 'border-red-500' : ''}`}
+                      placeholder="https://..."
+                      disabled={viewMode}
+                    />
+                    {errores.enlaceEncuesta && (
+                      <p className="text-red-500 text-xs mt-1">{errores.enlaceEncuesta}</p>
+                    )}
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones 
+                    </label>
+                    <textarea
+                      name="observaciones"
+                      value={formData.observaciones}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Observaciones..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observaciones?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Documento de evidencia (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Documento de evidencia (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento de evidencia en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 20 ? (
+              // COMPROMISO 20: Digitalización de Servicios y Trámites
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Digitalización de Servicios y Trámites</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Nombre del responsable */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nombre del responsable <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="responsableDigitalizacion"
+                      value={formData.responsableDigitalizacion}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.responsableDigitalizacion ? 'border-red-500' : ''}`}
+                      placeholder="Nombre del responsable"
+                      disabled={viewMode}
+                    />
+                    {errores.responsableDigitalizacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsableDigitalizacion}</p>
+                    )}
+                  </div>
+
+                  {/* Cargo */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cargo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoResponsable"
+                      value={formData.cargoResponsable}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.cargoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Cargo"
+                      disabled={viewMode}
+                    />
+                    {errores.cargoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Correo electrónico */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo electrónico <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="correoResponsable"
+                      value={formData.correoResponsable}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.correoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Correo electrónico"
+                      disabled={viewMode}
+                    />
+                    {errores.correoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono 
+                    </label>
+                    <input
+                      type="text"
+                      name="telefonoResponsable"
+                      value={formData.telefonoResponsable}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.telefonoResponsable ? 'border-red-500' : ''}`}
+                      placeholder="Teléfono"
+                      disabled={viewMode}
+                    />
+                    {errores.telefonoResponsable && (
+                      <p className="text-red-500 text-xs mt-1">{errores.telefonoResponsable}</p>
+                    )}
+                  </div>
+
+                  {/* Estado de implementación */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Estado de implementación <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="estadoImplementacion"
+                      value={formData.estadoImplementacion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.estadoImplementacion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    >
+                      <option value="">Seleccione...</option>
+                        <option value="No iniciado">No iniciado</option>
+                        <option value="En planificación">En planificación</option>
+                        <option value="En implementación">En implementación</option>
+                        <option value="Implementado">Implementado</option>
+                    </select>
+                    {errores.estadoImplementacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.estadoImplementacion}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de inicio */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de inicio <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaInicio"
+                      value={formData.fechaInicio}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaInicio ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaInicio && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaInicio}</p>
+                    )}
+                  </div>
+
+                  {/* Último avance reportado */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Último avance reportado 
+                    </label>
+                    <input
+                      type="date"
+                      name="ultimoAvance"
+                      value={formData.ultimoAvance}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.ultimoAvance ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.ultimoAvance && (
+                      <p className="text-red-500 text-xs mt-1">{errores.ultimoAvance}</p>
+                    )}
+                  </div>
+
+                  {/* Total de servicios digitalizados */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Total de servicios digitalizados 
+                    </label>
+                    <input
+                      type="number"
+                      name="totalServicios"
+                      value={formData.totalServicios}
+                      onChange={handleInputChange}
+                      min="0"
+                      className={`input-field ${errores.totalServicios ? 'border-red-500' : ''}`}
+                      placeholder="0"
+                      disabled={viewMode}
+                    />
+                    {errores.totalServicios && (
+                      <p className="text-red-500 text-xs mt-1">{errores.totalServicios}</p>
+                    )}
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones 
+                    </label>
+                    <textarea
+                      name="observaciones"
+                      value={formData.observaciones}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Observaciones..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observaciones?.length || 0} / 1000 caracteres
+                    </p>
+                  </div>
+
+                  {/* Documento de evidencia (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Documento de evidencia (PDF)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          disabled={viewMode}
+                        />
+                      </label>
+                      {pdfUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrl);
+                            setShowPdfViewer(true);
+                          }}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Ver PDF
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento de evidencia en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 21 ? (
+              // COMPROMISO 21: Oficial de Gobierno de Datos (OGD)
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Oficial de Gobierno de Datos (OGD)</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* DNI */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      DNI <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="dniOficial"
+                      value={formData.dniOficial}
+                      onChange={handleInputChange}
+                      maxLength="8"
+                      className={`input-field ${errores.dniOficial ? 'border-red-500' : ''}`}
+                      placeholder="DNI"
+                      disabled={viewMode}
+                    />
+                    {errores.dniOficial && (
+                      <p className="text-red-500 text-xs mt-1">{errores.dniOficial}</p>
+                    )}
+                  </div>
+
+                  {/* Nombres */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nombres <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="nombresOficial"
+                      value={formData.nombresOficial}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.nombresOficial ? 'border-red-500' : ''}`}
+                      placeholder="Nombres"
+                      disabled={viewMode}
+                    />
+                    {errores.nombresOficial && (
+                      <p className="text-red-500 text-xs mt-1">{errores.nombresOficial}</p>
+                    )}
+                  </div>
+
+                  {/* Apellido paterno */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Apellido paterno <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="apellidoPaternoOficial"
+                      value={formData.apellidoPaternoOficial}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.apellidoPaternoOficial ? 'border-red-500' : ''}`}
+                      placeholder="Apellido paterno"
+                      disabled={viewMode}
+                    />
+                    {errores.apellidoPaternoOficial && (
+                      <p className="text-red-500 text-xs mt-1">{errores.apellidoPaternoOficial}</p>
+                    )}
+                  </div>
+
+                  {/* Apellido materno */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Apellido materno <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="apellidoMaternoOficial"
+                      value={formData.apellidoMaternoOficial}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.apellidoMaternoOficial ? 'border-red-500' : ''}`}
+                      placeholder="Apellido materno"
+                      disabled={viewMode}
+                    />
+                    {errores.apellidoMaternoOficial && (
+                      <p className="text-red-500 text-xs mt-1">{errores.apellidoMaternoOficial}</p>
+                    )}
+                  </div>
+
+                  {/* Cargo */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cargo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoOficial"
+                      value={formData.cargoOficial}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.cargoOficial ? 'border-red-500' : ''}`}
+                      placeholder="Cargo"
+                      disabled={viewMode}
+                    />
+                    {errores.cargoOficial && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoOficial}</p>
+                    )}
+                  </div>
+
+                  {/* Correo electrónico */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo electrónico <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="correoOficial"
+                      value={formData.correoOficial}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.correoOficial ? 'border-red-500' : ''}`}
+                      placeholder="Correo electrónico"
+                      disabled={viewMode}
+                    />
+                    {errores.correoOficial && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoOficial}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono 
+                    </label>
+                    <input
+                      type="text"
+                      name="telefonoOficial"
+                      value={formData.telefonoOficial}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.telefonoOficial ? 'border-red-500' : ''}`}
+                      placeholder="Teléfono"
+                      disabled={viewMode}
+                    />
+                    {errores.telefonoOficial && (
+                      <p className="text-red-500 text-xs mt-1">{errores.telefonoOficial}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de designación */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de designación <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaDesignacion"
+                      value={formData.fechaDesignacion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaDesignacion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaDesignacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaDesignacion}</p>
+                    )}
+                  </div>
+
+                  {/* Resolución de designación */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Resolución de designación <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="resolucionDesignacion"
+                      value={formData.resolucionDesignacion}
+                      onChange={handleInputChange}
+                      
+                      className={`input-field ${errores.resolucionDesignacion ? 'border-red-500' : ''}`}
+                      placeholder="Resolución de designación"
+                      disabled={viewMode}
+                    />
+                    {errores.resolucionDesignacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.resolucionDesignacion}</p>
+                    )}
+                  </div>
+
+                  {/* ¿Comunicada a la SGTD? */}
+                  <div className="">
+                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                      <input
+                        type="checkbox"
+                        name="comunicadaSgtd"
+                        checked={formData.comunicadaSgtd || false}
+                        onChange={handleInputChange}
+                        className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        disabled={viewMode}
+                      />
+                      ¿Comunicada a la SGTD?
+                    </label>
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones 
+                    </label>
+                    <textarea
+                      name="observaciones"
+                      value={formData.observaciones}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Observaciones..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observaciones?.length || 0} / 1000 caracteres
                     </p>
                   </div>
 

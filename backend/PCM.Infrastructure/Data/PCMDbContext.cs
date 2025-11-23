@@ -40,6 +40,17 @@ public class PCMDbContext : DbContext
     public DbSet<Com8PublicacionTUPA> Com8PublicacionTUPA { get; set; }
     public DbSet<Com9ModeloGestionDocumental> Com9ModeloGestionDocumental { get; set; }
     public DbSet<Com10DatosAbiertos> Com10DatosAbiertos { get; set; }
+    public DbSet<Com11AportacionGeoPeru> Com11AportacionGeoPeru { get; set; }
+    public DbSet<Com12ResponsableSoftwarePublico> Com12ResponsableSoftwarePublico { get; set; }
+    public DbSet<Com13InteroperabilidadPIDE> Com13InteroperabilidadPIDE { get; set; }
+    public DbSet<Com14OficialSeguridadDigital> Com14OficialSeguridadDigital { get; set; }
+    public DbSet<Com15CSIRTInstitucional> Com15CSIRTInstitucional { get; set; }
+    public DbSet<Com16SistemaGestionSeguridad> Com16SistemaGestionSeguridad { get; set; }
+    public DbSet<Com17PlanTransicionIPv6> Com17PlanTransicionIPv6 { get; set; }
+    public DbSet<Com18AccesoPortalTransparencia> Com18AccesoPortalTransparencia { get; set; }
+    public DbSet<Com19EncuestaNacionalGobDigital> Com19EncuestaNacionalGobDigital { get; set; }
+    public DbSet<Com20DigitalizacionServiciosFacilita> Com20DigitalizacionServiciosFacilita { get; set; }
+    public DbSet<Com21OficialGobiernoDatos> Com21OficialGobiernoDatos { get; set; }
     public DbSet<LogAuditoria> LogAuditoria { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
