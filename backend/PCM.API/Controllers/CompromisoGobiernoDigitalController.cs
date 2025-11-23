@@ -36,7 +36,7 @@ public class CompromisoGobiernoDigitalController : ControllerBase
         try
         {
             // Obtener UserId del usuario autenticado
-            var userIdClaim = User.FindFirst("UserId")?.Value;
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             Guid? userId = null;
             if (!string.IsNullOrEmpty(userIdClaim) && Guid.TryParse(userIdClaim, out var parsedUserId))
             {

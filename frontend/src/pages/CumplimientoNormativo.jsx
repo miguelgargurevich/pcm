@@ -227,7 +227,7 @@ const CumplimientoNormativo = () => {
                     Nombre del Compromiso
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Descripción
+                    Alcance
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Estado
@@ -238,7 +238,7 @@ const CumplimientoNormativo = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {compromisosPaginados.map((compromiso, index) => {
+                {compromisosPaginados.map((compromiso) => {
                   // Buscar si existe un cumplimiento para este compromiso
                   const cumplimiento = cumplimientos.find(c => c.compromisoId === compromiso.compromisoId);
                   
@@ -246,7 +246,7 @@ const CumplimientoNormativo = () => {
                     <tr key={compromiso.compromisoId} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-sm font-bold text-primary">{indicePrimero + index + 1}</span>
+                          <span className="text-sm font-bold text-primary">{compromiso.compromisoId}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -260,8 +260,10 @@ const CumplimientoNormativo = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-sm text-gray-600 line-clamp-2">
-                          {compromiso.descripcion || 'Sin descripción'}
+                        <p className="text-sm text-gray-600">
+                          {compromiso.alcances && compromiso.alcances.length > 0
+                            ? `Alcance: ${compromiso.alcances.join(', ')}`
+                            : 'Sin alcance definido'}
                         </p>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
