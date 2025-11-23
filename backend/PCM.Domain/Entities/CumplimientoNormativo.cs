@@ -9,7 +9,7 @@ namespace PCM.Domain.Entities;
 public class CumplimientoNormativo
 {
     public int CumplimientoId { get; set; }
-    public int CompromisoId { get; set; }
+    public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
     
     // ============================================

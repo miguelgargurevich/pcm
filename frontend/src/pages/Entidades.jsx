@@ -437,6 +437,7 @@ const Entidades = () => {
         apePatAlcalde: formData.apePatAlcalde,
         apeMatAlcalde: formData.apeMatAlcalde,
         emailAlcalde: formData.emailAlcalde,
+        activo: formData.activo,
       };
       
       if (editingEntidad) {
@@ -761,6 +762,9 @@ const Entidades = () => {
                   Clase
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">
+                  Estado
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Acciones
                 </th>
               </tr>
@@ -768,7 +772,7 @@ const Entidades = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {entidadesPaginadas.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="px-3 py-8 text-center text-gray-500">
+                  <td colSpan="10" className="px-3 py-8 text-center text-gray-500">
                     {entidades.length === 0
                       ? 'No hay entidades registradas'
                       : 'No se encontraron entidades con los filtros aplicados'}
@@ -800,6 +804,15 @@ const Entidades = () => {
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                       {entidad.nombreClasificacion || 'N/A'}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap text-sm">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        entidad.activo 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {entidad.activo ? 'Activo' : 'Inactivo'}
+                      </span>
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center gap-2">

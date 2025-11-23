@@ -8,7 +8,7 @@ namespace PCM.Domain.Entities;
 public class Com1LiderGTD
 {
     public long ComlgtdEntId { get; set; }
-    public int CompromisoId { get; set; }
+    public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
     public string EtapaFormulario { get; set; } = string.Empty; // paso1, paso2, paso3, completado
     public string Estado { get; set; } = string.Empty; // bandeja, sin_reportar, publicado

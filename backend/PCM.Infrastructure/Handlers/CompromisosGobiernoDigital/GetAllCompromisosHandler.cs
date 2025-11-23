@@ -25,7 +25,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
         try
         {
             // Obtener la clasificación de la entidad del usuario (si está autenticado)
-            int? userClasificacionId = null;
+            long? userClasificacionId = null;
             if (request.UserId.HasValue)
             {
                 var usuario = await _context.Usuarios
@@ -72,7 +72,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
 
             if (request.Estado.HasValue)
             {
-                query = query.Where(c => c.IdEstado == request.Estado.Value);
+                query = query.Where(c => c.Estado == request.Estado.Value);
             }
             
             // Only show active records
@@ -109,7 +109,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                 .ToList() ?? new List<string>(),
             FechaInicio = compromiso.FechaInicio,
             FechaFin = compromiso.FechaFin,
-            Estado = compromiso.IdEstado,
+            Estado = compromiso.Estado,
             Activo = compromiso.Activo,
             CreatedAt = compromiso.CreatedAt,
             UpdatedAt = compromiso.UpdatedAt,

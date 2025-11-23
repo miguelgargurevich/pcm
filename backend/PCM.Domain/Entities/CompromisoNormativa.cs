@@ -5,7 +5,7 @@ namespace PCM.Domain.Entities;
 public class CompromisoNormativa
 {
     public int CompromisoNormativaId { get; set; }
-    public int CompromisoId { get; set; }
+    public long CompromisoId { get; set; }
     public int NormaId { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

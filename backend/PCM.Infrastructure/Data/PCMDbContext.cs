@@ -384,7 +384,7 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.Alcances).HasColumnName("alcances").HasMaxLength(500).IsRequired();
             entity.Property(e => e.FechaInicio).HasColumnName("fecha_inicio").IsRequired();
             entity.Property(e => e.FechaFin).HasColumnName("fecha_fin").IsRequired();
-            entity.Property(e => e.IdEstado).HasColumnName("estado").IsRequired().HasDefaultValue(1);
+            entity.Property(e => e.Estado).HasColumnName("estado").IsRequired().HasDefaultValue(1);
             entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
@@ -435,7 +435,7 @@ public class PCMDbContext : DbContext
         {
             entity.ToTable("alcance_compromisos");
             entity.HasKey(e => e.AlcanceCompromisoId);
-            entity.Property(e => e.AlcanceCompromisoId).HasColumnName("alcance_compromiso_id");
+            entity.Property(e => e.AlcanceCompromisoId).HasColumnName("alc_com_id");
             entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id").IsRequired();
             entity.Property(e => e.ClasificacionId).HasColumnName("clasificacion_id").IsRequired();
             entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);

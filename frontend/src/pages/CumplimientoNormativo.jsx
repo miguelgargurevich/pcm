@@ -21,11 +21,21 @@ const CumplimientoNormativo = () => {
     estado: ''
   });
 
-  const estados = cumplimientoService.getEstados();
+  const [estados, setEstados] = useState([]);
 
   useEffect(() => {
     loadData();
+    loadEstados();
   }, []);
+
+  const loadEstados = async () => {
+    try {
+      const estadosData = await cumplimientoService.getEstados();
+      setEstados(estadosData);
+    } catch (error) {
+      console.error('Error al cargar estados:', error);
+    }
+  };
 
   // Aplicar filtros
   useEffect(() => {

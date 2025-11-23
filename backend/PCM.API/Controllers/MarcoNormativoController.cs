@@ -27,6 +27,7 @@ public class MarcoNormativoController : ControllerBase
 
     /// <summary>
     /// Obtener todas las normas con filtros opcionales
+    /// Filtra automáticamente por el nivel de gobierno de la entidad del usuario
     /// </summary>
     [HttpGet]
     public async Task<IActionResult> GetAll(
@@ -36,8 +37,17 @@ public class MarcoNormativoController : ControllerBase
         [FromQuery] DateTime? fechaDesde,
         [FromQuery] DateTime? fechaHasta)
     {
+        // Obtener UserId del usuario autenticado
+        var userIdClaim = User.FindFirst("UserId")?.Value;
+        Guid? userId = null;
+        if (!string.IsNullOrEmpty(userIdClaim) && Guid.TryParse(userIdClaim, out var parsedUserId))
+        {
+            userId = parsedUserId;
+        }
+
         var query = new GetAllMarcoNormativoQuery
         {
+            UserId = userId,
             TipoNormaId = tipoNormaId,
             Activo = activo,
             SearchTerm = searchTerm,

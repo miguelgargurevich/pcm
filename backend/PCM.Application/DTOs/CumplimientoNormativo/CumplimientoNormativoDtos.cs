@@ -8,7 +8,7 @@ namespace PCM.Application.DTOs.CumplimientoNormativo;
 
 public class CreateCumplimientoRequest
 {
-    public int CompromisoId { get; set; }
+    public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
     
     // Paso 1: Datos Generales
@@ -78,7 +78,7 @@ public class UpdateCumplimientoRequest
 public class CumplimientoResponseDto
 {
     public int CumplimientoId { get; set; }
-    public int CompromisoId { get; set; }
+    public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
     
     // Datos del Compromiso (para mostrar en listado)
@@ -125,7 +125,7 @@ public class CumplimientoResponseDto
 public class CumplimientoListItemDto
 {
     public int CumplimientoId { get; set; }
-    public int CompromisoId { get; set; }
+    public long CompromisoId { get; set; }
     public string NombreCompromiso { get; set; } = string.Empty;
     public string NombreEntidad { get; set; } = string.Empty;
     public string NombreLider { get; set; } = string.Empty; // Nombres + Apellidos

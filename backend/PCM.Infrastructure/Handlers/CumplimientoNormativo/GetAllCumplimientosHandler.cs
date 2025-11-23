@@ -24,7 +24,7 @@ public class GetAllCumplimientosHandler : IRequestHandler<GetAllCumplimientosQue
         try
         {
             // Obtener la clasificación de la entidad del usuario (si está autenticado)
-            int? userClasificacionId = null;
+            long? userClasificacionId = null;
             if (request.UserId.HasValue)
             {
                 var usuario = await _context.Usuarios

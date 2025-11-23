@@ -6,7 +6,7 @@ namespace PCM.Application.Features.CumplimientoNormativo.Commands.CreateCumplimi
 
 public class CreateCumplimientoCommand : IRequest<Result<CumplimientoResponseDto>>
 {
-    public int CompromisoId { get; set; }
+    public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
     
     // Paso 1: Datos Generales

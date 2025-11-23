@@ -1,0 +1,599 @@
+                             Table "public.com2_cgtd"
+      Column       |            Type             | Collation | Nullable | Default 
+-------------------+-----------------------------+-----------+----------+---------
+ comcgtd_ent_id    | bigint                      |           | not null | 
+ compromiso_id     | bigint                      |           | not null | 
+ entidad_id        | bigint                      |           | not null | 
+ etapa_formulario  | character varying(20)       |           | not null | 
+ estado            | character varying(15)       |           | not null | 
+ check_privacidad  | boolean                     |           | not null | 
+ check_ddjj        | boolean                     |           | not null | 
+ estado_PCM        | character varying(50)       |           | not null | 
+ observaciones_PCM | character varying(500)      |           | not null | 
+ created_at        | timestamp without time zone |           | not null | 
+ fec_registro      | date                        |           | not null | 
+ usuario_registra  | bigint                      |           | not null | 
+ activo            | boolean                     |           | not null | 
+Indexes:
+    "com2_cgtd_pkey" PRIMARY KEY, btree (comcgtd_ent_id)
+Referenced by:
+    TABLE "comite_miembros" CONSTRAINT "comite_miembros_fk1" FOREIGN KEY (com_entidad_id) REFERENCES com2_cgtd(comcgtd_ent_id)
+
+                               Table "public.com3_epgd"
+        Column         |            Type             | Collation | Nullable | Default 
+-----------------------+-----------------------------+-----------+----------+---------
+ comepgd_ent_id        | bigint                      |           | not null | 
+ compromiso_id         | bigint                      |           | not null | 
+ entidad_id            | bigint                      |           | not null | 
+ etapa_formulario      | character varying(20)       |           | not null | 
+ estado                | character varying(15)       |           | not null | 
+ check_privacidad      | boolean                     |           | not null | 
+ check_ddjj            | boolean                     |           | not null | 
+ estado_PCM            | character varying(50)       |           | not null | 
+ observaciones_PCM     | character varying(500)      |           | not null | 
+ created_at            | timestamp without time zone |           | not null | 
+ fec_registro          | date                        |           | not null | 
+ usuario_registra      | bigint                      |           | not null | 
+ activo                | boolean                     |           | not null | 
+ fecha_reporte         | date                        |           | not null | 
+ sede                  | character varying(100)      |           | not null | 
+ observaciones         | character varying(255)      |           | not null | 
+ ubicacion_area_ti     | character varying(255)      |           | not null | 
+ organigrama_ti        | character varying(255)      |           | not null | 
+ dependencia_area_ti   | character varying(100)      |           | not null | 
+ costo_anual_ti        | numeric(12,2)               |           | not null | 
+ existe_comision_gd_ti | boolean                     |           | not null | 
+Indexes:
+    "com3_epgd_pkey" PRIMARY KEY, btree (comepgd_ent_id)
+Referenced by:
+    TABLE "capacitaciones_seginfo" CONSTRAINT "capacitaciones_seginfo_fk1" FOREIGN KEY (com_entidad_id) REFERENCES com3_epgd(comepgd_ent_id)
+    TABLE "inventario_red" CONSTRAINT "inventario_red_fk1" FOREIGN KEY (com_entidad_id) REFERENCES com3_epgd(comepgd_ent_id)
+    TABLE "inventario_servidores" CONSTRAINT "inventario_servidores_fk1" FOREIGN KEY (com_entidad_id) REFERENCES com3_epgd(comepgd_ent_id)
+    TABLE "inventario_sistemas_info" CONSTRAINT "inventario_sistemas_info_fk1" FOREIGN KEY (com_entidad_id) REFERENCES com3_epgd(comepgd_ent_id)
+    TABLE "inventario_software" CONSTRAINT "inventario_software_fk1" FOREIGN KEY (com_entidad_id) REFERENCES com3_epgd(comepgd_ent_id)
+    TABLE "objetivos_entidades" CONSTRAINT "objetivos_entidades_fk1" FOREIGN KEY (com_entidad_id) REFERENCES com3_epgd(comepgd_ent_id)
+    TABLE "personal_ti" CONSTRAINT "personal_ti_fk1" FOREIGN KEY (com_entidad_id) REFERENCES com3_epgd(comepgd_ent_id)
+    TABLE "proyectos_entidades" CONSTRAINT "proyectos_entidades_fk1" FOREIGN KEY (com_entidad_id) REFERENCES com3_epgd(comepgd_ent_id)
+    TABLE "seguridad_info" CONSTRAINT "seguridad_info_fk1" FOREIGN KEY (com_entidad_id) REFERENCES com3_epgd(comepgd_ent_id)
+
+                              Table "public.com4_tdpei"
+        Column        |            Type             | Collation | Nullable | Default 
+----------------------+-----------------------------+-----------+----------+---------
+ comtdpei_ent_id      | bigint                      |           | not null | 
+ compromiso_id        | bigint                      |           | not null | 
+ entidad_id           | bigint                      |           | not null | 
+ etapa_formulario     | character varying(20)       |           | not null | 
+ estado               | character varying(15)       |           | not null | 
+ check_privacidad     | boolean                     |           | not null | 
+ check_ddjj           | boolean                     |           | not null | 
+ estado_PCM           | character varying(50)       |           | not null | 
+ observaciones_PCM    | character varying(500)      |           | not null | 
+ created_at           | timestamp without time zone |           | not null | 
+ fec_registro         | date                        |           | not null | 
+ usuario_registra     | bigint                      |           | not null | 
+ activo               | boolean                     |           | not null | 
+ anio_inicio_pei      | bigint                      |           | not null | 
+ anio_fin_pei         | bigint                      |           | not null | 
+ objetivo_pei         | character varying(255)      |           | not null | 
+ descripcion_pei      | character varying(255)      |           | not null | 
+ alineado_pgd         | boolean                     |           | not null | 
+ fecha_aprobacion_pei | date                        |           | not null | 
+ ruta_pdf_pei         | character varying(255)      |           | not null | 
+Indexes:
+    "com4_tdpei_pkey" PRIMARY KEY, btree (comtdpei_ent_id)
+
+                                Table "public.com5_destrategiad"
+              Column              |            Type             | Collation | Nullable | Default 
+----------------------------------+-----------------------------+-----------+----------+---------
+ comded_ent_id                    | bigint                      |           | not null | 
+ compromiso_id                    | bigint                      |           | not null | 
+ entidad_id                       | bigint                      |           | not null | 
+ etapa_formulario                 | character varying(20)       |           | not null | 
+ estado                           | character varying(15)       |           | not null | 
+ check_privacidad                 | boolean                     |           | not null | 
+ check_ddjj                       | boolean                     |           | not null | 
+ estado_PCM                       | character varying(50)       |           | not null | 
+ observaciones_PCM                | character varying(500)      |           | not null | 
+ created_at                       | timestamp without time zone |           | not null | 
+ fec_registro                     | date                        |           | not null | 
+ usuario_registra                 | bigint                      |           | not null | 
+ activo                           | boolean                     |           | not null | 
+ nombre_estrategia                | character varying(150)      |           | not null | 
+ periodo_inicio_estrategia        | bigint                      |           | not null | 
+ periodo_fin_estrategia           | bigint                      |           | not null | 
+ objetivos_estrategicos           | character varying(255)      |           | not null | 
+ lineas_accion                    | character varying(255)      |           | not null | 
+ fecha_aprobacion_estrategia      | date                        |           | not null | 
+ alineado_pgd_estrategia          | boolean                     |           | not null | 
+ estado_implementacion_estrategia | character varying(50)       |           | not null | 
+ ruta_pdf_estrategia              | character varying(255)      |           | not null | 
+Indexes:
+    "com5_destrategiad_pkey" PRIMARY KEY, btree (comded_ent_id)
+
+                                Table "public.com6_mpgobpe"
+           Column           |            Type             | Collation | Nullable | Default 
+----------------------------+-----------------------------+-----------+----------+---------
+ comded_ent_id              | bigint                      |           | not null | 
+ compromiso_id              | bigint                      |           | not null | 
+ entidad_id                 | bigint                      |           | not null | 
+ etapa_formulario           | character varying(20)       |           | not null | 
+ estado                     | character varying(15)       |           | not null | 
+ check_privacidad           | boolean                     |           | not null | 
+ check_ddjj                 | boolean                     |           | not null | 
+ estado_PCM                 | character varying(50)       |           | not null | 
+ observaciones_PCM          | character varying(500)      |           | not null | 
+ created_at                 | timestamp without time zone |           | not null | 
+ fec_registro               | date                        |           | not null | 
+ usuario_registra           | bigint                      |           | not null | 
+ activo                     | boolean                     |           | not null | 
+ url_gobpe                  | character varying(150)      |           | not null | 
+ fecha_migracion_gobpe      | date                        |           | not null | 
+ fecha_actualizacion_gobpe  | date                        |           | not null | 
+ responsable_gobpe          | character varying(100)      |           | not null | 
+ correo_responsable_gobpe   | character varying(100)      |           | not null | 
+ telefono_responsable_gobpe | character varying(30)       |           | not null | 
+ tipo_migracion_gobpe       | character varying(50)       |           | not null | 
+ observacion_gobpe          | character varying(255)      |           | not null | 
+ ruta_pdf_gobpe             | character varying(255)      |           | not null | 
+Indexes:
+    "com6_mpgobpe_pkey" PRIMARY KEY, btree (comded_ent_id)
+
+                                Table "public.com7_impd"
+          Column          |            Type             | Collation | Nullable | Default 
+--------------------------+-----------------------------+-----------+----------+---------
+ estado                   | character varying(15)       |           | not null | 
+ comimpd_ent_id           | bigint                      |           | not null | 
+ compromiso_id            | bigint                      |           | not null | 
+ entidad_id               | bigint                      |           | not null | 
+ etapa_formulario         | character varying(20)       |           | not null | 
+ check_privacidad         | boolean                     |           | not null | 
+ check_ddjj               | boolean                     |           | not null | 
+ estado_PCM               | character varying(50)       |           | not null | 
+ observaciones_PCM        | character varying(500)      |           | not null | 
+ created_at               | timestamp without time zone |           | not null | 
+ fec_registro             | date                        |           | not null | 
+ usuario_registra         | bigint                      |           | not null | 
+ activo                   | boolean                     |           | not null | 
+ url_mpd                  | character varying(150)      |           | not null | 
+ fecha_implementacion_mpd | date                        |           | not null | 
+ responsable_mpd          | character varying(100)      |           | not null | 
+ cargo_responsable_mpd    | character varying(100)      |           | not null | 
+ correo_responsable_mpd   | character varying(100)      |           | not null | 
+ telefono_responsable_mpd | character varying(30)       |           | not null | 
+ tipo_mpd                 | character varying(50)       |           | not null | 
+ interoperabilidad_mpd    | boolean                     |           | not null | 
+ observacion_mpd          | character varying(255)      |           | not null | 
+ ruta_pdf_mpd             | character varying(255)      |           | not null | 
+Indexes:
+    "com7_impd_pkey" PRIMARY KEY, btree (comimpd_ent_id)
+
+                                Table "public.com8_ptupa"
+          Column           |            Type             | Collation | Nullable | Default 
+---------------------------+-----------------------------+-----------+----------+---------
+ comptupa_ent_id           | bigint                      |           | not null | 
+ compromiso_id             | bigint                      |           | not null | 
+ entidad_id                | bigint                      |           | not null | 
+ etapa_formulario          | character varying(20)       |           | not null | 
+ estado                    | character varying(15)       |           | not null | 
+ check_privacidad          | boolean                     |           | not null | 
+ check_ddjj                | boolean                     |           | not null | 
+ estado_PCM                | character varying(50)       |           | not null | 
+ observaciones_PCM         | character varying(500)      |           | not null | 
+ created_at                | timestamp without time zone |           | not null | 
+ fec_registro              | date                        |           | not null | 
+ usuario_registra          | bigint                      |           | not null | 
+ activo                    | boolean                     |           | not null | 
+ url_tupa                  | character varying(150)      |           | not null | 
+ numero_resolucion_tupa    | character varying(50)       |           | not null | 
+ fecha_aprobacion_tupa     | date                        |           | not null | 
+ responsable_tupa          | character varying(100)      |           | not null | 
+ cargo_responsable_tupa    | character varying(100)      |           | not null | 
+ correo_responsable_tupa   | character varying(100)      |           | not null | 
+ telefono_responsable_tupa | character varying(30)       |           | not null | 
+ actualizado_tupa          | boolean                     |           | not null | 
+ observacion_tupa          | character varying(255)      |           | not null | 
+ ruta_pdf_tupa             | character varying(255)      |           | not null | 
+Indexes:
+    "com8_ptupa_pkey" PRIMARY KEY, btree (comptupa_ent_id)
+
+                                Table "public.com9_imgd"
+          Column          |            Type             | Collation | Nullable | Default 
+--------------------------+-----------------------------+-----------+----------+---------
+ comimgd_ent_id           | bigint                      |           | not null | 
+ compromiso_id            | bigint                      |           | not null | 
+ entidad_id               | bigint                      |           | not null | 
+ etapa_formulario         | character varying(20)       |           | not null | 
+ estado                   | character varying(15)       |           | not null | 
+ check_privacidad         | boolean                     |           | not null | 
+ check_ddjj               | boolean                     |           | not null | 
+ estado_PCM               | character varying(50)       |           | not null | 
+ observaciones_PCM        | character varying(500)      |           | not null | 
+ created_at               | timestamp without time zone |           | not null | 
+ fec_registro             | date                        |           | not null | 
+ usuario_registra         | bigint                      |           | not null | 
+ activo                   | boolean                     |           | not null | 
+ fecha_aprobacion_mgd     | date                        |           | not null | 
+ numero_resolucion_mgd    | character varying(50)       |           | not null | 
+ responsable_mgd          | character varying(100)      |           | not null | 
+ cargo_responsable_mgd    | character varying(100)      |           | not null | 
+ correo_responsable_mgd   | character varying(100)      |           | not null | 
+ telefono_responsable_mgd | character varying(30)       |           | not null | 
+ sistema_gestion_doc      | character varying(100)      |           | not null | 
+ tipo_implantacion_mgd    | character varying(50)       |           | not null | 
+ interoperabilidad_mgd    | boolean                     |           | not null | 
+ observacion_mgd          | character varying(255)      |           | not null | 
+ ruta_pdf_mgd             | character varying(255)      |           | not null | 
+Indexes:
+    "com9_imgd_pkey" PRIMARY KEY, btree (comimgd_ent_id)
+
+                                   Table "public.com10_pnda"
+             Column              |            Type             | Collation | Nullable | Default 
+---------------------------------+-----------------------------+-----------+----------+---------
+ compnda_ent_id                  | bigint                      |           | not null | 
+ compromiso_id                   | bigint                      |           | not null | 
+ entidad_id                      | bigint                      |           | not null | 
+ etapa_formulario                | character varying(20)       |           | not null | 
+ estado                          | character varying(15)       |           | not null | 
+ check_privacidad                | boolean                     |           | not null | 
+ check_ddjj                      | boolean                     |           | not null | 
+ estado_PCM                      | character varying(50)       |           | not null | 
+ observaciones_PCM               | character varying(500)      |           | not null | 
+ created_at                      | timestamp without time zone |           | not null | 
+ fec_registro                    | date                        |           | not null | 
+ usuario_registra                | bigint                      |           | not null | 
+ activo                          | boolean                     |           | not null | 
+ url_pnda                        | character varying(200)      |           | not null | 
+ total_datasets_publicados       | bigint                      |           | not null | 
+ fecha_ultima_actualizacion_pnda | date                        |           | not null | 
+ responsable_pnda                | character varying(100)      |           | not null | 
+ cargo_responsable_pnda          | character varying(100)      |           | not null | 
+ correo_responsable_pnda         | character varying(100)      |           | not null | 
+ telefono_responsable_pnda       | character varying(30)       |           | not null | 
+ norma_aprobacion_pnda           | character varying(100)      |           | not null | 
+ fecha_aprobacion_pnda           | date                        |           | not null | 
+ observacion_pnda                | character varying(255)      |           | not null | 
+ ruta_pdf_pnda                   | character varying(255)      |           | not null | 
+Indexes:
+    "com10_pnda_pkey" PRIMARY KEY, btree (compnda_ent_id)
+
+                                  Table "public.com11_ageop"
+             Column             |            Type             | Collation | Nullable | Default 
+--------------------------------+-----------------------------+-----------+----------+---------
+ comageop_ent_id                | bigint                      |           | not null | 
+ compromiso_id                  | bigint                      |           | not null | 
+ entidad_id                     | bigint                      |           | not null | 
+ etapa_formulario               | character varying(20)       |           | not null | 
+ estado                         | character varying(15)       |           | not null | 
+ check_privacidad               | boolean                     |           | not null | 
+ check_ddjj                     | boolean                     |           | not null | 
+ estado_PCM                     | character varying(50)       |           | not null | 
+ observaciones_PCM              | character varying(500)      |           | not null | 
+ created_at                     | timestamp without time zone |           | not null | 
+ fec_registro                   | date                        |           | not null | 
+ usuario_registra               | bigint                      |           | not null | 
+ activo                         | boolean                     |           | not null | 
+ url_geo                        | character varying(200)      |           | not null | 
+ tipo_informacion_geo           | character varying(100)      |           | not null | 
+ total_capas_publicadas         | bigint                      |           | not null | 
+ fecha_ultima_actualizacion_geo | date                        |           | not null | 
+ responsable_geo                | character varying(100)      |           | not null | 
+ cargo_responsable_geo          | character varying(100)      |           | not null | 
+ correo_responsable_geo         | character varying(100)      |           | not null | 
+ telefono_responsable_geo       | character varying(30)       |           | not null | 
+ norma_aprobacion_geo           | character varying(100)      |           | not null | 
+ fecha_aprobacion_geo           | date                        |           | not null | 
+ interoperabilidad_geo          | boolean                     |           | not null | 
+ observacion_geo                | character varying(255)      |           | not null | 
+ ruta_pdf_geo                   | character varying(255)      |           | not null | 
+Indexes:
+    "com11_ageop_pkey" PRIMARY KEY, btree (comageop_ent_id)
+
+                              Table "public.com12_drsp"
+        Column         |            Type             | Collation | Nullable | Default 
+-----------------------+-----------------------------+-----------+----------+---------
+ comdrsp_ent_id        | bigint                      |           | not null | 
+ compromiso_id         | bigint                      |           | not null | 
+ entidad_id            | bigint                      |           | not null | 
+ etapa_formulario      | character varying(20)       |           | not null | 
+ estado                | character varying(15)       |           | not null | 
+ check_privacidad      | boolean                     |           | not null | 
+ check_ddjj            | boolean                     |           | not null | 
+ estado_PCM            | character varying(50)       |           | not null | 
+ observaciones_PCM     | character varying(500)      |           | not null | 
+ created_at            | timestamp without time zone |           | not null | 
+ fec_registro          | date                        |           | not null | 
+ usuario_registra      | bigint                      |           | not null | 
+ activo                | boolean                     |           | not null | 
+ dni_rsp               | character varying(12)       |           | not null | 
+ nombre_rsp            | character varying(100)      |           | not null | 
+ ape_pat_rsp           | character varying(60)       |           | not null | 
+ ape_mat_rsp           | character varying(60)       |           | not null | 
+ cargo_rsp             | character varying(100)      |           | not null | 
+ correo_rsp            | character varying(100)      |           | not null | 
+ telefono_rsp          | character varying(30)       |           | not null | 
+ fecha_designacion_rsp | date                        |           | not null | 
+ numero_resolucion_rsp | character varying(50)       |           | not null | 
+ ruta_pdf_rsp          | character varying(255)      |           | not null | 
+ observacion_rsp       | character varying(255)      |           | not null | 
+Indexes:
+    "com12_drsp_pkey" PRIMARY KEY, btree (comdrsp_ent_id)
+
+                                Table "public.com13_pcpide"
+           Column            |            Type             | Collation | Nullable | Default 
+-----------------------------+-----------------------------+-----------+----------+---------
+ compcpide_ent_id            | bigint                      |           | not null | 
+ compromiso_id               | bigint                      |           | not null | 
+ entidad_id                  | bigint                      |           | not null | 
+ etapa_formulario            | character varying(20)       |           | not null | 
+ estado                      | character varying(15)       |           | not null | 
+ check_privacidad            | boolean                     |           | not null | 
+ check_ddjj                  | boolean                     |           | not null | 
+ estado_PCM                  | character varying(50)       |           | not null | 
+ observaciones_PCM           | character varying(500)      |           | not null | 
+ created_at                  | timestamp without time zone |           | not null | 
+ fec_registro                | date                        |           | not null | 
+ usuario_registra            | bigint                      |           | not null | 
+ activo                      | boolean                     |           | not null | 
+ tipo_integracion_pide       | character varying(30)       |           | not null | 
+ nombre_servicio_pide        | character varying(150)      |           | not null | 
+ descripcion_servicio_pide   | character varying(255)      |           | not null | 
+ fecha_inicio_operacion_pide | date                        |           | not null | 
+ responsable_pide            | character varying(100)      |           | not null | 
+ cargo_responsable_pide      | character varying(100)      |           | not null | 
+ correo_responsable_pide     | character varying(100)      |           | not null | 
+ telefono_responsable_pide   | character varying(30)       |           | not null | 
+ numero_convenio_pide        | character varying(50)       |           | not null | 
+ fecha_convenio_pide         | date                        |           | not null | 
+ interoperabilidad_pide      | boolean                     |           | not null | 
+ url_servicio_pide           | character varying(200)      |           | not null | 
+ observacion_pide            | character varying(255)      |           | not null | 
+ ruta_pdf_pide               | character varying(255)      |           | not null | 
+Indexes:
+    "com13_pcpide_pkey" PRIMARY KEY, btree (compcpide_ent_id)
+
+                              Table "public.com14_doscd"
+         Column         |            Type             | Collation | Nullable | Default 
+------------------------+-----------------------------+-----------+----------+---------
+ comdoscd_ent_id        | bigint                      |           | not null | 
+ compromiso_id          | bigint                      |           | not null | 
+ entidad_id             | bigint                      |           | not null | 
+ etapa_formulario       | character varying(20)       |           | not null | 
+ estado                 | character varying(15)       |           | not null | 
+ check_privacidad       | boolean                     |           | not null | 
+ check_ddjj             | boolean                     |           | not null | 
+ estado_PCM             | character varying(50)       |           | not null | 
+ observaciones_PCM      | character varying(500)      |           | not null | 
+ created_at             | timestamp without time zone |           | not null | 
+ fec_registro           | date                        |           | not null | 
+ usuario_registra       | bigint                      |           | not null | 
+ activo                 | boolean                     |           | not null | 
+ dni_oscd               | character varying(12)       |           | not null | 
+ nombre_oscd            | character varying(100)      |           | not null | 
+ ape_pat_oscd           | character varying(60)       |           | not null | 
+ ape_mat_oscd           | character varying(60)       |           | not null | 
+ cargo_oscd             | character varying(100)      |           | not null | 
+ correo_oscd            | character varying(100)      |           | not null | 
+ telefono_oscd          | character varying(30)       |           | not null | 
+ fecha_designacion_oscd | date                        |           | not null | 
+ numero_resolucion_oscd | character varying(50)       |           | not null | 
+ comunicado_pcm_oscd    | boolean                     |           | not null | 
+ ruta_pdf_oscd          | character varying(255)      |           | not null | 
+ observacion_oscd       | character varying(255)      |           | not null | 
+Indexes:
+    "com14_doscd_pkey" PRIMARY KEY, btree (comdoscd_ent_id)
+
+                                Table "public.com15_csirt"
+           Column           |            Type             | Collation | Nullable | Default 
+----------------------------+-----------------------------+-----------+----------+---------
+ comcsirt_ent_id            | bigint                      |           | not null | 
+ compromiso_id              | bigint                      |           | not null | 
+ entidad_id                 | bigint                      |           | not null | 
+ etapa_formulario           | character varying(20)       |           | not null | 
+ estado                     | character varying(15)       |           | not null | 
+ check_privacidad           | boolean                     |           | not null | 
+ check_ddjj                 | boolean                     |           | not null | 
+ estado_PCM                 | character varying(50)       |           | not null | 
+ observaciones_PCM          | character varying(500)      |           | not null | 
+ created_at                 | timestamp without time zone |           | not null | 
+ fec_registro               | date                        |           | not null | 
+ usuario_registra           | bigint                      |           | not null | 
+ activo                     | boolean                     |           | not null | 
+ nombre_csirt               | character varying(150)      |           | not null | 
+ fecha_conformacion_csirt   | date                        |           | not null | 
+ numero_resolucion_csirt    | character varying(50)       |           | not null | 
+ responsable_csirt          | character varying(100)      |           | not null | 
+ cargo_responsable_csirt    | character varying(100)      |           | not null | 
+ correo_csirt               | character varying(100)      |           | not null | 
+ telefono_csirt             | character varying(30)       |           | not null | 
+ protocolo_incidentes_csirt | boolean                     |           | not null | 
+ comunicado_pcm_csirt       | boolean                     |           | not null | 
+ ruta_pdf_csirt             | character varying(255)      |           | not null | 
+ observacion_csirt          | character varying(255)      |           | not null | 
+Indexes:
+    "com15_csirt_pkey" PRIMARY KEY, btree (comcsirt_ent_id)
+
+                                 Table "public.com16_sgsi"
+           Column           |            Type             | Collation | Nullable | Default 
+----------------------------+-----------------------------+-----------+----------+---------
+ comsgsi_ent_id             | bigint                      |           | not null | 
+ compromiso_id              | bigint                      |           | not null | 
+ entidad_id                 | bigint                      |           | not null | 
+ etapa_formulario           | character varying(20)       |           | not null | 
+ estado                     | character varying(15)       |           | not null | 
+ check_privacidad           | boolean                     |           | not null | 
+ check_ddjj                 | boolean                     |           | not null | 
+ estado_PCM                 | character varying(50)       |           | not null | 
+ observaciones_PCM          | character varying(500)      |           | not null | 
+ created_at                 | timestamp without time zone |           | not null | 
+ fec_registro               | date                        |           | not null | 
+ usuario_registra           | bigint                      |           | not null | 
+ activo                     | boolean                     |           | not null | 
+ responsable_sgsi           | character varying(100)      |           | not null | 
+ cargo_responsable_sgsi     | character varying(100)      |           | not null | 
+ correo_sgsi                | character varying(100)      |           | not null | 
+ telefono_sgsi              | character varying(30)       |           | not null | 
+ estado_implementacion_sgsi | character varying(50)       |           | not null | 
+ alcance_sgsi               | character varying(255)      |           | not null | 
+ fecha_inicio_sgsi          | date                        |           | not null | 
+ fecha_certificacion_sgsi   | date                        |           | not null | 
+ entidad_certificadora_sgsi | character varying(150)      |           | not null | 
+ version_norma_sgsi         | character varying(20)       |           | not null | 
+ ruta_pdf_certificado_sgsi  | character varying(255)      |           | not null | 
+ ruta_pdf_politicas_sgsi    | character varying(255)      |           | not null | 
+ observacion_sgsi           | character varying(255)      |           | not null | 
+Indexes:
+    "com16_sgsi_pkey" PRIMARY KEY, btree (comsgsi_ent_id)
+
+                              Table "public.com17_ptipv6"
+         Column         |            Type             | Collation | Nullable | Default 
+------------------------+-----------------------------+-----------+----------+---------
+ comptipv6_ent_id       | bigint                      |           | not null | 
+ compromiso_id          | bigint                      |           | not null | 
+ entidad_id             | bigint                      |           | not null | 
+ etapa_formulario       | character varying(20)       |           | not null | 
+ estado                 | character varying(15)       |           | not null | 
+ check_privacidad       | boolean                     |           | not null | 
+ check_ddjj             | boolean                     |           | not null | 
+ estado_PCM             | character varying(50)       |           | not null | 
+ observaciones_PCM      | character varying(500)      |           | not null | 
+ created_at             | timestamp without time zone |           | not null | 
+ fec_registro           | date                        |           | not null | 
+ usuario_registra       | bigint                      |           | not null | 
+ activo                 | boolean                     |           | not null | 
+ responsable_ipv6       | character varying(100)      |           | not null | 
+ cargo_responsable_ipv6 | character varying(100)      |           | not null | 
+ correo_ipv6            | character varying(100)      |           | not null | 
+ telefono_ipv6          | character varying(30)       |           | not null | 
+ estado_plan_ipv6       | character varying(50)       |           | not null | 
+ fecha_formulacion_ipv6 | date                        |           | not null | 
+ fecha_aprobacion_ipv6  | date                        |           | not null | 
+ fecha_inicio_ipv6      | date                        |           | not null | 
+ fecha_fin_ipv6         | date                        |           | not null | 
+ descripcion_plan_ipv6  | character varying(255)      |           | not null | 
+ ruta_pdf_plan_ipv6     | character varying(255)      |           | not null | 
+ observacion_ipv6       | character varying(255)      |           | not null | 
+Indexes:
+    "com17_ptipv6_pkey" PRIMARY KEY, btree (comptipv6_ent_id)
+
+                              Table "public.com18_sapte"
+        Column         |            Type             | Collation | Nullable | Default 
+-----------------------+-----------------------------+-----------+----------+---------
+ comsapte_ent_id       | bigint                      |           | not null | 
+ compromiso_id         | bigint                      |           | not null | 
+ entidad_id            | bigint                      |           | not null | 
+ etapa_formulario      | character varying(20)       |           | not null | 
+ estado                | character varying(15)       |           | not null | 
+ check_privacidad      | boolean                     |           | not null | 
+ check_ddjj            | boolean                     |           | not null | 
+ estado_PCM            | character varying(50)       |           | not null | 
+ observaciones_PCM     | character varying(500)      |           | not null | 
+ created_at            | timestamp without time zone |           | not null | 
+ fec_registro          | date                        |           | not null | 
+ usuario_registra      | bigint                      |           | not null | 
+ activo                | boolean                     |           | not null | 
+ responsable_pte       | character varying(100)      |           | not null | 
+ cargo_responsable_pte | character varying(100)      |           | not null | 
+ correo_pte            | character varying(100)      |           | not null | 
+ telefono_pte          | character varying(30)       |           | not null | 
+ fecha_solicitud_pte   | date                        |           | not null | 
+ fecha_acceso_pte      | date                        |           | not null | 
+ numero_oficio_pte     | character varying(50)       |           | not null | 
+ estado_acceso_pte     | character varying(50)       |           | not null | 
+ enlace_portal_pte     | character varying(200)      |           | not null | 
+ descripcion_pte       | character varying(255)      |           | not null | 
+ ruta_pdf_pte          | character varying(255)      |           | not null | 
+ observacion_pte       | character varying(255)      |           | not null | 
+Indexes:
+    "com18_sapte_pkey" PRIMARY KEY, btree (comsapte_ent_id)
+
+                              Table "public.com19_renad"
+         Column         |            Type             | Collation | Nullable | Default 
+------------------------+-----------------------------+-----------+----------+---------
+ comrenad_ent_id        | bigint                      |           | not null | 
+ compromiso_id          | bigint                      |           | not null | 
+ entidad_id             | bigint                      |           | not null | 
+ etapa_formulario       | character varying(20)       |           | not null | 
+ estado                 | character varying(15)       |           | not null | 
+ check_privacidad       | boolean                     |           | not null | 
+ check_ddjj             | boolean                     |           | not null | 
+ estado_PCM             | character varying(50)       |           | not null | 
+ observaciones_PCM      | character varying(500)      |           | not null | 
+ created_at             | timestamp without time zone |           | not null | 
+ fec_registro           | date                        |           | not null | 
+ usuario_registra       | bigint                      |           | not null | 
+ activo                 | boolean                     |           | not null | 
+ anio_enad              | bigint                      |           | not null | 
+ responsable_enad       | character varying(100)      |           | not null | 
+ cargo_responsable_enad | character varying(100)      |           | not null | 
+ correo_enad            | character varying(100)      |           | not null | 
+ telefono_enad          | character varying(30)       |           | not null | 
+ fecha_envio_enad       | date                        |           | not null | 
+ estado_respuesta_enad  | character varying(50)       |           | not null | 
+ enlace_formulario_enad | character varying(200)      |           | not null | 
+ observacion_enad       | character varying(255)      |           | not null | 
+ ruta_pdf_enad          | character varying(255)      |           | not null | 
+Indexes:
+    "com19_renad_pkey" PRIMARY KEY, btree (comrenad_ent_id)
+
+                                  Table "public.com20_dsfpe"
+             Column             |            Type             | Collation | Nullable | Default 
+--------------------------------+-----------------------------+-----------+----------+---------
+ comdsfpe_ent_id                | bigint                      |           | not null | 
+ compromiso_id                  | bigint                      |           | not null | 
+ entidad_id                     | bigint                      |           | not null | 
+ etapa_formulario               | character varying(20)       |           | not null | 
+ estado                         | character varying(15)       |           | not null | 
+ check_privacidad               | boolean                     |           | not null | 
+ check_ddjj                     | boolean                     |           | not null | 
+ estado_PCM                     | character varying(50)       |           | not null | 
+ observaciones_PCM              | character varying(500)      |           | not null | 
+ created_at                     | timestamp without time zone |           | not null | 
+ fec_registro                   | date                        |           | not null | 
+ usuario_registra               | bigint                      |           | not null | 
+ activo                         | boolean                     |           | not null | 
+ responsable_facilita           | character varying(100)      |           | not null | 
+ cargo_responsable_facilita     | character varying(100)      |           | not null | 
+ correo_facilita                | character varying(100)      |           | not null | 
+ telefono_facilita              | character varying(30)       |           | not null | 
+ estado_implementacion_facilita | character varying(50)       |           | not null | 
+ fecha_inicio_facilita          | date                        |           | not null | 
+ fecha_ultimo_avance_facilita   | date                        |           | not null | 
+ total_servicios_digitalizados  | bigint                      |           | not null | 
+ ruta_pdf_facilita              | character varying(255)      |           | not null | 
+ observacion_facilita           | character varying(255)      |           | not null | 
+Indexes:
+    "com20_dsfpe_pkey" PRIMARY KEY, btree (comdsfpe_ent_id)
+Referenced by:
+    TABLE "servicios_facilita_entidades" CONSTRAINT "servicios_facilita_entidades_fk1" FOREIGN KEY (com_ent_id) REFERENCES com20_dsfpe(comdsfpe_ent_id)
+
+                              Table "public.com21_dogd"
+        Column         |            Type             | Collation | Nullable | Default 
+-----------------------+-----------------------------+-----------+----------+---------
+ comdogd_ent_id        | bigint                      |           | not null | 
+ compromiso_id         | bigint                      |           | not null | 
+ entidad_id            | bigint                      |           | not null | 
+ etapa_formulario      | character varying(20)       |           | not null | 
+ estado                | character varying(15)       |           | not null | 
+ check_privacidad      | boolean                     |           | not null | 
+ check_ddjj            | boolean                     |           | not null | 
+ estado_PCM            | character varying(50)       |           | not null | 
+ observaciones_PCM     | character varying(500)      |           | not null | 
+ created_at            | timestamp without time zone |           | not null | 
+ fec_registro          | date                        |           | not null | 
+ usuario_registra      | bigint                      |           | not null | 
+ activo                | boolean                     |           | not null | 
+ dni_ogd               | character varying(12)       |           | not null | 
+ nombre_ogd            | character varying(100)      |           | not null | 
+ ape_pat_ogd           | character varying(60)       |           | not null | 
+ ape_mat_ogd           | character varying(60)       |           | not null | 
+ cargo_ogd             | character varying(100)      |           | not null | 
+ correo_ogd            | character varying(100)      |           | not null | 
+ telefono_ogd          | character varying(30)       |           | not null | 
+ fecha_designacion_ogd | date                        |           | not null | 
+ numero_resolucion_ogd | character varying(50)       |           | not null | 
+ comunicado_pcm_ogd    | boolean                     |           | not null | 
+ ruta_pdf_ogd          | character varying(255)      |           | not null | 
+ observacion_ogd       | character varying(255)      |           | not null | 
+Indexes:
+    "com21_dogd_pkey" PRIMARY KEY, btree (comdogd_ent_id)
+

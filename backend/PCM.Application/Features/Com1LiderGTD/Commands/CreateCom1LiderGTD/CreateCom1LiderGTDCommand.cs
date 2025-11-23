@@ -5,7 +5,7 @@ namespace PCM.Application.Features.Com1LiderGTD.Commands.CreateCom1LiderGTD;
 
 public class CreateCom1LiderGTDCommand : IRequest<Result<Com1LiderGTDResponse>>
 {
-    public int CompromisoId { get; set; }
+    public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
     public string EtapaFormulario { get; set; } = "paso1"; // paso1, paso2, paso3, completado
     public string Estado { get; set; } = "bandeja"; // bandeja, sin_reportar, publicado
@@ -32,7 +32,7 @@ public class CreateCom1LiderGTDCommand : IRequest<Result<Com1LiderGTDResponse>>
 public class Com1LiderGTDResponse
 {
     public long ComlgtdEntId { get; set; }
-    public int CompromisoId { get; set; }
+    public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
     public string EtapaFormulario { get; set; } = string.Empty;
     public string Estado { get; set; } = string.Empty;

@@ -158,12 +158,25 @@ const CompromisoGobiernoDigital = () => {
   const handleEdit = (compromiso) => {
     console.log('🔍 Compromiso recibido para editar:', compromiso);
     console.log('📝 Descripción del compromiso:', compromiso.descripcion);
+    console.log('📝 Alcances recibidos:', compromiso.alcances);
     setEditingCompromiso(compromiso);
+    
+    // Convertir nombres de alcances a IDs para que funcionen los checkboxes
+    let alcanceIds = [];
+    if (compromiso.alcances && compromiso.alcances.length > 0) {
+      alcanceIds = compromiso.alcances
+        .map(nombreAlcance => {
+          const alcance = alcances.find(a => a.nombre.toLowerCase() === nombreAlcance.toLowerCase());
+          return alcance ? alcance.clasificacionId : null;
+        })
+        .filter(id => id !== null);
+    }
+    console.log('📝 Alcance IDs mapeados:', alcanceIds);
     
     const newFormData = {
       nombreCompromiso: compromiso.nombreCompromiso || '',
       descripcion: compromiso.descripcion || '',
-      alcances: compromiso.alcances || [],
+      alcances: alcanceIds,
       fechaInicio: compromiso.fechaInicio ? compromiso.fechaInicio.split('T')[0] : '',
       fechaFin: compromiso.fechaFin ? compromiso.fechaFin.split('T')[0] : '',
       activo: compromiso.activo !== undefined ? compromiso.activo : true,
@@ -173,6 +186,7 @@ const CompromisoGobiernoDigital = () => {
     
     console.log('📋 FormData preparado:', newFormData);
     console.log('📋 Descripción en formData:', newFormData.descripcion);
+    console.log('📋 Alcances en formData:', newFormData.alcances);
     
     setFormData(newFormData);
     setShowModal(true);

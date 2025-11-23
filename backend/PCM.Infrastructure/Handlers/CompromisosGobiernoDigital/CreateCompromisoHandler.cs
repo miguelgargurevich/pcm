@@ -32,7 +32,7 @@ public class CreateCompromisoHandler : IRequestHandler<CreateCompromisoCommand, 
                 Alcances = string.Join(",", request.Alcances.Select(a => a.Trim()).Distinct(StringComparer.OrdinalIgnoreCase)), // Convert list to comma-separated string
                 FechaInicio = DateTime.SpecifyKind(request.FechaInicio, DateTimeKind.Utc),
                 FechaFin = DateTime.SpecifyKind(request.FechaFin, DateTimeKind.Utc),
-                IdEstado = 1, // Default pendiente
+                Estado = 1, // Default pendiente
                 Activo = request.Activo,
                 CreatedAt = DateTime.UtcNow
             };
@@ -150,7 +150,7 @@ public class CreateCompromisoHandler : IRequestHandler<CreateCompromisoCommand, 
                     .ToList(),
             FechaInicio = compromiso.FechaInicio,
             FechaFin = compromiso.FechaFin,
-            Estado = compromiso.IdEstado,
+            Estado = compromiso.Estado,
             Activo = compromiso.Activo,
             CreatedAt = compromiso.CreatedAt,
             UpdatedAt = compromiso.UpdatedAt,

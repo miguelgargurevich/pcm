@@ -111,15 +111,29 @@ const cumplimientoService = {
   },
 
   /**
-   * Obtiene los estados de cumplimiento disponibles
-   * @returns {Array} Lista de estados
+   * Obtiene los estados de cumplimiento disponibles desde el backend
+   * @returns {Promise<Array>} Lista de estados
    */
-  getEstados: () => {
-    return [
-      { id: 1, nombre: 'Bandeja', descripcion: 'En bandeja de entrada' },
-      { id: 2, nombre: 'Sin Reportar', descripcion: 'Iniciado pero sin reportar' },
-      { id: 3, nombre: 'Publicado', descripcion: 'Reportado y publicado' }
-    ];
+  getEstados: async () => {
+    try {
+      const response = await apiClient.get('/catalogos/estados');
+      const data = response.data?.data || response.data?.Data || [];
+      // Mapear para compatibilidad con código existente
+      return data.map(e => ({
+        id: e.estadoId,
+        nombre: e.nombre,
+        descripcion: e.descripcion
+      }));
+    } catch (error) {
+      console.error('Error al obtener estados:', error);
+      // Fallback a valores por defecto si falla el API
+      return [
+        { id: 1, nombre: 'Pendiente', descripcion: 'Pendiente de ejecución' },
+        { id: 2, nombre: 'En Proceso', descripcion: 'En proceso de ejecución' },
+        { id: 3, nombre: 'Completado', descripcion: 'Completado exitosamente' },
+        { id: 4, nombre: 'Cancelado', descripcion: 'Cancelado' }
+      ];
+    }
   }
 };
 

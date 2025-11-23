@@ -81,6 +81,7 @@ public class UpdateEntidadHandler : IRequestHandler<UpdateEntidadCommand, Result
             entidad.ApePatAlcalde = request.ApePatAlcalde;
             entidad.ApeMatAlcalde = request.ApeMatAlcalde;
             entidad.EmailAlcalde = request.EmailAlcalde;
+            entidad.Activo = request.Activo;
             entidad.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync(cancellationToken);

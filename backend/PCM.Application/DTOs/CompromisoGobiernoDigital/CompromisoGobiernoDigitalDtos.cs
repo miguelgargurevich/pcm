@@ -18,7 +18,7 @@ public class CreateCompromisoRequest
 
 public class UpdateCompromisoRequest
 {
-    public int CompromisoId { get; set; }
+    public long CompromisoId { get; set; }
     public string NombreCompromiso { get; set; } = string.Empty;
     public string? Descripcion { get; set; }
     public List<string> Alcances { get; set; } = new();
@@ -32,7 +32,7 @@ public class UpdateCompromisoRequest
 // Response DTOs
 public class CompromisoResponseDto
 {
-    public int CompromisoId { get; set; }
+    public long CompromisoId { get; set; }
     public string NombreCompromiso { get; set; } = string.Empty;
     public string? Descripcion { get; set; }
     public List<string> Alcances { get; set; } = new();
@@ -54,7 +54,7 @@ public class CompromisoNormativaDto
 public class CompromisoNormativaResponseDto
 {
     public int CompromisoNormativaId { get; set; }
-    public int CompromisoId { get; set; }
+    public long CompromisoId { get; set; }
     public int NormaId { get; set; }
     public string? NombreNorma { get; set; }
     public string? Numero { get; set; }
@@ -76,7 +76,7 @@ public class CriterioEvaluacionDto
 public class CriterioEvaluacionResponseDto
 {
     public int CriterioEvaluacionId { get; set; }
-    public int CompromisoId { get; set; }
+    public long CompromisoId { get; set; }
     public string Descripcion { get; set; } = string.Empty;
     public int Estado { get; set; } // FK a estado_compromiso
     public bool Activo { get; set; }

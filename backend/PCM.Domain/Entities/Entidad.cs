@@ -15,7 +15,7 @@ public class Entidad
     public string Email { get; set; } = string.Empty;
     public string? Web { get; set; }
     public int SectorId { get; set; }
-    public int ClasificacionId { get; set; }
+    public long ClasificacionId { get; set; }
     public string NombreAlcalde { get; set; } = string.Empty;
     public string ApePatAlcalde { get; set; } = string.Empty;
     public string ApeMatAlcalde { get; set; } = string.Empty;

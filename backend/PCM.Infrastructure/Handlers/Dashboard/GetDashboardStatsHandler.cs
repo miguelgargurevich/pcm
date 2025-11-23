@@ -47,10 +47,10 @@ public class GetDashboardStatsHandler : IRequestHandler<GetDashboardStatsQuery, 
 
             // Obtener compromisos por estado
             var compromisosPendientes = await _context.CompromisosGobiernoDigital
-                .CountAsync(c => c.Activo && c.IdEstado == 1, cancellationToken); // Pendiente
+                .CountAsync(c => c.Activo && c.Estado == 1, cancellationToken); // Pendiente
 
             var compromisosCompletados = await _context.CompromisosGobiernoDigital
-                .CountAsync(c => c.Activo && c.IdEstado == 3, cancellationToken); // Completado
+                .CountAsync(c => c.Activo && c.Estado == 3, cancellationToken); // Completado
 
             var stats = new DashboardStatsDto
             {

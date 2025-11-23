@@ -101,7 +101,8 @@ public class EntidadesController : ControllerBase
             NombreAlcalde = dto.NombreAlcalde,
             ApePatAlcalde = dto.ApePatAlcalde,
             ApeMatAlcalde = dto.ApeMatAlcalde,
-            EmailAlcalde = dto.EmailAlcalde
+            EmailAlcalde = dto.EmailAlcalde,
+            Activo = dto.Activo
         };
 
         var result = await _mediator.Send(command);
@@ -147,7 +148,8 @@ public class EntidadesController : ControllerBase
             NombreAlcalde = dto.NombreAlcalde,
             ApePatAlcalde = dto.ApePatAlcalde,
             ApeMatAlcalde = dto.ApeMatAlcalde,
-            EmailAlcalde = dto.EmailAlcalde
+            EmailAlcalde = dto.EmailAlcalde,
+            Activo = dto.Activo
         };
 
         var result = await _mediator.Send(command);

@@ -20,7 +20,27 @@ public class GetAllMarcoNormativoHandler : IRequestHandler<GetAllMarcoNormativoQ
     {
         try
         {
+            // Obtener el nivel de gobierno de la entidad del usuario (si está autenticado)
+            int? userNivelGobiernoId = null;
+            if (request.UserId.HasValue)
+            {
+                var usuario = await _context.Usuarios
+                    .Include(u => u.Entidad)
+                    .FirstOrDefaultAsync(u => u.UserId == request.UserId.Value, cancellationToken);
+                
+                if (usuario?.Entidad != null)
+                {
+                    userNivelGobiernoId = usuario.Entidad.NivelGobiernoId;
+                }
+            }
+
             var query = _context.MarcosNormativos.AsQueryable();
+
+            // Filtrar por nivel de gobierno de la entidad del usuario
+            if (userNivelGobiernoId.HasValue)
+            {
+                query = query.Where(m => m.NivelGobiernoId == userNivelGobiernoId.Value);
+            }
 
             // Filtros opcionales
             if (request.TipoNormaId.HasValue)

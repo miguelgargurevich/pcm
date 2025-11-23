@@ -11,11 +11,12 @@ public record CreateEntidadDto
     public string? Web { get; init; }
     public required int NivelGobiernoId { get; init; }
     public required int SectorId { get; init; }
-    public required int ClasificacionId { get; init; }
+    public required long ClasificacionId { get; init; }
     public required string NombreAlcalde { get; init; }
     public required string ApePatAlcalde { get; init; }
     public required string ApeMatAlcalde { get; init; }
     public required string EmailAlcalde { get; init; }
+    public bool Activo { get; init; } = true;
 }
 
 public record UpdateEntidadDto
@@ -30,11 +31,12 @@ public record UpdateEntidadDto
     public string? Web { get; init; }
     public required int NivelGobiernoId { get; init; }
     public required int SectorId { get; init; }
-    public required int ClasificacionId { get; init; }
+    public required long ClasificacionId { get; init; }
     public required string NombreAlcalde { get; init; }
     public required string ApePatAlcalde { get; init; }
     public required string ApeMatAlcalde { get; init; }
     public required string EmailAlcalde { get; init; }
+    public bool Activo { get; init; }
 }
 
 public record EntidadDetailDto
@@ -53,7 +55,7 @@ public record EntidadDetailDto
     public string? Web { get; init; }
     public int NivelGobiernoId { get; init; }
     public int SectorId { get; init; }
-    public int ClasificacionId { get; init; }
+    public long ClasificacionId { get; init; }
     public string NombreClasificacion { get; init; } = string.Empty;
     public string NombreAlcalde { get; init; } = string.Empty;
     public string ApePatAlcalde { get; init; } = string.Empty;
@@ -78,7 +80,7 @@ public record EntidadListDto
     public string NivelGobierno { get; init; } = string.Empty;
     public int SectorId { get; init; }
     public string NombreSector { get; init; } = string.Empty;
-    public int ClasificacionId { get; init; }
+    public long ClasificacionId { get; init; }
     public string NombreClasificacion { get; init; } = string.Empty;
     public string Email { get; init; } = string.Empty;
     public string Telefono { get; init; } = string.Empty;

@@ -15,9 +15,10 @@ public record CreateEntidadCommand : IRequest<Result<EntidadDetailDto>>
     public string? Web { get; init; }
     public required int NivelGobiernoId { get; init; }
     public required int SectorId { get; init; }
-    public required int ClasificacionId { get; init; }
+    public required long ClasificacionId { get; init; }
     public required string NombreAlcalde { get; init; }
     public required string ApePatAlcalde { get; init; }
     public required string ApeMatAlcalde { get; init; }
     public required string EmailAlcalde { get; init; }
+    public bool Activo { get; init; } = true;
 }

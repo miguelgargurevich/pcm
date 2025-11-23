@@ -74,7 +74,7 @@ public class CreateEntidadHandler : IRequestHandler<CreateEntidadCommand, Result
                 ApePatAlcalde = request.ApePatAlcalde,
                 ApeMatAlcalde = request.ApeMatAlcalde,
                 EmailAlcalde = request.EmailAlcalde,
-                Activo = true,
+                Activo = request.Activo,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
