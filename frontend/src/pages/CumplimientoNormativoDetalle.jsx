@@ -31,8 +31,8 @@ const CumplimientoNormativoDetalle = () => {
   const [haVistoDeclaracion, setHaVistoDeclaracion] = useState(false);
 
   // URLs de los documentos en Supabase Storage
-  const POLITICA_PRIVACIDAD_URL = 'https://amzwfwfhllwhjffkqxhn.supabase.co/storage/v1/object/public/documentos-normativos/politicas/politica-privacidad.pdf';
-  const DECLARACION_JURADA_URL = 'https://amzwfwfhllwhjffkqxhn.supabase.co/storage/v1/object/public/documentos-normativos/politicas/declaracion-jurada.pdf';
+  const POLITICA_PRIVACIDAD_URL = 'https://amzwfwfhllwhjffkqxhn.supabase.co/storage/v1/object/public/cumplimiento-documentos/politicas/politica-privacidad.pdf';
+  const DECLARACION_JURADA_URL = 'https://amzwfwfhllwhjffkqxhn.supabase.co/storage/v1/object/public/cumplimiento-documentos/politicas/declaracion-jurada.pdf';
 
   // Formulario con los 3 pasos
   const [formData, setFormData] = useState({

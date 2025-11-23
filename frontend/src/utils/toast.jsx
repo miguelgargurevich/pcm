@@ -72,8 +72,8 @@ export const showSuccessToast = (titleOrMessage, message) => {
     toast.success(
       (t) => (
         <div className="flex flex-col gap-1">
-          <p className="font-semibold text-gray-900">{titleOrMessage}</p>
-          <p className="text-sm text-gray-600">{message}</p>
+          <p className="font-semibold text-white">{titleOrMessage}</p>
+          <p className="text-sm text-white">{message}</p>
         </div>
       ),
       {
