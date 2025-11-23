@@ -152,24 +152,21 @@ const CumplimientoNormativo = () => {
 
       {/* Filtros */}
       <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Filtro por nombre */}
-          <div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              <Search size={16} className="inline mr-1" />
-              Buscar por nombre
+              Nombre del Compromiso
             </label>
             <input
               type="text"
               name="nombreCompromiso"
               value={filtros.nombreCompromiso}
               onChange={handleFiltroChange}
-              placeholder="Buscar compromiso..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Buscar por nombre..."
+              className="input-field"
             />
           </div>
 
-          {/* Filtro por estado */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Estado
@@ -178,9 +175,9 @@ const CumplimientoNormativo = () => {
               name="estado"
               value={filtros.estado}
               onChange={handleFiltroChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              className="input-field"
             >
-              <option value="">Todos los estados</option>
+              <option value="">Todos</option>
               <option value="sin_registrar">Sin registrar</option>
               {estados.map((estado) => (
                 <option key={estado.id} value={estado.id}>
@@ -190,15 +187,13 @@ const CumplimientoNormativo = () => {
             </select>
           </div>
 
-          {/* Botón limpiar filtros */}
-          <div className="flex items-end">
-            <button
-              onClick={limpiarFiltros}
-              className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 flex items-center justify-center gap-2"
-            >
-              <FilterX size={16} />
-              Limpiar Filtros
-            </button>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              &nbsp;
+            </label>
+            <div className="h-full flex items-center">
+              <span className="text-sm text-gray-500">Filtros disponibles</span>
+            </div>
           </div>
         </div>
 
@@ -206,6 +201,14 @@ const CumplimientoNormativo = () => {
           <div className="text-sm text-gray-600">
             Mostrando {compromisosPaginados.length} de {compromisosFiltrados.length} compromisos
           </div>
+          <button
+            onClick={limpiarFiltros}
+            className="btn-secondary flex items-center gap-2 px-4 py-2"
+            title="Limpiar filtros"
+          >
+            <FilterX size={20} />
+            Limpiar filtros
+          </button>
         </div>
       </div>
 
@@ -227,10 +230,10 @@ const CumplimientoNormativo = () => {
                     Nombre del Compromiso
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Alcance
+                    Estado
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Estado
+                    Fecha Registro
                   </th>
                   <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Acciones
@@ -256,15 +259,13 @@ const CumplimientoNormativo = () => {
                             <div className="text-sm font-medium text-gray-900">
                               {compromiso.nombreCompromiso}
                             </div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              {compromiso.alcances && compromiso.alcances.length > 0
+                                ? `Alcance: ${compromiso.alcances.join(', ')}`
+                                : 'Sin alcance definido'}
+                            </div>
                           </div>
                         </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="text-sm text-gray-600">
-                          {compromiso.alcances && compromiso.alcances.length > 0
-                            ? `Alcance: ${compromiso.alcances.join(', ')}`
-                            : 'Sin alcance definido'}
-                        </p>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {cumplimiento ? (
@@ -276,6 +277,15 @@ const CumplimientoNormativo = () => {
                             Sin registrar
                           </span>
                         )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {cumplimiento && cumplimiento.createdAt
+                          ? new Date(cumplimiento.createdAt).toLocaleDateString('es-PE', { 
+                              day: '2-digit', 
+                              month: '2-digit', 
+                              year: 'numeric' 
+                            })
+                          : '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                         <div className="flex justify-center gap-2">
