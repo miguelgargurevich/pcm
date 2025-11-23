@@ -546,11 +546,10 @@ public class PCMDbContext : DbContext
                 .HasForeignKey(e => e.CompromisoId)
                 .HasConstraintName("com1_liderg_td_fk1");
 
-            // Nota: entidad_id no tiene FK en la BD, es solo un bigint sin relación
-            // entity.HasOne(e => e.Entidad)
-            //     .WithMany()
-            //     .HasForeignKey(e => e.EntidadId)
-            //     .HasConstraintName("com1_liderg_td_fk2");
+            entity.HasOne(e => e.Entidad)
+                .WithMany()
+                .HasForeignKey(e => e.EntidadId)
+                .HasConstraintName("com1_liderg_td_fk2");
         });
 
         // Configuración de PermisoModulo

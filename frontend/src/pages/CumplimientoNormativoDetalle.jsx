@@ -371,7 +371,7 @@ const CumplimientoNormativoDetalle = () => {
         
         const com1Data = {
           compromisoId: 1,
-          entidadId: user.entidadId,
+          entidadId: user.entidadId, // UUID de la entidad del usuario
           etapaFormulario: pasoActual === 3 ? 'completado' : `paso${pasoActual}`,
           estado: formData.estado === 1 ? 'bandeja' : formData.estado === 2 ? 'sin_reportar' : 'publicado',
           dniLider: formData.nroDni,

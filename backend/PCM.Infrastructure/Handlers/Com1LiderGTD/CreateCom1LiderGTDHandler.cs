@@ -46,7 +46,7 @@ public class CreateCom1LiderGTDHandler : IRequestHandler<CreateCom1LiderGTDComma
                 ObservacionesPCM = "",
                 CreatedAt = DateTime.UtcNow,
                 FecRegistro = request.FecIniLider ?? DateTime.UtcNow,
-                UsuarioRegistra = request.UsuarioRegistra ?? 0,
+                UsuarioRegistra = request.UsuarioRegistra ?? Guid.Empty,
                 Activo = true
             };
 
