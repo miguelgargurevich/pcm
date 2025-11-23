@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import cumplimientoService from '../services/cumplimientoService';
 import com1LiderGTDService from '../services/com1LiderGTDService';
 import com2CGTDService from '../services/com2CGTDService';
+import com4PEIService from '../services/com4PEIService';
 import { compromisosService } from '../services/compromisosService';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
 import PDFViewer from '../components/PDFViewer';
@@ -23,6 +24,7 @@ const CumplimientoNormativoDetalle = () => {
   const [pasoActual, setPasoActual] = useState(1);
   const [com1RecordId, setCom1RecordId] = useState(null); // ID del registro en com1_liderg_td
   const [com2RecordId, setCom2RecordId] = useState(null); // ID del registro en com2_cgtd
+  const [com4RecordId, setCom4RecordId] = useState(null); // ID del registro en com4_pei
   
   // Estado para Compromiso 2: Miembros del comité
   const [miembrosComite, setMiembrosComite] = useState([]);
@@ -82,7 +84,7 @@ const CumplimientoNormativoDetalle = () => {
   useEffect(() => {
     loadCompromisos();
     // Cargar datos si está editando O si es Compromiso 1 o 2 (que usan tablas especiales)
-    if (isEdit || (['1', '2'].includes(compromisoIdFromUrl) && user?.entidadId)) {
+    if (isEdit || (['1', '2', '4'].includes(compromisoIdFromUrl) && user?.entidadId)) {
       loadCumplimiento();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -211,6 +213,62 @@ const CumplimientoNormativoDetalle = () => {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '2' }));
             setMiembrosComite([]);
+          }
+          setLoading(false);
+          return;
+        }
+      }
+      
+      // COMPROMISO 4: Incorporar TD en el PEI
+      if (compromisoId === 4 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 4, user.entidadId);
+        const response = await com4PEIService.getByEntidad(4, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom4RecordId(data.compeiEntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '4',
+              anioInicio: data.anioInicio || '',
+              anioFin: data.anioFin || '',
+              fechaAprobacion: data.fechaAprobacion ? data.fechaAprobacion.split('T')[0] : '',
+              objetivoEstrategico: data.objetivoEstrategico || '',
+              descripcionIncorporacion: data.descripcionIncorporacion || '',
+              alineadoPgd: data.alineadoPgd || false,
+              documentoFile: null,
+              criteriosEvaluados: criteriosParsed,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.urlDocPei) {
+              console.log('📄 Cargando PDF guardado desde:', data.urlDocPei);
+              setPdfUrl(data.urlDocPei);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '4' }));
           }
           setLoading(false);
           return;
@@ -386,7 +444,29 @@ const CumplimientoNormativoDetalle = () => {
           nuevosErrores.miembrosComite = 'Debe agregar al menos un miembro del comité';
           showErrorToast('Debe agregar al menos un miembro del comité');
         }
-      } else {
+      }
+      // Validación específica para Compromiso 4 (Incorporar TD en el PEI)
+      else if (parseInt(formData.compromisoId) === 4) {
+        if (!formData.anioInicio) {
+          nuevosErrores.anioInicio = 'Ingrese el año de inicio del PEI';
+        }
+        if (!formData.anioFin) {
+          nuevosErrores.anioFin = 'Ingrese el año de fin del PEI';
+        }
+        if (formData.anioInicio && formData.anioFin && parseInt(formData.anioFin) <= parseInt(formData.anioInicio)) {
+          nuevosErrores.anioFin = 'El año de fin debe ser mayor al año de inicio';
+        }
+        if (!formData.fechaAprobacion) {
+          nuevosErrores.fechaAprobacion = 'Seleccione la fecha de aprobación del PEI';
+        }
+        if (!formData.objetivoEstrategico || formData.objetivoEstrategico.trim() === '') {
+          nuevosErrores.objetivoEstrategico = 'Ingrese el objetivo estratégico vinculado a la TD';
+        }
+        if (!formData.descripcionIncorporacion || formData.descripcionIncorporacion.trim() === '') {
+          nuevosErrores.descripcionIncorporacion = 'Describa cómo se incorporó la TD en el PEI';
+        }
+      }
+      else {
         // Validación para Compromiso 1 y otros (Líder)
         if (!formData.nroDni) nuevosErrores.nroDni = 'Ingrese el DNI';
         if (formData.nroDni && formData.nroDni.length !== 8) nuevosErrores.nroDni = 'El DNI debe tener 8 dígitos';
@@ -661,6 +741,66 @@ const CumplimientoNormativoDetalle = () => {
             }
           }
         }
+      }
+      // COMPROMISO 4: Incorporar TD en el PEI
+      else if (parseInt(formData.compromisoId) === 4) {
+        console.log('🚀 Preparando datos para Com4 PEI');
+        
+        const com4Data = {
+          compromisoId: 4,
+          entidadId: user.entidadId,
+          anioInicio: parseInt(formData.anioInicio) || null,
+          anioFin: parseInt(formData.anioFin) || null,
+          fechaAprobacion: formData.fechaAprobacion || null,
+          objetivoEstrategico: formData.objetivoEstrategico || null,
+          descripcionIncorporacion: formData.descripcionIncorporacion || null,
+          alineadoPgd: formData.alineadoPgd || false,
+          urlDocPei: pdfUrl || null,
+          criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3'
+        };
+        
+        console.log('Datos Com4 a enviar:', com4Data);
+        
+        if (com4RecordId) {
+          console.log('Actualizando registro existente Com4:', com4RecordId);
+          response = await com4PEIService.update(com4RecordId, com4Data);
+        } else {
+          console.log('Creando nuevo registro Com4');
+          response = await com4PEIService.create(com4Data);
+          console.log('Respuesta create Com4:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com4:', response.data.compeiEntId);
+            setCom4RecordId(response.data.compeiEntId);
+          }
+        }
+        
+        console.log('Respuesta final Com4:', response);
+        
+        // Actualizar estado local con datos guardados
+        if (response.isSuccess && response.data) {
+          console.log('✅ Actualizando estado local Com4');
+          
+          if (response.data.urlDocPei) {
+            setPdfUrl(response.data.urlDocPei);
+            if (blobUrlToRevoke) {
+              console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
+          }
+          
+          if (response.data.criteriosEvaluados) {
+            try {
+              const criteriosParsed = JSON.parse(response.data.criteriosEvaluados);
+              setFormData(prev => ({ ...prev, criteriosEvaluados: criteriosParsed }));
+            } catch (e) {
+              console.error('❌ Error al parsear criterios:', e);
+            }
+          }
+        }
       } 
       else if (isEdit || id) {
         // Si ya existe, actualizar (genérico)
@@ -811,7 +951,135 @@ const CumplimientoNormativoDetalle = () => {
         {/* Paso 1: Registrar Compromiso */}
         {pasoActual === 1 && (
           <div className="space-y-3">
-            {parseInt(formData.compromisoId) === 2 ? (
+            {parseInt(formData.compromisoId) === 4 ? (
+              // COMPROMISO 4: Incorporar TD en el PEI
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Incorporar Transformación Digital en el PEI</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Año de Inicio */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Año de Inicio del PEI <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="anioInicio"
+                      value={formData.anioInicio}
+                      onChange={handleInputChange}
+                      min="2020"
+                      max="2050"
+                      className={`input-field ${errores.anioInicio ? 'border-red-500' : ''}`}
+                      placeholder="2024"
+                      disabled={viewMode}
+                    />
+                    {errores.anioInicio && (
+                      <p className="text-red-500 text-xs mt-1">{errores.anioInicio}</p>
+                    )}
+                  </div>
+
+                  {/* Año de Fin */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Año de Fin del PEI <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="anioFin"
+                      value={formData.anioFin}
+                      onChange={handleInputChange}
+                      min={formData.anioInicio || "2020"}
+                      max="2050"
+                      className={`input-field ${errores.anioFin ? 'border-red-500' : ''}`}
+                      placeholder="2026"
+                      disabled={viewMode}
+                    />
+                    {errores.anioFin && (
+                      <p className="text-red-500 text-xs mt-1">{errores.anioFin}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de Aprobación */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de Aprobación del PEI <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaAprobacion"
+                      value={formData.fechaAprobacion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaAprobacion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaAprobacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaAprobacion}</p>
+                    )}
+                  </div>
+
+                  {/* Alineado con PGD */}
+                  <div className="flex items-center h-full pt-6">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="alineadoPgd"
+                        checked={formData.alineadoPgd || false}
+                        onChange={handleInputChange}
+                        className="mr-2 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                        disabled={viewMode}
+                      />
+                      <span className="text-sm text-gray-700">¿El PEI está alineado con el Plan de Gobierno Digital?</span>
+                    </label>
+                  </div>
+
+                  {/* Objetivo Estratégico - Ocupa toda la fila */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Objetivo Estratégico vinculado a la Transformación Digital <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="objetivoEstrategico"
+                      value={formData.objetivoEstrategico}
+                      onChange={handleInputChange}
+                      maxLength="1000"
+                      rows="3"
+                      className={`input-field ${errores.objetivoEstrategico ? 'border-red-500' : ''}`}
+                      placeholder="Describa el objetivo estratégico del PEI que incorpora la Transformación Digital..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.objetivoEstrategico?.length || 0} / 1000 caracteres
+                    </p>
+                    {errores.objetivoEstrategico && (
+                      <p className="text-red-500 text-xs mt-1">{errores.objetivoEstrategico}</p>
+                    )}
+                  </div>
+
+                  {/* Descripción de Incorporación - Ocupa toda la fila */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Descripción del modo de incorporación de la TD en el PEI <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="descripcionIncorporacion"
+                      value={formData.descripcionIncorporacion}
+                      onChange={handleInputChange}
+                      maxLength="2000"
+                      rows="4"
+                      className={`input-field ${errores.descripcionIncorporacion ? 'border-red-500' : ''}`}
+                      placeholder="Describa cómo se ha incorporado la Transformación Digital en el Plan Estratégico Institucional..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.descripcionIncorporacion?.length || 0} / 2000 caracteres
+                    </p>
+                    {errores.descripcionIncorporacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.descripcionIncorporacion}</p>
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 2 ? (
               // COMPROMISO 2: Comité GTD
               <>
                 <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Constituir el Comité de Gobierno y TD (CGTD)</h2>
