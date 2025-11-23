@@ -79,7 +79,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
             query = query.Where(c => c.Activo);
 
             var compromisos = await query
-                .OrderByDescending(c => c.CreatedAt)
+                .OrderBy(c => c.CompromisoId)
                 .ToListAsync(cancellationToken);
 
             var response = compromisos.Select(MapToResponseDto).ToList();
