@@ -7,5 +7,5 @@ namespace PCM.Application.Features.Com1LiderGTD.Queries.GetCom1LiderGTDByEntidad
 public class GetCom1LiderGTDByEntidadQuery : IRequest<Result<Com1LiderGTDResponse?>>
 {
     public long CompromisoId { get; set; }
-    public Guid EntidadId { get; set; }
+    public long EntidadId { get; set; }
 }

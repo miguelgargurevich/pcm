@@ -313,6 +313,12 @@ const CumplimientoNormativoDetalle = () => {
   const guardarProgreso = async () => {
     try {
       setSaving(true);
+      
+      console.log('=== GUARDAR PROGRESO ===');
+      console.log('Compromiso ID:', formData.compromisoId);
+      console.log('User:', user);
+      console.log('Paso actual:', pasoActual);
+      console.log('com1RecordId:', com1RecordId);
 
       // Primero subir el documento si hay uno nuevo en el paso 2
       let documentoUrl = pdfUrl;
@@ -355,6 +361,14 @@ const CumplimientoNormativoDetalle = () => {
       
       // Si es Compromiso 1, usar API específica
       if (parseInt(formData.compromisoId) === 1) {
+        console.log('Es Compromiso 1 - Usando API específica');
+        
+        // Convertir fecha al formato ISO si existe
+        let fechaIso = null;
+        if (formData.fechaInicio) {
+          fechaIso = new Date(formData.fechaInicio + 'T00:00:00').toISOString();
+        }
+        
         const com1Data = {
           compromisoId: 1,
           entidadId: user.entidadId,
@@ -368,21 +382,29 @@ const CumplimientoNormativoDetalle = () => {
           telefonoLider: formData.telefono,
           rolLider: formData.rol,
           cargoLider: formData.cargo,
-          fecIniLider: formData.fechaInicio,
+          fecIniLider: fechaIso,
           checkPrivacidad: formData.aceptaPoliticaPrivacidad,
           checkDdjj: formData.aceptaDeclaracionJurada
         };
         
+        console.log('Datos Com1 a enviar:', com1Data);
+        
         if (com1RecordId) {
           // Actualizar registro existente
+          console.log('Actualizando registro existente:', com1RecordId);
           response = await com1LiderGTDService.update(com1RecordId, com1Data);
         } else {
           // Crear nuevo registro
+          console.log('Creando nuevo registro Com1');
           response = await com1LiderGTDService.create(com1Data);
+          console.log('Respuesta create:', response);
           if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro:', response.data.comlgtdEntId);
             setCom1RecordId(response.data.comlgtdEntId);
           }
         }
+        
+        console.log('Respuesta final Com1:', response);
       } else if (isEdit || id) {
         // Si ya existe, actualizar (genérico)
         response = await cumplimientoService.update(id, dataToSend);

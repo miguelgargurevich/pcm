@@ -34,13 +34,21 @@ const com1LiderGTDService = {
    */
   create: async (data) => {
     try {
+      console.log('🔵 Enviando petición POST /Com1LiderGTD con datos:', data);
       const response = await api.post('/Com1LiderGTD', data);
+      console.log('✅ Respuesta exitosa de POST /Com1LiderGTD:', response.data);
       return {
         isSuccess: true,
         data: response.data
       };
     } catch (error) {
-      console.error('Error al crear Com1LiderGTD:', error);
+      console.error('❌ Error al crear Com1LiderGTD:', error);
+      console.error('Detalles del error:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        message: error.message
+      });
       return {
         isSuccess: false,
         message: error.response?.data?.message || 'Error al crear el registro'

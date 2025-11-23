@@ -524,8 +524,8 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(15).IsRequired();
             entity.Property(e => e.CheckPrivacidad).HasColumnName("check_privacidad").IsRequired();
             entity.Property(e => e.CheckDdjj).HasColumnName("check_ddjj").IsRequired();
-            entity.Property(e => e.EstadoPCM).HasColumnName("estado_PCM").HasMaxLength(50).IsRequired();
-            entity.Property(e => e.ObservacionesPCM).HasColumnName("observaciones_PCM").HasMaxLength(500).IsRequired();
+            entity.Property(e => e.EstadoPCM).HasColumnName("estado_pcm").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.ObservacionesPCM).HasColumnName("observaciones_pcm").HasMaxLength(500).IsRequired();
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").IsRequired();
             entity.Property(e => e.FecRegistro).HasColumnName("fec_registro").IsRequired();
             entity.Property(e => e.UsuarioRegistra).HasColumnName("usuario_registra").IsRequired();
@@ -546,10 +546,11 @@ public class PCMDbContext : DbContext
                 .HasForeignKey(e => e.CompromisoId)
                 .HasConstraintName("com1_liderg_td_fk1");
 
-            entity.HasOne(e => e.Entidad)
-                .WithMany()
-                .HasForeignKey(e => e.EntidadId)
-                .HasConstraintName("com1_liderg_td_fk2");
+            // Nota: entidad_id no tiene FK en la BD, es solo un bigint sin relación
+            // entity.HasOne(e => e.Entidad)
+            //     .WithMany()
+            //     .HasForeignKey(e => e.EntidadId)
+            //     .HasConstraintName("com1_liderg_td_fk2");
         });
 
         // Configuración de PermisoModulo

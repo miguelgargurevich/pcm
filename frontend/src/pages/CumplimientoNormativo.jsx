@@ -41,6 +41,9 @@ const CumplimientoNormativo = () => {
   useEffect(() => {
     let filtered = [...compromisos];
 
+    // Ordenar por compromisoId de forma ascendente (1, 2, 3, ...)
+    filtered.sort((a, b) => a.compromisoId - b.compromisoId);
+
     if (filtros.nombreCompromiso.trim()) {
       const busqueda = filtros.nombreCompromiso.toLowerCase();
       filtered = filtered.filter((c) =>

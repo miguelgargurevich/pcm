@@ -9,7 +9,7 @@ public class Com1LiderGTD
 {
     public long ComlgtdEntId { get; set; }
     public long CompromisoId { get; set; }
-    public Guid EntidadId { get; set; }
+    public long EntidadId { get; set; }
     public string EtapaFormulario { get; set; } = string.Empty; // paso1, paso2, paso3, completado
     public string Estado { get; set; } = string.Empty; // bandeja, sin_reportar, publicado
     public bool CheckPrivacidad { get; set; }
@@ -18,7 +18,7 @@ public class Com1LiderGTD
     public string ObservacionesPCM { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime FecRegistro { get; set; }
-    public Guid UsuarioRegistra { get; set; }
+    public long UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
     
     // Datos del Líder
@@ -34,5 +34,5 @@ public class Com1LiderGTD
     
     // Navegación
     public virtual CompromisoGobiernoDigital? Compromiso { get; set; }
-    public virtual Entidad? Entidad { get; set; }
+    // Nota: entidad_id es un bigint sin FK, no se puede navegar a la entidad
 }

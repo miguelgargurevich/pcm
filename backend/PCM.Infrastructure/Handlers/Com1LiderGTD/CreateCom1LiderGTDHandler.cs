@@ -43,9 +43,10 @@ public class CreateCom1LiderGTDHandler : IRequestHandler<CreateCom1LiderGTDComma
                 CheckPrivacidad = request.CheckPrivacidad,
                 CheckDdjj = request.CheckDdjj,
                 EstadoPCM = "en_revision",
+                ObservacionesPCM = "",
                 CreatedAt = DateTime.UtcNow,
                 FecRegistro = request.FecIniLider ?? DateTime.UtcNow,
-                UsuarioRegistra = request.UsuarioRegistra ?? Guid.Empty,
+                UsuarioRegistra = request.UsuarioRegistra ?? 0,
                 Activo = true
             };
 
