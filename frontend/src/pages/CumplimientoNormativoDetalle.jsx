@@ -4,6 +4,7 @@ import cumplimientoService from '../services/cumplimientoService';
 import com1LiderGTDService from '../services/com1LiderGTDService';
 import com2CGTDService from '../services/com2CGTDService';
 import com4PEIService from '../services/com4PEIService';
+import com5EstrategiaDigitalService from '../services/com5EstrategiaDigitalService';
 import { compromisosService } from '../services/compromisosService';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
 import PDFViewer from '../components/PDFViewer';
@@ -25,6 +26,7 @@ const CumplimientoNormativoDetalle = () => {
   const [com1RecordId, setCom1RecordId] = useState(null); // ID del registro en com1_liderg_td
   const [com2RecordId, setCom2RecordId] = useState(null); // ID del registro en com2_cgtd
   const [com4RecordId, setCom4RecordId] = useState(null); // ID del registro en com4_pei
+  const [com5RecordId, setCom5RecordId] = useState(null); // ID del registro en com5_estrategia_digital
   
   // Estado para Compromiso 2: Miembros del comité
   const [miembrosComite, setMiembrosComite] = useState([]);
@@ -83,8 +85,8 @@ const CumplimientoNormativoDetalle = () => {
 
   useEffect(() => {
     loadCompromisos();
-    // Cargar datos si está editando O si es Compromiso 1 o 2 (que usan tablas especiales)
-    if (isEdit || (['1', '2', '4'].includes(compromisoIdFromUrl) && user?.entidadId)) {
+    // Cargar datos si está editando O si es Compromiso 1, 2, 4 o 5 (que usan tablas especiales)
+    if (isEdit || (['1', '2', '4', '5'].includes(compromisoIdFromUrl) && user?.entidadId)) {
       loadCumplimiento();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -269,6 +271,64 @@ const CumplimientoNormativoDetalle = () => {
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '4' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+      
+      // COMPROMISO 5: Estrategia Digital
+      if (compromisoId === 5 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 5, user.entidadId);
+        const response = await com5EstrategiaDigitalService.getByEntidad(5, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
+        
+        if (response.isSuccess) {
+          const data = response.data;
+          console.log('📄 Datos recibidos:', data);
+          
+          if (data) {
+            setCom5RecordId(data.comedEntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
+            setFormData({
+              compromisoId: '5',
+              nombreEstrategia: data.nombreEstrategia || '',
+              anioInicio: data.anioInicio || '',
+              anioFin: data.anioFin || '',
+              fechaAprobacion: data.fechaAprobacion ? data.fechaAprobacion.split('T')[0] : '',
+              objetivosEstrategicos: data.objetivosEstrategicos || '',
+              lineasAccion: data.lineasAccion || '',
+              alineadoPgd: data.alineadoPgd || false,
+              estadoImplementacion: data.estadoImplementacion || '',
+              documentoFile: null,
+              criteriosEvaluados: criteriosParsed,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.urlDoc) {
+              console.log('📄 Cargando PDF guardado desde:', data.urlDoc);
+              setPdfUrl(data.urlDoc);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '5' }));
           }
           setLoading(false);
           return;
@@ -464,6 +524,33 @@ const CumplimientoNormativoDetalle = () => {
         }
         if (!formData.descripcionIncorporacion || formData.descripcionIncorporacion.trim() === '') {
           nuevosErrores.descripcionIncorporacion = 'Describa cómo se incorporó la TD en el PEI';
+        }
+      }
+      // Validación específica para Compromiso 5 (Estrategia Digital)
+      else if (parseInt(formData.compromisoId) === 5) {
+        if (!formData.nombreEstrategia || formData.nombreEstrategia.trim() === '') {
+          nuevosErrores.nombreEstrategia = 'Ingrese el nombre de la estrategia digital';
+        }
+        if (!formData.anioInicio) {
+          nuevosErrores.anioInicio = 'Ingrese el año de inicio de la estrategia';
+        }
+        if (!formData.anioFin) {
+          nuevosErrores.anioFin = 'Ingrese el año de fin de la estrategia';
+        }
+        if (formData.anioInicio && formData.anioFin && parseInt(formData.anioFin) <= parseInt(formData.anioInicio)) {
+          nuevosErrores.anioFin = 'El año de fin debe ser mayor al año de inicio';
+        }
+        if (!formData.fechaAprobacion) {
+          nuevosErrores.fechaAprobacion = 'Seleccione la fecha de aprobación';
+        }
+        if (!formData.objetivosEstrategicos || formData.objetivosEstrategicos.trim() === '') {
+          nuevosErrores.objetivosEstrategicos = 'Ingrese los objetivos estratégicos';
+        }
+        if (!formData.lineasAccion || formData.lineasAccion.trim() === '') {
+          nuevosErrores.lineasAccion = 'Ingrese las líneas de acción';
+        }
+        if (!formData.estadoImplementacion || formData.estadoImplementacion.trim() === '') {
+          nuevosErrores.estadoImplementacion = 'Seleccione el estado de implementación';
         }
       }
       else {
@@ -801,6 +888,68 @@ const CumplimientoNormativoDetalle = () => {
             }
           }
         }
+      }
+      // COMPROMISO 5: Estrategia Digital
+      else if (parseInt(formData.compromisoId) === 5) {
+        console.log('🚀 Preparando datos para Com5 Estrategia Digital');
+        
+        const com5Data = {
+          compromisoId: 5,
+          entidadId: user.entidadId,
+          nombreEstrategia: formData.nombreEstrategia || null,
+          anioInicio: parseInt(formData.anioInicio) || null,
+          anioFin: parseInt(formData.anioFin) || null,
+          fechaAprobacion: formData.fechaAprobacion || null,
+          objetivosEstrategicos: formData.objetivosEstrategicos || null,
+          lineasAccion: formData.lineasAccion || null,
+          alineadoPgd: formData.alineadoPgd || false,
+          estadoImplementacion: formData.estadoImplementacion || null,
+          urlDoc: pdfUrl || null,
+          criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
+          checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          checkDdjj: formData.aceptaDeclaracionJurada || false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: pasoActual === 1 ? 'paso1' : pasoActual === 2 ? 'paso2' : 'paso3'
+        };
+        
+        console.log('Datos Com5 a enviar:', com5Data);
+        
+        if (com5RecordId) {
+          console.log('Actualizando registro existente Com5:', com5RecordId);
+          response = await com5EstrategiaDigitalService.update(com5RecordId, com5Data);
+        } else {
+          console.log('Creando nuevo registro Com5');
+          response = await com5EstrategiaDigitalService.create(com5Data);
+          console.log('Respuesta create Com5:', response);
+          if (response.isSuccess && response.data) {
+            console.log('ID del nuevo registro Com5:', response.data.comedEntId);
+            setCom5RecordId(response.data.comedEntId);
+          }
+        }
+        
+        console.log('Respuesta final Com5:', response);
+        
+        // Actualizar estado local con datos guardados
+        if (response.isSuccess && response.data) {
+          console.log('✅ Actualizando estado local Com5');
+          
+          if (response.data.urlDoc) {
+            setPdfUrl(response.data.urlDoc);
+            if (blobUrlToRevoke) {
+              console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
+          }
+          
+          if (response.data.criteriosEvaluados) {
+            try {
+              const criteriosParsed = JSON.parse(response.data.criteriosEvaluados);
+              setFormData(prev => ({ ...prev, criteriosEvaluados: criteriosParsed }));
+            } catch (e) {
+              console.error('❌ Error al parsear criterios:', e);
+            }
+          }
+        }
       } 
       else if (isEdit || id) {
         // Si ya existe, actualizar (genérico)
@@ -1075,6 +1224,180 @@ const CumplimientoNormativoDetalle = () => {
                     </p>
                     {errores.descripcionIncorporacion && (
                       <p className="text-red-500 text-xs mt-1">{errores.descripcionIncorporacion}</p>
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : parseInt(formData.compromisoId) === 5 ? (
+              // COMPROMISO 5: Estrategia Digital
+              <>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Formulación de la Estrategia Digital</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Nombre de la Estrategia */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nombre de la Estrategia Digital <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="nombreEstrategia"
+                      value={formData.nombreEstrategia}
+                      onChange={handleInputChange}
+                      maxLength="500"
+                      className={`input-field ${errores.nombreEstrategia ? 'border-red-500' : ''}`}
+                      placeholder="Ej: Estrategia de Transformación Digital 2024-2026"
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.nombreEstrategia?.length || 0} / 500 caracteres
+                    </p>
+                    {errores.nombreEstrategia && (
+                      <p className="text-red-500 text-xs mt-1">{errores.nombreEstrategia}</p>
+                    )}
+                  </div>
+
+                  {/* Año de Inicio */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Año de Inicio <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="anioInicio"
+                      value={formData.anioInicio}
+                      onChange={handleInputChange}
+                      min="2020"
+                      max="2050"
+                      className={`input-field ${errores.anioInicio ? 'border-red-500' : ''}`}
+                      placeholder="2024"
+                      disabled={viewMode}
+                    />
+                    {errores.anioInicio && (
+                      <p className="text-red-500 text-xs mt-1">{errores.anioInicio}</p>
+                    )}
+                  </div>
+
+                  {/* Año de Fin */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Año de Fin <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="anioFin"
+                      value={formData.anioFin}
+                      onChange={handleInputChange}
+                      min={formData.anioInicio || "2020"}
+                      max="2050"
+                      className={`input-field ${errores.anioFin ? 'border-red-500' : ''}`}
+                      placeholder="2026"
+                      disabled={viewMode}
+                    />
+                    {errores.anioFin && (
+                      <p className="text-red-500 text-xs mt-1">{errores.anioFin}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de Aprobación */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de Aprobación <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaAprobacion"
+                      value={formData.fechaAprobacion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaAprobacion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaAprobacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaAprobacion}</p>
+                    )}
+                  </div>
+
+                  {/* Estado de Implementación */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Estado de Implementación <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="estadoImplementacion"
+                      value={formData.estadoImplementacion}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.estadoImplementacion ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    >
+                      <option value="">Seleccione...</option>
+                      <option value="planificacion">En Planificación</option>
+                      <option value="implementacion">En Implementación</option>
+                      <option value="completado">Completado</option>
+                      <option value="suspendido">Suspendido</option>
+                    </select>
+                    {errores.estadoImplementacion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.estadoImplementacion}</p>
+                    )}
+                  </div>
+
+                  {/* Alineado con PGD */}
+                  <div className="md:col-span-2">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="alineadoPgd"
+                        checked={formData.alineadoPgd || false}
+                        onChange={handleInputChange}
+                        className="mr-2 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                        disabled={viewMode}
+                      />
+                      <span className="text-sm text-gray-700">¿La estrategia está alineada con el Plan de Gobierno Digital?</span>
+                    </label>
+                  </div>
+
+                  {/* Objetivos Estratégicos */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Objetivos Estratégicos <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="objetivosEstrategicos"
+                      value={formData.objetivosEstrategicos}
+                      onChange={handleInputChange}
+                      maxLength="2000"
+                      rows="3"
+                      className={`input-field ${errores.objetivosEstrategicos ? 'border-red-500' : ''}`}
+                      placeholder="Describa los objetivos estratégicos de la estrategia digital..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.objetivosEstrategicos?.length || 0} / 2000 caracteres
+                    </p>
+                    {errores.objetivosEstrategicos && (
+                      <p className="text-red-500 text-xs mt-1">{errores.objetivosEstrategicos}</p>
+                    )}
+                  </div>
+
+                  {/* Líneas de Acción */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Líneas de Acción <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="lineasAccion"
+                      value={formData.lineasAccion}
+                      onChange={handleInputChange}
+                      maxLength="2000"
+                      rows="4"
+                      className={`input-field ${errores.lineasAccion ? 'border-red-500' : ''}`}
+                      placeholder="Describa las líneas de acción de la estrategia digital..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.lineasAccion?.length || 0} / 2000 caracteres
+                    </p>
+                    {errores.lineasAccion && (
+                      <p className="text-red-500 text-xs mt-1">{errores.lineasAccion}</p>
                     )}
                   </div>
                 </div>
