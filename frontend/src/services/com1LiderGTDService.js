@@ -63,13 +63,21 @@ const com1LiderGTDService = {
    */
   update: async (id, data) => {
     try {
+      console.log('🔵 Enviando petición PUT /Com1LiderGTD/' + id + ' con datos:', data);
       const response = await api.put(`/Com1LiderGTD/${id}`, data);
+      console.log('✅ Respuesta completa de PUT /Com1LiderGTD:', response.data);
+      
+      // El backend devuelve Result<Com1LiderGTDResponse>, necesitamos extraer el objeto
+      // response.data = { isSuccess: true, data: {...objeto...} }
+      const actualData = response.data.data || response.data.Data || response.data;
+      console.log('📦 Objeto extraído:', actualData);
+      
       return {
         isSuccess: true,
-        data: response.data
+        data: actualData  // Devolver el objeto directo, igual que create
       };
     } catch (error) {
-      console.error('Error al actualizar Com1LiderGTD:', error);
+      console.error('❌ Error al actualizar Com1LiderGTD:', error);
       return {
         isSuccess: false,
         message: error.response?.data?.message || 'Error al actualizar el registro'
