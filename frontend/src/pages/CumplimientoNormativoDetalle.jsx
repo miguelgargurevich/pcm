@@ -83,12 +83,14 @@ const CumplimientoNormativoDetalle = () => {
   // Cleanup del blob URL al desmontar el componente
   useEffect(() => {
     return () => {
+      // Solo limpiar si es un blob URL local
       if (pdfUrl && pdfUrl.startsWith('blob:')) {
-        console.log('🧹 Limpiando blob URL:', pdfUrl);
+        console.log('🧹 Limpiando blob URL al desmontar:', pdfUrl);
         URL.revokeObjectURL(pdfUrl);
       }
     };
-  }, [pdfUrl]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Array vacío para que solo se ejecute al desmontar
 
   const loadCompromisos = async () => {
     try {
@@ -446,6 +448,37 @@ const CumplimientoNormativoDetalle = () => {
         }
         
         console.log('Respuesta final Com1:', response);
+        
+        // Actualizar el estado local con los datos guardados (incluyendo URLs de Supabase)
+        if (response.isSuccess && response.data) {
+          console.log('✅ Actualizando estado local con datos guardados');
+          console.log('📄 URL del PDF guardado:', response.data.urlDocPcm);
+          console.log('✓ Criterios guardados:', response.data.criteriosEvaluados);
+          
+          // Si hay URL del documento, actualizar pdfUrl
+          if (response.data.urlDocPcm) {
+            // Si teníamos una blob URL, revocarla
+            if (pdfUrl && pdfUrl.startsWith('blob:')) {
+              console.log('🧹 Revocando blob URL antiguo:', pdfUrl);
+              URL.revokeObjectURL(pdfUrl);
+            }
+            setPdfUrl(response.data.urlDocPcm);
+          }
+          
+          // Actualizar formData con los criterios guardados
+          if (response.data.criteriosEvaluados) {
+            try {
+              const criteriosParsed = JSON.parse(response.data.criteriosEvaluados);
+              console.log('✓ Criterios parseados:', criteriosParsed);
+              setFormData(prev => ({
+                ...prev,
+                criteriosEvaluados: criteriosParsed
+              }));
+            } catch (e) {
+              console.error('❌ Error al parsear criterios guardados:', e);
+            }
+          }
+        }
       } else if (isEdit || id) {
         // Si ya existe, actualizar (genérico)
         response = await cumplimientoService.update(id, dataToSend);
