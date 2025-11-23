@@ -136,6 +136,18 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             // Mapear campos de Com1 a formData
             setCom1RecordId(data.comlgtdEntId);
+            
+            // Parsear criterios evaluados desde JSON
+            let criteriosParsed = [];
+            if (data.criteriosEvaluados) {
+              try {
+                criteriosParsed = JSON.parse(data.criteriosEvaluados);
+                console.log('✅ Criterios cargados:', criteriosParsed);
+              } catch (e) {
+                console.error('❌ Error al parsear criterios:', e);
+              }
+            }
+            
             setFormData({
               compromisoId: '1',
               nroDni: data.dniLider || '',
@@ -148,7 +160,7 @@ const CumplimientoNormativoDetalle = () => {
               cargo: data.cargoLider || '',
               fechaInicio: data.fecIniLider ? data.fecIniLider.split('T')[0] : '',
               documentoFile: null,
-              criteriosEvaluados: [],
+              criteriosEvaluados: criteriosParsed,
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -411,6 +423,7 @@ const CumplimientoNormativoDetalle = () => {
           cargoLider: formData.cargo,
           fecIniLider: fechaIso,
           urlDocUrl: documentoUrl, // URL del PDF subido a Supabase Storage
+          criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados), // Serializar a JSON
           checkPrivacidad: formData.aceptaPoliticaPrivacidad,
           checkDdjj: formData.aceptaDeclaracionJurada
         };

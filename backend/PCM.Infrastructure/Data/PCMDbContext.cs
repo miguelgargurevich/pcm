@@ -540,6 +540,7 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.CargoLider).HasColumnName("cargo_lider").HasMaxLength(20).IsRequired();
             entity.Property(e => e.FecIniLider).HasColumnName("fec_ini_lider").IsRequired();
             entity.Property(e => e.UrlDocPcm).HasColumnName("url_doc_pcm");
+            entity.Property(e => e.CriteriosEvaluados).HasColumnName("criterios_evaluados").HasColumnType("jsonb");
 
             // Relaciones
             entity.HasOne(e => e.Compromiso)

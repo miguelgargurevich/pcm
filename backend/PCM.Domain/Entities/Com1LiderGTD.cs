@@ -32,6 +32,7 @@ public class Com1LiderGTD
     public string CargoLider { get; set; } = string.Empty;
     public DateTime FecIniLider { get; set; }
     public string? UrlDocPcm { get; set; }
+    public string? CriteriosEvaluados { get; set; } // JSON string
     
     // Navegación
     public virtual CompromisoGobiernoDigital? Compromiso { get; set; }

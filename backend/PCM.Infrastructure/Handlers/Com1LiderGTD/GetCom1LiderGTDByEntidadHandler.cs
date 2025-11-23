@@ -60,6 +60,7 @@ public class GetCom1LiderGTDByEntidadHandler : IRequestHandler<GetCom1LiderGTDBy
                 CargoLider = entity.CargoLider,
                 FecIniLider = entity.FecIniLider,
                 UrlDocPcm = entity.UrlDocPcm,
+                CriteriosEvaluados = entity.CriteriosEvaluados,
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 UsuarioRegistra = entity.UsuarioRegistra,
