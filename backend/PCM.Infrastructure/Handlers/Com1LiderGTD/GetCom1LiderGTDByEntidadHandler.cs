@@ -26,12 +26,14 @@ public class GetCom1LiderGTDByEntidadHandler : IRequestHandler<GetCom1LiderGTDBy
             _logger.LogInformation("Buscando Com1LiderGTD para Compromiso {CompromisoId}, Entidad {EntidadId}", 
                 request.CompromisoId, request.EntidadId);
 
+            // Obtener el registro más reciente (por created_at DESC)
             var entity = await _context.Com1LiderGTD
-                .FirstOrDefaultAsync(x => 
+                .Where(x => 
                     x.CompromisoId == request.CompromisoId && 
                     x.EntidadId == request.EntidadId && 
-                    x.Activo, 
-                    cancellationToken);
+                    x.Activo)
+                .OrderByDescending(x => x.CreatedAt)
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (entity == null)
             {

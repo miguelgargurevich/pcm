@@ -8,19 +8,22 @@ const com1LiderGTDService = {
    */
   getByEntidad: async (compromisoId, entidadId) => {
     try {
+      console.log('🔵 GET /Com1LiderGTD/' + compromisoId + '/entidad/' + entidadId);
       const response = await api.get(`/Com1LiderGTD/${compromisoId}/entidad/${entidadId}`);
+      console.log('✅ Respuesta getByEntidad:', response.data);
       return {
         isSuccess: true,
         data: response.data
       };
     } catch (error) {
       if (error.response?.status === 404) {
+        console.log('⚠️ 404 - No existe registro para esta entidad');
         return {
           isSuccess: true,
           data: null // No existe registro aún
         };
       }
-      console.error('Error al obtener Com1LiderGTD:', error);
+      console.error('❌ Error al obtener Com1LiderGTD:', error);
       return {
         isSuccess: false,
         message: error.response?.data?.message || 'Error al cargar los datos'

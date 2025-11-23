@@ -64,11 +64,12 @@ const CumplimientoNormativoDetalle = () => {
 
   useEffect(() => {
     loadCompromisos();
-    if (isEdit) {
+    // Cargar datos si está editando O si es Compromiso 1 (que usa tabla especial)
+    if (isEdit || (compromisoIdFromUrl === '1' && user?.entidadId)) {
       loadCumplimiento();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id, user]);
 
   // Establecer compromiso seleccionado cuando ambos datos estén disponibles
   useEffect(() => {
@@ -129,11 +130,18 @@ const CumplimientoNormativoDetalle = () => {
       
       // Si es Compromiso 1 y tenemos entidadId, usar API específica
       const compromisoId = parseInt(compromisoIdFromUrl || formData.compromisoId);
+      console.log('🔍 loadCumplimiento - compromisoId:', compromisoId);
+      console.log('🔍 loadCumplimiento - user:', user);
+      console.log('🔍 loadCumplimiento - compromisoIdFromUrl:', compromisoIdFromUrl);
+      
       if (compromisoId === 1 && user?.entidadId) {
+        console.log('📞 Llamando getByEntidad con:', 1, user.entidadId);
         const response = await com1LiderGTDService.getByEntidad(1, user.entidadId);
+        console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess) {
           const data = response.data;
+          console.log('📄 Datos recibidos:', data);
           
           if (data) {
             // Mapear campos de Com1 a formData
