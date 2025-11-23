@@ -539,6 +539,7 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.RolLider).HasColumnName("rol_lider").HasMaxLength(20).IsRequired();
             entity.Property(e => e.CargoLider).HasColumnName("cargo_lider").HasMaxLength(20).IsRequired();
             entity.Property(e => e.FecIniLider).HasColumnName("fec_ini_lider").IsRequired();
+            entity.Property(e => e.UrlDocPcm).HasColumnName("url_doc_pcm");
 
             // Relaciones
             entity.HasOne(e => e.Compromiso)

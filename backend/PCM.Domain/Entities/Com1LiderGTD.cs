@@ -31,6 +31,7 @@ public class Com1LiderGTD
     public string RolLider { get; set; } = string.Empty;
     public string CargoLider { get; set; } = string.Empty;
     public DateTime FecIniLider { get; set; }
+    public string? UrlDocPcm { get; set; }
     
     // Navegación
     public virtual CompromisoGobiernoDigital? Compromiso { get; set; }

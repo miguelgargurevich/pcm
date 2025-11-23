@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import cumplimientoService from '../services/cumplimientoService';
 import { compromisosService } from '../services/compromisosService';
-import { FilterX, Edit2, Eye, FileText, Calendar, Search } from 'lucide-react';
+import { FilterX, Edit2, Eye, FileText, FileCheck, Calendar, Search } from 'lucide-react';
 
 const CumplimientoNormativo = () => {
   const navigate = useNavigate();
@@ -192,7 +192,7 @@ const CumplimientoNormativo = () => {
               &nbsp;
             </label>
             <div className="h-full flex items-center">
-              <span className="text-sm text-gray-500">Filtros disponibles</span>
+              {/* <span className="text-sm text-gray-500">Filtros disponibles</span> */}
             </div>
           </div>
         </div>
@@ -254,7 +254,7 @@ const CumplimientoNormativo = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-start">
-                          {/* <FileText className="text-primary mr-2 mt-1" size={18} /> */}
+                          <FileCheck className="text-primary mr-2 mt-1" size={18} />
                           <div>
                             <div className="text-sm font-medium text-gray-900">
                               {compromiso.nombreCompromiso}

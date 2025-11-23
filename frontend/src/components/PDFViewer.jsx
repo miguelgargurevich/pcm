@@ -5,7 +5,12 @@ import PropTypes from 'prop-types';
 const PDFViewer = ({ pdfUrl, onClose, title = 'Vista Previa del Documento' }) => {
   const [isLoading, setIsLoading] = useState(true);
   
-  if (!pdfUrl) return null;
+  console.log('👁️ PDFViewer recibió URL:', pdfUrl);
+  
+  if (!pdfUrl) {
+    console.log('⚠️ PDFViewer: No hay pdfUrl');
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -33,7 +38,14 @@ const PDFViewer = ({ pdfUrl, onClose, title = 'Vista Previa del Documento' }) =>
             src={pdfUrl}
             className="w-full h-full min-h-[600px] border-0"
             title={title}
-            onLoad={() => setIsLoading(false)}
+            onLoad={() => {
+              console.log('✅ PDF cargado correctamente en iframe');
+              setIsLoading(false);
+            }}
+            onError={(e) => {
+              console.error('❌ Error al cargar PDF en iframe:', e);
+              setIsLoading(false);
+            }}
           />
         </div>
         <div className="p-4 border-t bg-gray-50 flex justify-end gap-2">

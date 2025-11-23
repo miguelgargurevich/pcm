@@ -80,6 +80,16 @@ const CumplimientoNormativoDetalle = () => {
     }
   }, [formData.compromisoId, _compromisos, compromisoSeleccionado]);
 
+  // Cleanup del blob URL al desmontar el componente
+  useEffect(() => {
+    return () => {
+      if (pdfUrl && pdfUrl.startsWith('blob:')) {
+        console.log('🧹 Limpiando blob URL:', pdfUrl);
+        URL.revokeObjectURL(pdfUrl);
+      }
+    };
+  }, [pdfUrl]);
+
   const loadCompromisos = async () => {
     try {
       const response = await compromisosService.getAll();
@@ -146,6 +156,12 @@ const CumplimientoNormativoDetalle = () => {
             
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa
+            if (data.urlDocPcm) {
+              console.log('📄 Cargando PDF guardado desde:', data.urlDocPcm);
+              setPdfUrl(data.urlDocPcm);
+            }
           } else {
             // No existe registro, inicializar con valores predeterminados
             setFormData(prev => ({ ...prev, compromisoId: '1' }));
@@ -221,11 +237,22 @@ const CumplimientoNormativoDetalle = () => {
         return;
       }
 
+      // Revocar URL anterior si existe
+      if (pdfUrl && pdfUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(pdfUrl);
+      }
+
       setFormData(prev => ({ ...prev, documentoFile: file }));
       
       // Vista previa del PDF
-      const fileUrl = URL.createObjectURL(file);
-      setPdfUrl(fileUrl);
+      try {
+        const fileUrl = URL.createObjectURL(file);
+        console.log('📄 PDF blob URL creado:', fileUrl);
+        setPdfUrl(fileUrl);
+      } catch (error) {
+        console.error('❌ Error al crear blob URL:', error);
+        showErrorToast('Error al cargar la vista previa del PDF');
+      }
     }
   };
 
@@ -383,6 +410,7 @@ const CumplimientoNormativoDetalle = () => {
           rolLider: formData.rol,
           cargoLider: formData.cargo,
           fecIniLider: fechaIso,
+          urlDocUrl: documentoUrl, // URL del PDF subido a Supabase Storage
           checkPrivacidad: formData.aceptaPoliticaPrivacidad,
           checkDdjj: formData.aceptaDeclaracionJurada
         };
