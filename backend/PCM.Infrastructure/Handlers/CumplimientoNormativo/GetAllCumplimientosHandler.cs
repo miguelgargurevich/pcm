@@ -91,13 +91,13 @@ public class GetAllCumplimientosHandler : IRequestHandler<GetAllCumplimientosQue
                     .Where(c => c.EntidadId == entidadId.Value)
                     .OrderByDescending(c => c.CreatedAt)
                     .FirstOrDefaultAsync(cancellationToken);
-                if (com4 != null) comTablas[4] = (com4.CreatedAt, ConvertEstadoToInt(com4.Estado), com4.EtapaFormulario);
+                if (com4 != null) comTablas[4] = (com4.CreatedAt, ConvertEstadoToInt(com4.EstadoPCM), com4.EtapaFormulario);
 
                 var com5 = await _context.Com5EstrategiaDigital
                     .Where(c => c.EntidadId == entidadId.Value)
                     .OrderByDescending(c => c.CreatedAt)
                     .FirstOrDefaultAsync(cancellationToken);
-                if (com5 != null) comTablas[5] = (com5.CreatedAt, ConvertEstadoToInt(com5.Estado), com5.EtapaFormulario);
+                if (com5 != null) comTablas[5] = (com5.CreatedAt, ConvertEstadoToInt(com5.EstadoPCM), com5.EtapaFormulario);
             }
 
             var result = cumplimientos.Select(c => {

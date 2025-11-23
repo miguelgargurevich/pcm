@@ -44,6 +44,10 @@ public class CompromisoResponseDto
     public DateTime? UpdatedAt { get; set; }
     public List<CompromisoNormativaResponseDto> Normativas { get; set; } = new();
     public List<CriterioEvaluacionResponseDto> CriteriosEvaluacion { get; set; } = new();
+    
+    // Datos de cumplimiento normativo de la entidad del usuario
+    public DateTime? FechaRegistroCumplimiento { get; set; } // Fecha de creación del registro en cumplimiento_normativo
+    public int? EstadoCumplimiento { get; set; } // Estado del cumplimiento: 1=bandeja, 2=sin_reportar, 3=publicado
 }
 
 public class CompromisoNormativaDto

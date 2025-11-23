@@ -24,8 +24,9 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
     {
         try
         {
-            // Obtener la clasificación de la entidad del usuario (si está autenticado)
+            // Obtener la clasificación y entidadId del usuario (si está autenticado)
             long? userClasificacionId = null;
+            Guid? userEntidadId = null;
             if (request.UserId.HasValue)
             {
                 var usuario = await _context.Usuarios
@@ -35,6 +36,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                 if (usuario?.Entidad != null)
                 {
                     userClasificacionId = usuario.Entidad.ClasificacionId;
+                    userEntidadId = usuario.Entidad.EntidadId;
                 }
             }
 
@@ -82,7 +84,65 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                 .OrderBy(c => c.CompromisoId)
                 .ToListAsync(cancellationToken);
 
-            var response = compromisos.Select(MapToResponseDto).ToList();
+            // Obtener cumplimientos de la entidad del usuario (tabla genérica paso 2-3)
+            var cumplimientosPorCompromiso = new Dictionary<long, PCM.Domain.Entities.CumplimientoNormativo>();
+            if (userEntidadId.HasValue)
+            {
+                var cumplimientos = await _context.CumplimientosNormativos
+                    .Where(cn => cn.EntidadId == userEntidadId.Value && cn.Activo)
+                    .ToListAsync(cancellationToken);
+                
+                cumplimientosPorCompromiso = cumplimientos.ToDictionary(c => c.CompromisoId);
+            }
+
+            // Obtener registros de tablas específicas (paso 1) para Com1, Com2, Com4-21
+            var registrosEspecificos = new Dictionary<long, (DateTime fecha, string? estado)>();
+            if (userEntidadId.HasValue)
+            {
+                // Com1: Líder GTD
+                var com1 = await _context.Com1LiderGTD
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com1 != null)
+                {
+                    registrosEspecificos[1] = (com1.CreatedAt, com1.EstadoPCM);
+                }
+
+                // Com2: Comité GTD
+                var com2 = await _context.Com2CGTD
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com2 != null)
+                {
+                    registrosEspecificos[2] = (com2.CreatedAt, com2.EstadoPcm);
+                }
+
+                // Com4: PEI
+                var com4 = await _context.Com4PEI
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com4 != null)
+                {
+                    registrosEspecificos[4] = (com4.CreatedAt, com4.EstadoPCM);
+                }
+
+                // Com5: Estrategia Digital
+                var com5 = await _context.Com5EstrategiaDigital
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com5 != null)
+                {
+                    registrosEspecificos[5] = (com5.CreatedAt, com5.EstadoPCM);
+                }
+
+                // TODO: Agregar Com6-Com21 cuando estén listos
+            }
+
+            var response = compromisos.Select(c => MapToResponseDto(c, cumplimientosPorCompromiso, registrosEspecificos)).ToList();
 
             _logger.LogInformation("Retrieved {Count} compromisos", response.Count);
             return Result<List<CompromisoResponseDto>>.Success(response);
@@ -94,8 +154,37 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
         }
     }
 
-    private CompromisoResponseDto MapToResponseDto(CompromisoGobiernoDigital compromiso)
+    private CompromisoResponseDto MapToResponseDto(
+        CompromisoGobiernoDigital compromiso, 
+        Dictionary<long, PCM.Domain.Entities.CumplimientoNormativo> cumplimientosPorCompromiso,
+        Dictionary<long, (DateTime fecha, string? estado)> registrosEspecificos)
     {
+        // Obtener cumplimiento de este compromiso si existe (tabla genérica paso 2-3)
+        cumplimientosPorCompromiso.TryGetValue(compromiso.CompromisoId, out var cumplimiento);
+        
+        // Obtener registro específico si existe (tabla específica paso 1)
+        registrosEspecificos.TryGetValue(compromiso.CompromisoId, out var registroEspecifico);
+        
+        // Priorizar datos de registro específico si existe, sino usar cumplimiento genérico
+        DateTime? fechaRegistro = registroEspecifico.fecha != default ? registroEspecifico.fecha : cumplimiento?.CreatedAt;
+        int? estadoCumplimiento = null;
+        
+        // Convertir estado string a int si existe registro específico
+        if (!string.IsNullOrEmpty(registroEspecifico.estado))
+        {
+            estadoCumplimiento = registroEspecifico.estado switch
+            {
+                "bandeja" => 1,
+                "sin_reportar" => 2,
+                "publicado" => 3,
+                _ => cumplimiento?.Estado
+            };
+        }
+        else if (cumplimiento != null)
+        {
+            estadoCumplimiento = cumplimiento.Estado;
+        }
+        
         return new CompromisoResponseDto
         {
             CompromisoId = compromiso.CompromisoId,
@@ -113,6 +202,8 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
             Activo = compromiso.Activo,
             CreatedAt = compromiso.CreatedAt,
             UpdatedAt = compromiso.UpdatedAt,
+            FechaRegistroCumplimiento = fechaRegistro,
+            EstadoCumplimiento = estadoCumplimiento,
             Normativas = compromiso.Normativas?.Select(n => new CompromisoNormativaResponseDto
             {
                 CompromisoNormativaId = n.CompromisoNormativaId,

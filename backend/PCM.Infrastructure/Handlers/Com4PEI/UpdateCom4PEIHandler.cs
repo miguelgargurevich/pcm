@@ -38,7 +38,9 @@ public class UpdateCom4PEIHandler : IRequestHandler<UpdateCom4PEICommand, Result
             entity.Estado = request.Estado;
             entity.AnioInicioPei = request.AnioInicioPei;
             entity.AnioFinPei = request.AnioFinPei;
-            entity.FechaAprobacionPei = request.FechaAprobacionPei;
+            entity.FechaAprobacionPei = request.FechaAprobacionPei.HasValue 
+                ? DateTime.SpecifyKind(request.FechaAprobacionPei.Value, DateTimeKind.Utc)
+                : null;
             entity.ObjetivoPei = request.ObjetivoPei;
             entity.DescripcionPei = request.DescripcionPei;
             entity.AlineadoPgd = request.AlineadoPgd;

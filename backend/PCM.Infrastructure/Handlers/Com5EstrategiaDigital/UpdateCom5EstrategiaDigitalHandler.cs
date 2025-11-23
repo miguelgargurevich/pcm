@@ -42,7 +42,9 @@ public class UpdateCom5EstrategiaDigitalHandler
             entity.NombreEstrategia = command.NombreEstrategia;
             entity.PeriodoInicioEstrategia = command.PeriodoInicioEstrategia;
             entity.PeriodoFinEstrategia = command.PeriodoFinEstrategia;
-            entity.FechaAprobacionEstrategia = command.FechaAprobacionEstrategia;
+            entity.FechaAprobacionEstrategia = command.FechaAprobacionEstrategia.HasValue 
+                ? DateTime.SpecifyKind(command.FechaAprobacionEstrategia.Value, DateTimeKind.Utc)
+                : null;
             entity.ObjetivosEstrategicos = command.ObjetivosEstrategicos;
             entity.LineasAccion = command.LineasAccion;
             entity.AlineadoPgdEstrategia = command.AlineadoPgdEstrategia;

@@ -38,12 +38,16 @@ public class CreateCom5EstrategiaDigitalHandler
                 FecRegistro = now,
                 UsuarioRegistra = command.UsuarioRegistra,
                 Activo = true,
+                EstadoPCM = string.Empty,
+                ObservacionesPCM = string.Empty,
                 NombreEstrategia = command.NombreEstrategia,
                 PeriodoInicioEstrategia = command.PeriodoInicioEstrategia,
                 PeriodoFinEstrategia = command.PeriodoFinEstrategia,
                 ObjetivosEstrategicos = command.ObjetivosEstrategicos,
                 LineasAccion = command.LineasAccion,
-                FechaAprobacionEstrategia = command.FechaAprobacionEstrategia,
+                FechaAprobacionEstrategia = command.FechaAprobacionEstrategia.HasValue 
+                    ? DateTime.SpecifyKind(command.FechaAprobacionEstrategia.Value, DateTimeKind.Utc)
+                    : null,
                 AlineadoPgdEstrategia = command.AlineadoPgdEstrategia,
                 EstadoImplementacionEstrategia = command.EstadoImplementacionEstrategia,
                 RutaPdfEstrategia = command.RutaPdfEstrategia,

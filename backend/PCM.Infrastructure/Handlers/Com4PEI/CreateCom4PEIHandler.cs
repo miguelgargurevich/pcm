@@ -38,12 +38,16 @@ public class CreateCom4PEIHandler : IRequestHandler<CreateCom4PEICommand, Result
                 FecRegistro = now,
                 UsuarioRegistra = request.UsuarioRegistra ?? Guid.Empty,
                 Activo = true,
+                EstadoPCM = string.Empty,
+                ObservacionesPCM = string.Empty,
                 AnioInicioPei = request.AnioInicioPei,
                 AnioFinPei = request.AnioFinPei,
                 ObjetivoPei = request.ObjetivoPei,
                 DescripcionPei = request.DescripcionPei,
                 AlineadoPgd = request.AlineadoPgd,
-                FechaAprobacionPei = request.FechaAprobacionPei,
+                FechaAprobacionPei = request.FechaAprobacionPei.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaAprobacionPei.Value, DateTimeKind.Utc)
+                    : null,
                 RutaPdfPei = request.RutaPdfPei,
                 CriteriosEvaluados = request.CriteriosEvaluados
             };

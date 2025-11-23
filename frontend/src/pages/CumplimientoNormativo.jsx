@@ -268,9 +268,9 @@ const CumplimientoNormativo = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {cumplimiento ? (
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadgeClass(cumplimiento.estado)}`}>
-                            {getEstadoNombre(cumplimiento.estado)}
+                        {compromiso.estadoCumplimiento ? (
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadgeClass(compromiso.estadoCumplimiento)}`}>
+                            {getEstadoNombre(compromiso.estadoCumplimiento)}
                           </span>
                         ) : (
                           <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
@@ -279,17 +279,12 @@ const CumplimientoNormativo = () => {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {cumplimiento ? (
-                          // Mostrar la fecha más reciente disponible
-                          // Si hay updatedAt, usarla; sino usar createdAt
-                          (() => {
-                            const fechaMostrar = cumplimiento.updatedAt || cumplimiento.createdAt;
-                            return new Date(fechaMostrar).toLocaleDateString('es-PE', { 
-                              day: '2-digit', 
-                              month: '2-digit', 
-                              year: 'numeric' 
-                            });
-                          })()
+                        {compromiso.fechaRegistroCumplimiento ? (
+                          new Date(compromiso.fechaRegistroCumplimiento).toLocaleDateString('es-PE', { 
+                            day: '2-digit', 
+                            month: '2-digit', 
+                            year: 'numeric' 
+                          })
                         ) : '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">

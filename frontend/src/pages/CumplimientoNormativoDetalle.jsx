@@ -96,7 +96,7 @@ const CumplimientoNormativoDetalle = () => {
 
   // Formulario con los 3 pasos
   const [formData, setFormData] = useState({
-    // Paso 1: Datos Generales
+    // Paso 1: Datos Generales (Com1 - Líder GTD)
     compromisoId: '',
     nroDni: '',
     nombres: '',
@@ -107,6 +107,24 @@ const CumplimientoNormativoDetalle = () => {
     rol: '',
     cargo: '',
     fechaInicio: '',
+    
+    // Campos específicos Com4 - PEI
+    anioInicio: '',
+    anioFin: '',
+    fechaAprobacion: '',
+    objetivoEstrategico: '',
+    descripcionIncorporacion: '',
+    alineadoPgd: false,
+    
+    // Campos específicos Com5 - Estrategia Digital
+    nombreEstrategia: '',
+    periodoInicio: '',
+    periodoFin: '',
+    fechaAprobacionEstrategia: '',
+    objetivosEstrategicos: '',
+    lineasAccion: '',
+    estadoImplementacion: '',
+    alineadoPgdEstrategia: false,
     
     // Paso 2: Normativa
     documentoFile: null,
@@ -7425,22 +7443,61 @@ const CumplimientoNormativoDetalle = () => {
             {/* Resumen */}
             <div className="bg-gray-50 rounded-lg p-4">
               <h3 className="font-semibold text-gray-800 mb-3">Resumen de la Información</h3>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <div className="text-gray-600">Compromiso:</div>
-                <div className="font-medium">
-                  {compromisoSeleccionado?.nombreCompromiso || '-'}
+              
+              {/* Para Compromiso 2: mostrar detalle de miembros */}
+              {formData.compromisoId === '2' ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="text-gray-600">Compromiso:</div>
+                    <div className="font-medium">
+                      {compromisoSeleccionado?.nombreCompromiso || '-'}
+                    </div>
+                    <div className="text-gray-600">Documento:</div>
+                    <div className="font-medium">{pdfUrl ? 'Adjuntado ✓' : 'No adjuntado'}</div>
+                  </div>
+                  
+                  <div>
+                    <div className="text-gray-600 font-medium mb-2">Miembros del Comité ({miembrosComite.length}):</div>
+                    {miembrosComite.length > 0 ? (
+                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                        {miembrosComite.map((miembro, index) => (
+                          <div key={miembro.miembroId || index} className="bg-white p-3 rounded border border-gray-200 text-sm">
+                            <div className="font-medium text-gray-800">
+                              {`${miembro.nombre} ${miembro.apellidoPaterno} ${miembro.apellidoMaterno}`}
+                            </div>
+                            <div className="text-gray-600 mt-1">
+                              <span className="inline-block mr-4">DNI: {miembro.dni}</span>
+                              <span className="inline-block">Rol: {miembro.rol}</span>
+                            </div>
+                            {miembro.cargo && (
+                              <div className="text-gray-600 text-xs mt-1">Cargo: {miembro.cargo}</div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-gray-500 text-sm italic">No hay miembros registrados</div>
+                    )}
+                  </div>
                 </div>
-                <div className="text-gray-600">Líder:</div>
-                <div className="font-medium">
-                  {`${formData.nombres} ${formData.apellidoPaterno} ${formData.apellidoMaterno}`}
+              ) : (
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="text-gray-600">Compromiso:</div>
+                  <div className="font-medium">
+                    {compromisoSeleccionado?.nombreCompromiso || '-'}
+                  </div>
+                  <div className="text-gray-600">Líder:</div>
+                  <div className="font-medium">
+                    {`${formData.nombres} ${formData.apellidoPaterno} ${formData.apellidoMaterno}`.trim() || '-'}
+                  </div>
+                  <div className="text-gray-600">DNI:</div>
+                  <div className="font-medium">{formData.nroDni || '-'}</div>
+                  <div className="text-gray-600">Correo:</div>
+                  <div className="font-medium">{formData.correoElectronico || '-'}</div>
+                  <div className="text-gray-600">Documento:</div>
+                  <div className="font-medium">{pdfUrl ? 'Adjuntado ✓' : 'No adjuntado'}</div>
                 </div>
-                <div className="text-gray-600">DNI:</div>
-                <div className="font-medium">{formData.nroDni}</div>
-                <div className="text-gray-600">Correo:</div>
-                <div className="font-medium">{formData.correoElectronico}</div>
-                <div className="text-gray-600">Documento:</div>
-                <div className="font-medium">{pdfUrl ? 'Adjuntado ✓' : 'No adjuntado'}</div>
-              </div>
+              )}
             </div>
           </div>
         )}
