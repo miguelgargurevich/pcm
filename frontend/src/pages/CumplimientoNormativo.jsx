@@ -290,20 +290,32 @@ const CumplimientoNormativo = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                         <div className="flex justify-center gap-2">
                           <button
-                            onClick={() => cumplimiento 
-                              ? handleVer(cumplimiento.cumplimientoId)
-                              : navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`)
-                            }
+                            onClick={() => {
+                              // Para Compromiso 1, siempre navegar con ?compromiso=1 para cargar desde com1_liderg_td
+                              if (compromiso.compromisoId === 1) {
+                                navigate(`/dashboard/cumplimiento/nuevo?compromiso=1&mode=view`);
+                              } else if (cumplimiento) {
+                                handleVer(cumplimiento.cumplimientoId);
+                              } else {
+                                navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`);
+                              }
+                            }}
                             className="text-primary hover:text-primary-dark inline-flex items-center gap-1 p-2 rounded-md hover:bg-gray-100"
                             title="Ver"
                           >
                             <Eye size={18} />
                           </button>
                           <button
-                            onClick={() => cumplimiento 
-                              ? handleEditar(cumplimiento.cumplimientoId)
-                              : navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`)
-                            }
+                            onClick={() => {
+                              // Para Compromiso 1, siempre navegar con ?compromiso=1 para cargar desde com1_liderg_td
+                              if (compromiso.compromisoId === 1) {
+                                navigate(`/dashboard/cumplimiento/nuevo?compromiso=1`);
+                              } else if (cumplimiento) {
+                                handleEditar(cumplimiento.cumplimientoId);
+                              } else {
+                                navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`);
+                              }
+                            }}
                             className="text-primary hover:text-primary-dark"
                             title="Editar"
                           >
