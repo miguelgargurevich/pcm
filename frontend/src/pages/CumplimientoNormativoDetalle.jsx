@@ -6,7 +6,7 @@ import com2CGTDService from '../services/com2CGTDService';
 import { compromisosService } from '../services/compromisosService';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
 import PDFViewer from '../components/PDFViewer';
-import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save, Eye, ExternalLink, Plus, Trash2 } from 'lucide-react';
+import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save, Eye, ExternalLink, Plus, Trash2, Edit2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 const CumplimientoNormativoDetalle = () => {
@@ -882,16 +882,35 @@ const CumplimientoNormativoDetalle = () => {
                               <td className="px-3 py-2 text-sm text-gray-900">{miembro.telefono}</td>
                               {!viewMode && (
                                 <td className="px-3 py-2 text-center">
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setMiembrosComite(miembrosComite.filter((_, i) => i !== index));
-                                    }}
-                                    className="text-red-600 hover:text-red-800"
-                                    title="Eliminar"
-                                  >
-                                    <Trash2 size={16} />
-                                  </button>
+                                  <div className="flex items-center justify-center gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setMiembroActual(miembro);
+                                        setShowModalMiembro(true);
+                                      }}
+                                      className="text-blue-600 hover:text-blue-800"
+                                      title="Editar"
+                                    >
+                                      <Edit2 size={16} />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        showConfirmToast(
+                                          '¿Está seguro de eliminar este miembro del comité?',
+                                          () => {
+                                            setMiembrosComite(miembrosComite.filter((_, i) => i !== index));
+                                            showSuccessToast('Miembro eliminado');
+                                          }
+                                        );
+                                      }}
+                                      className="text-red-600 hover:text-red-800"
+                                      title="Eliminar"
+                                    >
+                                      <Trash2 size={16} />
+                                    </button>
+                                  </div>
                                 </td>
                               )}
                             </tr>
@@ -1382,11 +1401,17 @@ const CumplimientoNormativoDetalle = () => {
                 <input
                   type="text"
                   value={miembroActual.dni}
-                  onChange={(e) => setMiembroActual({ ...miembroActual, dni: e.target.value })}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, ''); // Solo dígitos
+                    setMiembroActual({ ...miembroActual, dni: value });
+                  }}
                   maxLength="8"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="12345678"
                 />
+                {miembroActual.dni && miembroActual.dni.length !== 8 && (
+                  <p className="text-xs text-red-500 mt-1">El DNI debe tener 8 dígitos</p>
+                )}
               </div>
 
               <div>
@@ -1469,6 +1494,9 @@ const CumplimientoNormativoDetalle = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="ejemplo@gob.pe"
                 />
+                {miembroActual.email && !miembroActual.email.endsWith('@gob.pe') && (
+                  <p className="text-xs text-red-500 mt-1">El correo debe ser del dominio @gob.pe</p>
+                )}
               </div>
 
               <div>
@@ -1504,6 +1532,27 @@ const CumplimientoNormativoDetalle = () => {
                     return;
                   }
 
+                  // Validar DNI: exactamente 8 dígitos numéricos
+                  if (!/^\d{8}$/.test(miembroActual.dni)) {
+                    showErrorToast('El DNI debe contener exactamente 8 dígitos numéricos');
+                    return;
+                  }
+
+                  // Validar email dominio @gob.pe
+                  if (!miembroActual.email.endsWith('@gob.pe')) {
+                    showErrorToast('El correo debe ser del dominio @gob.pe');
+                    return;
+                  }
+
+                  // Validar DNI único en el comité (excepto si es el mismo miembro siendo editado)
+                  const dniDuplicado = miembrosComite.find(
+                    m => m.dni === miembroActual.dni && m.miembroId !== miembroActual.miembroId
+                  );
+                  if (dniDuplicado) {
+                    showErrorToast('Ya existe un miembro con este DNI en el comité');
+                    return;
+                  }
+
                   // Agregar o actualizar miembro
                   const index = miembrosComite.findIndex(m => m.miembroId === miembroActual.miembroId);
                   if (index >= 0) {
@@ -1511,17 +1560,18 @@ const CumplimientoNormativoDetalle = () => {
                     const nuevos = [...miembrosComite];
                     nuevos[index] = miembroActual;
                     setMiembrosComite(nuevos);
+                    showSuccessToast('Miembro actualizado exitosamente');
                   } else {
                     // Agregar nuevo
                     setMiembrosComite([...miembrosComite, miembroActual]);
+                    showSuccessToast('Miembro agregado exitosamente');
                   }
                   
                   setShowModalMiembro(false);
-                  showSuccessToast('Miembro agregado exitosamente');
                 }}
                 className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark"
               >
-                Agregar
+                {miembroActual.miembroId ? 'Guardar Cambios' : 'Agregar Miembro'}
               </button>
             </div>
           </div>
