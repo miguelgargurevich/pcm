@@ -296,9 +296,11 @@ const CumplimientoNormativo = () => {
                         <div className="flex justify-center gap-2">
                           <button
                             onClick={() => {
-                              // Para Compromiso 1, siempre navegar con ?compromiso=1 para cargar desde com1_liderg_td
+                              // Para Compromiso 1 y 2, usar tablas específicas (com1_liderg_td, com2_cgtd)
                               if (compromiso.compromisoId === 1) {
                                 navigate(`/dashboard/cumplimiento/nuevo?compromiso=1&mode=view`);
+                              } else if (compromiso.compromisoId === 2) {
+                                navigate(`/dashboard/cumplimiento/nuevo?compromiso=2&mode=view`);
                               } else if (cumplimiento) {
                                 handleVer(cumplimiento.cumplimientoId);
                               } else {
@@ -312,9 +314,11 @@ const CumplimientoNormativo = () => {
                           </button>
                           <button
                             onClick={() => {
-                              // Para Compromiso 1, siempre navegar con ?compromiso=1 para cargar desde com1_liderg_td
+                              // Para Compromiso 1 y 2, usar tablas específicas
                               if (compromiso.compromisoId === 1) {
                                 navigate(`/dashboard/cumplimiento/nuevo?compromiso=1`);
+                              } else if (compromiso.compromisoId === 2) {
+                                navigate(`/dashboard/cumplimiento/nuevo?compromiso=2`);
                               } else if (cumplimiento) {
                                 handleEditar(cumplimiento.cumplimientoId);
                               } else {
