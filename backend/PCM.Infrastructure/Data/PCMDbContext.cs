@@ -34,6 +34,7 @@ public class PCMDbContext : DbContext
     public DbSet<Com2CGTD> Com2CGTD { get; set; }
     public DbSet<ComiteMiembro> ComiteMiembros { get; set; }
     public DbSet<Com4PEI> Com4PEI { get; set; }
+    public DbSet<Com5EstrategiaDigital> Com5EstrategiaDigital { get; set; }
     public DbSet<LogAuditoria> LogAuditoria { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -617,6 +618,33 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.DescripcionIncorporacion).HasColumnName("descripcion_incorporacion").HasMaxLength(2000);
             entity.Property(e => e.AlineadoPgd).HasColumnName("alineado_pgd");
             entity.Property(e => e.UrlDocPei).HasColumnName("url_doc_pei").HasMaxLength(500);
+            entity.Property(e => e.CriteriosEvaluados).HasColumnName("criterios_evaluados").HasMaxLength(4000);
+            entity.Property(e => e.CheckPrivacidad).HasColumnName("check_privacidad");
+            entity.Property(e => e.CheckDdjj).HasColumnName("check_ddjj");
+            entity.Property(e => e.UsuarioRegistra).HasColumnName("usuario_registra");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+        });
+
+        // Configuración de Com5EstrategiaDigital
+        modelBuilder.Entity<Com5EstrategiaDigital>(entity =>
+        {
+            entity.ToTable("com5_estrategia_digital");
+            entity.HasKey(e => e.ComedEntId);
+            entity.Property(e => e.ComedEntId).HasColumnName("comed_ent_id");
+            entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id");
+            entity.Property(e => e.EntidadId).HasColumnName("entidad_id");
+            entity.Property(e => e.EtapaFormulario).HasColumnName("etapa_formulario");
+            entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(50);
+            entity.Property(e => e.NombreEstrategia).HasColumnName("nombre_estrategia").HasMaxLength(500);
+            entity.Property(e => e.AnioInicio).HasColumnName("anio_inicio");
+            entity.Property(e => e.AnioFin).HasColumnName("anio_fin");
+            entity.Property(e => e.FechaAprobacion).HasColumnName("fecha_aprobacion");
+            entity.Property(e => e.ObjetivosEstrategicos).HasColumnName("objetivos_estrategicos").HasMaxLength(2000);
+            entity.Property(e => e.LineasAccion).HasColumnName("lineas_accion").HasMaxLength(2000);
+            entity.Property(e => e.AlineadoPgd).HasColumnName("alineado_pgd");
+            entity.Property(e => e.EstadoImplementacion).HasColumnName("estado_implementacion").HasMaxLength(100);
+            entity.Property(e => e.UrlDoc).HasColumnName("url_doc").HasMaxLength(500);
             entity.Property(e => e.CriteriosEvaluados).HasColumnName("criterios_evaluados").HasMaxLength(4000);
             entity.Property(e => e.CheckPrivacidad).HasColumnName("check_privacidad");
             entity.Property(e => e.CheckDdjj).HasColumnName("check_ddjj");

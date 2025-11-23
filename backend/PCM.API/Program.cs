@@ -84,6 +84,16 @@ builder.Services.AddHttpClient<IReCaptchaService, ReCaptchaService>();
 builder.Services.AddScoped<PCM.Infrastructure.Handlers.Auth.ForgotPasswordHandler>();
 builder.Services.AddScoped<PCM.Infrastructure.Handlers.Auth.ResetPasswordHandler>();
 
+// Registro de handlers Com4 PEI
+builder.Services.AddScoped<PCM.Infrastructure.Handlers.Com4PEI.CreateCom4PEIHandler>();
+builder.Services.AddScoped<PCM.Infrastructure.Handlers.Com4PEI.UpdateCom4PEIHandler>();
+builder.Services.AddScoped<PCM.Infrastructure.Handlers.Com4PEI.GetCom4PEIHandler>();
+
+// Registro de handlers Com5 Estrategia Digital
+builder.Services.AddScoped<PCM.Infrastructure.Handlers.Com5EstrategiaDigital.CreateCom5EstrategiaDigitalHandler>();
+builder.Services.AddScoped<PCM.Infrastructure.Handlers.Com5EstrategiaDigital.UpdateCom5EstrategiaDigitalHandler>();
+builder.Services.AddScoped<PCM.Infrastructure.Handlers.Com5EstrategiaDigital.GetCom5EstrategiaDigitalHandler>();
+
 // Configuración de CORS
 var corsOrigins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? new[] { "http://localhost:5173" };
 builder.Services.AddCors(options =>
