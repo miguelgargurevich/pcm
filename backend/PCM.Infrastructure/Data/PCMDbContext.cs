@@ -31,6 +31,8 @@ public class PCMDbContext : DbContext
     public DbSet<AlcanceCompromiso> AlcancesCompromisos { get; set; }
     public DbSet<CumplimientoNormativo> CumplimientosNormativos { get; set; }
     public DbSet<Com1LiderGTD> Com1LiderGTD { get; set; }
+    public DbSet<Com2CGTD> Com2CGTD { get; set; }
+    public DbSet<ComiteMiembro> ComiteMiembros { get; set; }
     public DbSet<LogAuditoria> LogAuditoria { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -552,6 +554,49 @@ public class PCMDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.EntidadId)
                 .HasConstraintName("com1_liderg_td_fk2");
+        });
+
+        // Configuración de Com2CGTD (Compromiso 2: Comité GTD)
+        modelBuilder.Entity<Com2CGTD>(entity =>
+        {
+            entity.ToTable("com2_cgtd");
+            entity.HasKey(e => e.ComcgtdEntId);
+            entity.Property(e => e.ComcgtdEntId).HasColumnName("comcgtd_ent_id");
+            entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id").IsRequired();
+            entity.Property(e => e.EntidadId).HasColumnName("entidad_id").IsRequired();
+            entity.Property(e => e.EtapaFormulario).HasColumnName("etapa_formulario").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(15).IsRequired();
+            entity.Property(e => e.CheckPrivacidad).HasColumnName("check_privacidad").IsRequired();
+            entity.Property(e => e.CheckDdjj).HasColumnName("check_ddjj").IsRequired();
+            entity.Property(e => e.EstadoPcm).HasColumnName("estado_pcm").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.ObservacionesPcm).HasColumnName("observaciones_pcm").HasMaxLength(500).IsRequired();
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").IsRequired();
+            entity.Property(e => e.FecRegistro).HasColumnName("fec_registro").IsRequired();
+            entity.Property(e => e.UsuarioRegistra).HasColumnName("usuario_registra").IsRequired();
+            entity.Property(e => e.Activo).HasColumnName("activo").IsRequired();
+            entity.Property(e => e.UrlDocPcm).HasColumnName("url_doc_pcm");
+            entity.Property(e => e.CriteriosEvaluados).HasColumnName("criterios_evaluados").HasColumnType("jsonb");
+        });
+
+        // Configuración de ComiteMiembro
+        modelBuilder.Entity<ComiteMiembro>(entity =>
+        {
+            entity.ToTable("comite_miembros");
+            entity.HasKey(e => e.MiembroId);
+            entity.Property(e => e.MiembroId).HasColumnName("miembro_id");
+            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id");
+            entity.Property(e => e.Dni).HasColumnName("dni").HasMaxLength(12);
+            entity.Property(e => e.Nombre).HasColumnName("nombre").HasMaxLength(100);
+            entity.Property(e => e.ApellidoPaterno).HasColumnName("apellido_paterno").HasMaxLength(60);
+            entity.Property(e => e.ApellidoMaterno).HasColumnName("apellido_materno").HasMaxLength(60);
+            entity.Property(e => e.Cargo).HasColumnName("cargo").HasMaxLength(100);
+            entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(100);
+            entity.Property(e => e.Telefono).HasColumnName("telefono").HasMaxLength(30);
+            entity.Property(e => e.Rol).HasColumnName("rol").HasMaxLength(50);
+            entity.Property(e => e.FechaInicio).HasColumnName("fecha_inicio");
+            entity.Property(e => e.FechaFin).HasColumnName("fecha_fin");
+            entity.Property(e => e.Activo).HasColumnName("activo");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
         });
 
         // Configuración de PermisoModulo
