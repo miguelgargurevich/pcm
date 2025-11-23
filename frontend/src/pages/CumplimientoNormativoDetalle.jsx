@@ -362,18 +362,28 @@ const CumplimientoNormativoDetalle = () => {
       console.log('com1RecordId:', com1RecordId);
 
       // Primero subir el documento si hay uno nuevo en el paso 2
-      let documentoUrl = pdfUrl;
+      let documentoUrl = null;
+      let blobUrlToRevoke = null;
+      
       // Verificar si hay un archivo nuevo (blob URL local) que necesita ser subido
       if (formData.documentoFile && pdfUrl && pdfUrl.startsWith('blob:')) {
+        console.log('📤 Subiendo archivo nuevo a Supabase...');
+        blobUrlToRevoke = pdfUrl; // Guardar para revocar después
         const uploadResponse = await cumplimientoService.uploadDocument(formData.documentoFile);
         documentoUrl = uploadResponse.data?.url || uploadResponse.url || uploadResponse.Url;
-        console.log('URL del documento subido:', documentoUrl);
-        setPdfUrl(documentoUrl);
-        // Limpiar el blob URL local
-        URL.revokeObjectURL(pdfUrl);
+        console.log('✅ URL del documento subido:', documentoUrl);
+        // NO revocar aún - esperar a que se actualice el estado
+      } else if (pdfUrl && !pdfUrl.startsWith('blob:')) {
+        // Si tenemos una URL de Supabase válida (no blob), mantenerla
+        console.log('📄 Manteniendo URL de Supabase existente:', pdfUrl);
+        documentoUrl = pdfUrl;
+      } else {
+        // Si tenemos blob URL pero no archivo nuevo, no enviar nada
+        console.log('⚠️ No hay archivo para guardar');
+        documentoUrl = null;
       }
       
-      console.log('URL final a guardar:', documentoUrl);
+      console.log('📝 URL final a guardar:', documentoUrl);
 
       // Preparar datos para enviar (incluyendo campos completados hasta ahora)
       const dataToSend = {
@@ -457,12 +467,12 @@ const CumplimientoNormativoDetalle = () => {
           
           // Si hay URL del documento, actualizar pdfUrl
           if (response.data.urlDocPcm) {
-            // Si teníamos una blob URL, revocarla
-            if (pdfUrl && pdfUrl.startsWith('blob:')) {
-              console.log('🧹 Revocando blob URL antiguo:', pdfUrl);
-              URL.revokeObjectURL(pdfUrl);
-            }
             setPdfUrl(response.data.urlDocPcm);
+            // Si subimos un archivo nuevo, revocar el blob URL ahora que ya actualizamos el estado
+            if (blobUrlToRevoke) {
+              console.log('🧹 Revocando blob URL antiguo después de guardar:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
           }
           
           // Actualizar formData con los criterios guardados
