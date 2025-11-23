@@ -226,8 +226,10 @@ public class CumplimientoNormativoController : ControllerBase
                 return BadRequest(new { isSuccess = false, message = "El archivo no puede superar los 10MB" });
             }
 
-            // Generar nombre único para el archivo
-            var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+            // Generar nombre único para el archivo y sanitizar el nombre
+            var originalFileName = Path.GetFileName(file.FileName);
+            var sanitizedFileName = System.Text.RegularExpressions.Regex.Replace(originalFileName, @"[^a-zA-Z0-9._-]", "_");
+            var fileName = $"{Guid.NewGuid()}_{sanitizedFileName}";
             var bucketName = Environment.GetEnvironmentVariable("SUPABASE_S3_BUCKET_NAME") ?? "cumplimiento-documentos";
             var supabaseUrl = "https://amzwfwfhllwhjffkqxhn.supabase.co";
             var supabaseKey = Environment.GetEnvironmentVariable("SUPABASE_SERVICE_KEY") ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtendmd2ZobGx3aGpmZmtxeGhuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjM4ODIyOSwiZXhwIjoyMDc3OTY0MjI5fQ.VZSvk3sxYB9mRjHaAu5McySAGQurO7c-eJIl6ET_MCQ";

@@ -60,6 +60,7 @@ const CumplimientoNormativoDetalle = () => {
   const [com19RecordId, setCom19RecordId] = useState(null); // ID del registro en com19_enad
   const [com20RecordId, setCom20RecordId] = useState(null); // ID del registro en com20_dsfp
   const [com21RecordId, setCom21RecordId] = useState(null); // ID del registro en com21_ogd
+  const [cumplimientoNormativoId, setCumplimientoNormativoId] = useState(null); // ID del registro en cumplimiento_normativo (Paso 2)
   
   // Estado para Compromiso 2: Miembros del comité
   const [miembrosComite, setMiembrosComite] = useState([]);
@@ -78,7 +79,8 @@ const CumplimientoNormativoDetalle = () => {
   
   const [_compromisos, setCompromisos] = useState([]);
   const [compromisoSeleccionado, setCompromisoSeleccionado] = useState(null);
-  const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfUrl, setPdfUrl] = useState(null); // PDF principal (Paso 1)
+  const [pdfUrlPaso2, setPdfUrlPaso2] = useState(null); // PDF para Paso 2 (cumplimiento normativo)
   // const [pdfUrl2, setPdfUrl2] = useState(null); // Para Com16 segundo PDF
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [documentoActualUrl, setDocumentoActualUrl] = useState(null); // URL del documento que se está viendo
@@ -240,7 +242,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com2CGTDService.getByEntidad(2, user.entidadId);
         console.log('📦 Respuesta de Com2 getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos Com2 recibidos:', data);
           
@@ -306,7 +308,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com4PEIService.getByEntidad(4, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -342,10 +344,44 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfPei) {
-              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfPei);
+              console.log('📄 Cargando PDF del PEI (Paso 1) desde:', data.rutaPdfPei);
               setPdfUrl(data.rutaPdfPei);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 4, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData) {
+                  console.log('📄 Datos de cumplimiento (Paso 2) encontrados:', cumplimientoData);
+                  // Guardar el ID del registro de cumplimiento normativo
+                  if (cumplimientoData.cumplimientoId) {
+                    console.log('📋 ID Cumplimiento Normativo:', cumplimientoData.cumplimientoId);
+                    setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
+                  }
+                  // Actualizar criterios si existen en paso 2
+                  if (cumplimientoData.criteriosEvaluados && Array.isArray(cumplimientoData.criteriosEvaluados)) {
+                    setFormData(prev => ({
+                      ...prev,
+                      criteriosEvaluados: cumplimientoData.criteriosEvaluados
+                    }));
+                  }
+                  // Cargar PDF de Paso 2 si existe
+                  if (cumplimientoData.documentoUrl) {
+                    console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                    setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                  }
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -362,7 +398,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com5EstrategiaDigitalService.getByEntidad(5, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -400,10 +436,44 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfEstrategia) {
-              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfEstrategia);
+              console.log('📄 Cargando PDF de Estrategia (Paso 1) desde:', data.rutaPdfEstrategia);
               setPdfUrl(data.rutaPdfEstrategia);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 5, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData) {
+                  console.log('📄 Datos de cumplimiento (Paso 2) encontrados:', cumplimientoData);
+                  // Guardar el ID del registro de cumplimiento normativo
+                  if (cumplimientoData.cumplimientoId) {
+                    console.log('📋 ID Cumplimiento Normativo:', cumplimientoData.cumplimientoId);
+                    setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
+                  }
+                  // Actualizar criterios si existen en paso 2
+                  if (cumplimientoData.criteriosEvaluados && Array.isArray(cumplimientoData.criteriosEvaluados)) {
+                    setFormData(prev => ({
+                      ...prev,
+                      criteriosEvaluados: cumplimientoData.criteriosEvaluados
+                    }));
+                  }
+                  // Cargar PDF de Paso 2 si existe
+                  if (cumplimientoData.documentoUrl) {
+                    console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                    setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                  }
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -420,7 +490,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com6MigracionGobPeService.getByEntidad(6, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -458,10 +528,39 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfGobpe) {
-              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfGobpe);
+              console.log('📄 Cargando PDF de GOB.PE (Paso 1) desde:', data.rutaPdfGobpe);
               setPdfUrl(data.rutaPdfGobpe);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 6, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData) {
+                  console.log('📄 Datos de cumplimiento (Paso 2) encontrados:', cumplimientoData);
+                  // Guardar el ID del registro de cumplimiento normativo
+                  if (cumplimientoData.cumplimientoId) {
+                    console.log('📋 ID Cumplimiento Normativo:', cumplimientoData.cumplimientoId);
+                    setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
+                  }
+                  if (cumplimientoData.criteriosEvaluados && Array.isArray(cumplimientoData.criteriosEvaluados)) {
+                    setFormData(prev => ({ ...prev, criteriosEvaluados: cumplimientoData.criteriosEvaluados }));
+                  }
+                  if (cumplimientoData.documentoUrl) {
+                    console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                    setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                  }
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -478,7 +577,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com7ImplementacionMPDService.getByEntidad(7, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -517,10 +616,39 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfMpd) {
-              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfMpd);
+              console.log('📄 Cargando PDF de MPD (Paso 1) desde:', data.rutaPdfMpd);
               setPdfUrl(data.rutaPdfMpd);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 7, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData) {
+                  console.log('📄 Datos de cumplimiento (Paso 2) encontrados:', cumplimientoData);
+                  // Guardar el ID del registro de cumplimiento normativo
+                  if (cumplimientoData.cumplimientoId) {
+                    console.log('📋 ID Cumplimiento Normativo:', cumplimientoData.cumplimientoId);
+                    setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
+                  }
+                  if (cumplimientoData.criteriosEvaluados && Array.isArray(cumplimientoData.criteriosEvaluados)) {
+                    setFormData(prev => ({ ...prev, criteriosEvaluados: cumplimientoData.criteriosEvaluados }));
+                  }
+                  if (cumplimientoData.documentoUrl) {
+                    console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                    setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                  }
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -537,7 +665,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com8PublicacionTUPAService.getByEntidad(8, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -576,10 +704,39 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfTupa) {
-              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfTupa);
+              console.log('📄 Cargando PDF de TUPA (Paso 1) desde:', data.rutaPdfTupa);
               setPdfUrl(data.rutaPdfTupa);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 8, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData) {
+                  console.log('📄 Datos de cumplimiento (Paso 2) encontrados:', cumplimientoData);
+                  // Guardar el ID del registro de cumplimiento normativo
+                  if (cumplimientoData.cumplimientoId) {
+                    console.log('📋 ID Cumplimiento Normativo:', cumplimientoData.cumplimientoId);
+                    setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
+                  }
+                  if (cumplimientoData.criteriosEvaluados && Array.isArray(cumplimientoData.criteriosEvaluados)) {
+                    setFormData(prev => ({ ...prev, criteriosEvaluados: cumplimientoData.criteriosEvaluados }));
+                  }
+                  if (cumplimientoData.documentoUrl) {
+                    console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                    setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                  }
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -596,7 +753,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com9ModeloGestionDocumentalService.getByEntidad(9, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -636,10 +793,39 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfMgd) {
-              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfMgd);
+              console.log('📄 Cargando PDF de MGD (Paso 1) desde:', data.rutaPdfMgd);
               setPdfUrl(data.rutaPdfMgd);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 9, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData) {
+                  console.log('📄 Datos de cumplimiento (Paso 2) encontrados:', cumplimientoData);
+                  // Guardar el ID del registro de cumplimiento normativo
+                  if (cumplimientoData.cumplimientoId) {
+                    console.log('📋 ID Cumplimiento Normativo:', cumplimientoData.cumplimientoId);
+                    setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
+                  }
+                  if (cumplimientoData.criteriosEvaluados && Array.isArray(cumplimientoData.criteriosEvaluados)) {
+                    setFormData(prev => ({ ...prev, criteriosEvaluados: cumplimientoData.criteriosEvaluados }));
+                  }
+                  if (cumplimientoData.documentoUrl) {
+                    console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                    setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                  }
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -656,7 +842,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com10DatosAbiertosService.getByEntidad(10, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -696,10 +882,39 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfDa) {
-              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfDa);
+              console.log('📄 Cargando PDF de Datos Abiertos (Paso 1) desde:', data.rutaPdfDa);
               setPdfUrl(data.rutaPdfDa);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 10, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData) {
+                  console.log('📄 Datos de cumplimiento (Paso 2) encontrados:', cumplimientoData);
+                  // Guardar el ID del registro de cumplimiento normativo
+                  if (cumplimientoData.cumplimientoId) {
+                    console.log('📋 ID Cumplimiento Normativo:', cumplimientoData.cumplimientoId);
+                    setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
+                  }
+                  if (cumplimientoData.criteriosEvaluados && Array.isArray(cumplimientoData.criteriosEvaluados)) {
+                    setFormData(prev => ({ ...prev, criteriosEvaluados: cumplimientoData.criteriosEvaluados }));
+                  }
+                  if (cumplimientoData.documentoUrl) {
+                    console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                    setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                  }
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -716,7 +931,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com11AportacionGeoPeruService.getByEntidad(11, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -741,10 +956,35 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay archivo de plan guardado, establecer la URL para vista previa
+            // Si hay archivo de plan guardado, establecer la URL para vista previa (Paso 1)
             if (data.archivoPlan) {
-              console.log('📄 Cargando archivo plan guardado desde:', data.archivoPlan);
+              console.log('📄 Cargando archivo plan (Paso 1) desde:', data.archivoPlan);
               setPdfUrl(data.archivoPlan);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 11, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData) {
+                  // Guardar el ID del registro de cumplimiento normativo
+                  if (cumplimientoData.cumplimientoId) {
+                    console.log('📋 ID Cumplimiento Normativo:', cumplimientoData.cumplimientoId);
+                    setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
+                  }
+                  if (cumplimientoData.documentoUrl) {
+                    console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                    setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                  }
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -761,7 +1001,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com12ResponsableSoftwarePublicoService.getByEntidad(12, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -785,10 +1025,35 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.archivoDocumento) {
-              console.log('📄 Cargando archivo documento guardado desde:', data.archivoDocumento);
+              console.log('📄 Cargando archivo documento (Paso 1) desde:', data.archivoDocumento);
               setPdfUrl(data.archivoDocumento);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 12, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData) {
+                  // Guardar el ID del registro de cumplimiento normativo
+                  if (cumplimientoData.cumplimientoId) {
+                    console.log('📋 ID Cumplimiento Normativo:', cumplimientoData.cumplimientoId);
+                    setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
+                  }
+                  if (cumplimientoData.documentoUrl) {
+                    console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                    setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                  }
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -805,7 +1070,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com13InteroperabilidadPIDEService.getByEntidad(13, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -830,10 +1095,35 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.archivoPlan) {
-              console.log('📄 Cargando archivo plan guardado desde:', data.archivoPlan);
+              console.log('📄 Cargando archivo plan (Paso 1) desde:', data.archivoPlan);
               setPdfUrl(data.archivoPlan);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 13, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData) {
+                  // Guardar el ID del registro de cumplimiento normativo
+                  if (cumplimientoData.cumplimientoId) {
+                    console.log('📋 ID Cumplimiento Normativo:', cumplimientoData.cumplimientoId);
+                    setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
+                  }
+                  if (cumplimientoData.documentoUrl) {
+                    console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                    setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                  }
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -850,7 +1140,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com14OficialSeguridadDigitalService.getByEntidad(14, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -874,10 +1164,35 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.archivoDocumento) {
-              console.log('📄 Cargando archivo documento guardado desde:', data.archivoDocumento);
+              console.log('📄 Cargando archivo documento (Paso 1) desde:', data.archivoDocumento);
               setPdfUrl(data.archivoDocumento);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 14, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData) {
+                  // Guardar el ID del registro de cumplimiento normativo
+                  if (cumplimientoData.cumplimientoId) {
+                    console.log('📋 ID Cumplimiento Normativo:', cumplimientoData.cumplimientoId);
+                    setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
+                  }
+                  if (cumplimientoData.documentoUrl) {
+                    console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                    setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                  }
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -894,7 +1209,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com15CSIRTInstitucionalService.getByEntidad(15, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -927,6 +1242,24 @@ const CumplimientoNormativoDetalle = () => {
             
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Intentar cargar datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 15, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData && cumplimientoData.documentoUrl) {
+                  console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                  setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
+            }
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '15' }));
@@ -942,7 +1275,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com16SistemaGestionSeguridadService.getByEntidad(16, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -975,6 +1308,24 @@ const CumplimientoNormativoDetalle = () => {
             
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Intentar cargar datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 16, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData && cumplimientoData.documentoUrl) {
+                  console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                  setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
+            }
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '16' }));
@@ -990,7 +1341,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com17PlanTransicionIPv6Service.getByEntidad(17, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -1024,10 +1375,28 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfPtipv6) {
-              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfPtipv6);
+              console.log('📄 Cargando PDF IPv6 (Paso 1) desde:', data.rutaPdfPtipv6);
               setPdfUrl(data.rutaPdfPtipv6);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 17, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData && cumplimientoData.documentoUrl) {
+                  console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                  setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -1044,7 +1413,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com18AccesoPortalTransparenciaService.getByEntidad(18, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -1078,10 +1447,28 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfApte) {
-              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfApte);
+              console.log('📄 Cargando PDF Portal Transparencia (Paso 1) desde:', data.rutaPdfApte);
               setPdfUrl(data.rutaPdfApte);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 18, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData && cumplimientoData.documentoUrl) {
+                  console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                  setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -1098,7 +1485,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com19EncuestaNacionalGobDigitalService.getByEntidad(19, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -1131,10 +1518,28 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfEnad) {
-              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfEnad);
+              console.log('📄 Cargando PDF Encuesta (Paso 1) desde:', data.rutaPdfEnad);
               setPdfUrl(data.rutaPdfEnad);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 19, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData && cumplimientoData.documentoUrl) {
+                  console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                  setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -1151,7 +1556,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com20DigitalizacionServiciosFacilitaService.getByEntidad(20, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -1183,10 +1588,28 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfDsfp) {
-              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfDsfp);
+              console.log('📄 Cargando PDF Digitalización (Paso 1) desde:', data.rutaPdfDsfp);
               setPdfUrl(data.rutaPdfDsfp);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 20, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData && cumplimientoData.documentoUrl) {
+                  console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                  setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -1203,7 +1626,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com21OficialGobiernoDatosService.getByEntidad(21, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -1237,10 +1660,28 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoPolitica(data.checkPrivacidad);
             setHaVistoDeclaracion(data.checkDdjj);
             
-            // Si hay documento guardado, establecer la URL para vista previa
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfOgd) {
-              console.log('📄 Cargando PDF guardado desde:', data.rutaPdfOgd);
+              console.log('📄 Cargando PDF Oficial Gobierno Datos (Paso 1) desde:', data.rutaPdfOgd);
               setPdfUrl(data.rutaPdfOgd);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 21, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData && cumplimientoData.documentoUrl) {
+                  console.log('📄 Cargando PDF normativo (Paso 2) desde:', cumplimientoData.documentoUrl);
+                  setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
             }
           } else {
             // No existe registro, inicializar
@@ -1257,7 +1698,7 @@ const CumplimientoNormativoDetalle = () => {
         const response = await com1LiderGTDService.getByEntidad(1, user.entidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
-        if (response.isSuccess) {
+        if (response.isSuccess || response.success) {
           const data = response.data;
           console.log('📄 Datos recibidos:', data);
           
@@ -1343,9 +1784,10 @@ const CumplimientoNormativoDetalle = () => {
           estado: data.estado || 1
         });
 
-        // Si hay documento, establecer la URL
+        // Si hay documento, establecer la URL (para Paso 2 usa pdfUrlPaso2)
         if (data.documentoUrl) {
-          setPdfUrl(data.documentoUrl);
+          console.log('📄 Cargando documento para Paso 2:', data.documentoUrl);
+          setPdfUrlPaso2(data.documentoUrl);
         }
       } else {
         showErrorToast(response.message || 'Error al cargar el cumplimiento');
@@ -1384,18 +1826,28 @@ const CumplimientoNormativoDetalle = () => {
         return;
       }
 
-      // Revocar URL anterior si existe
-      if (pdfUrl && pdfUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(pdfUrl);
+      // Revocar URL anterior si existe según el paso actual
+      if (pasoActual === 2) {
+        if (pdfUrlPaso2 && pdfUrlPaso2.startsWith('blob:')) {
+          URL.revokeObjectURL(pdfUrlPaso2);
+        }
+      } else {
+        if (pdfUrl && pdfUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(pdfUrl);
+        }
       }
 
       setFormData(prev => ({ ...prev, documentoFile: file }));
       
-      // Vista previa del PDF
+      // Vista previa del PDF según el paso actual
       try {
         const fileUrl = URL.createObjectURL(file);
-        console.log('📄 PDF blob URL creado:', fileUrl);
-        setPdfUrl(fileUrl);
+        console.log(`📄 PDF blob URL creado para paso ${pasoActual}:`, fileUrl);
+        if (pasoActual === 2) {
+          setPdfUrlPaso2(fileUrl);
+        } else {
+          setPdfUrl(fileUrl);
+        }
       } catch (error) {
         console.error('❌ Error al crear blob URL:', error);
         showErrorToast('Error al cargar la vista previa del PDF');
@@ -1405,10 +1857,17 @@ const CumplimientoNormativoDetalle = () => {
 
   const removeFile = () => {
     setFormData(prev => ({ ...prev, documentoFile: null }));
-    if (pdfUrl && pdfUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(pdfUrl);
+    if (pasoActual === 2) {
+      if (pdfUrlPaso2 && pdfUrlPaso2.startsWith('blob:')) {
+        URL.revokeObjectURL(pdfUrlPaso2);
+      }
+      setPdfUrlPaso2(null);
+    } else {
+      if (pdfUrl && pdfUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(pdfUrl);
+      }
+      setPdfUrl(null);
     }
-    setPdfUrl(null);
   };
 
   const validarPaso = (paso) => {
@@ -1832,18 +2291,24 @@ const CumplimientoNormativoDetalle = () => {
       let documentoUrl = null;
       let blobUrlToRevoke = null;
       
+      // Determinar qué URL de PDF usar según el paso actual
+      // Paso 1: usar pdfUrl (documento específico del compromiso)
+      // Paso 2: usar pdfUrlPaso2 (documento de cumplimiento normativo)
+      const currentPdfUrl = pasoActual === 2 ? pdfUrlPaso2 : pdfUrl;
+      console.log(`📄 Usando PDF del paso ${pasoActual}:`, currentPdfUrl);
+      
       // Verificar si hay un archivo nuevo (blob URL local) que necesita ser subido
-      if (formData.documentoFile && pdfUrl && pdfUrl.startsWith('blob:')) {
+      if (formData.documentoFile && currentPdfUrl && currentPdfUrl.startsWith('blob:')) {
         console.log('📤 Subiendo archivo nuevo a Supabase...');
-        blobUrlToRevoke = pdfUrl; // Guardar para revocar después
+        blobUrlToRevoke = currentPdfUrl; // Guardar para revocar después
         const uploadResponse = await cumplimientoService.uploadDocument(formData.documentoFile);
         documentoUrl = uploadResponse.data?.url || uploadResponse.url || uploadResponse.Url;
         console.log('✅ URL del documento subido:', documentoUrl);
         // NO revocar aún - esperar a que se actualice el estado
-      } else if (pdfUrl && !pdfUrl.startsWith('blob:')) {
+      } else if (currentPdfUrl && !currentPdfUrl.startsWith('blob:')) {
         // Si tenemos una URL de Supabase válida (no blob), mantenerla
-        console.log('📄 Manteniendo URL de Supabase existente:', pdfUrl);
-        documentoUrl = pdfUrl;
+        console.log('📄 Manteniendo URL de Supabase existente:', currentPdfUrl);
+        documentoUrl = currentPdfUrl;
       } else {
         // Si no hay archivo nuevo ni URL existente
         console.log('⚠️ No hay archivo para guardar');
@@ -2028,8 +2493,8 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
       // COMPROMISO 4: Incorporar TD en el PEI
-      else if (parseInt(formData.compromisoId) === 4) {
-        console.log('🚀 Preparando datos para Com4 PEI');
+      else if (parseInt(formData.compromisoId) === 4 && pasoActual === 1) {
+        console.log('🚀 Preparando datos para Com4 PEI (Paso 1)');
         
         const com4Data = {
           compromisoId: 4,
@@ -2057,16 +2522,23 @@ const CumplimientoNormativoDetalle = () => {
           console.log('Creando nuevo registro Com4');
           response = await com4PEIService.create(com4Data);
           console.log('Respuesta create Com4:', response);
-          if (response.isSuccess && response.data) {
-            console.log('ID del nuevo registro Com4:', response.data.comtdpeiEntId);
-            setCom4RecordId(response.data.comtdpeiEntId);
+          console.log('response.isSuccess:', response.isSuccess);
+          console.log('response.success:', response.success);
+          console.log('response.data:', response.data);
+          if ((response.isSuccess || response.success) && response.data) {
+            const recordId = response.data.comtdpeiEntId;
+            console.log('ID del nuevo registro Com4:', recordId);
+            setCom4RecordId(recordId);
+            console.log('com4RecordId actualizado a:', recordId);
+          } else {
+            console.error('❌ No se pudo obtener el ID del registro Com4');
           }
         }
         
         console.log('Respuesta final Com4:', response);
         
         // Actualizar estado local con datos guardados
-        if (response.isSuccess && response.data) {
+        if ((response.isSuccess || response.success) && response.data) {
           console.log('✅ Actualizando estado local Com4');
           
           if (response.data.rutaPdfPei) {
@@ -2088,8 +2560,8 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
       // COMPROMISO 5: Estrategia Digital
-      else if (parseInt(formData.compromisoId) === 5) {
-        console.log('🚀 Preparando datos para Com5 Estrategia Digital');
+      else if (parseInt(formData.compromisoId) === 5 && pasoActual === 1) {
+        console.log('🚀 Preparando datos para Com5 Estrategia Digital (Paso 1)');
         
         const com5Data = {
           compromisoId: 5,
@@ -2119,7 +2591,7 @@ const CumplimientoNormativoDetalle = () => {
           console.log('Creando nuevo registro Com5');
           response = await com5EstrategiaDigitalService.create(com5Data);
           console.log('Respuesta create Com5:', response);
-          if (response.isSuccess && response.data) {
+          if ((response.isSuccess || response.success) && response.data) {
             console.log('ID del nuevo registro Com5:', response.data.comdedEntId);
             setCom5RecordId(response.data.comdedEntId);
           }
@@ -2128,7 +2600,7 @@ const CumplimientoNormativoDetalle = () => {
         console.log('Respuesta final Com5:', response);
         
         // Actualizar estado local con datos guardados
-        if (response.isSuccess && response.data) {
+        if ((response.isSuccess || response.success) && response.data) {
           console.log('✅ Actualizando estado local Com5');
           
           if (response.data.rutaPdfEstrategia) {
@@ -2150,7 +2622,7 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
       // COMPROMISO 6: Migración GOB.PE
-      else if (parseInt(formData.compromisoId) === 6) {
+      else if (parseInt(formData.compromisoId) === 6 && pasoActual === 1) {
         console.log('🚀 Preparando datos para Com6 Migración GOB.PE');
         
         const com6Data = {
@@ -2212,7 +2684,7 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
       // COMPROMISO 7: Implementación MPD
-      else if (parseInt(formData.compromisoId) === 7) {
+      else if (parseInt(formData.compromisoId) === 7 && pasoActual === 1) {
         console.log('🚀 Preparando datos para Com7 Implementación MPD');
         
         const com7Data = {
@@ -2275,7 +2747,7 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
       // COMPROMISO 8: Publicación TUPA
-      else if (parseInt(formData.compromisoId) === 8) {
+      else if (parseInt(formData.compromisoId) === 8 && pasoActual === 1) {
         console.log('🚀 Preparando datos para Com8 Publicación TUPA');
         
         const com8Data = {
@@ -2338,7 +2810,7 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
       // COMPROMISO 9: Modelo de Gestión Documental
-      else if (parseInt(formData.compromisoId) === 9) {
+      else if (parseInt(formData.compromisoId) === 9 && pasoActual === 1) {
         console.log('🚀 Preparando datos para Com9 MGD');
         
         const com9Data = {
@@ -2402,7 +2874,7 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
       // COMPROMISO 10: Datos Abiertos
-      else if (parseInt(formData.compromisoId) === 10) {
+      else if (parseInt(formData.compromisoId) === 10 && pasoActual === 1) {
         console.log('🚀 Preparando datos para Com10 Datos Abiertos');
         
         const com10Data = {
@@ -2467,7 +2939,7 @@ const CumplimientoNormativoDetalle = () => {
       } 
 
       // COMPROMISO 11
-      else if (parseInt(formData.compromisoId) === 11) {
+      else if (parseInt(formData.compromisoId) === 11 && pasoActual === 1) {
         console.log('🚀 Preparando datos para Com11');
         
         const com11Data = {
@@ -2520,7 +2992,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 12
-      else if (parseInt(formData.compromisoId) === 12) {
+      else if (parseInt(formData.compromisoId) === 12 && pasoActual === 1) {
         console.log('🚀 Preparando datos para Com12');
         
         const com12Data = {
@@ -2572,7 +3044,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 13
-      else if (parseInt(formData.compromisoId) === 13) {
+      else if (parseInt(formData.compromisoId) === 13 && pasoActual === 1) {
         console.log('🚀 Preparando datos para Com13');
         
         const com13Data = {
@@ -2625,7 +3097,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 14
-      else if (parseInt(formData.compromisoId) === 14) {
+      else if (parseInt(formData.compromisoId) === 14 && pasoActual === 1) {
         console.log('🚀 Preparando datos para Com14');
         
         const com14Data = {
@@ -2677,7 +3149,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 15
-      else if (parseInt(formData.compromisoId) === 15) {
+      else if (parseInt(formData.compromisoId) === 15 && pasoActual === 1) {
         console.log('🚀 Preparando datos para Com15');
         
         const com15Data = {
@@ -2716,7 +3188,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 16
-      else if (parseInt(formData.compromisoId) === 16) {
+      else if (parseInt(formData.compromisoId) === 16 && pasoActual === 1) {
         console.log('🚀 Preparando datos para Com16');
         
         const com16Data = {
@@ -2755,7 +3227,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 17
-      else if (parseInt(formData.compromisoId) === 17) {
+      else if (parseInt(formData.compromisoId) === 17 && pasoActual === 1) {
         console.log('🚀 Preparando datos para Com17');
         
         const com17Data = {
@@ -2945,6 +3417,67 @@ const CumplimientoNormativoDetalle = () => {
         
         console.log('Respuesta final Com21:', response);
       }
+      // PASO 2: Guardar Cumplimiento Normativo para Compromisos 4-21
+      else if (pasoActual === 2 && parseInt(formData.compromisoId) >= 4 && parseInt(formData.compromisoId) <= 21) {
+        console.log('🚀 Guardando Cumplimiento Normativo (Paso 2) para Compromiso', formData.compromisoId);
+        
+        const cumplimientoData = {
+          compromisoId: parseInt(formData.compromisoId),
+          entidadId: user.entidadId,
+          nroDni: formData.nroDni || '',
+          nombres: formData.nombres || '',
+          apellidoPaterno: formData.apellidoPaterno || '',
+          apellidoMaterno: formData.apellidoMaterno || '',
+          correoElectronico: formData.correoElectronico || '',
+          telefono: formData.telefono || '',
+          rol: formData.rol || '',
+          cargo: formData.cargo || '',
+          fechaInicio: formData.fechaInicio || null,
+          documentoUrl: documentoUrl || null,
+          validacionResolucionAutoridad: formData.validacionResolucionAutoridad || false,
+          validacionLiderFuncionario: formData.validacionLiderFuncionario || false,
+          validacionDesignacionArticulo: formData.validacionDesignacionArticulo || false,
+          validacionFuncionesDefinidas: formData.validacionFuncionesDefinidas || false,
+          aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
+          estado: formData.estado || 1
+        };
+        
+        console.log('Datos Cumplimiento Normativo (Paso 2) a enviar:', cumplimientoData);
+        
+        if (cumplimientoNormativoId) {
+          console.log('Actualizando Cumplimiento Normativo existente:', cumplimientoNormativoId);
+          response = await cumplimientoService.update(cumplimientoNormativoId, cumplimientoData);
+        } else {
+          console.log('Creando nuevo Cumplimiento Normativo');
+          response = await cumplimientoService.create(cumplimientoData);
+          console.log('Respuesta create Cumplimiento Normativo:', response);
+          if (response.isSuccess || response.success) {
+            const newId = response.data?.cumplimientoId;
+            console.log('ID del nuevo Cumplimiento Normativo:', newId);
+            if (newId) {
+              setCumplimientoNormativoId(newId);
+              // Actualizar la URL con el ID del cumplimiento creado
+              navigate(`/dashboard/cumplimiento/${newId}?compromiso=${formData.compromisoId}`, { replace: true });
+            }
+          }
+        }
+        
+        console.log('Respuesta final Cumplimiento Normativo (Paso 2):', response);
+        
+        // Actualizar estado local
+        if ((response.isSuccess || response.success) && response.data) {
+          console.log('✅ Actualizando estado local Cumplimiento Normativo');
+          
+          if (response.data.documentoUrl) {
+            setPdfUrlPaso2(response.data.documentoUrl);
+            if (blobUrlToRevoke) {
+              console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
+          }
+        }
+      }
       else if (isEdit || id) {
         // Si ya existe, actualizar (genérico)
         response = await cumplimientoService.update(id, dataToSend);
@@ -2960,7 +3493,7 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
 
-      if (response.isSuccess || response.IsSuccess) {
+      if (response.isSuccess || response.IsSuccess || response.success) {
         showSuccessToast('Progreso guardado exitosamente');
         return true;
       } else {
@@ -7251,7 +7784,7 @@ const CumplimientoNormativoDetalle = () => {
                 Documento Normativo (PDF) <span className="text-red-500">*</span>
               </label>
               
-              {!pdfUrl ? (
+              {!pdfUrlPaso2 ? (
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                   <Upload className="mx-auto text-gray-400 mb-2" size={40} />
                   <p className="text-sm text-gray-600 mb-2">
@@ -7278,7 +7811,7 @@ const CumplimientoNormativoDetalle = () => {
                     <div className="flex items-center gap-2">
                       <FileText className="text-primary" size={24} />
                       <span className="text-sm font-medium text-gray-700">
-                        {formData.documentoFile ? formData.documentoFile.name : 'Documento cargado'}
+                        {formData.documentoFile ? formData.documentoFile.name : 'Documento normativo cargado'}
                       </span>
                     </div>
                     {!viewMode && (
@@ -7292,7 +7825,10 @@ const CumplimientoNormativoDetalle = () => {
                     )}
                   </div>
                   <button
-                    onClick={() => setShowPdfViewer(true)}
+                    onClick={() => {
+                      setDocumentoActualUrl(pdfUrlPaso2);
+                      setShowPdfViewer(true);
+                    }}
                     className="btn-secondary text-sm flex items-center gap-2"
                   >
                     <Eye size={16} />
