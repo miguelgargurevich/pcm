@@ -74,6 +74,7 @@ public class GetCumplimientoByIdHandler : IRequestHandler<GetCumplimientoByIdQue
             ValidacionLiderFuncionario = cumplimiento.ValidacionLiderFuncionario,
             ValidacionDesignacionArticulo = cumplimiento.ValidacionDesignacionArticulo,
             ValidacionFuncionesDefinidas = cumplimiento.ValidacionFuncionesDefinidas,
+            CriteriosEvaluados = cumplimiento.CriteriosEvaluados,
             
             AceptaPoliticaPrivacidad = cumplimiento.AceptaPoliticaPrivacidad,
             AceptaDeclaracionJurada = cumplimiento.AceptaDeclaracionJurada,

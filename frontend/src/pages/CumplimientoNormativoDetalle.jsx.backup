@@ -247,7 +247,7 @@ const CumplimientoNormativoDetalle = () => {
     try {
       const cumplimientoResponse = await cumplimientoService.getAll({ 
         compromisoId, 
-        entidad_id: user.entidadId 
+        entidadId: user.entidadId 
       });
       
       if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
@@ -411,8 +411,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 3, 
-                entidad_id: user.entidadId 
+                compromisoId: 3, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -552,8 +552,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 4, 
-                entidad_id: user.entidadId 
+                compromisoId: 4, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -636,8 +636,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 5, 
-                entidad_id: user.entidadId 
+                compromisoId: 5, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -720,8 +720,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 6, 
-                entidad_id: user.entidadId 
+                compromisoId: 6, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -800,8 +800,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 7, 
-                entidad_id: user.entidadId 
+                compromisoId: 7, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -880,8 +880,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 8, 
-                entidad_id: user.entidadId 
+                compromisoId: 8, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -961,8 +961,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 9, 
-                entidad_id: user.entidadId 
+                compromisoId: 9, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -1042,8 +1042,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 10, 
-                entidad_id: user.entidadId 
+                compromisoId: 10, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -1116,8 +1116,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 11, 
-                entidad_id: user.entidadId 
+                compromisoId: 11, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -1185,8 +1185,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 12, 
-                entidad_id: user.entidadId 
+                compromisoId: 12, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -1255,8 +1255,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 13, 
-                entidad_id: user.entidadId 
+                compromisoId: 13, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -1324,8 +1324,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 14, 
-                entidad_id: user.entidadId 
+                compromisoId: 14, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -1390,8 +1390,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 15, 
-                entidad_id: user.entidadId 
+                compromisoId: 15, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -1449,8 +1449,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 16, 
-                entidad_id: user.entidadId 
+                compromisoId: 16, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -1514,8 +1514,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 17, 
-                entidad_id: user.entidadId 
+                compromisoId: 17, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -1579,8 +1579,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 18, 
-                entidad_id: user.entidadId 
+                compromisoId: 18, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -1643,8 +1643,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 19, 
-                entidad_id: user.entidadId 
+                compromisoId: 19, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -1706,8 +1706,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 20, 
-                entidad_id: user.entidadId 
+                compromisoId: 20, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -1771,8 +1771,8 @@ const CumplimientoNormativoDetalle = () => {
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
             try {
               const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 21, 
-                entidad_id: user.entidadId 
+                compromisoId: 21, 
+                entidadId: user.entidadId 
               });
               if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
                 const cumplimientoList = cumplimientoResponse.data || [];
@@ -2401,6 +2401,29 @@ const CumplimientoNormativoDetalle = () => {
       
       console.log('📝 URL final a guardar:', documentoUrl);
 
+      // Preparar datos para enviar (incluyendo campos completados hasta ahora)
+      const dataToSend = {
+        compromisoId: parseInt(formData.compromisoId),
+        entidadId: user?.entidadId || '', // Obtener del usuario autenticado
+        nroDni: formData.nroDni || '',
+        nombres: formData.nombres || '',
+        apellidoPaterno: formData.apellidoPaterno || '',
+        apellidoMaterno: formData.apellidoMaterno || '',
+        correoElectronico: formData.correoElectronico || '',
+        telefono: formData.telefono || '',
+        rol: formData.rol || '',
+        cargo: formData.cargo || '',
+        fechaInicio: formData.fechaInicio || '',
+        documentoUrl: documentoUrl || '',
+        validacionResolucionAutoridad: formData.validacionResolucionAutoridad || false,
+        validacionLiderFuncionario: formData.validacionLiderFuncionario || false,
+        validacionDesignacionArticulo: formData.validacionDesignacionArticulo || false,
+        validacionFuncionesDefinidas: formData.validacionFuncionesDefinidas || false,
+        aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+        aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
+        estado: formData.estado || 1
+      };
+
       let response;
       
       // COMPROMISO 1: Guardar datos del líder en com1_liderg_td (Paso 1)
@@ -2408,8 +2431,8 @@ const CumplimientoNormativoDetalle = () => {
         console.log('🔄 Compromiso 1 - Guardando datos del líder en com1_liderg_td');
         
         const com1Data = {
-          compromiso_id: 1,
-          entidad_id: user.entidadId,
+          compromisoId: 1,
+          entidadId: user.entidadId,
           dniLider: formData.nroDni,
           nombreLider: formData.nombres,
           apePatLider: formData.apellidoPaterno,
@@ -2449,8 +2472,8 @@ const CumplimientoNormativoDetalle = () => {
         console.log('🔄 Compromiso 2 - Guardando miembros del comité en com2_cgtd');
         
         const com2Data = {
-          compromiso_id: 2,
-          entidad_id: user.entidadId,
+          compromisoId: 2,
+          entidadId: user.entidadId,
           miembros: miembrosComite,
           checkPrivacidad: false,
           checkDdjj: false,
@@ -2499,8 +2522,7 @@ const CumplimientoNormativoDetalle = () => {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1,
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           console.log(`Datos cumplimiento Com${formData.compromisoId} a enviar:`, cumplimientoData);
@@ -2546,21 +2568,21 @@ const CumplimientoNormativoDetalle = () => {
         };
         
         const cumplimientoData = {
-          compromiso_id: 3,
-          entidad_id: user.entidadId,
+          compromisoId: 3,
+          entidadId: user.entidadId,
           ...datosLider,
-          fecha_inicio: formData.fechaInicio || new Date().toISOString(),
-          ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
-          validacion_resolucion_autoridad: formData.validacionResolucionAutoridad || false,
-          validacion_lider_funcionario: formData.validacionLiderFuncionario || false,
-          validacion_designacion_articulo: formData.validacionDesignacionArticulo || false,
-          validacion_funciones_definidas: formData.validacionFuncionesDefinidas || false,
+          fechaInicio: formData.fechaInicio || new Date().toISOString(),
+          ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
+          validacionResolucionAutoridad: formData.validacionResolucionAutoridad || false,
+          validacionLiderFuncionario: formData.validacionLiderFuncionario || false,
+          validacionDesignacionArticulo: formData.validacionDesignacionArticulo || false,
+          validacionFuncionesDefinidas: formData.validacionFuncionesDefinidas || false,
           ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-            criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+            criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
           }),
-          acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-          acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
-          etapa_formulario: pasoActual === 3 ? 'completado' : `paso${pasoActual}`,
+          aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+          aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
+          etapaFormulario: pasoActual === 3 ? 'completado' : `paso${pasoActual}`,
           estado: formData.estado || 1
         };
         
@@ -2590,8 +2612,8 @@ const CumplimientoNormativoDetalle = () => {
         // Paso 1: Guardar en com4_tdpei
         if (pasoActual === 1) {
           const com4Data = {
-            compromiso_id: 4,
-            entidad_id: user.entidadId,
+            compromisoId: 4,
+            entidadId: user.entidadId,
             anioInicioPei: parseInt(formData.anioInicio) || null,
             anioFinPei: parseInt(formData.anioFin) || null,
             fechaAprobacionPei: formData.fechaAprobacion || null,
@@ -2626,19 +2648,18 @@ const CumplimientoNormativoDetalle = () => {
         // Paso 2 y 3: Guardar en cumplimiento_normativo
         else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 4,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 4,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           console.log(`Datos Com4 Paso ${pasoActual} a enviar a cumplimiento_normativo:`, cumplimientoData);
@@ -2660,8 +2681,8 @@ const CumplimientoNormativoDetalle = () => {
           // IMPORTANTE: Mantener todos los campos del paso 1 para no borrarlos
           if (pasoActual === 3 && com4RecordId) {
             const com4UpdateData = {
-              compromiso_id: 4,
-              entidad_id: user.entidadId,
+              compromisoId: 4,
+              entidadId: user.entidadId,
               anioInicioPei: parseInt(formData.anioInicio) || null,
               anioFinPei: parseInt(formData.anioFin) || null,
               fechaAprobacionPei: formData.fechaAprobacion || null,
@@ -2694,8 +2715,8 @@ const CumplimientoNormativoDetalle = () => {
         // Paso 1: Guardar en com5_estrategia_digital
         if (pasoActual === 1) {
           const com5Data = {
-            compromiso_id: 5,
-            entidad_id: user.entidadId,
+            compromisoId: 5,
+            entidadId: user.entidadId,
             nombreEstrategia: formData.nombreEstrategia || null,
             periodoInicioEstrategia: parseInt(formData.anioInicio) || null,
             periodoFinEstrategia: parseInt(formData.anioFin) || null,
@@ -2728,19 +2749,18 @@ const CumplimientoNormativoDetalle = () => {
         // Paso 2 y 3: Guardar en cumplimiento_normativo
         else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 5,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 5,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -2770,8 +2790,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com6Data = {
-            compromiso_id: 6,
-            entidad_id: user.entidadId,
+            compromisoId: 6,
+            entidadId: user.entidadId,
             urlGobpe: formData.urlPortalGobPe || null,
             fechaMigracionGobpe: formData.fechaMigracion || null,
             fechaActualizacionGobpe: formData.fechaUltimaActualizacion || null,
@@ -2800,19 +2820,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 6,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 6,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -2842,8 +2861,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com7Data = {
-            compromiso_id: 7,
-            entidad_id: user.entidadId,
+            compromisoId: 7,
+            entidadId: user.entidadId,
             urlMpd: formData.urlMpd || null,
             fechaImplementacionMpd: formData.fechaImplementacionMpd || null,
             responsableMpd: formData.responsableMpd || null,
@@ -2873,19 +2892,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 7,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 7,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -2915,8 +2933,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com8Data = {
-            compromiso_id: 8,
-            entidad_id: user.entidadId,
+            compromisoId: 8,
+            entidadId: user.entidadId,
             urlTupa: formData.urlTupa || null,
             numeroResolucionTupa: formData.numeroResolucionTupa || null,
             fechaAprobacionTupa: formData.fechaAprobacionTupa || null,
@@ -2946,19 +2964,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 8,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 8,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -2988,8 +3005,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com9Data = {
-            compromiso_id: 9,
-            entidad_id: user.entidadId,
+            compromisoId: 9,
+            entidadId: user.entidadId,
             fechaAprobacionMgd: formData.fechaAprobacionMgd || null,
             numeroResolucionMgd: formData.numeroResolucionMgd || null,
             responsableMgd: formData.responsableMgd || null,
@@ -3020,19 +3037,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 9,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 9,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -3062,8 +3078,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com10Data = {
-            compromiso_id: 10,
-            entidad_id: user.entidadId,
+            compromisoId: 10,
+            entidadId: user.entidadId,
             urlDatosAbiertos: formData.urlDatosAbiertos || null,
             totalDatasets: formData.totalDatasets ? parseInt(formData.totalDatasets) : null,
             fechaUltimaActualizacionDa: formData.fechaUltimaActualizacionDa || null,
@@ -3094,19 +3110,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 10,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 10,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -3137,8 +3152,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com11Data = {
-            compromiso_id: 11,
-            entidad_id: user.entidadId,
+            compromisoId: 11,
+            entidadId: user.entidadId,
             fechaInicio: formData.fechaInicio || null,
             fechaFin: formData.fechaFin || null,
             serviciosDigitalizados: formData.serviciosDigitalizados ? parseInt(formData.serviciosDigitalizados) : null,
@@ -3167,19 +3182,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 11,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 11,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -3210,8 +3224,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com12Data = {
-            compromiso_id: 12,
-            entidad_id: user.entidadId,
+            compromisoId: 12,
+            entidadId: user.entidadId,
             fechaElaboracion: formData.fechaElaboracion || null,
             numeroDocumento: formData.numeroDocumento || null,
             archivoDocumento: documentoUrl || formData.archivoDocumento || null,
@@ -3239,19 +3253,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 12,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 12,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -3282,8 +3295,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com13Data = {
-            compromiso_id: 13,
-            entidad_id: user.entidadId,
+            compromisoId: 13,
+            entidadId: user.entidadId,
             fechaAprobacion: formData.fechaAprobacion || null,
             numeroResolucion: formData.numeroResolucion || null,
             archivoPlan: documentoUrl || formData.archivoPlan || null,
@@ -3312,19 +3325,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 13,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 13,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -3355,8 +3367,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com14Data = {
-            compromiso_id: 14,
-            entidad_id: user.entidadId,
+            compromisoId: 14,
+            entidadId: user.entidadId,
             fechaElaboracion: formData.fechaElaboracion || null,
             numeroDocumento: formData.numeroDocumento || null,
             archivoDocumento: documentoUrl || formData.archivoDocumento || null,
@@ -3384,19 +3396,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 14,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 14,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -3427,8 +3438,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com15Data = {
-            compromiso_id: 15,
-            entidad_id: user.entidadId,
+            compromisoId: 15,
+            entidadId: user.entidadId,
             fechaConformacion: formData.fechaConformacion || null,
             numeroResolucion: formData.numeroResolucion || null,
             responsable: formData.responsable || null,
@@ -3456,19 +3467,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 15,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 15,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -3499,8 +3509,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com16Data = {
-            compromiso_id: 16,
-            entidad_id: user.entidadId,
+            compromisoId: 16,
+            entidadId: user.entidadId,
             fechaImplementacion: formData.fechaImplementacion || null,
             normaAplicable: formData.normaAplicable || null,
             certificacion: formData.certificacion || null,
@@ -3528,19 +3538,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 16,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 16,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -3571,8 +3580,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com17Data = {
-            compromiso_id: 17,
-            entidad_id: user.entidadId,
+            compromisoId: 17,
+            entidadId: user.entidadId,
             fechaInicioTransicion: formData.fechaInicioTransicion || null,
             fechaFinTransicion: formData.fechaFinTransicion || null,
             porcentajeAvance: formData.porcentajeAvance ? parseFloat(formData.porcentajeAvance) : null,
@@ -3600,19 +3609,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 17,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 17,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -3643,8 +3651,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com18Data = {
-            compromiso_id: 18,
-            entidad_id: user.entidadId,
+            compromisoId: 18,
+            entidadId: user.entidadId,
             urlPlataforma: formData.urlPlataforma || null,
             fechaImplementacion: formData.fechaImplementacion || null,
             tramitesDisponibles: formData.tramitesDisponibles ? parseInt(formData.tramitesDisponibles) : null,
@@ -3672,19 +3680,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 18,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 18,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -3715,8 +3722,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com19Data = {
-            compromiso_id: 19,
-            entidad_id: user.entidadId,
+            compromisoId: 19,
+            entidadId: user.entidadId,
             fechaConexion: formData.fechaConexion || null,
             tipoConexion: formData.tipoConexion || null,
             anchoBanda: formData.anchoBanda || null,
@@ -3743,19 +3750,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 19,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 19,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -3786,8 +3792,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com20Data = {
-            compromiso_id: 20,
-            entidad_id: user.entidadId,
+            compromisoId: 20,
+            entidadId: user.entidadId,
             sistemasDocumentados: formData.sistemasDocumentados ? parseInt(formData.sistemasDocumentados) : null,
             sistemasTotal: formData.sistemasTotal ? parseInt(formData.sistemasTotal) : null,
             porcentajeDocumentacion: formData.porcentajeDocumentacion ? parseFloat(formData.porcentajeDocumentacion) : null,
@@ -3813,19 +3819,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 20,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 20,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -3856,8 +3861,8 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com21Data = {
-            compromiso_id: 21,
-            entidad_id: user.entidadId,
+            compromisoId: 21,
+            entidadId: user.entidadId,
             fechaElaboracion: formData.fechaElaboracion || null,
             numeroDocumento: formData.numeroDocumento || null,
             archivoDocumento: documentoUrl || null,
@@ -3885,19 +3890,18 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            compromiso_id: 21,
-            entidad_id: user.entidadId,
-            fecha_inicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            compromisoId: 21,
+            entidadId: user.entidadId,
+            fechaInicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
             }),
-            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
-            estado: formData.estado || 1
+            etapaFormulario: pasoActual === 3 ? 'completado' : 'paso2'
           };
           
           if (cumplimientoNormativoId) {
@@ -3921,8 +3925,22 @@ const CumplimientoNormativoDetalle = () => {
         
         console.log('Respuesta final Com21:', response);
       }
+      else if (isEdit || id) {
+        // Si ya existe, actualizar (genérico)
+        response = await cumplimientoService.update(id, dataToSend);
+      } else {
+        // Si es nuevo, crear y guardar el ID (genérico)
+        response = await cumplimientoService.create(dataToSend);
+        if (response.isSuccess || response.IsSuccess) {
+          const newId = response.data?.cumplimientoId || response.Data?.cumplimientoId;
+          if (newId) {
+            // Actualizar la URL con el ID del cumplimiento creado
+            navigate(`/dashboard/cumplimiento/${newId}?compromiso=${formData.compromisoId}`, { replace: true });
+          }
+        }
+      }
 
-      if (response && (response.isSuccess || response.IsSuccess || response.success)) {
+      if (response.isSuccess || response.IsSuccess || response.success) {
         showSuccessToast('Progreso guardado exitosamente');
         return true;
       } else {

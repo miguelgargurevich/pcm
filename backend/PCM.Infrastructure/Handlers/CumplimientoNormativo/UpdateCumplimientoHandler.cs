@@ -31,16 +31,27 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
                 return Result<CumplimientoResponseDto>.Failure("Cumplimiento normativo no encontrado");
             }
 
-            // Actualizar Paso 1: Datos Generales
-            cumplimiento.NroDni = request.NroDni;
-            cumplimiento.Nombres = request.Nombres;
-            cumplimiento.ApellidoPaterno = request.ApellidoPaterno;
-            cumplimiento.ApellidoMaterno = request.ApellidoMaterno;
-            cumplimiento.CorreoElectronico = request.CorreoElectronico;
-            cumplimiento.Telefono = request.Telefono;
-            cumplimiento.Rol = request.Rol;
-            cumplimiento.Cargo = request.Cargo;
-            cumplimiento.FechaInicio = DateTime.SpecifyKind(request.FechaInicio, DateTimeKind.Utc);
+            // Actualizar Paso 1: Datos Generales (solo si vienen en el request)
+            if (!string.IsNullOrEmpty(request.NroDni))
+                cumplimiento.NroDni = request.NroDni;
+            if (!string.IsNullOrEmpty(request.Nombres))
+                cumplimiento.Nombres = request.Nombres;
+            if (!string.IsNullOrEmpty(request.ApellidoPaterno))
+                cumplimiento.ApellidoPaterno = request.ApellidoPaterno;
+            if (!string.IsNullOrEmpty(request.ApellidoMaterno))
+                cumplimiento.ApellidoMaterno = request.ApellidoMaterno;
+            if (!string.IsNullOrEmpty(request.CorreoElectronico))
+                cumplimiento.CorreoElectronico = request.CorreoElectronico;
+            if (!string.IsNullOrEmpty(request.Telefono))
+                cumplimiento.Telefono = request.Telefono;
+            if (!string.IsNullOrEmpty(request.Rol))
+                cumplimiento.Rol = request.Rol;
+            if (!string.IsNullOrEmpty(request.Cargo))
+                cumplimiento.Cargo = request.Cargo;
+            if (request.FechaInicio.HasValue)
+            {
+                cumplimiento.FechaInicio = DateTime.SpecifyKind(request.FechaInicio.Value, DateTimeKind.Utc);
+            }
             
             // Actualizar Paso 2: Normativa (solo si vienen datos, no sobrescribir con null)
             if (!string.IsNullOrEmpty(request.DocumentoUrl))
@@ -58,7 +69,9 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
             cumplimiento.ValidacionFuncionesDefinidas = request.ValidacionFuncionesDefinidas;
             
             // Actualizar criterios evaluados si vienen datos
+            if (!string.IsNullOrEmpty(request.CriteriosEvaluados))
             {
+                cumplimiento.CriteriosEvaluados = request.CriteriosEvaluados;
             }
             
             // Actualizar Paso 3: Confirmación
@@ -71,7 +84,12 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
                 cumplimiento.EtapaFormulario = request.EtapaFormulario;
             }
             
-            cumplimiento.Estado = request.Estado;
+            // Solo actualizar estado si viene un valor válido (1, 2 o 3)
+            if (request.Estado > 0 && request.Estado <= 3)
+            {
+                cumplimiento.Estado = request.Estado;
+            }
+            
             cumplimiento.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync(cancellationToken);
@@ -123,6 +141,7 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
             ValidacionLiderFuncionario = cumplimiento.ValidacionLiderFuncionario,
             ValidacionDesignacionArticulo = cumplimiento.ValidacionDesignacionArticulo,
             ValidacionFuncionesDefinidas = cumplimiento.ValidacionFuncionesDefinidas,
+            CriteriosEvaluados = cumplimiento.CriteriosEvaluados,
             
             AceptaPoliticaPrivacidad = cumplimiento.AceptaPoliticaPrivacidad,
             AceptaDeclaracionJurada = cumplimiento.AceptaDeclaracionJurada,

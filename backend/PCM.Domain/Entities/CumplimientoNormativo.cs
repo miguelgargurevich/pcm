@@ -16,15 +16,15 @@ public class CumplimientoNormativo
     // ============================================
     // PASO 1: DATOS GENERALES DEL LÍDER
     // ============================================
-    public string NroDni { get; set; } = string.Empty;
-    public string Nombres { get; set; } = string.Empty;
-    public string ApellidoPaterno { get; set; } = string.Empty;
-    public string ApellidoMaterno { get; set; } = string.Empty;
-    public string CorreoElectronico { get; set; } = string.Empty;
+    public string? NroDni { get; set; }
+    public string? Nombres { get; set; }
+    public string? ApellidoPaterno { get; set; }
+    public string? ApellidoMaterno { get; set; }
+    public string? CorreoElectronico { get; set; }
     public string? Telefono { get; set; }
     public string? Rol { get; set; }
     public string? Cargo { get; set; }
-    public DateTime FechaInicio { get; set; }
+    public DateTime? FechaInicio { get; set; }
     
     // ============================================
     // PASO 2: NORMATIVA (Documento y Validaciones)

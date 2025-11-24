@@ -12,15 +12,15 @@ public class CreateCumplimientoRequest
     public Guid EntidadId { get; set; }
     
     // Paso 1: Datos Generales
-    public string NroDni { get; set; } = string.Empty;
-    public string Nombres { get; set; } = string.Empty;
-    public string ApellidoPaterno { get; set; } = string.Empty;
-    public string ApellidoMaterno { get; set; } = string.Empty;
-    public string CorreoElectronico { get; set; } = string.Empty;
+    public string? NroDni { get; set; }
+    public string? Nombres { get; set; }
+    public string? ApellidoPaterno { get; set; }
+    public string? ApellidoMaterno { get; set; }
+    public string? CorreoElectronico { get; set; }
     public string? Telefono { get; set; }
     public string? Rol { get; set; }
     public string? Cargo { get; set; }
-    public DateTime FechaInicio { get; set; }
+    public DateTime? FechaInicio { get; set; }
     
     // Paso 2: Normativa
     public string? DocumentoUrl { get; set; }
@@ -37,6 +37,7 @@ public class CreateCumplimientoRequest
     public bool AceptaPoliticaPrivacidad { get; set; }
     public bool AceptaDeclaracionJurada { get; set; }
     
+    public string? EtapaFormulario { get; set; }
     public int Estado { get; set; } = 1; // 1=bandeja
 }
 
@@ -45,15 +46,15 @@ public class UpdateCumplimientoRequest
     public int CumplimientoId { get; set; }
     
     // Paso 1: Datos Generales
-    public string NroDni { get; set; } = string.Empty;
-    public string Nombres { get; set; } = string.Empty;
-    public string ApellidoPaterno { get; set; } = string.Empty;
-    public string ApellidoMaterno { get; set; } = string.Empty;
-    public string CorreoElectronico { get; set; } = string.Empty;
+    public string? NroDni { get; set; }
+    public string? Nombres { get; set; }
+    public string? ApellidoPaterno { get; set; }
+    public string? ApellidoMaterno { get; set; }
+    public string? CorreoElectronico { get; set; }
     public string? Telefono { get; set; }
     public string? Rol { get; set; }
     public string? Cargo { get; set; }
-    public DateTime FechaInicio { get; set; }
+    public DateTime? FechaInicio { get; set; }
     
     // Paso 2: Normativa
     public string? DocumentoUrl { get; set; }
@@ -91,15 +92,15 @@ public class CumplimientoResponseDto
     public string? NombreEntidad { get; set; }
     
     // Paso 1: Datos Generales
-    public string NroDni { get; set; } = string.Empty;
-    public string Nombres { get; set; } = string.Empty;
-    public string ApellidoPaterno { get; set; } = string.Empty;
-    public string ApellidoMaterno { get; set; } = string.Empty;
-    public string CorreoElectronico { get; set; } = string.Empty;
+    public string? NroDni { get; set; }
+    public string? Nombres { get; set; }
+    public string? ApellidoPaterno { get; set; }
+    public string? ApellidoMaterno { get; set; }
+    public string? CorreoElectronico { get; set; }
     public string? Telefono { get; set; }
     public string? Rol { get; set; }
     public string? Cargo { get; set; }
-    public DateTime FechaInicio { get; set; }
+    public DateTime? FechaInicio { get; set; }
     
     // Paso 2: Normativa
     public string? DocumentoUrl { get; set; }
@@ -146,6 +147,7 @@ public class CumplimientoListItemDto
     public bool ValidacionLiderFuncionario { get; set; }
     public bool ValidacionDesignacionArticulo { get; set; }
     public bool ValidacionFuncionesDefinidas { get; set; }
+    public string? CriteriosEvaluados { get; set; } // JSON
     
     // Aceptaciones (Paso 3)
     public bool AceptaPoliticaPrivacidad { get; set; }

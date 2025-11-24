@@ -484,15 +484,15 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.EntidadId).HasColumnName("entidad_id").IsRequired();
             
             // Paso 1: Datos Generales
-            entity.Property(e => e.NroDni).HasColumnName("nro_dni").HasMaxLength(8).IsRequired();
-            entity.Property(e => e.Nombres).HasColumnName("nombres").HasMaxLength(200).IsRequired();
-            entity.Property(e => e.ApellidoPaterno).HasColumnName("apellido_paterno").HasMaxLength(100).IsRequired();
-            entity.Property(e => e.ApellidoMaterno).HasColumnName("apellido_materno").HasMaxLength(100).IsRequired();
-            entity.Property(e => e.CorreoElectronico).HasColumnName("correo_electronico").HasMaxLength(200).IsRequired();
+            entity.Property(e => e.NroDni).HasColumnName("nro_dni").HasMaxLength(8);
+            entity.Property(e => e.Nombres).HasColumnName("nombres").HasMaxLength(200);
+            entity.Property(e => e.ApellidoPaterno).HasColumnName("apellido_paterno").HasMaxLength(100);
+            entity.Property(e => e.ApellidoMaterno).HasColumnName("apellido_materno").HasMaxLength(100);
+            entity.Property(e => e.CorreoElectronico).HasColumnName("correo_electronico").HasMaxLength(200);
             entity.Property(e => e.Telefono).HasColumnName("telefono").HasMaxLength(20);
             entity.Property(e => e.Rol).HasColumnName("rol").HasMaxLength(100);
             entity.Property(e => e.Cargo).HasColumnName("cargo").HasMaxLength(200);
-            entity.Property(e => e.FechaInicio).HasColumnName("fecha_inicio").IsRequired();
+            entity.Property(e => e.FechaInicio).HasColumnName("fecha_inicio");
             
             // Paso 2: Normativa
             entity.Property(e => e.DocumentoUrl).HasColumnName("documento_url").HasColumnType("text");

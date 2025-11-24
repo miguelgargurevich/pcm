@@ -46,7 +46,7 @@ public class CreateCumplimientoHandler : IRequestHandler<CreateCumplimientoComma
                 Telefono = request.Telefono,
                 Rol = request.Rol,
                 Cargo = request.Cargo,
-                FechaInicio = DateTime.SpecifyKind(request.FechaInicio, DateTimeKind.Utc),
+                FechaInicio = request.FechaInicio.HasValue ? DateTime.SpecifyKind(request.FechaInicio.Value, DateTimeKind.Utc) : DateTime.UtcNow,
                 
                 // Paso 2: Normativa
                 DocumentoUrl = request.DocumentoUrl,
@@ -58,6 +58,7 @@ public class CreateCumplimientoHandler : IRequestHandler<CreateCumplimientoComma
                 ValidacionLiderFuncionario = request.ValidacionLiderFuncionario,
                 ValidacionDesignacionArticulo = request.ValidacionDesignacionArticulo,
                 ValidacionFuncionesDefinidas = request.ValidacionFuncionesDefinidas,
+                CriteriosEvaluados = request.CriteriosEvaluados,
                 
                 // Paso 3: Confirmación
                 AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad,

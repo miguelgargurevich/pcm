@@ -122,10 +122,12 @@ public class CumplimientoNormativoController : ControllerBase
                 ValidacionLiderFuncionario = request.ValidacionLiderFuncionario,
                 ValidacionDesignacionArticulo = request.ValidacionDesignacionArticulo,
                 ValidacionFuncionesDefinidas = request.ValidacionFuncionesDefinidas,
+                CriteriosEvaluados = request.CriteriosEvaluados,
                 
                 AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad,
                 AceptaDeclaracionJurada = request.AceptaDeclaracionJurada,
                 
+                EtapaFormulario = request.EtapaFormulario,
                 Estado = request.Estado
             };
 

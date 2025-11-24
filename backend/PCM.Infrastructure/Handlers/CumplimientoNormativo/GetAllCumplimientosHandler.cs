@@ -129,6 +129,7 @@ public class GetAllCumplimientosHandler : IRequestHandler<GetAllCumplimientosQue
                     ValidacionLiderFuncionario = c.ValidacionLiderFuncionario,
                     ValidacionDesignacionArticulo = c.ValidacionDesignacionArticulo,
                     ValidacionFuncionesDefinidas = c.ValidacionFuncionesDefinidas,
+                    CriteriosEvaluados = c.CriteriosEvaluados,
                     AceptaPoliticaPrivacidad = c.AceptaPoliticaPrivacidad,
                     AceptaDeclaracionJurada = c.AceptaDeclaracionJurada,
                     EtapaFormulario = c.EtapaFormulario

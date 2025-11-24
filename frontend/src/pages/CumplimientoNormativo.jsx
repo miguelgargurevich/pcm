@@ -113,12 +113,12 @@ const CumplimientoNormativo = () => {
     setPaginaActual(1); // Reset página al limpiar filtros
   };
 
-  const handleVer = (cumplimientoId) => {
-    navigate(`/dashboard/cumplimiento/${cumplimientoId}?mode=view`);
+  const handleVer = (cumplimientoId, compromisoId) => {
+    navigate(`/dashboard/cumplimiento/${cumplimientoId}?compromiso=${compromisoId}&mode=view`);
   };
 
-  const handleEditar = (cumplimientoId) => {
-    navigate(`/dashboard/cumplimiento/${cumplimientoId}`);
+  const handleEditar = (cumplimientoId, compromisoId) => {
+    navigate(`/dashboard/cumplimiento/${cumplimientoId}?compromiso=${compromisoId}`);
   };
 
   const getEstadoBadgeClass = (estadoId) => {
@@ -297,7 +297,7 @@ const CumplimientoNormativo = () => {
                               } else if (compromiso.compromisoId === 2) {
                                 navigate(`/dashboard/cumplimiento/nuevo?compromiso=2&mode=view`);
                               } else if (cumplimiento) {
-                                handleVer(cumplimiento.cumplimientoId);
+                                handleVer(cumplimiento.cumplimientoId, compromiso.compromisoId);
                               } else {
                                 navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`);
                               }
@@ -315,7 +315,7 @@ const CumplimientoNormativo = () => {
                               } else if (compromiso.compromisoId === 2) {
                                 navigate(`/dashboard/cumplimiento/nuevo?compromiso=2`);
                               } else if (cumplimiento) {
-                                handleEditar(cumplimiento.cumplimientoId);
+                                handleEditar(cumplimiento.cumplimientoId, compromiso.compromisoId);
                               } else {
                                 navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`);
                               }
