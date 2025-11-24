@@ -80,8 +80,26 @@ export const getCatalogoOptions = async (nombreTabla) => {
   }));
 };
 
+/**
+ * Obtiene un valor de configuración específico desde tabla_tablas
+ * @param {string} nombreTabla - Nombre de la tabla de configuración (ej: CONFIG_DOCUMENTOS)
+ * @param {string} columnaId - ID de la columna a buscar (ej: URL_POL_PRIVACIDAD)
+ * @returns {Promise<string|null>} Valor de configuración o null si no existe
+ */
+export const getConfigValue = async (nombreTabla, columnaId) => {
+  try {
+    const items = await getCatalogo(nombreTabla);
+    const item = items.find(i => i.columnaId === columnaId);
+    return item ? item.valor : null;
+  } catch (error) {
+    console.error(`[Catálogo] Error getting config ${nombreTabla}.${columnaId}:`, error);
+    return null;
+  }
+};
+
 export default {
   getCatalogo,
   getCatalogoOptions,
+  getConfigValue,
   clearCatalogoCache
 };

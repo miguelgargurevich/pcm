@@ -39,7 +39,6 @@ public class UpdateCom2CGTDHandler : IRequestHandler<UpdateCom2CGTDCommand, Resu
             entity.EstadoPcm = request.EstadoPcm;
             entity.ObservacionesPcm = request.ObservacionesPcm;
             entity.UrlDocPcm = request.UrlDocUrl;
-            entity.CriteriosEvaluados = request.CriteriosEvaluados;
 
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -154,7 +153,6 @@ public class UpdateCom2CGTDHandler : IRequestHandler<UpdateCom2CGTDCommand, Resu
                 UsuarioRegistra = entity.UsuarioRegistra,
                 Activo = entity.Activo,
                 UrlDocPcm = entity.UrlDocPcm,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 Miembros = miembrosResponse
             };
 

@@ -31,6 +31,7 @@ public class CreateCumplimientoRequest
     public bool ValidacionLiderFuncionario { get; set; }
     public bool ValidacionDesignacionArticulo { get; set; }
     public bool ValidacionFuncionesDefinidas { get; set; }
+    public string? CriteriosEvaluados { get; set; } // JSON
     
     // Paso 3: Confirmación
     public bool AceptaPoliticaPrivacidad { get; set; }
@@ -63,11 +64,13 @@ public class UpdateCumplimientoRequest
     public bool ValidacionLiderFuncionario { get; set; }
     public bool ValidacionDesignacionArticulo { get; set; }
     public bool ValidacionFuncionesDefinidas { get; set; }
+    public string? CriteriosEvaluados { get; set; } // JSON
     
     // Paso 3: Confirmación
     public bool AceptaPoliticaPrivacidad { get; set; }
     public bool AceptaDeclaracionJurada { get; set; }
     
+    public string? EtapaFormulario { get; set; }
     public int Estado { get; set; }
 }
 
@@ -108,12 +111,14 @@ public class CumplimientoResponseDto
     public bool ValidacionLiderFuncionario { get; set; }
     public bool ValidacionDesignacionArticulo { get; set; }
     public bool ValidacionFuncionesDefinidas { get; set; }
+    public string? CriteriosEvaluados { get; set; } // JSON
     
     // Paso 3: Confirmación
     public bool AceptaPoliticaPrivacidad { get; set; }
     public bool AceptaDeclaracionJurada { get; set; }
     
     // Metadatos
+    public string? EtapaFormulario { get; set; }
     public int Estado { get; set; } // 1=bandeja, 2=sin_reportar, 3=publicado
     public string? EstadoNombre { get; set; } // Para mostrar en UI
     public bool Activo { get; set; }
@@ -133,5 +138,18 @@ public class CumplimientoListItemDto
     public string EstadoNombre { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    
+    // Documento y validaciones (Paso 2)
+    public string? DocumentoUrl { get; set; }
     public bool TieneDocumento { get; set; }
+    public bool ValidacionResolucionAutoridad { get; set; }
+    public bool ValidacionLiderFuncionario { get; set; }
+    public bool ValidacionDesignacionArticulo { get; set; }
+    public bool ValidacionFuncionesDefinidas { get; set; }
+    
+    // Aceptaciones (Paso 3)
+    public bool AceptaPoliticaPrivacidad { get; set; }
+    public bool AceptaDeclaracionJurada { get; set; }
+    
+    public string? EtapaFormulario { get; set; }
 }

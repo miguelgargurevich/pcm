@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PCM.Domain.Entities;
 
@@ -34,11 +35,15 @@ public class CumplimientoNormativo
     public string? DocumentoTipo { get; set; }
     public DateTime? DocumentoFechaSubida { get; set; }
     
-    // Checkboxes de Validación
+    // Checkboxes de Validación (fijos - 4 validaciones comunes)
     public bool ValidacionResolucionAutoridad { get; set; }
     public bool ValidacionLiderFuncionario { get; set; }
     public bool ValidacionDesignacionArticulo { get; set; }
     public bool ValidacionFuncionesDefinidas { get; set; }
+    
+    // Criterios de Evaluación dinámicos (JSON)
+    [Column("criterios_evaluados", TypeName = "jsonb")]
+    public string? CriteriosEvaluados { get; set; }
     
     // ============================================
     // PASO 3: CONFIRMACIÓN
@@ -49,6 +54,8 @@ public class CumplimientoNormativo
     // ============================================
     // METADATOS
     // ============================================
+    [Column("etapa_formulario")]
+    public string EtapaFormulario { get; set; } = "paso1"; // paso1, paso2, paso3, completado
     public int Estado { get; set; } = 1; // 1=bandeja, 2=sin_reportar, 3=publicado
     public bool Activo { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

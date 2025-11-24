@@ -53,7 +53,6 @@ public class GetCom6MigracionGobPeHandler : IRequestHandler<GetCom6MigracionGobP
                 TipoMigracionGobPe = entity.TipoMigracionGobPe,
                 ObservacionGobPe = entity.ObservacionGobPe,
                 RutaPdfGobPe = entity.RutaPdfGobPe,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
                 CheckDdjj = entity.CheckDdjj,
                 EstadoPCM = entity.EstadoPCM,

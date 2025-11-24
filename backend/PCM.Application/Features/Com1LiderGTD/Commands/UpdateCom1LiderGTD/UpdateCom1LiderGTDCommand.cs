@@ -21,9 +21,8 @@ public class UpdateCom1LiderGTDCommand : IRequest<Result<Com1LiderGTDResponse>>
     public string? CargoLider { get; set; }
     public DateTime? FecIniLider { get; set; }
     
-    // Documento y criterios
+    // Documento
     public string? UrlDocUrl { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     
     // Aceptaciones
     public bool? CheckPrivacidad { get; set; }

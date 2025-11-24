@@ -30,6 +30,7 @@ public class GetCatalogoHandler : IRequestHandler<GetCatalogoQuery, Result<List<
                 .Select(t => new CatalogoItemResponse
                 {
                     Id = t.ColumnaId,
+                    ColumnaId = t.ColumnaId,
                     Valor = t.Valor,
                     Descripcion = t.Descripcion,
                     Orden = t.Orden

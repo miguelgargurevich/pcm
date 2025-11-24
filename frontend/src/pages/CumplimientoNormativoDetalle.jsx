@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import cumplimientoService from '../services/cumplimientoService';
 import com1LiderGTDService from '../services/com1LiderGTDService';
 import com2CGTDService from '../services/com2CGTDService';
+// import com3EstrategiaGobiernoPeService from '../services/com3EstrategiaGobiernoPeService'; // TODO: Crear este servicio
 import com4PEIService from '../services/com4PEIService';
 import com5EstrategiaDigitalService from '../services/com5EstrategiaDigitalService';
 import com6MigracionGobPeService from '../services/com6MigracionGobPeService';
@@ -22,7 +23,7 @@ import com19EncuestaNacionalGobDigitalService from '../services/com19EncuestaNac
 import com20DigitalizacionServiciosFacilitaService from '../services/com20DigitalizacionServiciosFacilitaService';
 import com21OficialGobiernoDatosService from '../services/com21OficialGobiernoDatosService';
 import { compromisosService } from '../services/compromisosService';
-import { getCatalogoOptions } from '../services/catalogoService';
+import { getCatalogoOptions, getConfigValue } from '../services/catalogoService';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
 import PDFViewer from '../components/PDFViewer';
 import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save, Eye, ExternalLink, Plus, Trash2, Edit2 } from 'lucide-react';
@@ -40,7 +41,6 @@ const CumplimientoNormativoDetalle = () => {
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [pasoActual, setPasoActual] = useState(1);
-  const [com1RecordId, setCom1RecordId] = useState(null); // ID del registro en com1_liderg_td
   const [com2RecordId, setCom2RecordId] = useState(null); // ID del registro en com2_cgtd
   const [com4RecordId, setCom4RecordId] = useState(null); // ID del registro en com4_pei
   const [com5RecordId, setCom5RecordId] = useState(null); // ID del registro en com5_estrategia_digital
@@ -81,7 +81,6 @@ const CumplimientoNormativoDetalle = () => {
   const [compromisoSeleccionado, setCompromisoSeleccionado] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null); // PDF principal (Paso 1)
   const [pdfUrlPaso2, setPdfUrlPaso2] = useState(null); // PDF para Paso 2 (cumplimiento normativo)
-  // const [pdfUrl2, setPdfUrl2] = useState(null); // Para Com16 segundo PDF
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [documentoActualUrl, setDocumentoActualUrl] = useState(null); // URL del documento que se está viendo
   const [haVistoPolitica, setHaVistoPolitica] = useState(false);
@@ -92,9 +91,9 @@ const CumplimientoNormativoDetalle = () => {
   const [rolesComite, setRolesComite] = useState([]);
   const [loadingCatalogos, setLoadingCatalogos] = useState(true);
 
-  // URLs de los documentos en Supabase Storage
-  const POLITICA_PRIVACIDAD_URL = 'https://amzwfwfhllwhjffkqxhn.supabase.co/storage/v1/object/public/cumplimiento-documentos/politicas/politica-privacidad.pdf';
-  const DECLARACION_JURADA_URL = 'https://amzwfwfhllwhjffkqxhn.supabase.co/storage/v1/object/public/cumplimiento-documentos/politicas/declaracion-jurada.pdf';
+  // URLs de los documentos en Supabase Storage (cargadas dinámicamente desde BD)
+  const [POLITICA_PRIVACIDAD_URL, setPoliticaPrivacidadUrl] = useState('');
+  const [DECLARACION_JURADA_URL, setDeclaracionJuradaUrl] = useState('');
 
   // Formulario con los 3 pasos
   const [formData, setFormData] = useState({
@@ -142,17 +141,21 @@ const CumplimientoNormativoDetalle = () => {
 
   const [errores, setErrores] = useState({});
 
-  // Cargar catálogos al montar el componente
+  // Cargar catálogos y configuración al montar el componente
   useEffect(() => {
     const loadCatalogos = async () => {
       try {
         setLoadingCatalogos(true);
-        const [funcionario, comite] = await Promise.all([
+        const [funcionario, comite, urlPolitica, urlDeclaracion] = await Promise.all([
           getCatalogoOptions('ROL_FUNCIONARIO'),
-          getCatalogoOptions('ROL_COMITE')
+          getCatalogoOptions('ROL_COMITE'),
+          getConfigValue('CONFIG_DOCUMENTOS', 'URL_POL_PRIVACIDAD'),
+          getConfigValue('CONFIG_DOCUMENTOS', 'URL_DECL_JURADA')
         ]);
         setRolesFuncionario(funcionario);
         setRolesComite(comite);
+        setPoliticaPrivacidadUrl(urlPolitica || '');
+        setDeclaracionJuradaUrl(urlDeclaracion || '');
       } catch (error) {
         console.error('Error cargando catálogos:', error);
         showErrorToast('Error al cargar catálogos de roles');
@@ -205,10 +208,22 @@ const CumplimientoNormativoDetalle = () => {
         
         // Si viene compromisoId por URL, pre-seleccionarlo
         if (compromisoIdFromUrl) {
+          console.log('🔧 Estableciendo compromisoId desde URL:', compromisoIdFromUrl);
           const compromiso = compromisosArray.find(c => c.compromisoId === parseInt(compromisoIdFromUrl));
+          console.log('🔍 Compromiso encontrado:', compromiso);
           if (compromiso) {
             setCompromisoSeleccionado(compromiso);
-            setFormData(prev => ({ ...prev, compromisoId: compromisoIdFromUrl }));
+            // NO sobrescribir formData si ya tiene un compromisoId establecido (datos ya cargados)
+            setFormData(prev => {
+              if (prev.compromisoId && prev.compromisoId === compromisoIdFromUrl) {
+                console.log('⏭️ formData ya tiene compromisoId, no sobrescribir');
+                return prev;
+              }
+              console.log('🔧 Estado anterior de formData:', prev);
+              const newData = { ...prev, compromisoId: compromisoIdFromUrl };
+              console.log('🔧 Nuevo estado de formData:', newData);
+              return newData;
+            });
           }
         }
         
@@ -226,6 +241,65 @@ const CumplimientoNormativoDetalle = () => {
     }
   };
 
+  // Función común para cargar datos de Paso 2 y 3 desde cumplimiento_normativo
+  // RETORNA los datos en lugar de modificar el estado directamente
+  const loadCumplimientoNormativo = async (compromisoId) => {
+    try {
+      const cumplimientoResponse = await cumplimientoService.getAll({ 
+        compromisoId, 
+        entidadId: user.entidadId 
+      });
+      
+      if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+        const cumplimientoList = cumplimientoResponse.data || [];
+        const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+        
+        if (cumplimientoData) {
+          console.log(`📄 Datos de cumplimiento_normativo encontrados para Com${compromisoId}:`, cumplimientoData);
+          
+          setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
+          setHaVistoPolitica(cumplimientoData.aceptaPoliticaPrivacidad);
+          setHaVistoDeclaracion(cumplimientoData.aceptaDeclaracionJurada);
+          
+          // PDF de la sección 2
+          if (cumplimientoData.documentoUrl) {
+            console.log(`📄 Cargando PDF sección 2 para Com${compromisoId}:`, cumplimientoData.documentoUrl);
+            setPdfUrlPaso2(cumplimientoData.documentoUrl);
+          }
+          
+          // Parsear criterios evaluados si existen
+          let criteriosParsed = [];
+          if (cumplimientoData.criteriosEvaluados) {
+            try {
+              if (typeof cumplimientoData.criteriosEvaluados === 'string') {
+                criteriosParsed = JSON.parse(cumplimientoData.criteriosEvaluados);
+              } else if (Array.isArray(cumplimientoData.criteriosEvaluados)) {
+                criteriosParsed = cumplimientoData.criteriosEvaluados;
+              }
+              console.log('✅ Criterios evaluados cargados desde cumplimiento_normativo:', criteriosParsed);
+            } catch (e) {
+              console.error('❌ Error al parsear criterios evaluados:', e);
+            }
+          }
+          
+          return {
+            validacionResolucionAutoridad: cumplimientoData.validacionResolucionAutoridad || false,
+            validacionLiderFuncionario: cumplimientoData.validacionLiderFuncionario || false,
+            validacionDesignacionArticulo: cumplimientoData.validacionDesignacionArticulo || false,
+            validacionFuncionesDefinidas: cumplimientoData.validacionFuncionesDefinidas || false,
+            criteriosEvaluados: criteriosParsed,
+            aceptaPoliticaPrivacidad: cumplimientoData.aceptaPoliticaPrivacidad || false,
+            aceptaDeclaracionJurada: cumplimientoData.aceptaDeclaracionJurada || false
+          };
+        }
+      }
+      return null;
+    } catch (error) {
+      console.log(`ℹ️ No hay datos de cumplimiento_normativo para Com${compromisoId}:`, error.message);
+      return null;
+    }
+  };
+
   const loadCumplimiento = async () => {
     try {
       setLoading(true);
@@ -236,7 +310,133 @@ const CumplimientoNormativoDetalle = () => {
       console.log('🔍 loadCumplimiento - user:', user);
       console.log('🔍 loadCumplimiento - compromisoIdFromUrl:', compromisoIdFromUrl);
       
-      // COMPROMISO 2: Comité GTD
+      // COMPROMISO 1: Líder GTD (Usar tabla com1_liderg_td)
+      if (compromisoId === 1 && user?.entidadId) {
+        console.log('📞 Llamando Com1LiderGTD.getByEntidad con:', 1, user.entidadId);
+        const response = await com1LiderGTDService.getByEntidad(1, user.entidadId);
+        console.log('📦 Respuesta de Com1 getByEntidad:', response);
+        
+        if (response.isSuccess || response.success) {
+          const data = response.data;
+          console.log('📄 Datos Com1 recibidos:', data);
+          
+          if (data) {
+            setCom4RecordId(data.comlgtdEntId); // Usar com4RecordId para almacenar el ID
+            
+            // Cargar datos de cumplimiento_normativo (sección 2 y 3, incluye criterios)
+            const cumplimientoData = await loadCumplimientoNormativo(1);
+            console.log('✅ Datos cumplimiento retornados:', cumplimientoData);
+            
+            setFormData({
+              compromisoId: '1',
+              nroDni: data.dniLider || '',
+              nombres: data.nombreLider || '',
+              apellidoPaterno: data.apePatLider || '',
+              apellidoMaterno: data.apeMatLider || '',
+              correoElectronico: data.emailLider || '',
+              telefono: data.telefonoLider || '',
+              rol: data.rolLider || '',
+              cargo: data.cargoLider || '',
+              fechaInicio: data.fecIniLider ? data.fecIniLider.split('T')[0] : '',
+              documentoFile: null,
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
+              // Integrar validaciones y aceptaciones desde cumplimiento_normativo
+              validacionResolucionAutoridad: cumplimientoData?.validacionResolucionAutoridad || false,
+              validacionLiderFuncionario: cumplimientoData?.validacionLiderFuncionario || false,
+              validacionDesignacionArticulo: cumplimientoData?.validacionDesignacionArticulo || false,
+              validacionFuncionesDefinidas: cumplimientoData?.validacionFuncionesDefinidas || false,
+              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            // Si hay documento guardado, establecer la URL para Paso 1
+            if (data.urlDocPcm) {
+              console.log('📄 Cargando PDF del Líder GTD desde:', data.urlDocPcm);
+              setPdfUrl(data.urlDocPcm);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '1' }));
+          }
+          setLoading(false);
+          return;
+        }
+      }
+      
+      // COMPROMISO 3: Estrategia Gobierno Digital Perú (Usar tabla com3_epgd)
+      // TODO: Implementar cuando exista el servicio com3EstrategiaGobiernoPeService
+      /* if (compromisoId === 3 && user?.entidadId) {
+        console.log('📞 Llamando Com3EstrategiaGobPe.getByEntidad con:', 3, user.entidadId);
+        const response = await com3EstrategiaGobiernoPeService.getByEntidad(3, user.entidadId);
+        console.log('📦 Respuesta de Com3 getByEntidad:', response);
+        
+        if (response.isSuccess || response.success) {
+          const data = response.data;
+          console.log('📄 Datos Com3 recibidos:', data);
+          
+          if (data) {
+            // Guardar el ID del registro
+            setCom5RecordId(data.comepgdEntId); // Usar com5RecordId para almacenar el ID
+            
+            // Cargar datos de cumplimiento_normativo (sección 2 y 3, incluye criterios)
+            const cumplimientoData = await loadCumplimientoNormativo(3);
+            console.log('✅ Datos cumplimiento retornados para Com3:', cumplimientoData);
+            
+            setFormData({
+              compromisoId: '3',
+              documentoFile: null,
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
+              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || data.checkDdjj || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            setHaVistoPolitica(data.checkPrivacidad);
+            setHaVistoDeclaracion(data.checkDdjj);
+            
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
+            if (data.urlDocPcm) {
+              console.log('📄 Cargando PDF de Estrategia Gob Digital (Paso 1) desde:', data.urlDocPcm);
+              setPdfUrl(data.urlDocPcm);
+            }
+            
+            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
+            try {
+              const cumplimientoResponse = await cumplimientoService.getAll({ 
+                compromisoId: 3, 
+                entidadId: user.entidadId 
+              });
+              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                const cumplimientoList = cumplimientoResponse.data || [];
+                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                if (cumplimientoData) {
+                  console.log('📄 Datos de cumplimiento (Paso 2) encontrados:', cumplimientoData);
+                  // Guardar el ID del registro de cumplimiento normativo
+                  if (cumplimientoData.cumplimientoId) {
+                    console.log('📋 ID Cumplimiento Normativo:', cumplimientoData.cumplimientoId);
+                    setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
+                  }
+                  // Cargar PDF de Paso 2 si existe
+                  if (cumplimientoData.documentoUrl) {
+                    console.log('📄 Cargando PDF Paso 2:', cumplimientoData.documentoUrl);
+                    setPdfUrlPaso2(cumplimientoData.documentoUrl);
+                  }
+                }
+              }
+            } catch (error) {
+              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '3' }));
+          }
+          setLoading(false);
+          return;
+        }
+      } */
+      
+      // COMPROMISO 2: Comité GTD (Usar tabla com2_cgtd para Paso 1)
       if (compromisoId === 2 && user?.entidadId) {
         console.log('📞 Llamando Com2CGTD.getByEntidad con:', 2, user.entidadId);
         const response = await com2CGTDService.getByEntidad(2, user.entidadId);
@@ -249,23 +449,17 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom2RecordId(data.comcgtdEntId);
             
-            // Cargar miembros del comité
+            // Cargar miembros del comité (Paso 1)
             if (data.miembros && Array.isArray(data.miembros)) {
               console.log('👥 Miembros cargados:', data.miembros);
               setMiembrosComite(data.miembros);
             }
             
-            // Parsear criterios evaluados
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar datos de cumplimiento_normativo (sección 2 y 3)
+            const cumplimientoData = await loadCumplimientoNormativo(2);
+            console.log('✅ Datos cumplimiento retornados:', cumplimientoData);
             
+            // Establecer formData completo (IDÉNTICO a Com1)
             setFormData({
               compromisoId: '2',
               nroDni: '',
@@ -278,18 +472,20 @@ const CumplimientoNormativoDetalle = () => {
               cargo: '',
               fechaInicio: '',
               documentoFile: null,
-              criteriosEvaluados: criteriosParsed,
-              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
-              aceptaDeclaracionJurada: data.checkDdjj || false,
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
+              // Integrar validaciones y aceptaciones desde cumplimiento_normativo
+              validacionResolucionAutoridad: cumplimientoData?.validacionResolucionAutoridad || false,
+              validacionLiderFuncionario: cumplimientoData?.validacionLiderFuncionario || false,
+              validacionDesignacionArticulo: cumplimientoData?.validacionDesignacionArticulo || false,
+              validacionFuncionesDefinidas: cumplimientoData?.validacionFuncionesDefinidas || false,
+              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(data.checkPrivacidad);
-            setHaVistoDeclaracion(data.checkDdjj);
-            
-            // Si hay documento guardado
+            // Si hay documento guardado en com2_cgtd, establecer la URL para Paso 1
             if (data.urlDocPcm) {
-              console.log('📄 Cargando PDF guardado desde:', data.urlDocPcm);
+              console.log('📄 Cargando PDF del Comité GTD desde:', data.urlDocPcm);
               setPdfUrl(data.urlDocPcm);
             }
           } else {
@@ -315,16 +511,9 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom4RecordId(data.comtdpeiEntId);
             
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar datos de cumplimiento_normativo (sección 2 y 3, incluye criterios)
+            const cumplimientoData = await loadCumplimientoNormativo(4);
+            console.log('✅ Datos cumplimiento retornados para Com4:', cumplimientoData);
             
             setFormData({
               compromisoId: '4',
@@ -335,9 +524,9 @@ const CumplimientoNormativoDetalle = () => {
               descripcionIncorporacion: data.descripcionPei || '',
               alineadoPgd: data.alineadoPgd || false,
               documentoFile: null,
-              criteriosEvaluados: criteriosParsed,
-              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
-              aceptaDeclaracionJurada: data.checkDdjj || false,
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
+              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
@@ -405,16 +594,8 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom5RecordId(data.comdedEntId);
             
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar criterios evaluados desde cumplimiento_normativo
+            const cumplimientoData = await loadCumplimientoNormativo(5);
             
             setFormData({
               compromisoId: '5',
@@ -427,7 +608,7 @@ const CumplimientoNormativoDetalle = () => {
               alineadoPgd: data.alineadoPgdEstrategia || false,
               estadoImplementacion: data.estadoImplementacionEstrategia || '',
               documentoFile: null,
-              criteriosEvaluados: criteriosParsed,
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -497,16 +678,8 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom6RecordId(data.commpgobpeEntId);
             
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar criterios evaluados desde cumplimiento_normativo
+            const cumplimientoData = await loadCumplimientoNormativo(6);
             
             setFormData({
               compromisoId: '6',
@@ -519,7 +692,7 @@ const CumplimientoNormativoDetalle = () => {
               tipoMigracion: data.tipoMigracionGobpe || '',
               observacionesMigracion: data.observacionGobpe || '',
               documentoFile: null,
-              criteriosEvaluados: criteriosParsed,
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -584,16 +757,8 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom7RecordId(data.comimpdEntId);
             
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar criterios evaluados desde cumplimiento_normativo
+            const cumplimientoData = await loadCumplimientoNormativo(7);
             
             setFormData({
               compromisoId: '7',
@@ -607,7 +772,7 @@ const CumplimientoNormativoDetalle = () => {
               interoperabilidadMpd: data.interoperabilidadMpd || false,
               observacionesMpd: data.observacionMpd || '',
               documentoFile: null,
-              criteriosEvaluados: criteriosParsed,
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -672,16 +837,8 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom8RecordId(data.comptupaEntId);
             
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar criterios evaluados desde cumplimiento_normativo
+            const cumplimientoData = await loadCumplimientoNormativo(8);
             
             setFormData({
               compromisoId: '8',
@@ -695,7 +852,7 @@ const CumplimientoNormativoDetalle = () => {
               actualizadoTupa: data.actualizadoTupa || false,
               observacionesTupa: data.observacionTupa || '',
               documentoFile: null,
-              criteriosEvaluados: criteriosParsed,
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -760,16 +917,8 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom9RecordId(data.commgdEntId);
             
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar criterios evaluados desde cumplimiento_normativo
+            const cumplimientoData = await loadCumplimientoNormativo(9);
             
             setFormData({
               compromisoId: '9',
@@ -784,7 +933,7 @@ const CumplimientoNormativoDetalle = () => {
               interoperaSistemasMgd: data.interoperaSistemasMgd || false,
               observacionesMgd: data.observacionMgd || '',
               documentoFile: null,
-              criteriosEvaluados: criteriosParsed,
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -849,16 +998,8 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom10RecordId(data.comdaEntId);
             
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar criterios evaluados desde cumplimiento_normativo
+            const cumplimientoData = await loadCumplimientoNormativo(10);
             
             setFormData({
               compromisoId: '10',
@@ -873,7 +1014,7 @@ const CumplimientoNormativoDetalle = () => {
               fechaAprobacionDa: data.fechaAprobacionDa ? data.fechaAprobacionDa.split('T')[0] : '',
               observacionesDa: data.observacionDa || '',
               documentoFile: null,
-              criteriosEvaluados: criteriosParsed,
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -1216,16 +1357,8 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom15RecordId(data.comcsirtEntId);
             
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar criterios evaluados desde cumplimiento_normativo
+            const cumplimientoData = await loadCumplimientoNormativo(15);
             
             setFormData({
               compromisoId: '15',
@@ -1235,6 +1368,7 @@ const CumplimientoNormativoDetalle = () => {
               emailContacto: data.emailContacto || '',
               telefonoContacto: data.telefonoContacto || '',
               descripcion: data.descripcion || '',
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -1282,16 +1416,8 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom16RecordId(data.comsgsiEntId);
             
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar criterios evaluados desde cumplimiento_normativo
+            const cumplimientoData = await loadCumplimientoNormativo(16);
             
             setFormData({
               compromisoId: '16',
@@ -1301,6 +1427,7 @@ const CumplimientoNormativoDetalle = () => {
               fechaCertificacion: data.fechaCertificacion ? data.fechaCertificacion.split('T')[0] : '',
               descripcion: data.descripcion || '',
               alcance: data.alcance || '',
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -1348,16 +1475,8 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom17RecordId(data.comptipv6EntId);
             
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar criterios evaluados desde cumplimiento_normativo
+            const cumplimientoData = await loadCumplimientoNormativo(17);
             
             setFormData({
               compromisoId: '17',
@@ -1367,6 +1486,7 @@ const CumplimientoNormativoDetalle = () => {
               sistemasMigrados: data.sistemasMigrados || '',
               sistemasTotal: data.sistemasTotal || '',
               descripcion: data.descripcion || '',
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -1420,16 +1540,8 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom18RecordId(data.comapteEntId);
             
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar criterios evaluados desde cumplimiento_normativo
+            const cumplimientoData = await loadCumplimientoNormativo(18);
             
             setFormData({
               compromisoId: '18',
@@ -1439,6 +1551,7 @@ const CumplimientoNormativoDetalle = () => {
               usuariosRegistrados: data.usuariosRegistrados || '',
               tramitesProcesados: data.tramitesProcesados || '',
               descripcion: data.descripcion || '',
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -1492,16 +1605,8 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom19RecordId(data.comenadEntId);
             
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar criterios evaluados desde cumplimiento_normativo
+            const cumplimientoData = await loadCumplimientoNormativo(19);
             
             setFormData({
               compromisoId: '19',
@@ -1510,6 +1615,7 @@ const CumplimientoNormativoDetalle = () => {
               anchoBanda: data.anchoBanda || '',
               proveedor: data.proveedor || '',
               descripcion: data.descripcion || '',
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -1563,16 +1669,8 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom20RecordId(data.comdsfpEntId);
             
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar criterios evaluados desde cumplimiento_normativo
+            const cumplimientoData = await loadCumplimientoNormativo(20);
             
             setFormData({
               compromisoId: '20',
@@ -1580,6 +1678,7 @@ const CumplimientoNormativoDetalle = () => {
               sistemasTotal: data.sistemasTotal || '',
               porcentajeDocumentacion: data.porcentajeDocumentacion || '',
               descripcion: data.descripcion || '',
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -1633,16 +1732,8 @@ const CumplimientoNormativoDetalle = () => {
           if (data) {
             setCom21RecordId(data.comogdEntId);
             
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+            // Cargar criterios evaluados desde cumplimiento_normativo
+            const cumplimientoData = await loadCumplimientoNormativo(21);
             
             setFormData({
               compromisoId: '21',
@@ -1652,6 +1743,7 @@ const CumplimientoNormativoDetalle = () => {
               procedimientos: data.procedimientos || '',
               responsables: data.responsables || '',
               fechaVigencia: data.fechaVigencia ? data.fechaVigencia.split('T')[0] : '',
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -1692,64 +1784,47 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
       
-      // COMPROMISO 1: Líder GTD
-      if (compromisoId === 1 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 1, user.entidadId);
-        const response = await com1LiderGTDService.getByEntidad(1, user.entidadId);
-        console.log('📦 Respuesta de getByEntidad:', response);
+      // COMPROMISOS 1, 2, 3: Cargar desde cumplimiento_normativo (tabla genérica)
+      if ((compromisoId >= 1 && compromisoId <= 3) && user?.entidadId) {
+        console.log(`📞 Cargando Compromiso ${compromisoId} desde cumplimiento_normativo`);
         
-        if (response.isSuccess || response.success) {
-          const data = response.data;
-          console.log('📄 Datos recibidos:', data);
-          
-          if (data) {
-            // Mapear campos de Com1 a formData
-            setCom1RecordId(data.comlgtdEntId);
-            
-            // Parsear criterios evaluados desde JSON
-            let criteriosParsed = [];
-            if (data.criteriosEvaluados) {
-              try {
-                criteriosParsed = JSON.parse(data.criteriosEvaluados);
-                console.log('✅ Criterios cargados:', criteriosParsed);
-              } catch (e) {
-                console.error('❌ Error al parsear criterios:', e);
-              }
-            }
+        // Si viene ID por URL, cargar por ID
+        if (id) {
+          const response = await cumplimientoService.getById(id);
+          if (response.isSuccess || response.success) {
+            const data = response.data;
+            console.log('📄 Datos de cumplimiento cargados:', data);
             
             setFormData({
-              compromisoId: '1',
-              nroDni: data.dniLider || '',
-              nombres: data.nombreLider || '',
-              apellidoPaterno: data.apePatLider || '',
-              apellidoMaterno: data.apeMatLider || '',
-              correoElectronico: data.emailLider || '',
-              telefono: data.telefonoLider || '',
-              rol: data.rolLider || '',
-              cargo: data.cargoLider || '',
-              fechaInicio: data.fecIniLider ? data.fecIniLider.split('T')[0] : '',
+              compromisoId: String(compromisoId),
+              nroDni: data.nroDni || '',
+              nombres: data.nombres || '',
+              apellidoPaterno: data.apellidoPaterno || '',
+              apellidoMaterno: data.apellidoMaterno || '',
+              correoElectronico: data.correoElectronico || '',
+              telefono: data.telefono || '',
+              rol: data.rol || '',
+              cargo: data.cargo || '',
+              fechaInicio: data.fechaInicio ? data.fechaInicio.split('T')[0] : '',
               documentoFile: null,
-              criteriosEvaluados: criteriosParsed,
-              aceptaPoliticaPrivacidad: data.checkPrivacidad || false,
-              aceptaDeclaracionJurada: data.checkDdjj || false,
-              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+              criteriosEvaluados: data.criteriosEvaluados || [],
+              aceptaPoliticaPrivacidad: data.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: data.aceptaDeclaracionJurada || false,
+              estado: data.estado || 1
             });
             
-            setHaVistoPolitica(data.checkPrivacidad);
-            setHaVistoDeclaracion(data.checkDdjj);
+            setHaVistoPolitica(data.aceptaPoliticaPrivacidad);
+            setHaVistoDeclaracion(data.aceptaDeclaracionJurada);
             
-            // Si hay documento guardado, establecer la URL para vista previa
-            if (data.urlDocPcm) {
-              console.log('📄 Cargando PDF guardado desde:', data.urlDocPcm);
-              setPdfUrl(data.urlDocPcm);
+            // Cargar PDF en Paso 2
+            if (data.documentoUrl) {
+              console.log('📄 Cargando PDF del Paso 2 desde:', data.documentoUrl);
+              setPdfUrlPaso2(data.documentoUrl);
             }
-          } else {
-            // No existe registro, inicializar con valores predeterminados
-            setFormData(prev => ({ ...prev, compromisoId: '1' }));
           }
-          setLoading(false);
-          return;
         }
+        setLoading(false);
+        return;
       }
       
       // Si llegamos aquí sin ID, significa que es un compromiso especial sin registro aún
@@ -2227,7 +2302,7 @@ const CumplimientoNormativoDetalle = () => {
     }
 
     if (paso === 2) {
-      if (!isEdit && !formData.documentoFile && !pdfUrl) {
+      if (!formData.documentoFile && !pdfUrlPaso2) {
         nuevosErrores.documentoFile = 'Debe adjuntar el documento normativo (PDF)';
       }
       // Validar que todos los criterios activos del compromiso estén marcados
@@ -2283,7 +2358,6 @@ const CumplimientoNormativoDetalle = () => {
       console.log('Compromiso ID:', formData.compromisoId);
       console.log('User:', user);
       console.log('Paso actual:', pasoActual);
-      console.log('com1RecordId:', com1RecordId);
       console.log('formData.documentoFile:', formData.documentoFile);
       console.log('pdfUrl:', pdfUrl);
 
@@ -2342,21 +2416,13 @@ const CumplimientoNormativoDetalle = () => {
 
       let response;
       
-      // Si es Compromiso 1, usar API específica
-      if (parseInt(formData.compromisoId) === 1) {
-        console.log('Es Compromiso 1 - Usando API específica');
-        
-        // Convertir fecha al formato ISO si existe
-        let fechaIso = null;
-        if (formData.fechaInicio) {
-          fechaIso = new Date(formData.fechaInicio + 'T00:00:00').toISOString();
-        }
+      // COMPROMISO 1: Guardar datos del líder en com1_liderg_td (Paso 1)
+      if (parseInt(formData.compromisoId) === 1 && pasoActual === 1) {
+        console.log('🔄 Compromiso 1 - Guardando datos del líder en com1_liderg_td');
         
         const com1Data = {
           compromisoId: 1,
-          entidadId: user.entidadId, // UUID de la entidad del usuario
-          etapaFormulario: pasoActual === 3 ? 'completado' : `paso${pasoActual}`,
-          estado: formData.estado === 1 ? 'bandeja' : formData.estado === 2 ? 'sin_reportar' : 'publicado',
+          entidadId: user.entidadId,
           dniLider: formData.nroDni,
           nombreLider: formData.nombres,
           apePatLider: formData.apellidoPaterno,
@@ -2365,129 +2431,191 @@ const CumplimientoNormativoDetalle = () => {
           telefonoLider: formData.telefono,
           rolLider: formData.rol,
           cargoLider: formData.cargo,
-          fecIniLider: fechaIso,
-          urlDocUrl: documentoUrl, // URL del PDF subido a Supabase Storage
-          criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados), // Serializar a JSON
-          checkPrivacidad: formData.aceptaPoliticaPrivacidad,
-          checkDdjj: formData.aceptaDeclaracionJurada
+          fecIniLider: formData.fechaInicio,
+          checkPrivacidad: false,
+          checkDdjj: false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: 'paso1',
+          estado: 'bandeja'
         };
         
-        console.log('Datos Com1 a enviar:', com1Data);
+        console.log('Datos Com1 (líder) a enviar:', com1Data);
         
-        if (com1RecordId) {
-          // Actualizar registro existente
-          console.log('Actualizando registro existente:', com1RecordId);
-          response = await com1LiderGTDService.update(com1RecordId, com1Data);
+        if (com4RecordId) { // Usamos com4RecordId para almacenar el ID de Com1
+          console.log('Actualizando registro Com1 existente:', com4RecordId);
+          response = await com1LiderGTDService.update(com4RecordId, com1Data);
         } else {
-          // Crear nuevo registro
           console.log('Creando nuevo registro Com1');
           response = await com1LiderGTDService.create(com1Data);
-          console.log('Respuesta create:', response);
+          console.log('Respuesta create Com1:', response);
           if (response.isSuccess && response.data) {
-            console.log('ID del nuevo registro:', response.data.comlgtdEntId);
-            setCom1RecordId(response.data.comlgtdEntId);
+            console.log('ID del nuevo registro Com1:', response.data.id);
+            setCom4RecordId(response.data.id); // Guardar el ID
           }
         }
         
         console.log('Respuesta final Com1:', response);
-        
-        // Actualizar el estado local con los datos guardados (incluyendo URLs de Supabase)
-        if (response.isSuccess && response.data) {
-          console.log('✅ Actualizando estado local con datos guardados');
-          console.log('📄 URL del PDF guardado:', response.data.urlDocPcm);
-          console.log('✓ Criterios guardados:', response.data.criteriosEvaluados);
-          
-          // Si hay URL del documento, actualizar pdfUrl
-          if (response.data.urlDocPcm) {
-            setPdfUrl(response.data.urlDocPcm);
-            // Si subimos un archivo nuevo, revocar el blob URL ahora que ya actualizamos el estado
-            if (blobUrlToRevoke) {
-              console.log('🧹 Revocando blob URL antiguo después de guardar:', blobUrlToRevoke);
-              URL.revokeObjectURL(blobUrlToRevoke);
-            }
-          }
-          
-          // Actualizar formData con los criterios guardados
-          if (response.data.criteriosEvaluados) {
-            try {
-              const criteriosParsed = JSON.parse(response.data.criteriosEvaluados);
-              console.log('✓ Criterios parseados:', criteriosParsed);
-              setFormData(prev => ({
-                ...prev,
-                criteriosEvaluados: criteriosParsed
-              }));
-            } catch (e) {
-              console.error('❌ Error al parsear criterios guardados:', e);
-            }
-          }
-        }
-      } 
-      // Si es Compromiso 2, usar API específica
-      else if (parseInt(formData.compromisoId) === 2) {
-        console.log('Es Compromiso 2 - Usando API específica');
+      }
+      
+      // COMPROMISO 2: Guardar miembros del comité en com2_cgtd (Paso 1)
+      if (parseInt(formData.compromisoId) === 2 && pasoActual === 1) {
+        console.log('🔄 Compromiso 2 - Guardando miembros del comité en com2_cgtd');
         
         const com2Data = {
           compromisoId: 2,
           entidadId: user.entidadId,
-          etapaFormulario: pasoActual === 3 ? 'completado' : `paso${pasoActual}`,
-          estado: formData.estado === 1 ? 'bandeja' : formData.estado === 2 ? 'sin_reportar' : 'publicado',
-          urlDocUrl: documentoUrl,
-          criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados),
-          checkPrivacidad: formData.aceptaPoliticaPrivacidad,
-          checkDdjj: formData.aceptaDeclaracionJurada,
-          miembros: miembrosComite.map(m => ({
-            miembroId: m.miembroId || null,
-            dni: m.dni,
-            nombre: m.nombre,
-            apellidoPaterno: m.apellidoPaterno,
-            apellidoMaterno: m.apellidoMaterno,
-            cargo: m.cargo,
-            rol: m.rol,
-            email: m.email,
-            telefono: m.telefono,
-            activo: true
-          }))
+          miembros: miembrosComite,
+          checkPrivacidad: false,
+          checkDdjj: false,
+          usuarioRegistra: user.usuarioId,
+          etapaFormulario: 'paso1',
+          estado: 'bandeja'
         };
         
-        console.log('Datos Com2 a enviar:', com2Data);
+        console.log('Datos Com2 (miembros) a enviar:', com2Data);
         
         if (com2RecordId) {
-          console.log('Actualizando registro existente Com2:', com2RecordId);
+          console.log('Actualizando registro Com2 existente:', com2RecordId);
           response = await com2CGTDService.update(com2RecordId, com2Data);
         } else {
           console.log('Creando nuevo registro Com2');
           response = await com2CGTDService.create(com2Data);
           console.log('Respuesta create Com2:', response);
           if (response.isSuccess && response.data) {
-            console.log('ID del nuevo registro Com2:', response.data.comcgtdEntId);
-            setCom2RecordId(response.data.comcgtdEntId);
+            console.log('ID del nuevo registro Com2:', response.data.id);
+            setCom2RecordId(response.data.id);
           }
         }
         
         console.log('Respuesta final Com2:', response);
-        
-        // Actualizar estado local con datos guardados
-        if (response.isSuccess && response.data) {
-          console.log('✅ Actualizando estado local Com2');
+      }
+      
+      // Compromisos 1, 2 y 3: Usar cumplimientoService con patrón genérico de 3 pasos
+      // Para Compromiso 1, solo se usa en Paso 2 y 3 (Paso 1 usa com1_liderg_td)
+      // Para Compromiso 2, solo se usa en Paso 2 y 3 (Paso 1 usa com2_cgtd)
+      if (parseInt(formData.compromisoId) >= 1 && parseInt(formData.compromisoId) <= 3) {
+        // Para Compromiso 1, omitir en Paso 1 (ya se guardó en com1_liderg_td arriba)
+        if (parseInt(formData.compromisoId) === 1 && pasoActual === 1) {
+          console.log('⏭️ Compromiso 1 Paso 1 - Ya guardado en com1_liderg_td, omitir cumplimientoService');
+        }
+        // Para Compromiso 2, omitir en Paso 1 (ya se guardó en com2_cgtd arriba)
+        else if (parseInt(formData.compromisoId) === 2 && pasoActual === 1) {
+          console.log('⏭️ Compromiso 2 Paso 1 - Ya guardado en com2_cgtd, omitir cumplimientoService');
+        } else {
+          console.log(`🔄 Compromiso ${formData.compromisoId} - Usando cumplimientoService genérico`);
           
-          if (response.data.urlDocPcm) {
-            setPdfUrl(response.data.urlDocPcm);
-            if (blobUrlToRevoke) {
-              console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
-              URL.revokeObjectURL(blobUrlToRevoke);
+          // Para Compromiso 2, usar el primer miembro del comité como "líder" para los campos requeridos
+          let datosLider = {};
+          if (parseInt(formData.compromisoId) === 2 && miembrosComite.length > 0) {
+            const primerMiembro = miembrosComite[0];
+            console.log('📋 Compromiso 2: Usando primer miembro del comité como líder:', primerMiembro);
+            datosLider = {
+              nroDni: primerMiembro.dni || '',
+              nombres: primerMiembro.nombre || '',
+              apellidoPaterno: primerMiembro.apellidoPaterno || '',
+              apellidoMaterno: primerMiembro.apellidoMaterno || '',
+              correoElectronico: primerMiembro.email || '', // Usar 'email' en lugar de 'correoElectronico'
+              telefono: primerMiembro.telefono || '',
+              rol: primerMiembro.rol || '',
+              cargo: primerMiembro.cargo || ''
+            };
+          } else {
+            // Para otros compromisos (Com1, Com3), usar datos de formData
+            datosLider = {
+              nroDni: formData.nroDni || '',
+              nombres: formData.nombres || '',
+              apellidoPaterno: formData.apellidoPaterno || '',
+              apellidoMaterno: formData.apellidoMaterno || '',
+              correoElectronico: formData.correoElectronico || '',
+              telefono: formData.telefono || '',
+              rol: formData.rol || '',
+              cargo: formData.cargo || ''
+            };
+          }
+          
+          // Verificar el valor de documentoUrl antes de usarlo
+          console.log(`🔍 documentoUrl disponible para Com${formData.compromisoId}:`, documentoUrl);
+          console.log(`🔍 pasoActual:`, pasoActual);
+          console.log(`🔍 Condición (pasoActual === 2):`, pasoActual === 2);
+          
+          const cumplimientoData = {
+            compromisoId: parseInt(formData.compromisoId),
+            entidadId: user.entidadId,
+            ...datosLider,
+            fechaInicio: formData.fechaInicio || new Date().toISOString(),
+            // Para Paso 2, usar documentoUrl del upload; para Paso 3, mantener el existente
+            ...(pasoActual === 2 && documentoUrl && { documentoUrl }),
+            // Validaciones solo se actualizan en Paso 2
+            validacionResolucionAutoridad: pasoActual === 2 ? formData.validacionResolucionAutoridad || false : formData.validacionResolucionAutoridad || false,
+            validacionLiderFuncionario: pasoActual === 2 ? formData.validacionLiderFuncionario || false : formData.validacionLiderFuncionario || false,
+            validacionDesignacionArticulo: pasoActual === 2 ? formData.validacionDesignacionArticulo || false : formData.validacionDesignacionArticulo || false,
+            validacionFuncionesDefinidas: pasoActual === 2 ? formData.validacionFuncionesDefinidas || false : formData.validacionFuncionesDefinidas || false,
+            // Criterios evaluados (dinámicos) como JSON
+            ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
+              criteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+            }),
+            // Aceptaciones se actualizan en Paso 3
+            aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+            aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
+            etapaFormulario: pasoActual === 3 ? 'completado' : `paso${pasoActual}`,
+            estado: formData.estado || 1
+          };
+          
+          console.log(`Datos Compromiso ${formData.compromisoId} a enviar:`, cumplimientoData);
+          console.log('🔍 Detalle documentoUrl en cumplimientoData:', cumplimientoData.documentoUrl);
+          console.log('🔍 Detalle validaciones:', {
+            validacionResolucionAutoridad: cumplimientoData.validacionResolucionAutoridad,
+            validacionLiderFuncionario: cumplimientoData.validacionLiderFuncionario,
+            validacionDesignacionArticulo: cumplimientoData.validacionDesignacionArticulo,
+            validacionFuncionesDefinidas: cumplimientoData.validacionFuncionesDefinidas
+          });
+          console.log('🔍 Aceptaciones enviadas:', {
+            aceptaPoliticaPrivacidad: cumplimientoData.aceptaPoliticaPrivacidad,
+            aceptaDeclaracionJurada: cumplimientoData.aceptaDeclaracionJurada,
+            formDataOriginal: {
+              aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad,
+              aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada
+            }
+          });
+          
+          // Para Compromiso 1 y 2, usar cumplimientoNormativoId; para el resto usar id de la URL
+          const compromisoNum = parseInt(formData.compromisoId);
+          const cumplimientoIdToUse = (compromisoNum === 1 || compromisoNum === 2) ? cumplimientoNormativoId : id;
+          
+          console.log(`ID a usar para guardar (Com${compromisoNum}):`, cumplimientoIdToUse);
+          
+          if (cumplimientoIdToUse) {
+            console.log('Actualizando cumplimiento existente:', cumplimientoIdToUse);
+            response = await cumplimientoService.update(cumplimientoIdToUse, cumplimientoData);
+          } else {
+            console.log('Creando nuevo cumplimiento');
+            response = await cumplimientoService.create(cumplimientoData);
+            console.log('Respuesta create:', response);
+            if (response.isSuccess || response.success) {
+              const newId = response.data?.cumplimientoId;
+              console.log('ID del nuevo cumplimiento:', newId);
+              if (newId) {
+                setCumplimientoNormativoId(newId);
+              }
+              if (newId && parseInt(formData.compromisoId) !== 2) {
+                // Actualizar la URL con el ID del cumplimiento creado
+                navigate(`/dashboard/cumplimiento/${newId}?compromiso=${formData.compromisoId}`, { replace: true });
+              }
             }
           }
           
-          if (response.data.miembros) {
-            setMiembrosComite(response.data.miembros);
-          }
+          console.log(`Respuesta final Compromiso ${formData.compromisoId}:`, response);
           
-          if (response.data.criteriosEvaluados) {
-            try {
-              const criteriosParsed = JSON.parse(response.data.criteriosEvaluados);
-              setFormData(prev => ({ ...prev, criteriosEvaluados: criteriosParsed }));
-            } catch (e) {
-              console.error('❌ Error al parsear criterios:', e);
+          // Actualizar estado local
+          if ((response.isSuccess || response.success) && response.data) {
+            console.log('✅ Actualizando estado local');
+            
+            if (response.data.documentoUrl && pasoActual === 2) {
+              setPdfUrlPaso2(response.data.documentoUrl);
+              if (blobUrlToRevoke) {
+                console.log('🧹 Revocando blob URL antiguo:', blobUrlToRevoke);
+                URL.revokeObjectURL(blobUrlToRevoke);
+              }
             }
           }
         }
@@ -2506,7 +2634,6 @@ const CumplimientoNormativoDetalle = () => {
           descripcionPei: formData.descripcionIncorporacion || null,
           alineadoPgd: formData.alineadoPgd || false,
           rutaPdfPei: documentoUrl || null,
-          criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
           checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
           checkDdjj: formData.aceptaDeclaracionJurada || false,
           usuarioRegistra: user.usuarioId,
@@ -2575,7 +2702,6 @@ const CumplimientoNormativoDetalle = () => {
           alineadoPgdEstrategia: formData.alineadoPgd || false,
           estadoImplementacionEstrategia: formData.estadoImplementacion || null,
           rutaPdfEstrategia: documentoUrl || null,
-          criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
           checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
           checkDdjj: formData.aceptaDeclaracionJurada || false,
           usuarioRegistra: user.usuarioId,
@@ -2637,7 +2763,6 @@ const CumplimientoNormativoDetalle = () => {
           tipoMigracionGobpe: formData.tipoMigracion || null,
           observacionGobpe: formData.observacionesMigracion || null,
           rutaPdfGobpe: documentoUrl || null,
-          criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
           checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
           checkDdjj: formData.aceptaDeclaracionJurada || false,
           usuarioRegistra: user.usuarioId,
@@ -2700,7 +2825,6 @@ const CumplimientoNormativoDetalle = () => {
           interoperabilidadMpd: formData.interoperabilidadMpd || false,
           observacionMpd: formData.observacionesMpd || null,
           rutaPdfMpd: documentoUrl || null,
-          criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
           checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
           checkDdjj: formData.aceptaDeclaracionJurada || false,
           usuarioRegistra: user.usuarioId,
@@ -2763,7 +2887,6 @@ const CumplimientoNormativoDetalle = () => {
           actualizadoTupa: formData.actualizadoTupa || false,
           observacionTupa: formData.observacionesTupa || null,
           rutaPdfTupa: documentoUrl || null,
-          criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
           checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
           checkDdjj: formData.aceptaDeclaracionJurada || false,
           usuarioRegistra: user.usuarioId,
@@ -2827,7 +2950,6 @@ const CumplimientoNormativoDetalle = () => {
           interoperaSistemasMgd: formData.interoperaSistemasMgd || false,
           observacionMgd: formData.observacionesMgd || null,
           rutaPdfMgd: documentoUrl || null,
-          criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
           checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
           checkDdjj: formData.aceptaDeclaracionJurada || false,
           usuarioRegistra: user.usuarioId,
@@ -2891,7 +3013,6 @@ const CumplimientoNormativoDetalle = () => {
           fechaAprobacionDa: formData.fechaAprobacionDa || null,
           observacionDa: formData.observacionesDa || null,
           rutaPdfDa: documentoUrl || null,
-          criteriosEvaluados: formData.criteriosEvaluados ? JSON.stringify(formData.criteriosEvaluados) : null,
           checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
           checkDdjj: formData.aceptaDeclaracionJurada || false,
           usuarioRegistra: user.usuarioId,
@@ -3440,6 +3561,7 @@ const CumplimientoNormativoDetalle = () => {
           validacionFuncionesDefinidas: formData.validacionFuncionesDefinidas || false,
           aceptaPoliticaPrivacidad: formData.aceptaPoliticaPrivacidad || false,
           aceptaDeclaracionJurada: formData.aceptaDeclaracionJurada || false,
+          etapaFormulario: 'paso2',
           estado: formData.estado || 1
         };
         

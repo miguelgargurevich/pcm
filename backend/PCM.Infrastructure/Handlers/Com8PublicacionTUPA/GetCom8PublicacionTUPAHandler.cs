@@ -57,7 +57,6 @@ public class GetCom8PublicacionTUPAHandler : IRequestHandler<GetCom8PublicacionT
                 ActualizadoTupa = entity.ActualizadoTupa,
                 ObservacionTupa = entity.ObservacionTupa,
                 RutaPdfTupa = entity.RutaPdfTupa,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
                 CheckDdjj = entity.CheckDdjj,
                 EstadoPCM = entity.EstadoPCM,

@@ -19,7 +19,6 @@ namespace PCM.Application.Features.Com10DatosAbiertos.Commands.CreateCom10DatosA
         public DateTime? FechaAprobacionDa { get; set; }
         public string? ObservacionDa { get; set; }
         public string? RutaPdfDa { get; set; }
-        public string? CriteriosEvaluados { get; set; }
         public bool? CheckPrivacidad { get; set; }
         public bool? CheckDdjj { get; set; }
         public int? UsuarioRegistra { get; set; }
@@ -42,7 +41,6 @@ namespace PCM.Application.Features.Com10DatosAbiertos.Commands.CreateCom10DatosA
         public DateTime? FechaAprobacionDa { get; set; }
         public string? ObservacionDa { get; set; }
         public string? RutaPdfDa { get; set; }
-        public string? CriteriosEvaluados { get; set; }
         public bool? CheckPrivacidad { get; set; }
         public bool? CheckDdjj { get; set; }
         public int? UsuarioRegistra { get; set; }

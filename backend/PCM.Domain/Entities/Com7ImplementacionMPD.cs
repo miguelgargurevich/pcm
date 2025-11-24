@@ -88,7 +88,4 @@ public class Com7ImplementacionMPD
     [Column("ruta_pdf_mpd")]
     [MaxLength(255)]
     public string? RutaPdfMpd { get; set; }
-
-    [Column("criterios_evaluados")]
-    public string? CriteriosEvaluados { get; set; }
 }

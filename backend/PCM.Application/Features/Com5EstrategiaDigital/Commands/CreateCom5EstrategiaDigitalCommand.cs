@@ -13,7 +13,6 @@ public class CreateCom5EstrategiaDigitalCommand
     public bool AlineadoPgdEstrategia { get; set; }
     public string? EstadoImplementacionEstrategia { get; set; }
     public string? RutaPdfEstrategia { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }
     public Guid UsuarioRegistra { get; set; }
@@ -35,7 +34,6 @@ public class Com5EstrategiaDigitalResponse
     public bool AlineadoPgdEstrategia { get; set; }
     public string? EstadoImplementacionEstrategia { get; set; }
     public string? RutaPdfEstrategia { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }
     public Guid UsuarioRegistra { get; set; }

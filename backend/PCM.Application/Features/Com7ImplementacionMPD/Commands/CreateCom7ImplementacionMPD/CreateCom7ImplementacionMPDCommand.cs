@@ -21,7 +21,6 @@ public class CreateCom7ImplementacionMPDCommand : IRequest<Result<Com7Implementa
     public bool InteroperabilidadMpd { get; set; }
     public string? ObservacionMpd { get; set; }
     public string? RutaPdfMpd { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     
     // Aceptaciones
     public bool CheckPrivacidad { get; set; }
@@ -48,7 +47,6 @@ public class Com7ImplementacionMPDResponse
     public bool InteroperabilidadMpd { get; set; }
     public string? ObservacionMpd { get; set; }
     public string? RutaPdfMpd { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }
     public string? EstadoPCM { get; set; }

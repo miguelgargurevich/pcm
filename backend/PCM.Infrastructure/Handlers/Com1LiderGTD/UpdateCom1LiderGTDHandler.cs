@@ -71,8 +71,6 @@ public class UpdateCom1LiderGTDHandler : IRequestHandler<UpdateCom1LiderGTDComma
             if (request.UrlDocUrl != null)
                 entity.UrlDocPcm = request.UrlDocUrl;
             
-            if (request.CriteriosEvaluados != null)
-                entity.CriteriosEvaluados = request.CriteriosEvaluados;
 
             if (request.CheckPrivacidad.HasValue)
                 entity.CheckPrivacidad = request.CheckPrivacidad.Value;
@@ -112,7 +110,6 @@ public class UpdateCom1LiderGTDHandler : IRequestHandler<UpdateCom1LiderGTDComma
                 CargoLider = entity.CargoLider,
                 FecIniLider = entity.FecIniLider,
                 UrlDocPcm = entity.UrlDocPcm,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 UsuarioRegistra = entity.UsuarioRegistra,

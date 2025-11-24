@@ -40,7 +40,6 @@ public class CreateCom2CGTDHandler : IRequestHandler<CreateCom2CGTDCommand, Resu
                 UsuarioRegistra = request.UsuarioRegistra,
                 Activo = true,
                 UrlDocPcm = request.UrlDocUrl ?? string.Empty,
-                CriteriosEvaluados = request.CriteriosEvaluados ?? string.Empty
             };
 
             _context.Com2CGTD.Add(entity);
@@ -104,7 +103,6 @@ public class CreateCom2CGTDHandler : IRequestHandler<CreateCom2CGTDCommand, Resu
                 UsuarioRegistra = entity.UsuarioRegistra,
                 Activo = entity.Activo,
                 UrlDocPcm = entity.UrlDocPcm,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 Miembros = miembrosResponse
             };
 

@@ -51,7 +51,6 @@ public class CreateCom5EstrategiaDigitalHandler
                 AlineadoPgdEstrategia = command.AlineadoPgdEstrategia,
                 EstadoImplementacionEstrategia = command.EstadoImplementacionEstrategia,
                 RutaPdfEstrategia = command.RutaPdfEstrategia,
-                CriteriosEvaluados = command.CriteriosEvaluados
             };
 
             _context.Com5EstrategiaDigital.Add(entity);
@@ -73,7 +72,6 @@ public class CreateCom5EstrategiaDigitalHandler
                 AlineadoPgdEstrategia = entity.AlineadoPgdEstrategia,
                 EstadoImplementacionEstrategia = entity.EstadoImplementacionEstrategia,
                 RutaPdfEstrategia = entity.RutaPdfEstrategia,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
                 CheckDdjj = entity.CheckDdjj,
                 UsuarioRegistra = entity.UsuarioRegistra,

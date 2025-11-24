@@ -71,7 +71,6 @@ public class GetCom2CGTDByEntidadHandler : IRequestHandler<GetCom2CGTDByEntidadQ
                 UsuarioRegistra = entity.UsuarioRegistra,
                 Activo = entity.Activo,
                 UrlDocPcm = entity.UrlDocPcm,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 Miembros = miembrosDto
             };
 

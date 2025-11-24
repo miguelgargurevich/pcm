@@ -17,7 +17,6 @@ public class CreateCom2CGTDCommand : IRequest<Result<Com2CGTDResponse>>
     
     // Campos adicionales para persistencia
     public string? UrlDocUrl { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     
     // Lista de miembros del comité
     public List<ComiteMiembroDto>? Miembros { get; set; }
@@ -39,7 +38,6 @@ public class Com2CGTDResponse
     public Guid UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
     public string? UrlDocPcm { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     
     public List<ComiteMiembroDto>? Miembros { get; set; }
 }

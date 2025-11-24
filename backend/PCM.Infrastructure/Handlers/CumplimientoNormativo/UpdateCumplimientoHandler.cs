@@ -42,15 +42,13 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
             cumplimiento.Cargo = request.Cargo;
             cumplimiento.FechaInicio = DateTime.SpecifyKind(request.FechaInicio, DateTimeKind.Utc);
             
-            // Actualizar Paso 2: Normativa
-            cumplimiento.DocumentoUrl = request.DocumentoUrl;
-            cumplimiento.DocumentoNombre = request.DocumentoNombre;
-            cumplimiento.DocumentoTamano = request.DocumentoTamano;
-            cumplimiento.DocumentoTipo = request.DocumentoTipo;
-            
-            // Solo actualizar fecha de subida si se está subiendo un nuevo documento
-            if (!string.IsNullOrEmpty(request.DocumentoUrl) && request.DocumentoUrl != cumplimiento.DocumentoUrl)
+            // Actualizar Paso 2: Normativa (solo si vienen datos, no sobrescribir con null)
+            if (!string.IsNullOrEmpty(request.DocumentoUrl))
             {
+                cumplimiento.DocumentoUrl = request.DocumentoUrl;
+                cumplimiento.DocumentoNombre = request.DocumentoNombre;
+                cumplimiento.DocumentoTamano = request.DocumentoTamano;
+                cumplimiento.DocumentoTipo = request.DocumentoTipo;
                 cumplimiento.DocumentoFechaSubida = DateTime.UtcNow;
             }
             
@@ -59,9 +57,19 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
             cumplimiento.ValidacionDesignacionArticulo = request.ValidacionDesignacionArticulo;
             cumplimiento.ValidacionFuncionesDefinidas = request.ValidacionFuncionesDefinidas;
             
+            // Actualizar criterios evaluados si vienen datos
+            {
+            }
+            
             // Actualizar Paso 3: Confirmación
             cumplimiento.AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad;
             cumplimiento.AceptaDeclaracionJurada = request.AceptaDeclaracionJurada;
+            
+            // Actualizar etapa del formulario
+            if (!string.IsNullOrEmpty(request.EtapaFormulario))
+            {
+                cumplimiento.EtapaFormulario = request.EtapaFormulario;
+            }
             
             cumplimiento.Estado = request.Estado;
             cumplimiento.UpdatedAt = DateTime.UtcNow;
@@ -119,6 +127,7 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
             AceptaPoliticaPrivacidad = cumplimiento.AceptaPoliticaPrivacidad,
             AceptaDeclaracionJurada = cumplimiento.AceptaDeclaracionJurada,
             
+            EtapaFormulario = cumplimiento.EtapaFormulario,
             Estado = cumplimiento.Estado,
             EstadoNombre = GetEstadoNombre(cumplimiento.Estado),
             Activo = cumplimiento.Activo,

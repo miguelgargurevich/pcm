@@ -86,7 +86,4 @@ public class Com5EstrategiaDigital
     [Column("ruta_pdf_estrategia")]
     [StringLength(255)]
     public string? RutaPdfEstrategia { get; set; }
-
-    [Column("criterios_evaluados", TypeName = "jsonb")]
-    public string? CriteriosEvaluados { get; set; }
 }

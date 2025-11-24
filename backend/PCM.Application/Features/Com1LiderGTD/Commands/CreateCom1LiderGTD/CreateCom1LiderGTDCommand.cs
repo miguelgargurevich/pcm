@@ -21,7 +21,6 @@ public class CreateCom1LiderGTDCommand : IRequest<Result<Com1LiderGTDResponse>>
     public string? CargoLider { get; set; }
     public DateTime? FecIniLider { get; set; }
     public string? UrlDocUrl { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     
     // Aceptaciones
     public bool CheckPrivacidad { get; set; }
@@ -54,7 +53,6 @@ public class Com1LiderGTDResponse
     public string? CargoLider { get; set; }
     public DateTime? FecIniLider { get; set; }
     public string? UrlDocPcm { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     
     // Auditoría
     public DateTime CreatedAt { get; set; }

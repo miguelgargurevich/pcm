@@ -19,7 +19,6 @@ namespace PCM.Application.Features.Com9ModeloGestionDocumental.Commands.CreateCo
         public bool? InteroperaSistemasMgd { get; set; }
         public string? ObservacionMgd { get; set; }
         public string? RutaPdfMgd { get; set; }
-        public string? CriteriosEvaluados { get; set; }
         public bool? CheckPrivacidad { get; set; }
         public bool? CheckDdjj { get; set; }
         public int? UsuarioRegistra { get; set; }
@@ -42,7 +41,6 @@ namespace PCM.Application.Features.Com9ModeloGestionDocumental.Commands.CreateCo
         public bool? InteroperaSistemasMgd { get; set; }
         public string? ObservacionMgd { get; set; }
         public string? RutaPdfMgd { get; set; }
-        public string? CriteriosEvaluados { get; set; }
         public bool? CheckPrivacidad { get; set; }
         public bool? CheckDdjj { get; set; }
         public int? UsuarioRegistra { get; set; }

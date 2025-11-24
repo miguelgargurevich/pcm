@@ -22,7 +22,6 @@ public class UpdateCom8PublicacionTUPACommand : IRequest<Result<Com8PublicacionT
     public bool? ActualizadoTupa { get; set; }
     public string? ObservacionTupa { get; set; }
     public string? RutaPdfTupa { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     
     // Aceptaciones
     public bool? CheckPrivacidad { get; set; }
@@ -49,7 +48,6 @@ public class Com8PublicacionTUPAResponse
     public bool ActualizadoTupa { get; set; }
     public string? ObservacionTupa { get; set; }
     public string? RutaPdfTupa { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }
     public string? EstadoPCM { get; set; }

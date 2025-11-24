@@ -45,7 +45,6 @@ public class UpdateCom6MigracionGobPeHandler : IRequestHandler<UpdateCom6Migraci
             if (request.TipoMigracionGobPe != null) entity.TipoMigracionGobPe = request.TipoMigracionGobPe;
             if (request.ObservacionGobPe != null) entity.ObservacionGobPe = request.ObservacionGobPe;
             if (request.RutaPdfGobPe != null) entity.RutaPdfGobPe = request.RutaPdfGobPe;
-            if (request.CriteriosEvaluados != null) entity.CriteriosEvaluados = request.CriteriosEvaluados;
             if (request.CheckPrivacidad.HasValue) entity.CheckPrivacidad = request.CheckPrivacidad.Value;
             if (request.CheckDdjj.HasValue) entity.CheckDdjj = request.CheckDdjj.Value;
 
@@ -67,7 +66,6 @@ public class UpdateCom6MigracionGobPeHandler : IRequestHandler<UpdateCom6Migraci
                 TipoMigracionGobPe = entity.TipoMigracionGobPe,
                 ObservacionGobPe = entity.ObservacionGobPe,
                 RutaPdfGobPe = entity.RutaPdfGobPe,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
                 CheckDdjj = entity.CheckDdjj,
                 EstadoPCM = entity.EstadoPCM,

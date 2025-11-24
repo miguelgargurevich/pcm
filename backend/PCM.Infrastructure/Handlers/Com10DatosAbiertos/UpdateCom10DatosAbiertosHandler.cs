@@ -48,7 +48,6 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                 registro.FechaAprobacionDa = request.FechaAprobacionDa ?? registro.FechaAprobacionDa;
                 registro.ObservacionDa = request.ObservacionDa ?? registro.ObservacionDa;
                 registro.RutaPdfDa = request.RutaPdfDa ?? registro.RutaPdfDa;
-                registro.CriteriosEvaluados = request.CriteriosEvaluados ?? registro.CriteriosEvaluados;
                 registro.CheckPrivacidad = request.CheckPrivacidad ?? registro.CheckPrivacidad;
                 registro.CheckDdjj = request.CheckDdjj ?? registro.CheckDdjj;
                 registro.UsuarioRegistra = request.UsuarioRegistra ?? registro.UsuarioRegistra;

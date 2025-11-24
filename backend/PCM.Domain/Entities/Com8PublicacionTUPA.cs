@@ -91,7 +91,4 @@ public class Com8PublicacionTUPA
     [Column("ruta_pdf_tupa")]
     [MaxLength(255)]
     public string? RutaPdfTupa { get; set; }
-
-    [Column("criterios_evaluados")]
-    public string? CriteriosEvaluados { get; set; }
 }

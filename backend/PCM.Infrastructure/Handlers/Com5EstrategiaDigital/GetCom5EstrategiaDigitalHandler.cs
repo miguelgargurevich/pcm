@@ -52,7 +52,6 @@ public class GetCom5EstrategiaDigitalHandler
                 AlineadoPgdEstrategia = entity.AlineadoPgdEstrategia,
                 EstadoImplementacionEstrategia = entity.EstadoImplementacionEstrategia,
                 RutaPdfEstrategia = entity.RutaPdfEstrategia,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
                 CheckDdjj = entity.CheckDdjj,
                 UsuarioRegistra = entity.UsuarioRegistra,

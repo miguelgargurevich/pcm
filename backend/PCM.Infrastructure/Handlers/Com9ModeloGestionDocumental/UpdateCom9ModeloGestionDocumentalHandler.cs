@@ -48,7 +48,6 @@ namespace PCM.Infrastructure.Handlers.Com9ModeloGestionDocumental
                 registro.InteroperaSistemasMgd = request.InteroperaSistemasMgd ?? registro.InteroperaSistemasMgd;
                 registro.ObservacionMgd = request.ObservacionMgd ?? registro.ObservacionMgd;
                 registro.RutaPdfMgd = request.RutaPdfMgd ?? registro.RutaPdfMgd;
-                registro.CriteriosEvaluados = request.CriteriosEvaluados ?? registro.CriteriosEvaluados;
                 registro.CheckPrivacidad = request.CheckPrivacidad ?? registro.CheckPrivacidad;
                 registro.CheckDdjj = request.CheckDdjj ?? registro.CheckDdjj;
                 registro.UsuarioRegistra = request.UsuarioRegistra ?? registro.UsuarioRegistra;

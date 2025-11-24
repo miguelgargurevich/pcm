@@ -57,7 +57,6 @@ public class GetCom7ImplementacionMPDHandler : IRequestHandler<GetCom7Implementa
                 InteroperabilidadMpd = entity.InteroperabilidadMpd,
                 ObservacionMpd = entity.ObservacionMpd,
                 RutaPdfMpd = entity.RutaPdfMpd,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
                 CheckDdjj = entity.CheckDdjj,
                 EstadoPCM = entity.EstadoPCM,

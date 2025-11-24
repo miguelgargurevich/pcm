@@ -52,7 +52,6 @@ public class GetCom4PEIHandler : IRequestHandler<GetCom4PEIQuery, Result<Com4PEI
                 DescripcionPei = entity.DescripcionPei,
                 AlineadoPgd = entity.AlineadoPgd,
                 RutaPdfPei = entity.RutaPdfPei,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
                 CheckDdjj = entity.CheckDdjj,
                 EstadoPCM = entity.EstadoPCM,

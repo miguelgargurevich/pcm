@@ -45,7 +45,6 @@ public class UpdateCom4PEIHandler : IRequestHandler<UpdateCom4PEICommand, Result
             entity.DescripcionPei = request.DescripcionPei;
             entity.AlineadoPgd = request.AlineadoPgd;
             entity.RutaPdfPei = request.RutaPdfPei;
-            entity.CriteriosEvaluados = request.CriteriosEvaluados;
             entity.CheckPrivacidad = request.CheckPrivacidad;
             entity.CheckDdjj = request.CheckDdjj;
 
@@ -73,7 +72,6 @@ public class UpdateCom4PEIHandler : IRequestHandler<UpdateCom4PEICommand, Result
                 DescripcionPei = entity.DescripcionPei,
                 AlineadoPgd = entity.AlineadoPgd,
                 RutaPdfPei = entity.RutaPdfPei,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
                 CheckDdjj = entity.CheckDdjj,
                 EstadoPCM = entity.EstadoPCM,

@@ -63,6 +63,7 @@ public class CreateCumplimientoHandler : IRequestHandler<CreateCumplimientoComma
                 AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad,
                 AceptaDeclaracionJurada = request.AceptaDeclaracionJurada,
                 
+                EtapaFormulario = request.EtapaFormulario ?? "paso1",
                 Estado = request.Estado,
                 Activo = true,
                 CreatedAt = DateTime.UtcNow
@@ -125,6 +126,7 @@ public class CreateCumplimientoHandler : IRequestHandler<CreateCumplimientoComma
             AceptaPoliticaPrivacidad = cumplimiento.AceptaPoliticaPrivacidad,
             AceptaDeclaracionJurada = cumplimiento.AceptaDeclaracionJurada,
             
+            EtapaFormulario = cumplimiento.EtapaFormulario,
             Estado = cumplimiento.Estado,
             EstadoNombre = GetEstadoNombre(cumplimiento.Estado),
             Activo = cumplimiento.Activo,

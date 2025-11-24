@@ -58,9 +58,6 @@ namespace PCM.Domain.Entities
         [StringLength(500)]
         public string? RutaPdfDa { get; set; }
 
-        [Column("criterios_evaluados")]
-        public string? CriteriosEvaluados { get; set; }
-
         [Column("check_privacidad")]
         public bool? CheckPrivacidad { get; set; }
 

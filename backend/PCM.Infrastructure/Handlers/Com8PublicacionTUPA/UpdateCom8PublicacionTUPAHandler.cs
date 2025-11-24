@@ -60,8 +60,6 @@ public class UpdateCom8PublicacionTUPAHandler : IRequestHandler<UpdateCom8Public
                 entity.ObservacionTupa = request.ObservacionTupa;
             if (request.RutaPdfTupa != null)
                 entity.RutaPdfTupa = request.RutaPdfTupa;
-            if (request.CriteriosEvaluados != null)
-                entity.CriteriosEvaluados = request.CriteriosEvaluados;
             if (request.CheckPrivacidad.HasValue)
                 entity.CheckPrivacidad = request.CheckPrivacidad.Value;
             if (request.CheckDdjj.HasValue)
@@ -94,7 +92,6 @@ public class UpdateCom8PublicacionTUPAHandler : IRequestHandler<UpdateCom8Public
                 ActualizadoTupa = entity.ActualizadoTupa,
                 ObservacionTupa = entity.ObservacionTupa,
                 RutaPdfTupa = entity.RutaPdfTupa,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
                 CheckDdjj = entity.CheckDdjj,
                 UsuarioRegistra = entity.UsuarioRegistra,

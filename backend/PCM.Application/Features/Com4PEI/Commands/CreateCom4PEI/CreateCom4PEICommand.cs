@@ -18,7 +18,6 @@ public class CreateCom4PEICommand : IRequest<Result<Com4PEIResponse>>
     public string? DescripcionPei { get; set; }
     public bool AlineadoPgd { get; set; }
     public string? RutaPdfPei { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     
     // Aceptaciones
     public bool CheckPrivacidad { get; set; }
@@ -42,7 +41,6 @@ public class Com4PEIResponse
     public string? DescripcionPei { get; set; }
     public bool AlineadoPgd { get; set; }
     public string? RutaPdfPei { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }
     public string? EstadoPCM { get; set; }

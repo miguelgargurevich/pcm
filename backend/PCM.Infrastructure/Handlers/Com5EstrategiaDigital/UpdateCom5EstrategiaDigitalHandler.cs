@@ -50,7 +50,6 @@ public class UpdateCom5EstrategiaDigitalHandler
             entity.AlineadoPgdEstrategia = command.AlineadoPgdEstrategia;
             entity.EstadoImplementacionEstrategia = command.EstadoImplementacionEstrategia;
             entity.RutaPdfEstrategia = command.RutaPdfEstrategia;
-            entity.CriteriosEvaluados = command.CriteriosEvaluados;
             entity.CheckPrivacidad = command.CheckPrivacidad;
             entity.CheckDdjj = command.CheckDdjj;
             entity.UsuarioRegistra = command.UsuarioRegistra;
@@ -80,7 +79,6 @@ public class UpdateCom5EstrategiaDigitalHandler
                 AlineadoPgdEstrategia = entity.AlineadoPgdEstrategia,
                 EstadoImplementacionEstrategia = entity.EstadoImplementacionEstrategia,
                 RutaPdfEstrategia = entity.RutaPdfEstrategia,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
                 CheckDdjj = entity.CheckDdjj,
                 UsuarioRegistra = entity.UsuarioRegistra,

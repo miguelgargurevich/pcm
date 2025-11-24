@@ -49,7 +49,6 @@ public class CreateCom4PEIHandler : IRequestHandler<CreateCom4PEICommand, Result
                     ? DateTime.SpecifyKind(request.FechaAprobacionPei.Value, DateTimeKind.Utc)
                     : null,
                 RutaPdfPei = request.RutaPdfPei,
-                CriteriosEvaluados = request.CriteriosEvaluados
             };
 
             _context.Com4PEI.Add(entity);
@@ -71,7 +70,6 @@ public class CreateCom4PEIHandler : IRequestHandler<CreateCom4PEICommand, Result
                 DescripcionPei = entity.DescripcionPei,
                 AlineadoPgd = entity.AlineadoPgd,
                 RutaPdfPei = entity.RutaPdfPei,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
                 CheckDdjj = entity.CheckDdjj,
                 EstadoPCM = entity.EstadoPCM,

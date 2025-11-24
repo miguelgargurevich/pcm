@@ -28,10 +28,12 @@ public class UpdateCumplimientoCommand : IRequest<Result<CumplimientoResponseDto
     public bool ValidacionLiderFuncionario { get; set; }
     public bool ValidacionDesignacionArticulo { get; set; }
     public bool ValidacionFuncionesDefinidas { get; set; }
+    public string? CriteriosEvaluados { get; set; }
     
     // Paso 3: Confirmación
     public bool AceptaPoliticaPrivacidad { get; set; }
     public bool AceptaDeclaracionJurada { get; set; }
     
+    public string? EtapaFormulario { get; set; }
     public int Estado { get; set; }
 }

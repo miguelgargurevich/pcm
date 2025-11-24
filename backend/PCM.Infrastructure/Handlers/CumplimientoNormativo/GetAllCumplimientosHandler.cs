@@ -123,7 +123,15 @@ public class GetAllCumplimientosHandler : IRequestHandler<GetAllCumplimientosQue
                     EstadoNombre = GetEstadoNombre(estadoFinal),
                     CreatedAt = c.CreatedAt,
                     UpdatedAt = fechaActualizacion,
-                    TieneDocumento = !string.IsNullOrEmpty(c.DocumentoUrl)
+                    DocumentoUrl = c.DocumentoUrl,
+                    TieneDocumento = !string.IsNullOrEmpty(c.DocumentoUrl),
+                    ValidacionResolucionAutoridad = c.ValidacionResolucionAutoridad,
+                    ValidacionLiderFuncionario = c.ValidacionLiderFuncionario,
+                    ValidacionDesignacionArticulo = c.ValidacionDesignacionArticulo,
+                    ValidacionFuncionesDefinidas = c.ValidacionFuncionesDefinidas,
+                    AceptaPoliticaPrivacidad = c.AceptaPoliticaPrivacidad,
+                    AceptaDeclaracionJurada = c.AceptaDeclaracionJurada,
+                    EtapaFormulario = c.EtapaFormulario
                 };
             }).ToList();
 

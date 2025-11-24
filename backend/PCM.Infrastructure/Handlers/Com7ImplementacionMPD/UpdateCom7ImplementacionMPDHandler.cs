@@ -60,8 +60,6 @@ public class UpdateCom7ImplementacionMPDHandler : IRequestHandler<UpdateCom7Impl
                 entity.ObservacionMpd = request.ObservacionMpd;
             if (request.RutaPdfMpd != null)
                 entity.RutaPdfMpd = request.RutaPdfMpd;
-            if (request.CriteriosEvaluados != null)
-                entity.CriteriosEvaluados = request.CriteriosEvaluados;
             if (request.CheckPrivacidad.HasValue)
                 entity.CheckPrivacidad = request.CheckPrivacidad.Value;
             if (request.CheckDdjj.HasValue)
@@ -90,7 +88,6 @@ public class UpdateCom7ImplementacionMPDHandler : IRequestHandler<UpdateCom7Impl
                 InteroperabilidadMpd = entity.InteroperabilidadMpd,
                 ObservacionMpd = entity.ObservacionMpd,
                 RutaPdfMpd = entity.RutaPdfMpd,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 CheckPrivacidad = entity.CheckPrivacidad,
                 CheckDdjj = entity.CheckDdjj,
                 EstadoPCM = entity.EstadoPCM,

@@ -17,7 +17,6 @@ public class UpdateCom6MigracionGobPeCommand : IRequest<Result<Com6MigracionGobP
     public string? TipoMigracionGobPe { get; set; }
     public string? ObservacionGobPe { get; set; }
     public string? RutaPdfGobPe { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     public bool? CheckPrivacidad { get; set; }
     public bool? CheckDdjj { get; set; }
 }
@@ -38,7 +37,6 @@ public class Com6MigracionGobPeResponse
     public string? TipoMigracionGobPe { get; set; }
     public string? ObservacionGobPe { get; set; }
     public string? RutaPdfGobPe { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }
     public string? EstadoPCM { get; set; }

@@ -78,8 +78,5 @@ namespace PCM.Domain.Entities
         [Column("ruta_pdf_pei")]
         [StringLength(255)]
         public string? RutaPdfPei { get; set; }
-
-        [Column("criterios_evaluados", TypeName = "jsonb")]
-        public string? CriteriosEvaluados { get; set; }
     }
 }

@@ -504,12 +504,14 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.ValidacionLiderFuncionario).HasColumnName("validacion_lider_funcionario").HasDefaultValue(false);
             entity.Property(e => e.ValidacionDesignacionArticulo).HasColumnName("validacion_designacion_articulo").HasDefaultValue(false);
             entity.Property(e => e.ValidacionFuncionesDefinidas).HasColumnName("validacion_funciones_definidas").HasDefaultValue(false);
+            entity.Property(e => e.CriteriosEvaluados).HasColumnName("criterios_evaluados").HasColumnType("jsonb");
             
             // Paso 3: Confirmación
             entity.Property(e => e.AceptaPoliticaPrivacidad).HasColumnName("acepta_politica_privacidad").HasDefaultValue(false);
             entity.Property(e => e.AceptaDeclaracionJurada).HasColumnName("acepta_declaracion_jurada").HasDefaultValue(false);
             
             // Metadatos
+            entity.Property(e => e.EtapaFormulario).HasColumnName("etapa_formulario").HasMaxLength(20).HasDefaultValue("paso1");
             entity.Property(e => e.Estado).HasColumnName("estado").IsRequired().HasDefaultValue(1);
             entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
@@ -560,7 +562,7 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.CargoLider).HasColumnName("cargo_lider").HasMaxLength(20).IsRequired();
             entity.Property(e => e.FecIniLider).HasColumnName("fec_ini_lider").IsRequired();
             entity.Property(e => e.UrlDocPcm).HasColumnName("url_doc_pcm");
-            entity.Property(e => e.CriteriosEvaluados).HasColumnName("criterios_evaluados").HasColumnType("jsonb");
+            entity.Property(e => e.RutaPdfNormativa).HasColumnName("ruta_pdf_normativa");
 
             // Relaciones
             entity.HasOne(e => e.Compromiso)
@@ -593,7 +595,6 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.UsuarioRegistra).HasColumnName("usuario_registra").IsRequired();
             entity.Property(e => e.Activo).HasColumnName("activo").IsRequired();
             entity.Property(e => e.UrlDocPcm).HasColumnName("url_doc_pcm");
-            entity.Property(e => e.CriteriosEvaluados).HasColumnName("criterios_evaluados").HasColumnType("jsonb");
         });
 
         // Configuración de ComiteMiembro

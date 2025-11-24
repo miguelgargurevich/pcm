@@ -56,7 +56,6 @@ namespace PCM.Infrastructure.Handlers.Com9ModeloGestionDocumental
                     InteroperaSistemasMgd = registro.InteroperaSistemasMgd,
                     ObservacionMgd = registro.ObservacionMgd,
                     RutaPdfMgd = registro.RutaPdfMgd,
-                    CriteriosEvaluados = registro.CriteriosEvaluados,
                     CheckPrivacidad = registro.CheckPrivacidad,
                     CheckDdjj = registro.CheckDdjj,
                     UsuarioRegistra = registro.UsuarioRegistra,

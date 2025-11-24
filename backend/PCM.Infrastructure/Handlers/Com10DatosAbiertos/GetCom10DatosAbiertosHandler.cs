@@ -56,7 +56,6 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                     FechaAprobacionDa = registro.FechaAprobacionDa,
                     ObservacionDa = registro.ObservacionDa,
                     RutaPdfDa = registro.RutaPdfDa,
-                    CriteriosEvaluados = registro.CriteriosEvaluados,
                     CheckPrivacidad = registro.CheckPrivacidad,
                     CheckDdjj = registro.CheckDdjj,
                     UsuarioRegistra = registro.UsuarioRegistra,
