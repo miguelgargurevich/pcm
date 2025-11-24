@@ -2408,12 +2408,24 @@ const CumplimientoNormativoDetalle = () => {
       console.log(`📄 Usando PDF del paso ${pasoActual}:`, currentPdfUrl);
       
       // Verificar si hay un archivo nuevo (blob URL local) que necesita ser subido
+      console.log('🔍 Verificando archivo - documentoFile:', !!formData.documentoFile, 'currentPdfUrl:', currentPdfUrl);
       if (formData.documentoFile && currentPdfUrl && currentPdfUrl.startsWith('blob:')) {
         console.log('📤 Subiendo archivo nuevo a Supabase...');
         blobUrlToRevoke = currentPdfUrl; // Guardar para revocar después
-        const uploadResponse = await cumplimientoService.uploadDocument(formData.documentoFile);
-        documentoUrl = uploadResponse.data?.url || uploadResponse.url || uploadResponse.Url;
-        console.log('✅ URL del documento subido:', documentoUrl);
+        try {
+          const uploadResponse = await cumplimientoService.uploadDocument(formData.documentoFile);
+          console.log('📦 Respuesta completa de upload:', uploadResponse);
+          documentoUrl = uploadResponse.data?.url || uploadResponse.url || uploadResponse.Url;
+          console.log('✅ URL del documento subido:', documentoUrl);
+          if (!documentoUrl) {
+            console.error('❌ No se obtuvo URL del documento subido. Respuesta:', uploadResponse);
+            showErrorToast('Error al subir el documento');
+          }
+        } catch (uploadError) {
+          console.error('❌ Error al subir documento:', uploadError);
+          showErrorToast('Error al subir el documento: ' + uploadError.message);
+          throw uploadError;
+        }
         // NO revocar aún - esperar a que se actualice el estado
       } else if (currentPdfUrl && !currentPdfUrl.startsWith('blob:')) {
         // Si tenemos una URL de Supabase válida (no blob), mantenerla
@@ -2421,7 +2433,7 @@ const CumplimientoNormativoDetalle = () => {
         documentoUrl = currentPdfUrl;
       } else {
         // Si no hay archivo nuevo ni URL existente
-        console.log('⚠️ No hay archivo para guardar');
+        console.log('⚠️ No hay archivo para guardar - documentoFile:', !!formData.documentoFile, ', currentPdfUrl:', currentPdfUrl);
         documentoUrl = null;
       }
       
@@ -2620,6 +2632,7 @@ const CumplimientoNormativoDetalle = () => {
         
         // Paso 1: Guardar en com4_tdpei
         if (pasoActual === 1) {
+          console.log('📋 Paso 1 Com4 - documentoUrl final:', documentoUrl);
           const com4Data = {
             compromiso_id: 4,
             entidad_id: user.entidadId,
@@ -2634,7 +2647,8 @@ const CumplimientoNormativoDetalle = () => {
             etapaFormulario: 'paso1'
           };
           
-          console.log('Datos Com4 Paso 1 a enviar:', com4Data);
+          console.log('📤 Datos Com4 Paso 1 a enviar:', com4Data);
+          console.log('🔑 rutaPdfPei que se guardará:', com4Data.rutaPdfPei);
           
           if (com4RecordId) {
             console.log('Actualizando registro existente Com4:', com4RecordId);
@@ -2649,9 +2663,16 @@ const CumplimientoNormativoDetalle = () => {
             }
           }
           
+          console.log('✅ Respuesta Com4:', response);
           if ((response.isSuccess || response.success) && response.data?.rutaPdfPei) {
+            console.log('📄 Actualizando pdfUrl con:', response.data.rutaPdfPei);
             setPdfUrl(response.data.rutaPdfPei);
-            if (blobUrlToRevoke) URL.revokeObjectURL(blobUrlToRevoke);
+            if (blobUrlToRevoke) {
+              console.log('🗑️ Revocando blob URL:', blobUrlToRevoke);
+              URL.revokeObjectURL(blobUrlToRevoke);
+            }
+          } else {
+            console.log('⚠️ No se recibió rutaPdfPei en la respuesta:', response.data);
           }
         }
         // Paso 2 y 3: Guardar en cumplimiento_normativo
