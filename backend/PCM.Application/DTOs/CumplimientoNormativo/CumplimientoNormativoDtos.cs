@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 
 namespace PCM.Application.DTOs.CumplimientoNormativo;
 
@@ -34,7 +35,10 @@ public class CreateCumplimientoRequest
     public string? CriteriosEvaluados { get; set; } // JSON
     
     // Paso 3: Confirmación
+    [JsonPropertyName("acepta_politica_privacidad")]
     public bool AceptaPoliticaPrivacidad { get; set; }
+    
+    [JsonPropertyName("acepta_declaracion_jurada")]
     public bool AceptaDeclaracionJurada { get; set; }
     
     public string? EtapaFormulario { get; set; }
@@ -68,7 +72,10 @@ public class UpdateCumplimientoRequest
     public string? CriteriosEvaluados { get; set; } // JSON
     
     // Paso 3: Confirmación
+    [JsonPropertyName("acepta_politica_privacidad")]
     public bool AceptaPoliticaPrivacidad { get; set; }
+    
+    [JsonPropertyName("acepta_declaracion_jurada")]
     public bool AceptaDeclaracionJurada { get; set; }
     
     public string? EtapaFormulario { get; set; }

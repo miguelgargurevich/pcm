@@ -23,6 +23,10 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
     {
         try
         {
+            _logger.LogInformation("🔍 UpdateCumplimiento - Request recibido para CumplimientoId: {CumplimientoId}", request.CumplimientoId);
+            _logger.LogInformation("📋 Checkboxes recibidos - AceptaPoliticaPrivacidad: {Politica}, AceptaDeclaracionJurada: {Declaracion}", 
+                request.AceptaPoliticaPrivacidad, request.AceptaDeclaracionJurada);
+            
             var cumplimiento = await _context.CumplimientosNormativos
                 .FirstOrDefaultAsync(c => c.CumplimientoId == request.CumplimientoId, cancellationToken);
 

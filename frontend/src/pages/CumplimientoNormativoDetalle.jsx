@@ -241,6 +241,18 @@ const CumplimientoNormativoDetalle = () => {
     }
   };
 
+  // useEffect para actualizar haVistoPolitica y haVistoDeclaracion cuando ya están aceptados
+  useEffect(() => {
+    if (formData.aceptaPoliticaPrivacidad && !haVistoPolitica) {
+      console.log('✅ Auto-marcando política como vista (ya aceptada en formData)');
+      setHaVistoPolitica(true);
+    }
+    if (formData.aceptaDeclaracionJurada && !haVistoDeclaracion) {
+      console.log('✅ Auto-marcando declaración como vista (ya aceptada en formData)');
+      setHaVistoDeclaracion(true);
+    }
+  }, [formData.aceptaPoliticaPrivacidad, formData.aceptaDeclaracionJurada, haVistoPolitica, haVistoDeclaracion]);
+
   // Función común para cargar datos de Paso 2 y 3 desde cumplimiento_normativo
   // RETORNA los datos en lugar de modificar el estado directamente
   const loadCumplimientoNormativo = async (compromisoId) => {
@@ -258,23 +270,25 @@ const CumplimientoNormativoDetalle = () => {
           console.log(`📄 Datos de cumplimiento_normativo encontrados para Com${compromisoId}:`, cumplimientoData);
           
           setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
-          setHaVistoPolitica(cumplimientoData.aceptaPoliticaPrivacidad);
-          setHaVistoDeclaracion(cumplimientoData.aceptaDeclaracionJurada);
+          setHaVistoPolitica(cumplimientoData.AceptaPoliticaPrivacidad || cumplimientoData.aceptaPoliticaPrivacidad);
+          setHaVistoDeclaracion(cumplimientoData.AceptaDeclaracionJurada || cumplimientoData.aceptaDeclaracionJurada);
           
           // PDF de la sección 2
-          if (cumplimientoData.documentoUrl) {
-            console.log(`📄 Cargando PDF sección 2 para Com${compromisoId}:`, cumplimientoData.documentoUrl);
-            setPdfUrlPaso2(cumplimientoData.documentoUrl);
+          const docUrl = cumplimientoData.DocumentoUrl || cumplimientoData.documentoUrl;
+          if (docUrl) {
+            console.log(`📄 Cargando PDF sección 2 para Com${compromisoId}:`, docUrl);
+            setPdfUrlPaso2(docUrl);
           }
           
           // Parsear criterios evaluados si existen
           let criteriosParsed = [];
-          if (cumplimientoData.criteriosEvaluados) {
+          const criteriosData = cumplimientoData.CriteriosEvaluados || cumplimientoData.criteriosEvaluados;
+          if (criteriosData) {
             try {
-              if (typeof cumplimientoData.criteriosEvaluados === 'string') {
-                criteriosParsed = JSON.parse(cumplimientoData.criteriosEvaluados);
-              } else if (Array.isArray(cumplimientoData.criteriosEvaluados)) {
-                criteriosParsed = cumplimientoData.criteriosEvaluados;
+              if (typeof criteriosData === 'string') {
+                criteriosParsed = JSON.parse(criteriosData);
+              } else if (Array.isArray(criteriosData)) {
+                criteriosParsed = criteriosData;
               }
               console.log('✅ Criterios evaluados cargados desde cumplimiento_normativo:', criteriosParsed);
             } catch (e) {
@@ -283,13 +297,13 @@ const CumplimientoNormativoDetalle = () => {
           }
           
           const result = {
-            validacionResolucionAutoridad: cumplimientoData.validacionResolucionAutoridad || false,
-            validacionLiderFuncionario: cumplimientoData.validacionLiderFuncionario || false,
-            validacionDesignacionArticulo: cumplimientoData.validacionDesignacionArticulo || false,
-            validacionFuncionesDefinidas: cumplimientoData.validacionFuncionesDefinidas || false,
+            validacionResolucionAutoridad: cumplimientoData.ValidacionResolucionAutoridad || cumplimientoData.validacionResolucionAutoridad || false,
+            validacionLiderFuncionario: cumplimientoData.ValidacionLiderFuncionario || cumplimientoData.validacionLiderFuncionario || false,
+            validacionDesignacionArticulo: cumplimientoData.ValidacionDesignacionArticulo || cumplimientoData.validacionDesignacionArticulo || false,
+            validacionFuncionesDefinidas: cumplimientoData.ValidacionFuncionesDefinidas || cumplimientoData.validacionFuncionesDefinidas || false,
             criteriosEvaluados: criteriosParsed,
-            aceptaPoliticaPrivacidad: cumplimientoData.aceptaPoliticaPrivacidad || false,
-            aceptaDeclaracionJurada: cumplimientoData.aceptaDeclaracionJurada || false
+            aceptaPoliticaPrivacidad: cumplimientoData.AceptaPoliticaPrivacidad || cumplimientoData.aceptaPoliticaPrivacidad || false,
+            aceptaDeclaracionJurada: cumplimientoData.AceptaDeclaracionJurada || cumplimientoData.aceptaDeclaracionJurada || false
           };
           console.log(`🔍 Retornando datos de cumplimiento para Com${compromisoId}:`, result);
           console.log(`📋 CriteriosEvaluados específicamente:`, result.criteriosEvaluados);
@@ -349,13 +363,25 @@ const CumplimientoNormativoDetalle = () => {
               validacionLiderFuncionario: cumplimientoData?.validacionLiderFuncionario || false,
               validacionDesignacionArticulo: cumplimientoData?.validacionDesignacionArticulo || false,
               validacionFuncionesDefinidas: cumplimientoData?.validacionFuncionesDefinidas || false,
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: cumplimientoData?.AceptaPoliticaPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             };
             console.log('🎯 FormData que se va a establecer para Com1:', newFormData);
             console.log('🎯 Específicamente criteriosEvaluados:', newFormData.criteriosEvaluados);
+            console.log('🎯 Checks - aceptaPoliticaPrivacidad:', newFormData.aceptaPoliticaPrivacidad);
+            console.log('🎯 Checks - aceptaDeclaracionJurada:', newFormData.aceptaDeclaracionJurada);
             setFormData(newFormData);
+            
+            // Si los checks ya están aceptados, marcar como vistos
+            if (newFormData.aceptaPoliticaPrivacidad) {
+              console.log('✅ Marcando política como vista (ya aceptada)');
+              setHaVistoPolitica(true);
+            }
+            if (newFormData.aceptaDeclaracionJurada) {
+              console.log('✅ Marcando declaración como vista (ya aceptada)');
+              setHaVistoDeclaracion(true);
+            }
             
             // Si hay documento guardado, establecer la URL para Paso 1
             if (data.urlDocPcm) {
@@ -394,8 +420,8 @@ const CumplimientoNormativoDetalle = () => {
               compromisoId: '3',
               documentoFile: null,
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || data.checkPrivacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || data.checkDdjj || false,
+              aceptaPoliticaPrivacidad: cumplimientoData?.AceptaPoliticaPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
@@ -485,8 +511,8 @@ const CumplimientoNormativoDetalle = () => {
               validacionLiderFuncionario: cumplimientoData?.validacionLiderFuncionario || false,
               validacionDesignacionArticulo: cumplimientoData?.validacionDesignacionArticulo || false,
               validacionFuncionesDefinidas: cumplimientoData?.validacionFuncionesDefinidas || false,
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || false,
+              aceptaPoliticaPrivacidad: cumplimientoData?.AceptaPoliticaPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
@@ -532,8 +558,8 @@ const CumplimientoNormativoDetalle = () => {
               alineadoPgd: data.alineadoPgd || false,
               documentoFile: null,
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || data.checkPrivacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || data.checkDdjj || false,
+              aceptaPoliticaPrivacidad: cumplimientoData?.AceptaPoliticaPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || data.checkPrivacidad || false,
+              aceptaDeclaracionJurada: cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || data.checkDdjj || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
@@ -2487,6 +2513,9 @@ const CumplimientoNormativoDetalle = () => {
         }
         // Pasos 2 y 3: Guardar en cumplimiento_normativo (SIN datos del paso 1)
         else if (pasoActual === 2 || pasoActual === 3) {
+          console.log(`🔍 DEBUG Paso ${pasoActual} - formData.aceptaPoliticaPrivacidad:`, formData.aceptaPoliticaPrivacidad);
+          console.log(`🔍 DEBUG Paso ${pasoActual} - formData.aceptaDeclaracionJurada:`, formData.aceptaDeclaracionJurada);
+          
           const cumplimientoData = {
             compromiso_id: parseInt(formData.compromisoId),
             entidad_id: user.entidadId,
@@ -2496,14 +2525,16 @@ const CumplimientoNormativoDetalle = () => {
               criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
+              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
             }),
             etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
             estado: formData.estado || 1,
           };
           
-          console.log(`Datos cumplimiento Com${formData.compromisoId} a enviar:`, cumplimientoData);
+          console.log(`📤 Datos cumplimiento Com${formData.compromisoId} a enviar:`, cumplimientoData);
+          console.log(`📤 Específicamente checks - acepta_politica_privacidad:`, cumplimientoData.acepta_politica_privacidad);
+          console.log(`📤 Específicamente checks - acepta_declaracion_jurada:`, cumplimientoData.acepta_declaracion_jurada);
           
           if (cumplimientoNormativoId) {
             response = await cumplimientoService.update(cumplimientoNormativoId, cumplimientoData);
@@ -2558,8 +2589,8 @@ const CumplimientoNormativoDetalle = () => {
           ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
             criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
           }),
-          acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-          acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+          acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
+          acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
           etapa_formulario: pasoActual === 3 ? 'completado' : `paso${pasoActual}`,
           estado: formData.estado || 1
         };
@@ -2634,8 +2665,8 @@ const CumplimientoNormativoDetalle = () => {
               criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
+              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
             }),
             etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
             estado: formData.estado || 1
@@ -2736,8 +2767,8 @@ const CumplimientoNormativoDetalle = () => {
               criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
+              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
             }),
             etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
             estado: formData.estado || 1
@@ -2808,8 +2839,8 @@ const CumplimientoNormativoDetalle = () => {
               criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
+              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
             }),
             etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
             estado: formData.estado || 1
@@ -2881,8 +2912,8 @@ const CumplimientoNormativoDetalle = () => {
               criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
+              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
             }),
             etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
             estado: formData.estado || 1
@@ -2954,8 +2985,8 @@ const CumplimientoNormativoDetalle = () => {
               criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
+              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
             }),
             etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
             estado: formData.estado || 1
@@ -3028,8 +3059,8 @@ const CumplimientoNormativoDetalle = () => {
               criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
+              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
             }),
             etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
             estado: formData.estado || 1
@@ -3102,8 +3133,8 @@ const CumplimientoNormativoDetalle = () => {
               criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
-              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
-              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
+              acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
+              acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
             }),
             etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
             estado: formData.estado || 1
