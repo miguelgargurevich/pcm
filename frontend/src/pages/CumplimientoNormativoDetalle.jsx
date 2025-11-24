@@ -4220,19 +4220,20 @@ const CumplimientoNormativoDetalle = () => {
                       Documento PEI (PDF) <span className="text-red-500">*</span>
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -4389,19 +4390,20 @@ const CumplimientoNormativoDetalle = () => {
                       Documento PDF <span className="text-red-500">*</span>
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo PDF'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo PDF'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -4749,19 +4751,20 @@ const CumplimientoNormativoDetalle = () => {
                       Documento de evidencia (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -4965,19 +4968,20 @@ const CumplimientoNormativoDetalle = () => {
                       Documento de evidencia (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -5178,19 +5182,20 @@ const CumplimientoNormativoDetalle = () => {
                       Documento de evidencia (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -5416,19 +5421,20 @@ const CumplimientoNormativoDetalle = () => {
                       Documento de evidencia (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -5653,19 +5659,20 @@ const CumplimientoNormativoDetalle = () => {
                       Documento de evidencia (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -5839,19 +5846,20 @@ const CumplimientoNormativoDetalle = () => {
                       Archivo del plan (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -6011,19 +6019,20 @@ const CumplimientoNormativoDetalle = () => {
                       Archivo del documento (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -6190,19 +6199,20 @@ const CumplimientoNormativoDetalle = () => {
                       Archivo del plan (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -6350,19 +6360,20 @@ const CumplimientoNormativoDetalle = () => {
                       Archivo de documento (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -6528,19 +6539,20 @@ const CumplimientoNormativoDetalle = () => {
                       Documento de evidencia (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -6794,19 +6806,20 @@ const CumplimientoNormativoDetalle = () => {
                       Documento de evidencia (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -7054,19 +7067,20 @@ const CumplimientoNormativoDetalle = () => {
                       Documento de evidencia (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -7316,19 +7330,20 @@ const CumplimientoNormativoDetalle = () => {
                       Documento de evidencia (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -7540,19 +7555,20 @@ const CumplimientoNormativoDetalle = () => {
                       Documento de evidencia (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -7763,19 +7779,20 @@ const CumplimientoNormativoDetalle = () => {
                       Documento de evidencia (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
@@ -8020,19 +8037,20 @@ const CumplimientoNormativoDetalle = () => {
                       Documento de evidencia (PDF)
                     </label>
                     <div className="flex items-center gap-3">
-                      <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                        <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          disabled={viewMode}
-                        />
-                      </label>
+                      {!viewMode && (
+                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
+                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
+                          </span>
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                       {pdfUrl && (
                         <button
                           type="button"
