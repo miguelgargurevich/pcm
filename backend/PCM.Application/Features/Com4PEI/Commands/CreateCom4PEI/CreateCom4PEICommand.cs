@@ -1,29 +1,54 @@
 using MediatR;
 using PCM.Application.Common;
+using System.Text.Json.Serialization;
 
 namespace PCM.Application.Features.Com4PEI.Commands.CreateCom4PEI;
 
 public class CreateCom4PEICommand : IRequest<Result<Com4PEIResponse>>
 {
+    [JsonPropertyName("compromiso_id")]
     public long CompromisoId { get; set; }
+    
+    [JsonPropertyName("entidad_id")]
     public Guid EntidadId { get; set; }
+    
+    [JsonPropertyName("etapaFormulario")]
     public string EtapaFormulario { get; set; } = "paso1";
+    
+    [JsonPropertyName("estado")]
     public string Estado { get; set; } = "bandeja";
     
     // Campos del PEI - Supabase schema
+    [JsonPropertyName("anioInicioPei")]
     public long? AnioInicioPei { get; set; }
+    
+    [JsonPropertyName("anioFinPei")]
     public long? AnioFinPei { get; set; }
+    
+    [JsonPropertyName("fechaAprobacionPei")]
     public DateTime? FechaAprobacionPei { get; set; }
+    
+    [JsonPropertyName("objetivoPei")]
     public string? ObjetivoPei { get; set; }
+    
+    [JsonPropertyName("descripcionPei")]
     public string? DescripcionPei { get; set; }
+    
+    [JsonPropertyName("alineadoPgd")]
     public bool AlineadoPgd { get; set; }
+    
+    [JsonPropertyName("rutaPdfPei")]
     public string? RutaPdfPei { get; set; }
     
     // Aceptaciones
+    [JsonPropertyName("checkPrivacidad")]
     public bool CheckPrivacidad { get; set; }
+    
+    [JsonPropertyName("checkDdjj")]
     public bool CheckDdjj { get; set; }
     
     // Usuario que registra
+    [JsonPropertyName("usuarioRegistra")]
     public Guid? UsuarioRegistra { get; set; }
 }
 
