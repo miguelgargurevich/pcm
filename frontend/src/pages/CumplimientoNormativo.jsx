@@ -291,12 +291,8 @@ const CumplimientoNormativo = () => {
                         <div className="flex justify-center gap-2">
                           <button
                             onClick={() => {
-                              // Para Compromiso 1 y 2, usar tablas específicas (com1_liderg_td, com2_cgtd)
-                              if (compromiso.compromisoId === 1) {
-                                navigate(`/dashboard/cumplimiento/nuevo?compromiso=1&mode=view`);
-                              } else if (compromiso.compromisoId === 2) {
-                                navigate(`/dashboard/cumplimiento/nuevo?compromiso=2&mode=view`);
-                              } else if (cumplimiento) {
+                              // Si existe cumplimiento, ver; si no, crear nuevo
+                              if (cumplimiento) {
                                 handleVer(cumplimiento.cumplimientoId, compromiso.compromisoId);
                               } else {
                                 navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`);
@@ -309,12 +305,8 @@ const CumplimientoNormativo = () => {
                           </button>
                           <button
                             onClick={() => {
-                              // Para Compromiso 1 y 2, usar tablas específicas
-                              if (compromiso.compromisoId === 1) {
-                                navigate(`/dashboard/cumplimiento/nuevo?compromiso=1`);
-                              } else if (compromiso.compromisoId === 2) {
-                                navigate(`/dashboard/cumplimiento/nuevo?compromiso=2`);
-                              } else if (cumplimiento) {
+                              // Si existe cumplimiento, editar; si no, crear nuevo
+                              if (cumplimiento) {
                                 handleEditar(cumplimiento.cumplimientoId, compromiso.compromisoId);
                               } else {
                                 navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`);
