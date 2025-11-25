@@ -4237,44 +4237,65 @@ const CumplimientoNormativoDetalle = () => {
 
                   {/* Documento PEI (PDF) */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Documento PEI (PDF) <span className="text-red-500">*</span>
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com4"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com4" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento PEI cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
                     {errores.documentoFile && (
                       <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
                     )}
-                    <p className="text-xs text-gray-500 mt-1">
-                      Suba el documento del PEI en formato PDF (máximo 10 MB)
-                    </p>
                   </div>
                 </div>
               </>
@@ -4407,44 +4428,65 @@ const CumplimientoNormativoDetalle = () => {
 
                   {/* Documento PDF */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Documento PDF <span className="text-red-500">*</span>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Documento de la Estrategia Digital (PDF) <span className="text-red-500">*</span>
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo PDF'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com5"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com5" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de Estrategia Digital cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
                     {errores.documentoFile && (
                       <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
                     )}
-                    <p className="text-xs text-gray-500 mt-1">
-                      Suba el documento de la Estrategia Digital en formato PDF (máximo 10 MB)
-                    </p>
                   </div>
 
                   {/* Objetivos Estratégicos */}
@@ -4768,41 +4810,65 @@ const CumplimientoNormativoDetalle = () => {
 
                   {/* Documento de evidencia (PDF) */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Documento de evidencia (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com6"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com6" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Suba el documento de evidencia de la migración en formato PDF (máximo 10 MB)
-                    </p>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                   </div>
                 </div>
               </>
@@ -4985,41 +5051,65 @@ const CumplimientoNormativoDetalle = () => {
 
                   {/* Documento de evidencia (PDF) */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Documento de evidencia (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com7"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com7" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Suba el documento de evidencia de la implementación en formato PDF (máximo 10 MB)
-                    </p>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                   </div>
                 </div>
               </>
@@ -5199,41 +5289,65 @@ const CumplimientoNormativoDetalle = () => {
 
                   {/* Documento de evidencia (PDF) */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Documento de evidencia (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com8"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com8" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Suba el documento del TUPA en formato PDF (máximo 10 MB)
-                    </p>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                   </div>
                 </div>
               </>
@@ -5441,35 +5555,62 @@ const CumplimientoNormativoDetalle = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Documento de evidencia (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com9"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com9" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el documento del MGD en formato PDF (máximo 10 MB)
                     </p>
@@ -5679,35 +5820,62 @@ const CumplimientoNormativoDetalle = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Documento de evidencia (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com10"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com10" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el documento de evidencia en formato PDF (máximo 10 MB)
                     </p>
@@ -5866,35 +6034,62 @@ const CumplimientoNormativoDetalle = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Archivo del plan (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com11"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com11" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el archivo del plan en formato PDF (máximo 10 MB)
                     </p>
@@ -6039,35 +6234,62 @@ const CumplimientoNormativoDetalle = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Archivo del documento (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com12"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com12" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el archivo del documento en formato PDF (máximo 10 MB)
                     </p>
@@ -6219,35 +6441,62 @@ const CumplimientoNormativoDetalle = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Archivo del plan (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com13"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com13" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el plan de continuidad en formato PDF (máximo 10 MB)
                     </p>
@@ -6380,35 +6629,62 @@ const CumplimientoNormativoDetalle = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Archivo de documento (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com14"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com14" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el documento en formato PDF (máximo 10 MB)
                     </p>
@@ -6559,35 +6835,62 @@ const CumplimientoNormativoDetalle = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Documento de evidencia (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com15"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com15" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el documento de evidencia en formato PDF (máximo 10 MB)
                     </p>
@@ -6826,35 +7129,62 @@ const CumplimientoNormativoDetalle = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Documento de evidencia (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com16"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com16" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el documento de evidencia en formato PDF (máximo 10 MB)
                     </p>
@@ -7087,35 +7417,62 @@ const CumplimientoNormativoDetalle = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Documento de evidencia (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com17"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com17" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el documento de evidencia en formato PDF (máximo 10 MB)
                     </p>
@@ -7350,35 +7707,62 @@ const CumplimientoNormativoDetalle = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Documento de evidencia (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com18"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com18" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el documento de evidencia en formato PDF (máximo 10 MB)
                     </p>
@@ -7575,35 +7959,62 @@ const CumplimientoNormativoDetalle = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Documento de evidencia (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com19"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com19" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el documento de evidencia en formato PDF (máximo 10 MB)
                     </p>
@@ -7799,35 +8210,62 @@ const CumplimientoNormativoDetalle = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Documento de evidencia (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com20"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com20" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el documento de evidencia en formato PDF (máximo 10 MB)
                     </p>
@@ -8057,35 +8495,62 @@ const CumplimientoNormativoDetalle = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Documento de evidencia (PDF)
                     </label>
-                    <div className="flex items-center gap-3">
-                      {!viewMode && (
-                        <label className="flex-1 flex items-center justify-center px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
-                          <Upload className="w-5 h-5 mr-2 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {formData.documentoFile ? formData.documentoFile.name : 'Seleccionar archivo'}
-                          </span>
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
-                      {pdfUrl && (
+                    
+                    {!pdfUrl ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={40} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Arrastra y suelta el archivo PDF aquí, o haz clic para seleccionar
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload-com21"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com21" className="btn-primary cursor-pointer inline-block">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-primary" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={removeFile}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar documento"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
                         <button
-                          type="button"
                           onClick={() => {
                             setDocumentoActualUrl(pdfUrl);
                             setShowPdfViewer(true);
                           }}
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                          className="btn-secondary text-sm flex items-center gap-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          Ver PDF
+                          <Eye size={16} />
+                          Vista previa del PDF
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    {errores.documentoFile && (
+                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el documento de evidencia en formato PDF (máximo 10 MB)
                     </p>
