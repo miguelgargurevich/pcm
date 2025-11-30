@@ -62,28 +62,59 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
 
             if (request.Alcances != null && request.Alcances.Any())
             {
+                var addedSubclasificacionIds = new HashSet<long>();
+                
                 foreach (var alcanceIdStr in request.Alcances)
                 {
-                    if (int.TryParse(alcanceIdStr, out int alcanceId))
+                    if (long.TryParse(alcanceIdStr, out long alcanceId))
                     {
-                        // Verificar que el ClasificacionId existe
-                        var clasificacionExists = await _context.Clasificaciones
-                            .AnyAsync(c => c.ClasificacionId == alcanceId, cancellationToken);
+                        // PRIMERO verificar si es un clasificacion_id (los alcances del frontend son clasificaciones)
+                        var subclasificaciones = await _context.Subclasificaciones
+                            .Where(s => s.ClasificacionId == (int)alcanceId && s.Activo)
+                            .ToListAsync(cancellationToken);
                         
-                        if (!clasificacionExists)
+                        if (subclasificaciones.Any())
                         {
-                            _logger.LogWarning("ClasificacionId {AlcanceId} no existe en la tabla clasificacion", alcanceId);
-                            continue; // Skip this alcance
+                            // Es un clasificacion_id - insertar todas sus subclasificaciones
+                            foreach (var sub in subclasificaciones)
+                            {
+                                if (!addedSubclasificacionIds.Contains(sub.SubclasificacionId))
+                                {
+                                    var alcanceCompromiso = new AlcanceCompromiso
+                                    {
+                                        CompromisoId = compromiso.CompromisoId,
+                                        ClasificacionId = sub.SubclasificacionId, // Mapea a subclasificacion_id en BD
+                                        Activo = true,
+                                        CreatedAt = DateTime.UtcNow
+                                    };
+                                    _context.AlcancesCompromisos.Add(alcanceCompromiso);
+                                    addedSubclasificacionIds.Add(sub.SubclasificacionId);
+                                }
+                            }
                         }
-
-                        var alcanceCompromiso = new AlcanceCompromiso
+                        else
                         {
-                            CompromisoId = compromiso.CompromisoId,
-                            ClasificacionId = alcanceId,
-                            Activo = true,
-                            CreatedAt = DateTime.UtcNow
-                        };
-                        _context.AlcancesCompromisos.Add(alcanceCompromiso);
+                            // Si no es clasificacion, verificar si es un subclasificacion_id directo
+                            var subclasificacion = await _context.Subclasificaciones
+                                .FirstOrDefaultAsync(s => s.SubclasificacionId == alcanceId, cancellationToken);
+                            
+                            if (subclasificacion != null && !addedSubclasificacionIds.Contains(alcanceId))
+                            {
+                                var alcanceCompromiso = new AlcanceCompromiso
+                                {
+                                    CompromisoId = compromiso.CompromisoId,
+                                    ClasificacionId = alcanceId, // Mapea a subclasificacion_id en BD
+                                    Activo = true,
+                                    CreatedAt = DateTime.UtcNow
+                                };
+                                _context.AlcancesCompromisos.Add(alcanceCompromiso);
+                                addedSubclasificacionIds.Add(alcanceId);
+                            }
+                            else if (subclasificacion == null)
+                            {
+                                _logger.LogWarning("El ID {AlcanceId} no corresponde a ninguna clasificacion ni subclasificacion", alcanceId);
+                            }
+                        }
                     }
                 }
             }
@@ -153,8 +184,10 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error updating compromiso {CompromisoId}", request.CompromisoId);
-            return Result<CompromisoResponseDto>.Failure($"Error al actualizar el compromiso: {ex.Message}");
+            var innerMessage = ex.InnerException?.Message ?? ex.Message;
+            var fullMessage = ex.InnerException?.InnerException?.Message ?? innerMessage;
+            _logger.LogError(ex, "Error updating compromiso {CompromisoId}. Inner: {InnerMessage}", request.CompromisoId, fullMessage);
+            return Result<CompromisoResponseDto>.Failure($"Error al actualizar el compromiso: {fullMessage}");
         }
     }
 

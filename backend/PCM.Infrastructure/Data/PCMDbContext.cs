@@ -457,7 +457,9 @@ public class PCMDbContext : DbContext
         {
             entity.ToTable("alcance_compromisos");
             entity.HasKey(e => e.AlcanceCompromisoId);
-            entity.Property(e => e.AlcanceCompromisoId).HasColumnName("alc_com_id");
+            entity.Property(e => e.AlcanceCompromisoId)
+                .HasColumnName("alc_com_id")
+                .ValueGeneratedOnAdd(); // Auto-increment desde la BD
             entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id").IsRequired();
             entity.Property(e => e.ClasificacionId).HasColumnName("subclasificacion_id").IsRequired();
             entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
