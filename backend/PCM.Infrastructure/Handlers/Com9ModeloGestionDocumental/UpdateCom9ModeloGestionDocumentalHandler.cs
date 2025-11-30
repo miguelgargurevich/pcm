@@ -37,7 +37,9 @@ namespace PCM.Infrastructure.Handlers.Com9ModeloGestionDocumental
                 }
 
                 // Actualizar campos
-                registro.FechaAprobacionMgd = request.FechaAprobacionMgd ?? registro.FechaAprobacionMgd;
+                registro.FechaAprobacionMgd = request.FechaAprobacionMgd.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaAprobacionMgd.Value, DateTimeKind.Utc) 
+                    : registro.FechaAprobacionMgd;
                 registro.NumeroResolucionMgd = request.NumeroResolucionMgd ?? registro.NumeroResolucionMgd;
                 registro.ResponsableMgd = request.ResponsableMgd ?? registro.ResponsableMgd;
                 registro.CargoResponsableMgd = request.CargoResponsableMgd ?? registro.CargoResponsableMgd;
@@ -45,12 +47,12 @@ namespace PCM.Infrastructure.Handlers.Com9ModeloGestionDocumental
                 registro.TelefonoResponsableMgd = request.TelefonoResponsableMgd ?? registro.TelefonoResponsableMgd;
                 registro.SistemaPlataformaMgd = request.SistemaPlataformaMgd ?? registro.SistemaPlataformaMgd;
                 registro.TipoImplantacionMgd = request.TipoImplantacionMgd ?? registro.TipoImplantacionMgd;
-                registro.InteroperaSistemasMgd = request.InteroperaSistemasMgd ?? registro.InteroperaSistemasMgd;
+                registro.InteroperaSistemasMgd = request.InteroperaSistemasMgd;
                 registro.ObservacionMgd = request.ObservacionMgd ?? registro.ObservacionMgd;
                 registro.RutaPdfMgd = request.RutaPdfMgd ?? registro.RutaPdfMgd;
-                registro.CheckPrivacidad = request.CheckPrivacidad ?? registro.CheckPrivacidad;
-                registro.CheckDdjj = request.CheckDdjj ?? registro.CheckDdjj;
-                registro.UsuarioRegistra = request.UsuarioRegistra ?? registro.UsuarioRegistra;
+                registro.CheckPrivacidad = request.CheckPrivacidad;
+                registro.CheckDdjj = request.CheckDdjj;
+                registro.UsuarioRegistra = request.UsuarioRegistra;
                 registro.EtapaFormulario = request.EtapaFormulario ?? registro.EtapaFormulario;
                 registro.UpdatedAt = DateTime.UtcNow;
 

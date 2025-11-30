@@ -14,12 +14,17 @@ public class UpdateCom20DigitalizacionServiciosFacilitaCommand : IRequest<Result
     public bool? CheckDdjj { get; set; }
     public Guid? UsuarioRegistra { get; set; }
 
-    // Campos específicos
-    public int? SistemasDocumentados { get; set; }
-    public int? SistemasTotal { get; set; }
-    public decimal? PorcentajeDocumentacion { get; set; }
-    public string? ArchivoRepositorio { get; set; }
-    public string? Descripcion { get; set; }
+    // Campos específicos de Digitalización de Servicios Facilita Perú
+    public string? ResponsableFacilita { get; set; }
+    public string? CargoResponsableFacilita { get; set; }
+    public string? CorreoFacilita { get; set; }
+    public string? TelefonoFacilita { get; set; }
+    public string? EstadoImplementacionFacilita { get; set; }
+    public DateTime? FechaInicioFacilita { get; set; }
+    public DateTime? FechaUltimoAvanceFacilita { get; set; }
+    public long? TotalServiciosDigitalizados { get; set; }
+    public string? RutaPdfFacilita { get; set; }
+    public string? ObservacionFacilita { get; set; }
 }
 
 public class Com20DigitalizacionServiciosFacilitaResponse
@@ -31,15 +36,22 @@ public class Com20DigitalizacionServiciosFacilitaResponse
     public string Estado { get; set; } = string.Empty;
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }
-    public string EstadoPCM { get; set; } = string.Empty;
-    public string ObservacionesPCM { get; set; } = string.Empty;
+    public string? EstadoPCM { get; set; }
+    public string? ObservacionesPCM { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime FecRegistro { get; set; }
     public Guid UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
-    public int? SistemasDocumentados { get; set; }
-    public int? SistemasTotal { get; set; }
-    public decimal? PorcentajeDocumentacion { get; set; }
-    public string? ArchivoRepositorio { get; set; }
-    public string? Descripcion { get; set; }
+    
+    // Campos específicos de Digitalización de Servicios Facilita Perú
+    public string? ResponsableFacilita { get; set; }
+    public string? CargoResponsableFacilita { get; set; }
+    public string? CorreoFacilita { get; set; }
+    public string? TelefonoFacilita { get; set; }
+    public string? EstadoImplementacionFacilita { get; set; }
+    public DateTime? FechaInicioFacilita { get; set; }
+    public DateTime? FechaUltimoAvanceFacilita { get; set; }
+    public long TotalServiciosDigitalizados { get; set; }
+    public string? RutaPdfFacilita { get; set; }
+    public string? ObservacionFacilita { get; set; }
 }

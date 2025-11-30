@@ -1,8 +1,13 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PCM.Domain.Entities;
 
+/// <summary>
+/// Compromiso 15: Conformación del CSIRT Institucional
+/// Tabla Supabase: com15_csirt
+/// </summary>
 [Table("com15_csirt")]
 public class Com15CSIRTInstitucional
 {
@@ -50,30 +55,93 @@ public class Com15CSIRTInstitucional
     [Column("activo")]
     public bool Activo { get; set; } = true;
 
-    // Campos específicos
-    [Column("fecha_conformacion")]
-    public DateTime? FechaConformacion { get; set; }
+    // Campos específicos del CSIRT Institucional
+    [Column("nombre_csirt")]
+    [MaxLength(150)]
+    public string NombreCsirt { get; set; } = "";
 
-    [Column("numero_resolucion")]
+    [Column("fecha_conformacion_csirt")]
+    public DateTime? FechaConformacionCsirt { get; set; }
+
+    [Column("numero_resolucion_csirt")]
     [MaxLength(50)]
-    public string? NumeroResolucion { get; set; }
+    public string NumeroResolucionCsirt { get; set; } = "";
 
-    [Column("responsable")]
-    [MaxLength(200)]
-    public string? Responsable { get; set; }
-
-    [Column("email_contacto")]
+    [Column("responsable_csirt")]
     [MaxLength(100)]
-    public string? EmailContacto { get; set; }
+    public string ResponsableCsirt { get; set; } = "";
 
-    [Column("telefono_contacto")]
+    [Column("cargo_responsable_csirt")]
+    [MaxLength(100)]
+    public string CargoResponsableCsirt { get; set; } = "";
+
+    [Column("correo_csirt")]
+    [MaxLength(100)]
+    public string CorreoCsirt { get; set; } = "";
+
+    [Column("telefono_csirt")]
     [MaxLength(30)]
-    public string? TelefonoContacto { get; set; }
+    public string TelefonoCsirt { get; set; } = "";
 
-    [Column("archivo_procedimientos")]
+    [Column("protocolo_incidentes_csirt")]
+    public bool ProtocoloIncidentesCsirt { get; set; }
+
+    [Column("comunicado_pcm_csirt")]
+    public bool ComunicadoPcmCsirt { get; set; }
+
+    [Column("ruta_pdf_csirt")]
+    [MaxLength(255)]
+    public string RutaPdfCsirt { get; set; } = "";
+
+    [Column("observacion_csirt")]
+    [MaxLength(255)]
+    public string ObservacionCsirt { get; set; } = "";
+
+    [Column("rutaPDF_normativa")]
     [MaxLength(500)]
-    public string? ArchivoProcedimientos { get; set; }
+    public string? RutaPdfNormativa { get; set; }
 
-    [Column("descripcion")]
-    public string? Descripcion { get; set; }
+    // Propiedades de compatibilidad para handlers existentes
+    [NotMapped]
+    public DateTime? FechaElaboracion { get => FechaConformacionCsirt; set => FechaConformacionCsirt = value; }
+    
+    [NotMapped]
+    public string? NumeroDocumento { get => NumeroResolucionCsirt; set => NumeroResolucionCsirt = value ?? ""; }
+    
+    [NotMapped]
+    public string? ArchivoDocumento { get => RutaPdfCsirt; set => RutaPdfCsirt = value ?? ""; }
+    
+    [NotMapped]
+    public string? Descripcion { get => ObservacionCsirt; set => ObservacionCsirt = value ?? ""; }
+    
+    [NotMapped]
+    public string? TipoCSIRT { get => NombreCsirt; set => NombreCsirt = value ?? ""; }
+    
+    [NotMapped]
+    public int? IncidentesAtendidos { get => null; set { } }
+    
+    [NotMapped]
+    public int? TiempoPromedioRespuesta { get => null; set { } }
+    
+    [NotMapped]
+    public string? NombreCompleto { get => ResponsableCsirt; set => ResponsableCsirt = value ?? ""; }
+
+    // Alias adicionales para handlers
+    [NotMapped]
+    public DateTime? FechaConformacion { get => FechaConformacionCsirt; set => FechaConformacionCsirt = value; }
+    
+    [NotMapped]
+    public string? NumeroResolucion { get => NumeroResolucionCsirt; set => NumeroResolucionCsirt = value ?? ""; }
+    
+    [NotMapped]
+    public string? Responsable { get => ResponsableCsirt; set => ResponsableCsirt = value ?? ""; }
+    
+    [NotMapped]
+    public string? EmailContacto { get => CorreoCsirt; set => CorreoCsirt = value ?? ""; }
+    
+    [NotMapped]
+    public string? TelefonoContacto { get => TelefonoCsirt; set => TelefonoCsirt = value ?? ""; }
+    
+    [NotMapped]
+    public string? ArchivoProcedimientos { get => RutaPdfCsirt; set => RutaPdfCsirt = value ?? ""; }
 }

@@ -32,8 +32,12 @@ public class CreateCom6MigracionGobPeHandler : IRequestHandler<CreateCom6Migraci
                 EtapaFormulario = request.EtapaFormulario,
                 Estado = request.Estado,
                 UrlGobPe = request.UrlGobPe,
-                FechaMigracionGobPe = request.FechaMigracionGobPe,
-                FechaActualizacionGobPe = request.FechaActualizacionGobPe,
+                FechaMigracionGobPe = request.FechaMigracionGobPe.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaMigracionGobPe.Value, DateTimeKind.Utc) 
+                    : null,
+                FechaActualizacionGobPe = request.FechaActualizacionGobPe.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaActualizacionGobPe.Value, DateTimeKind.Utc) 
+                    : null,
                 ResponsableGobPe = request.ResponsableGobPe,
                 CorreoResponsableGobPe = request.CorreoResponsableGobPe,
                 TelefonoResponsableGobPe = request.TelefonoResponsableGobPe,
@@ -42,6 +46,8 @@ public class CreateCom6MigracionGobPeHandler : IRequestHandler<CreateCom6Migraci
                 RutaPdfGobPe = request.RutaPdfGobPe,
                 CheckPrivacidad = request.CheckPrivacidad,
                 CheckDdjj = request.CheckDdjj,
+                EstadoPCM = "Pendiente",
+                ObservacionesPCM = request.ObservacionGobPe ?? "",
                 UsuarioRegistra = request.UsuarioRegistra ?? Guid.Empty,
                 CreatedAt = DateTime.UtcNow,
                 FecRegistro = DateTime.UtcNow,

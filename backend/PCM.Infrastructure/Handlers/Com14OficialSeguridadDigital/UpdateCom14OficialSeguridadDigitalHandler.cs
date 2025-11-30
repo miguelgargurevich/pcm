@@ -42,13 +42,13 @@ public class UpdateCom14OficialSeguridadDigitalHandler : IRequestHandler<UpdateC
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
             // Actualizar campos específicos
-            if (request.FechaElaboracion.HasValue) entity.FechaElaboracion = request.FechaElaboracion;
+            if (request.FechaElaboracion.HasValue) entity.FechaElaboracion = DateTime.SpecifyKind(request.FechaElaboracion.Value, DateTimeKind.Utc);
             if (!string.IsNullOrEmpty(request.NumeroDocumento)) entity.NumeroDocumento = request.NumeroDocumento;
             if (!string.IsNullOrEmpty(request.ArchivoDocumento)) entity.ArchivoDocumento = request.ArchivoDocumento;
             if (!string.IsNullOrEmpty(request.Descripcion)) entity.Descripcion = request.Descripcion;
             if (!string.IsNullOrEmpty(request.PoliticasSeguridad)) entity.PoliticasSeguridad = request.PoliticasSeguridad;
             if (!string.IsNullOrEmpty(request.Certificaciones)) entity.Certificaciones = request.Certificaciones;
-            if (request.FechaVigencia.HasValue) entity.FechaVigencia = request.FechaVigencia;
+            if (request.FechaVigencia.HasValue) entity.FechaVigencia = DateTime.SpecifyKind(request.FechaVigencia.Value, DateTimeKind.Utc);
 
             await _context.SaveChangesAsync(cancellationToken);
 

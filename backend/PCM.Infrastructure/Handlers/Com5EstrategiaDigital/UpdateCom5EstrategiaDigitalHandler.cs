@@ -34,25 +34,24 @@ public class UpdateCom5EstrategiaDigitalHandler
                 return Result<Com5EstrategiaDigitalResponse>.Failure("Registro no encontrado");
             }
 
-            // Actualizar campos
-            entity.CompromisoId = command.CompromisoId;
-            entity.EntidadId = command.EntidadId;
-            entity.EtapaFormulario = command.EtapaFormulario;
-            entity.Estado = command.Estado;
-            entity.NombreEstrategia = command.NombreEstrategia;
-            entity.PeriodoInicioEstrategia = command.PeriodoInicioEstrategia;
-            entity.PeriodoFinEstrategia = command.PeriodoFinEstrategia;
-            entity.FechaAprobacionEstrategia = command.FechaAprobacionEstrategia.HasValue 
-                ? DateTime.SpecifyKind(command.FechaAprobacionEstrategia.Value, DateTimeKind.Utc)
-                : null;
-            entity.ObjetivosEstrategicos = command.ObjetivosEstrategicos;
-            entity.LineasAccion = command.LineasAccion;
+            // Actualizar campos (solo si vienen con valores no-default)
+            if (command.CompromisoId > 0) entity.CompromisoId = command.CompromisoId;
+            if (command.EntidadId != Guid.Empty) entity.EntidadId = command.EntidadId;
+            if (!string.IsNullOrEmpty(command.EtapaFormulario)) entity.EtapaFormulario = command.EtapaFormulario;
+            if (!string.IsNullOrEmpty(command.Estado)) entity.Estado = command.Estado;
+            if (command.NombreEstrategia != null) entity.NombreEstrategia = command.NombreEstrategia;
+            if (command.PeriodoInicioEstrategia.HasValue) entity.PeriodoInicioEstrategia = command.PeriodoInicioEstrategia;
+            if (command.PeriodoFinEstrategia.HasValue) entity.PeriodoFinEstrategia = command.PeriodoFinEstrategia;
+            if (command.FechaAprobacionEstrategia.HasValue) 
+                entity.FechaAprobacionEstrategia = DateTime.SpecifyKind(command.FechaAprobacionEstrategia.Value, DateTimeKind.Utc);
+            if (command.ObjetivosEstrategicos != null) entity.ObjetivosEstrategicos = command.ObjetivosEstrategicos;
+            if (command.LineasAccion != null) entity.LineasAccion = command.LineasAccion;
             entity.AlineadoPgdEstrategia = command.AlineadoPgdEstrategia;
-            entity.EstadoImplementacionEstrategia = command.EstadoImplementacionEstrategia;
-            entity.RutaPdfEstrategia = command.RutaPdfEstrategia;
+            if (command.EstadoImplementacionEstrategia != null) entity.EstadoImplementacionEstrategia = command.EstadoImplementacionEstrategia;
+            if (command.RutaPdfEstrategia != null) entity.RutaPdfEstrategia = command.RutaPdfEstrategia;
             entity.CheckPrivacidad = command.CheckPrivacidad;
             entity.CheckDdjj = command.CheckDdjj;
-            entity.UsuarioRegistra = command.UsuarioRegistra;
+            if (command.UsuarioRegistra != Guid.Empty) entity.UsuarioRegistra = command.UsuarioRegistra;
 
             // Si está en paso3 y ambos checks están true, cambiar estado a publicado
             if (command.EtapaFormulario == "paso3" && command.CheckPrivacidad && command.CheckDdjj)

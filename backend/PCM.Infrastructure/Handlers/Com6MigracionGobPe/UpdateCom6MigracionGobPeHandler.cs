@@ -37,8 +37,10 @@ public class UpdateCom6MigracionGobPeHandler : IRequestHandler<UpdateCom6Migraci
             if (request.EtapaFormulario != null) entity.EtapaFormulario = request.EtapaFormulario;
             if (request.Estado != null) entity.Estado = request.Estado;
             if (request.UrlGobPe != null) entity.UrlGobPe = request.UrlGobPe;
-            if (request.FechaMigracionGobPe.HasValue) entity.FechaMigracionGobPe = request.FechaMigracionGobPe;
-            if (request.FechaActualizacionGobPe.HasValue) entity.FechaActualizacionGobPe = request.FechaActualizacionGobPe;
+            if (request.FechaMigracionGobPe.HasValue) 
+                entity.FechaMigracionGobPe = DateTime.SpecifyKind(request.FechaMigracionGobPe.Value, DateTimeKind.Utc);
+            if (request.FechaActualizacionGobPe.HasValue) 
+                entity.FechaActualizacionGobPe = DateTime.SpecifyKind(request.FechaActualizacionGobPe.Value, DateTimeKind.Utc);
             if (request.ResponsableGobPe != null) entity.ResponsableGobPe = request.ResponsableGobPe;
             if (request.CorreoResponsableGobPe != null) entity.CorreoResponsableGobPe = request.CorreoResponsableGobPe;
             if (request.TelefonoResponsableGobPe != null) entity.TelefonoResponsableGobPe = request.TelefonoResponsableGobPe;

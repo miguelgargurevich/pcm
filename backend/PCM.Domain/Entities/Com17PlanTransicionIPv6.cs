@@ -1,8 +1,13 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PCM.Domain.Entities;
 
+/// <summary>
+/// Compromiso 17: Plan de Transición a IPv6
+/// Tabla Supabase: com17_ptipv6
+/// </summary>
 [Table("com17_ptipv6")]
 public class Com17PlanTransicionIPv6
 {
@@ -50,26 +55,74 @@ public class Com17PlanTransicionIPv6
     [Column("activo")]
     public bool Activo { get; set; } = true;
 
-    // Campos específicos
-    [Column("fecha_inicio_transicion")]
-    public DateTime? FechaInicioTransicion { get; set; }
+    // Campos específicos del Plan de Transición a IPv6
+    [Column("responsable_ipv6")]
+    [MaxLength(100)]
+    public string ResponsableIpv6 { get; set; } = "";
 
-    [Column("fecha_fin_transicion")]
-    public DateTime? FechaFinTransicion { get; set; }
+    [Column("cargo_responsable_ipv6")]
+    [MaxLength(100)]
+    public string CargoResponsableIpv6 { get; set; } = "";
 
-    [Column("porcentaje_avance", TypeName = "decimal(5,2)")]
-    public decimal? PorcentajeAvance { get; set; }
+    [Column("correo_ipv6")]
+    [MaxLength(100)]
+    public string CorreoIpv6 { get; set; } = "";
 
-    [Column("sistemas_migrados")]
-    public int? SistemasMigrados { get; set; }
+    [Column("telefono_ipv6")]
+    [MaxLength(30)]
+    public string TelefonoIpv6 { get; set; } = "";
 
-    [Column("sistemas_total")]
-    public int? SistemasTotal { get; set; }
+    [Column("estado_plan_ipv6")]
+    [MaxLength(50)]
+    public string EstadoPlanIpv6 { get; set; } = "";
 
-    [Column("archivo_plan")]
+    [Column("fecha_formulacion_ipv6")]
+    public DateTime? FechaFormulacionIpv6 { get; set; }
+
+    [Column("fecha_aprobacion_ipv6")]
+    public DateTime? FechaAprobacionIpv6 { get; set; }
+
+    [Column("fecha_inicio_ipv6")]
+    public DateTime? FechaInicioIpv6 { get; set; }
+
+    [Column("fecha_fin_ipv6")]
+    public DateTime? FechaFinIpv6 { get; set; }
+
+    [Column("descripcion_plan_ipv6")]
+    [MaxLength(255)]
+    public string DescripcionPlanIpv6 { get; set; } = "";
+
+    [Column("ruta_pdf_plan_ipv6")]
+    [MaxLength(255)]
+    public string RutaPdfPlanIpv6 { get; set; } = "";
+
+    [Column("observacion_ipv6")]
+    [MaxLength(255)]
+    public string ObservacionIpv6 { get; set; } = "";
+
+    [Column("rutaPDF_normativa")]
     [MaxLength(500)]
-    public string? ArchivoPlan { get; set; }
+    public string? RutaPdfNormativa { get; set; }
 
-    [Column("descripcion")]
-    public string? Descripcion { get; set; }
+    // Propiedades de compatibilidad para handlers existentes
+    [NotMapped]
+    public DateTime? FechaInicioTransicion { get => FechaInicioIpv6; set => FechaInicioIpv6 = value; }
+    
+    [NotMapped]
+    public DateTime? FechaFinTransicion { get => FechaFinIpv6; set => FechaFinIpv6 = value; }
+    
+    [NotMapped]
+    public decimal? PorcentajeAvance { get; set; }
+    
+    [NotMapped]
+    public int? SistemasMigrados { get; set; }
+    
+    [NotMapped]
+    public int? SistemasTotal { get; set; }
+    
+    [NotMapped]
+    public string? ArchivoPlan { get => RutaPdfPlanIpv6; set => RutaPdfPlanIpv6 = value ?? ""; }
+    
+    [NotMapped]
+    public string? Descripcion { get => ObservacionIpv6; set => ObservacionIpv6 = value ?? ""; }
 }

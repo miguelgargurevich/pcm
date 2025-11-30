@@ -42,7 +42,7 @@ public class UpdateCom19EncuestaNacionalGobDigitalHandler : IRequestHandler<Upda
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
             // Actualizar campos específicos
-            if (request.FechaConexion.HasValue) entity.FechaConexion = request.FechaConexion;
+            if (request.FechaConexion.HasValue) entity.FechaConexion = DateTime.SpecifyKind(request.FechaConexion.Value, DateTimeKind.Utc);
             if (!string.IsNullOrEmpty(request.TipoConexion)) entity.TipoConexion = request.TipoConexion;
             if (!string.IsNullOrEmpty(request.AnchoBanda)) entity.AnchoBanda = request.AnchoBanda;
             if (!string.IsNullOrEmpty(request.Proveedor)) entity.Proveedor = request.Proveedor;

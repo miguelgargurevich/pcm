@@ -41,9 +41,6 @@ public class Com8PublicacionTUPA
     [Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    [Column("updated_at")]
-    public DateTime? UpdatedAt { get; set; }
-
     [Column("fec_registro")]
     public DateTime FecRegistro { get; set; } = DateTime.UtcNow;
 
@@ -91,4 +88,12 @@ public class Com8PublicacionTUPA
     [Column("ruta_pdf_tupa")]
     [MaxLength(255)]
     public string? RutaPdfTupa { get; set; }
+
+    [Column("rutaPDF_normativa")]
+    [MaxLength(500)]
+    public string? RutaPdfNormativa { get; set; }
+
+    // Propiedad no mapeada para compatibilidad con handlers
+    [NotMapped]
+    public DateTime? UpdatedAt { get; set; }
 }

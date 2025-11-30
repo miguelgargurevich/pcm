@@ -39,8 +39,12 @@ public class CreateCom11AportacionGeoPeruHandler : IRequestHandler<CreateCom11Ap
                 CreatedAt = DateTime.UtcNow,
                 FecRegistro = DateTime.UtcNow,
                 Activo = true,
-                FechaInicio = request.FechaInicio,
-                FechaFin = request.FechaFin,
+                FechaInicio = request.FechaInicio.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaInicio.Value, DateTimeKind.Utc) 
+                    : null,
+                FechaFin = request.FechaFin.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaFin.Value, DateTimeKind.Utc) 
+                    : null,
                 ServiciosDigitalizados = request.ServiciosDigitalizados,
                 ServiciosTotal = request.ServiciosTotal,
                 PorcentajeDigitalizacion = request.PorcentajeDigitalizacion,

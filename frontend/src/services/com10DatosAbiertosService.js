@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5158/api';
 
 const com10DatosAbiertosService = {
   getByEntidad: async (compromisoId, entidadId) => {
@@ -8,7 +8,7 @@ const com10DatosAbiertosService = {
       console.log('📞 com10DatosAbiertosService.getByEntidad llamado con:', { compromisoId, entidadId });
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        `${API_URL}/api/Com10DatosAbiertos/${compromisoId}/entidad/${entidadId}`,
+        `${API_URL}/Com10DatosAbiertos/${compromisoId}/entidad/${entidadId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -34,7 +34,7 @@ const com10DatosAbiertosService = {
       console.log('📞 com10DatosAbiertosService.create llamado con:', data);
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        `${API_URL}/api/Com10DatosAbiertos`,
+        `${API_URL}/Com10DatosAbiertos`,
         data,
         {
           headers: {
@@ -59,7 +59,7 @@ const com10DatosAbiertosService = {
       console.log('📞 com10DatosAbiertosService.update llamado con:', { id, data });
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        `${API_URL}/api/Com10DatosAbiertos/${id}`,
+        `${API_URL}/Com10DatosAbiertos/${id}`,
         data,
         {
           headers: {

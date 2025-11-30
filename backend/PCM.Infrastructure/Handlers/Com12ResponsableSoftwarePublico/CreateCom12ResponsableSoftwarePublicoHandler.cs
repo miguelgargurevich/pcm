@@ -39,13 +39,17 @@ public class CreateCom12ResponsableSoftwarePublicoHandler : IRequestHandler<Crea
                 CreatedAt = DateTime.UtcNow,
                 FecRegistro = DateTime.UtcNow,
                 Activo = true,
-                FechaElaboracion = request.FechaElaboracion,
+                FechaElaboracion = request.FechaElaboracion.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaElaboracion.Value, DateTimeKind.Utc) 
+                    : null,
                 NumeroDocumento = request.NumeroDocumento,
                 ArchivoDocumento = request.ArchivoDocumento,
                 Descripcion = request.Descripcion,
                 RequisitosSeguridad = request.RequisitosSeguridad,
                 RequisitosPrivacidad = request.RequisitosPrivacidad,
-                FechaVigencia = request.FechaVigencia,
+                FechaVigencia = request.FechaVigencia.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaVigencia.Value, DateTimeKind.Utc) 
+                    : null,
             };
 
             _context.Com12ResponsableSoftwarePublico.Add(entity);

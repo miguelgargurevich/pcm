@@ -41,15 +41,20 @@ public class UpdateCom11AportacionGeoPeruHandler : IRequestHandler<UpdateCom11Ap
             if (request.CheckDdjj.HasValue) entity.CheckDdjj = request.CheckDdjj.Value;
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
-            // Actualizar campos específicos
-            if (request.FechaInicio.HasValue) entity.FechaInicio = request.FechaInicio;
-            if (request.FechaFin.HasValue) entity.FechaFin = request.FechaFin;
-            if (request.ServiciosDigitalizados.HasValue) entity.ServiciosDigitalizados = request.ServiciosDigitalizados;
-            if (request.ServiciosTotal.HasValue) entity.ServiciosTotal = request.ServiciosTotal;
-            if (request.PorcentajeDigitalizacion.HasValue) entity.PorcentajeDigitalizacion = request.PorcentajeDigitalizacion;
-            if (!string.IsNullOrEmpty(request.ArchivoPlan)) entity.ArchivoPlan = request.ArchivoPlan;
-            if (!string.IsNullOrEmpty(request.Descripcion)) entity.Descripcion = request.Descripcion;
-            if (request.BeneficiariosEstimados.HasValue) entity.BeneficiariosEstimados = request.BeneficiariosEstimados;
+            // Actualizar campos específicos de Aportación a GeoPeru
+            if (!string.IsNullOrEmpty(request.UrlGeo)) entity.UrlGeo = request.UrlGeo;
+            if (!string.IsNullOrEmpty(request.TipoInformacionGeo)) entity.TipoInformacionGeo = request.TipoInformacionGeo;
+            if (request.TotalCapasPublicadas.HasValue) entity.TotalCapasPublicadas = request.TotalCapasPublicadas.Value;
+            if (request.FechaUltimaActualizacionGeo.HasValue) entity.FechaUltimaActualizacionGeo = DateTime.SpecifyKind(request.FechaUltimaActualizacionGeo.Value, DateTimeKind.Utc);
+            if (!string.IsNullOrEmpty(request.ResponsableGeo)) entity.ResponsableGeo = request.ResponsableGeo;
+            if (!string.IsNullOrEmpty(request.CargoResponsableGeo)) entity.CargoResponsableGeo = request.CargoResponsableGeo;
+            if (!string.IsNullOrEmpty(request.CorreoResponsableGeo)) entity.CorreoResponsableGeo = request.CorreoResponsableGeo;
+            if (!string.IsNullOrEmpty(request.TelefonoResponsableGeo)) entity.TelefonoResponsableGeo = request.TelefonoResponsableGeo;
+            if (!string.IsNullOrEmpty(request.NormaAprobacionGeo)) entity.NormaAprobacionGeo = request.NormaAprobacionGeo;
+            if (request.FechaAprobacionGeo.HasValue) entity.FechaAprobacionGeo = DateTime.SpecifyKind(request.FechaAprobacionGeo.Value, DateTimeKind.Utc);
+            if (request.InteroperabilidadGeo.HasValue) entity.InteroperabilidadGeo = request.InteroperabilidadGeo.Value;
+            if (!string.IsNullOrEmpty(request.ObservacionGeo)) entity.ObservacionGeo = request.ObservacionGeo;
+            if (!string.IsNullOrEmpty(request.RutaPdfGeo)) entity.RutaPdfGeo = request.RutaPdfGeo;
 
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -68,14 +73,19 @@ public class UpdateCom11AportacionGeoPeruHandler : IRequestHandler<UpdateCom11Ap
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
-                FechaInicio = entity.FechaInicio,
-                FechaFin = entity.FechaFin,
-                ServiciosDigitalizados = entity.ServiciosDigitalizados,
-                ServiciosTotal = entity.ServiciosTotal,
-                PorcentajeDigitalizacion = entity.PorcentajeDigitalizacion,
-                ArchivoPlan = entity.ArchivoPlan,
-                Descripcion = entity.Descripcion,
-                BeneficiariosEstimados = entity.BeneficiariosEstimados,
+                UrlGeo = entity.UrlGeo,
+                TipoInformacionGeo = entity.TipoInformacionGeo,
+                TotalCapasPublicadas = entity.TotalCapasPublicadas,
+                FechaUltimaActualizacionGeo = entity.FechaUltimaActualizacionGeo,
+                ResponsableGeo = entity.ResponsableGeo,
+                CargoResponsableGeo = entity.CargoResponsableGeo,
+                CorreoResponsableGeo = entity.CorreoResponsableGeo,
+                TelefonoResponsableGeo = entity.TelefonoResponsableGeo,
+                NormaAprobacionGeo = entity.NormaAprobacionGeo,
+                FechaAprobacionGeo = entity.FechaAprobacionGeo,
+                InteroperabilidadGeo = entity.InteroperabilidadGeo,
+                ObservacionGeo = entity.ObservacionGeo,
+                RutaPdfGeo = entity.RutaPdfGeo,
             };
 
             return Result<Com11AportacionGeoPeruResponse>.Success(response);

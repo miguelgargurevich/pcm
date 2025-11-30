@@ -40,7 +40,9 @@ public class CreateCom18AccesoPortalTransparenciaHandler : IRequestHandler<Creat
                 FecRegistro = DateTime.UtcNow,
                 Activo = true,
                 UrlPlataforma = request.UrlPlataforma,
-                FechaImplementacion = request.FechaImplementacion,
+                FechaImplementacion = request.FechaImplementacion.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaImplementacion.Value, DateTimeKind.Utc) 
+                    : null,
                 TramitesDisponibles = request.TramitesDisponibles,
                 UsuariosRegistrados = request.UsuariosRegistrados,
                 TramitesProcesados = request.TramitesProcesados,

@@ -48,11 +48,17 @@ public class GetCom20DigitalizacionServiciosFacilitaHandler : IRequestHandler<Ge
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
-                SistemasDocumentados = entity.SistemasDocumentados,
-                SistemasTotal = entity.SistemasTotal,
-                PorcentajeDocumentacion = entity.PorcentajeDocumentacion,
-                ArchivoRepositorio = entity.ArchivoRepositorio,
-                Descripcion = entity.Descripcion,
+                ResponsableFacilita = entity.ResponsableFacilita,
+                CargoResponsableFacilita = entity.CargoResponsableFacilita,
+                CorreoFacilita = entity.CorreoFacilita,
+                TelefonoFacilita = entity.TelefonoFacilita,
+                EstadoImplementacionFacilita = entity.EstadoImplementacionFacilita,
+                FechaInicioFacilita = entity.FechaInicioFacilita,
+                FechaUltimoAvanceFacilita = entity.FechaUltimoAvanceFacilita,
+                TotalServiciosDigitalizados = entity.TotalServiciosDigitalizados,
+                RutaPdfFacilita = entity.RutaPdfFacilita,
+                ObservacionFacilita = entity.ObservacionFacilita,
+                RutaPdfNormativa = entity.RutaPdfNormativa,
             };
 
             return Result<Com20DigitalizacionServiciosFacilitaResponse>.Success(response);

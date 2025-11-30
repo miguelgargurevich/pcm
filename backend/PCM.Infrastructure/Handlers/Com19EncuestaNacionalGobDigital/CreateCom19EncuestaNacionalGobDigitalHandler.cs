@@ -39,7 +39,9 @@ public class CreateCom19EncuestaNacionalGobDigitalHandler : IRequestHandler<Crea
                 CreatedAt = DateTime.UtcNow,
                 FecRegistro = DateTime.UtcNow,
                 Activo = true,
-                FechaConexion = request.FechaConexion,
+                FechaConexion = request.FechaConexion.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaConexion.Value, DateTimeKind.Utc) 
+                    : null,
                 TipoConexion = request.TipoConexion,
                 AnchoBanda = request.AnchoBanda,
                 Proveedor = request.Proveedor,

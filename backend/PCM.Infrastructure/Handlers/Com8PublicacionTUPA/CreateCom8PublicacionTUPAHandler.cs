@@ -35,7 +35,9 @@ public class CreateCom8PublicacionTUPAHandler : IRequestHandler<CreateCom8Public
                 Estado = request.Estado,
                 UrlTupa = request.UrlTupa,
                 NumeroResolucionTupa = request.NumeroResolucionTupa,
-                FechaAprobacionTupa = request.FechaAprobacionTupa,
+                FechaAprobacionTupa = request.FechaAprobacionTupa.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaAprobacionTupa.Value, DateTimeKind.Utc) 
+                    : null,
                 ResponsableTupa = request.ResponsableTupa,
                 CargoResponsableTupa = request.CargoResponsableTupa,
                 CorreoResponsableTupa = request.CorreoResponsableTupa,

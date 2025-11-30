@@ -1,8 +1,13 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PCM.Domain.Entities;
 
+/// <summary>
+/// Compromiso 20: Digitalización de Servicios mediante Facilita Perú
+/// Tabla Supabase: com20_dsfpe
+/// </summary>
 [Table("com20_dsfpe")]
 public class Com20DigitalizacionServiciosFacilita
 {
@@ -50,20 +55,45 @@ public class Com20DigitalizacionServiciosFacilita
     [Column("activo")]
     public bool Activo { get; set; } = true;
 
-    // Campos específicos
-    [Column("sistemas_documentados")]
-    public int? SistemasDocumentados { get; set; }
+    // Campos específicos de Digitalización de Servicios Facilita Perú
+    [Column("responsable_facilita")]
+    [MaxLength(100)]
+    public string ResponsableFacilita { get; set; } = "";
 
-    [Column("sistemas_total")]
-    public int? SistemasTotal { get; set; }
+    [Column("cargo_responsable_facilita")]
+    [MaxLength(100)]
+    public string CargoResponsableFacilita { get; set; } = "";
 
-    [Column("porcentaje_documentacion", TypeName = "decimal(5,2)")]
-    public decimal? PorcentajeDocumentacion { get; set; }
+    [Column("correo_facilita")]
+    [MaxLength(100)]
+    public string CorreoFacilita { get; set; } = "";
 
-    [Column("archivo_repositorio")]
+    [Column("telefono_facilita")]
+    [MaxLength(30)]
+    public string TelefonoFacilita { get; set; } = "";
+
+    [Column("estado_implementacion_facilita")]
+    [MaxLength(50)]
+    public string EstadoImplementacionFacilita { get; set; } = "";
+
+    [Column("fecha_inicio_facilita")]
+    public DateTime? FechaInicioFacilita { get; set; }
+
+    [Column("fecha_ultimo_avance_facilita")]
+    public DateTime? FechaUltimoAvanceFacilita { get; set; }
+
+    [Column("total_servicios_digitalizados")]
+    public long TotalServiciosDigitalizados { get; set; }
+
+    [Column("ruta_pdf_facilita")]
+    [MaxLength(255)]
+    public string RutaPdfFacilita { get; set; } = "";
+
+    [Column("observacion_facilita")]
+    [MaxLength(255)]
+    public string ObservacionFacilita { get; set; } = "";
+
+    [Column("rutaPDF_normativa")]
     [MaxLength(500)]
-    public string? ArchivoRepositorio { get; set; }
-
-    [Column("descripcion")]
-    public string? Descripcion { get; set; }
+    public string? RutaPdfNormativa { get; set; }
 }

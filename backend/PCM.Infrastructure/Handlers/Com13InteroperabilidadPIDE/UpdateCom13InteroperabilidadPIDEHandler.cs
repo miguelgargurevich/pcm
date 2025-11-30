@@ -42,13 +42,13 @@ public class UpdateCom13InteroperabilidadPIDEHandler : IRequestHandler<UpdateCom
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
             // Actualizar campos específicos
-            if (request.FechaAprobacion.HasValue) entity.FechaAprobacion = request.FechaAprobacion;
+            if (request.FechaAprobacion.HasValue) entity.FechaAprobacion = DateTime.SpecifyKind(request.FechaAprobacion.Value, DateTimeKind.Utc);
             if (!string.IsNullOrEmpty(request.NumeroResolucion)) entity.NumeroResolucion = request.NumeroResolucion;
             if (!string.IsNullOrEmpty(request.ArchivoPlan)) entity.ArchivoPlan = request.ArchivoPlan;
             if (!string.IsNullOrEmpty(request.Descripcion)) entity.Descripcion = request.Descripcion;
             if (!string.IsNullOrEmpty(request.RiesgosIdentificados)) entity.RiesgosIdentificados = request.RiesgosIdentificados;
             if (!string.IsNullOrEmpty(request.EstrategiasMitigacion)) entity.EstrategiasMitigacion = request.EstrategiasMitigacion;
-            if (request.FechaRevision.HasValue) entity.FechaRevision = request.FechaRevision;
+            if (request.FechaRevision.HasValue) entity.FechaRevision = DateTime.SpecifyKind(request.FechaRevision.Value, DateTimeKind.Utc);
             if (!string.IsNullOrEmpty(request.Responsable)) entity.Responsable = request.Responsable;
 
             await _context.SaveChangesAsync(cancellationToken);

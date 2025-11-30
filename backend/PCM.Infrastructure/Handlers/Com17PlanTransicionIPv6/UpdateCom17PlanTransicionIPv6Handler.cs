@@ -42,8 +42,8 @@ public class UpdateCom17PlanTransicionIPv6Handler : IRequestHandler<UpdateCom17P
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
             // Actualizar campos específicos
-            if (request.FechaInicioTransicion.HasValue) entity.FechaInicioTransicion = request.FechaInicioTransicion;
-            if (request.FechaFinTransicion.HasValue) entity.FechaFinTransicion = request.FechaFinTransicion;
+            if (request.FechaInicioTransicion.HasValue) entity.FechaInicioTransicion = DateTime.SpecifyKind(request.FechaInicioTransicion.Value, DateTimeKind.Utc);
+            if (request.FechaFinTransicion.HasValue) entity.FechaFinTransicion = DateTime.SpecifyKind(request.FechaFinTransicion.Value, DateTimeKind.Utc);
             if (request.PorcentajeAvance.HasValue) entity.PorcentajeAvance = request.PorcentajeAvance;
             if (request.SistemasMigrados.HasValue) entity.SistemasMigrados = request.SistemasMigrados;
             if (request.SistemasTotal.HasValue) entity.SistemasTotal = request.SistemasTotal;

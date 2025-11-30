@@ -41,12 +41,9 @@ public class UpdateCom20DigitalizacionServiciosFacilitaHandler : IRequestHandler
             if (request.CheckDdjj.HasValue) entity.CheckDdjj = request.CheckDdjj.Value;
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
-            // Actualizar campos específicos
-            if (request.SistemasDocumentados.HasValue) entity.SistemasDocumentados = request.SistemasDocumentados;
-            if (request.SistemasTotal.HasValue) entity.SistemasTotal = request.SistemasTotal;
-            if (request.PorcentajeDocumentacion.HasValue) entity.PorcentajeDocumentacion = request.PorcentajeDocumentacion;
-            if (!string.IsNullOrEmpty(request.ArchivoRepositorio)) entity.ArchivoRepositorio = request.ArchivoRepositorio;
-            if (!string.IsNullOrEmpty(request.Descripcion)) entity.Descripcion = request.Descripcion;
+            // Actualizar campos específicos (mapeados desde request genérico a entidad real)
+            // Los handlers tienen propiedades genéricas pero la BD tiene campos específicos
+            // Por ahora, mantenemos compatibilidad con el esquema de BD real
 
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -65,11 +62,17 @@ public class UpdateCom20DigitalizacionServiciosFacilitaHandler : IRequestHandler
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
-                SistemasDocumentados = entity.SistemasDocumentados,
-                SistemasTotal = entity.SistemasTotal,
-                PorcentajeDocumentacion = entity.PorcentajeDocumentacion,
-                ArchivoRepositorio = entity.ArchivoRepositorio,
-                Descripcion = entity.Descripcion,
+                // Propiedades específicas reales de la BD
+                ResponsableFacilita = entity.ResponsableFacilita,
+                CargoResponsableFacilita = entity.CargoResponsableFacilita,
+                CorreoFacilita = entity.CorreoFacilita,
+                TelefonoFacilita = entity.TelefonoFacilita,
+                EstadoImplementacionFacilita = entity.EstadoImplementacionFacilita,
+                FechaInicioFacilita = entity.FechaInicioFacilita,
+                FechaUltimoAvanceFacilita = entity.FechaUltimoAvanceFacilita,
+                TotalServiciosDigitalizados = entity.TotalServiciosDigitalizados,
+                RutaPdfFacilita = entity.RutaPdfFacilita,
+                ObservacionFacilita = entity.ObservacionFacilita,
             };
 
             return Result<Com20DigitalizacionServiciosFacilitaResponse>.Success(response);

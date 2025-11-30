@@ -39,10 +39,14 @@ public class CreateCom16SistemaGestionSeguridadHandler : IRequestHandler<CreateC
                 CreatedAt = DateTime.UtcNow,
                 FecRegistro = DateTime.UtcNow,
                 Activo = true,
-                FechaImplementacion = request.FechaImplementacion,
+                FechaImplementacion = request.FechaImplementacion.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaImplementacion.Value, DateTimeKind.Utc) 
+                    : null,
                 NormaAplicable = request.NormaAplicable,
                 Certificacion = request.Certificacion,
-                FechaCertificacion = request.FechaCertificacion,
+                FechaCertificacion = request.FechaCertificacion.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaCertificacion.Value, DateTimeKind.Utc) 
+                    : null,
                 ArchivoCertificado = request.ArchivoCertificado,
                 Descripcion = request.Descripcion,
                 Alcance = request.Alcance,

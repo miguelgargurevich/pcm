@@ -39,13 +39,17 @@ public class CreateCom13InteroperabilidadPIDEHandler : IRequestHandler<CreateCom
                 CreatedAt = DateTime.UtcNow,
                 FecRegistro = DateTime.UtcNow,
                 Activo = true,
-                FechaAprobacion = request.FechaAprobacion,
+                FechaAprobacion = request.FechaAprobacion.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaAprobacion.Value, DateTimeKind.Utc) 
+                    : null,
                 NumeroResolucion = request.NumeroResolucion,
                 ArchivoPlan = request.ArchivoPlan,
                 Descripcion = request.Descripcion,
                 RiesgosIdentificados = request.RiesgosIdentificados,
                 EstrategiasMitigacion = request.EstrategiasMitigacion,
-                FechaRevision = request.FechaRevision,
+                FechaRevision = request.FechaRevision.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaRevision.Value, DateTimeKind.Utc) 
+                    : null,
                 Responsable = request.Responsable,
             };
 

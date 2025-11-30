@@ -50,42 +50,46 @@ public class Com7ImplementacionMPD
     [Column("activo")]
     public bool Activo { get; set; } = true;
 
-    // Campos específicos de Implementación de Metodología de Proyectos Digitales
+    // Campos específicos de Implementación de Mesa de Partes Digital
     [Column("url_mpd")]
-    [MaxLength(150)]
+    [MaxLength(500)]
     public string? UrlMpd { get; set; }
 
     [Column("fecha_implementacion_mpd")]
     public DateTime? FechaImplementacionMpd { get; set; }
 
     [Column("responsable_mpd")]
-    [MaxLength(100)]
+    [MaxLength(200)]
     public string? ResponsableMpd { get; set; }
 
     [Column("cargo_responsable_mpd")]
-    [MaxLength(100)]
+    [MaxLength(200)]
     public string? CargoResponsableMpd { get; set; }
 
     [Column("correo_responsable_mpd")]
-    [MaxLength(100)]
+    [MaxLength(200)]
     public string? CorreoResponsableMpd { get; set; }
 
     [Column("telefono_responsable_mpd")]
-    [MaxLength(30)]
+    [MaxLength(50)]
     public string? TelefonoResponsableMpd { get; set; }
 
     [Column("tipo_mpd")]
-    [MaxLength(50)]
+    [MaxLength(100)]
     public string? TipoMpd { get; set; }
 
     [Column("interoperabilidad_mpd")]
-    public bool InteroperabilidadMpd { get; set; }
+    public bool? InteroperabilidadMpd { get; set; }
 
     [Column("observacion_mpd")]
-    [MaxLength(255)]
+    [MaxLength(1000)]
     public string? ObservacionMpd { get; set; }
 
     [Column("ruta_pdf_mpd")]
-    [MaxLength(255)]
+    [MaxLength(500)]
     public string? RutaPdfMpd { get; set; }
+
+    [Column("rutaPDF_normativa")]
+    [MaxLength(500)]
+    public string? RutaPdfNormativa { get; set; }
 }

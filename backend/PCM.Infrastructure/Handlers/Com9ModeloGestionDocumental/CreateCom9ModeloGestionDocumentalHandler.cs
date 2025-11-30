@@ -31,7 +31,9 @@ namespace PCM.Infrastructure.Handlers.Com9ModeloGestionDocumental
                 {
                     CompromisoId = request.CompromisoId,
                     EntidadId = request.EntidadId,
-                    FechaAprobacionMgd = request.FechaAprobacionMgd,
+                    FechaAprobacionMgd = request.FechaAprobacionMgd.HasValue 
+                        ? DateTime.SpecifyKind(request.FechaAprobacionMgd.Value, DateTimeKind.Utc) 
+                        : null,
                     NumeroResolucionMgd = request.NumeroResolucionMgd,
                     ResponsableMgd = request.ResponsableMgd,
                     CargoResponsableMgd = request.CargoResponsableMgd,

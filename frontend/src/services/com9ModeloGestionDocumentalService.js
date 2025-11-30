@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5158/api';
 
 const com9ModeloGestionDocumentalService = {
   getByEntidad: async (compromisoId, entidadId) => {
@@ -8,7 +8,7 @@ const com9ModeloGestionDocumentalService = {
       console.log('📞 com9ModeloGestionDocumentalService.getByEntidad llamado con:', { compromisoId, entidadId });
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        `${API_URL}/api/Com9ModeloGestionDocumental/${compromisoId}/entidad/${entidadId}`,
+        `${API_URL}/Com9ModeloGestionDocumental/${compromisoId}/entidad/${entidadId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -34,7 +34,7 @@ const com9ModeloGestionDocumentalService = {
       console.log('📞 com9ModeloGestionDocumentalService.create llamado con:', data);
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        `${API_URL}/api/Com9ModeloGestionDocumental`,
+        `${API_URL}/Com9ModeloGestionDocumental`,
         data,
         {
           headers: {
@@ -59,7 +59,7 @@ const com9ModeloGestionDocumentalService = {
       console.log('📞 com9ModeloGestionDocumentalService.update llamado con:', { id, data });
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        `${API_URL}/api/Com9ModeloGestionDocumental/${id}`,
+        `${API_URL}/Com9ModeloGestionDocumental/${id}`,
         data,
         {
           headers: {

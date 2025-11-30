@@ -43,7 +43,7 @@ public class UpdateCom7ImplementacionMPDHandler : IRequestHandler<UpdateCom7Impl
             if (request.UrlMpd != null)
                 entity.UrlMpd = request.UrlMpd;
             if (request.FechaImplementacionMpd.HasValue)
-                entity.FechaImplementacionMpd = request.FechaImplementacionMpd;
+                entity.FechaImplementacionMpd = DateTime.SpecifyKind(request.FechaImplementacionMpd.Value, DateTimeKind.Utc);
             if (request.ResponsableMpd != null)
                 entity.ResponsableMpd = request.ResponsableMpd;
             if (request.CargoResponsableMpd != null)
@@ -85,7 +85,7 @@ public class UpdateCom7ImplementacionMPDHandler : IRequestHandler<UpdateCom7Impl
                 CorreoResponsableMpd = entity.CorreoResponsableMpd,
                 TelefonoResponsableMpd = entity.TelefonoResponsableMpd,
                 TipoMpd = entity.TipoMpd,
-                InteroperabilidadMpd = entity.InteroperabilidadMpd,
+                InteroperabilidadMpd = entity.InteroperabilidadMpd ?? false,
                 ObservacionMpd = entity.ObservacionMpd,
                 RutaPdfMpd = entity.RutaPdfMpd,
                 CheckPrivacidad = entity.CheckPrivacidad,

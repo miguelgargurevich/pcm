@@ -86,4 +86,8 @@ public class Com5EstrategiaDigital
     [Column("ruta_pdf_estrategia")]
     [StringLength(255)]
     public string? RutaPdfEstrategia { get; set; }
+
+    [Column("rutaPDF_normativa")]
+    [StringLength(500)]
+    public string? RutaPdfNormativa { get; set; }
 }

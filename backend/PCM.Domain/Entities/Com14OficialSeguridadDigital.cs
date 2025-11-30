@@ -1,8 +1,13 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PCM.Domain.Entities;
 
+/// <summary>
+/// Compromiso 14: Designación del Oficial de Seguridad y Confianza Digital
+/// Tabla Supabase: com14_doscd
+/// </summary>
 [Table("com14_doscd")]
 public class Com14OficialSeguridadDigital
 {
@@ -50,27 +55,79 @@ public class Com14OficialSeguridadDigital
     [Column("activo")]
     public bool Activo { get; set; } = true;
 
-    // Campos específicos
-    [Column("fecha_elaboracion")]
-    public DateTime? FechaElaboracion { get; set; }
+    // Campos específicos del Oficial de Seguridad y Confianza Digital
+    [Column("dni_oscd")]
+    [MaxLength(12)]
+    public string DniOscd { get; set; } = "";
 
-    [Column("numero_documento")]
+    [Column("nombre_oscd")]
+    [MaxLength(100)]
+    public string NombreOscd { get; set; } = "";
+
+    [Column("ape_pat_oscd")]
+    [MaxLength(60)]
+    public string ApePatOscd { get; set; } = "";
+
+    [Column("ape_mat_oscd")]
+    [MaxLength(60)]
+    public string ApeMatOscd { get; set; } = "";
+
+    [Column("cargo_oscd")]
+    [MaxLength(100)]
+    public string CargoOscd { get; set; } = "";
+
+    [Column("correo_oscd")]
+    [MaxLength(100)]
+    public string CorreoOscd { get; set; } = "";
+
+    [Column("telefono_oscd")]
+    [MaxLength(30)]
+    public string TelefonoOscd { get; set; } = "";
+
+    [Column("fecha_designacion_oscd")]
+    public DateTime? FechaDesignacionOscd { get; set; }
+
+    [Column("numero_resolucion_oscd")]
     [MaxLength(50)]
-    public string? NumeroDocumento { get; set; }
+    public string NumeroResolucionOscd { get; set; } = "";
 
-    [Column("archivo_documento")]
+    [Column("comunicado_pcm_oscd")]
+    public bool ComunicadoPcmOscd { get; set; }
+
+    [Column("ruta_pdf_oscd")]
+    [MaxLength(255)]
+    public string RutaPdfOscd { get; set; } = "";
+
+    [Column("observacion_oscd")]
+    [MaxLength(255)]
+    public string ObservacionOscd { get; set; } = "";
+
+    [Column("rutaPDF_normativa")]
     [MaxLength(500)]
-    public string? ArchivoDocumento { get; set; }
+    public string? RutaPdfNormativa { get; set; }
 
-    [Column("descripcion")]
-    public string? Descripcion { get; set; }
-
-    [Column("politicas_seguridad")]
-    public string? PoliticasSeguridad { get; set; }
-
-    [Column("certificaciones")]
-    public string? Certificaciones { get; set; }
-
-    [Column("fecha_vigencia")]
-    public DateTime? FechaVigencia { get; set; }
+    // Propiedades de compatibilidad para handlers existentes
+    [NotMapped]
+    public DateTime? FechaElaboracion { get => FechaDesignacionOscd; set => FechaDesignacionOscd = value; }
+    
+    [NotMapped]
+    public string? NumeroDocumento { get => NumeroResolucionOscd; set => NumeroResolucionOscd = value; }
+    
+    [NotMapped]
+    public string? ArchivoDocumento { get => RutaPdfOscd; set => RutaPdfOscd = value; }
+    
+    [NotMapped]
+    public string? Descripcion { get => ObservacionOscd; set => ObservacionOscd = value; }
+    
+    [NotMapped]
+    public string? PoliticasSeguridad { get => null; set { } }
+    
+    [NotMapped]
+    public string? Certificaciones { get => null; set { } }
+    
+    [NotMapped]
+    public DateTime? FechaVigencia { get => null; set { } }
+    
+    [NotMapped]
+    public string? NombreCompleto { get => $"{NombreOscd} {ApePatOscd} {ApeMatOscd}"; set { } }
 }

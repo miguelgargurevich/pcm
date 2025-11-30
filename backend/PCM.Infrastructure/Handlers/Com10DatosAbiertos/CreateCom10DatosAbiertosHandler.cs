@@ -33,13 +33,17 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                     EntidadId = request.EntidadId,
                     UrlDatosAbiertos = request.UrlDatosAbiertos,
                     TotalDatasets = request.TotalDatasets,
-                    FechaUltimaActualizacionDa = request.FechaUltimaActualizacionDa,
+                    FechaUltimaActualizacionDa = request.FechaUltimaActualizacionDa.HasValue 
+                        ? DateTime.SpecifyKind(request.FechaUltimaActualizacionDa.Value, DateTimeKind.Utc) 
+                        : null,
                     ResponsableDa = request.ResponsableDa,
                     CargoResponsableDa = request.CargoResponsableDa,
                     CorreoResponsableDa = request.CorreoResponsableDa,
                     TelefonoResponsableDa = request.TelefonoResponsableDa,
                     NumeroNormaResolucionDa = request.NumeroNormaResolucionDa,
-                    FechaAprobacionDa = request.FechaAprobacionDa,
+                    FechaAprobacionDa = request.FechaAprobacionDa.HasValue 
+                        ? DateTime.SpecifyKind(request.FechaAprobacionDa.Value, DateTimeKind.Utc) 
+                        : null,
                     ObservacionDa = request.ObservacionDa,
                     RutaPdfDa = request.RutaPdfDa,
                     CheckPrivacidad = request.CheckPrivacidad,

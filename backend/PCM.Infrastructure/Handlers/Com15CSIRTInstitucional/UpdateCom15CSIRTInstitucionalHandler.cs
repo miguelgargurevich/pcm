@@ -42,7 +42,7 @@ public class UpdateCom15CSIRTInstitucionalHandler : IRequestHandler<UpdateCom15C
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
             // Actualizar campos específicos
-            if (request.FechaConformacion.HasValue) entity.FechaConformacion = request.FechaConformacion;
+            if (request.FechaConformacion.HasValue) entity.FechaConformacion = DateTime.SpecifyKind(request.FechaConformacion.Value, DateTimeKind.Utc);
             if (!string.IsNullOrEmpty(request.NumeroResolucion)) entity.NumeroResolucion = request.NumeroResolucion;
             if (!string.IsNullOrEmpty(request.Responsable)) entity.Responsable = request.Responsable;
             if (!string.IsNullOrEmpty(request.EmailContacto)) entity.EmailContacto = request.EmailContacto;

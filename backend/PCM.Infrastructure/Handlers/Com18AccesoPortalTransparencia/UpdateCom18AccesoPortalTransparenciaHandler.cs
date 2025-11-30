@@ -43,7 +43,7 @@ public class UpdateCom18AccesoPortalTransparenciaHandler : IRequestHandler<Updat
 
             // Actualizar campos específicos
             if (!string.IsNullOrEmpty(request.UrlPlataforma)) entity.UrlPlataforma = request.UrlPlataforma;
-            if (request.FechaImplementacion.HasValue) entity.FechaImplementacion = request.FechaImplementacion;
+            if (request.FechaImplementacion.HasValue) entity.FechaImplementacion = DateTime.SpecifyKind(request.FechaImplementacion.Value, DateTimeKind.Utc);
             if (request.TramitesDisponibles.HasValue) entity.TramitesDisponibles = request.TramitesDisponibles;
             if (request.UsuariosRegistrados.HasValue) entity.UsuariosRegistrados = request.UsuariosRegistrados;
             if (request.TramitesProcesados.HasValue) entity.TramitesProcesados = request.TramitesProcesados;

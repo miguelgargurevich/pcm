@@ -2,83 +2,105 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PCM.Domain.Entities
+namespace PCM.Domain.Entities;
+
+/// <summary>
+/// Compromiso 10: Publicación de datos en la PNDA
+/// Tabla Supabase: com10_pnda
+/// </summary>
+[Table("com10_pnda")]
+public class Com10DatosAbiertos
 {
-    [Table("com10_da")]
-    public class Com10DatosAbiertos
-    {
-        [Key]
-        [Column("comda_ent_id")]
-        public int ComdaEntId { get; set; }
+    [Key]
+    [Column("compnda_ent_id")]
+    public long ComdaEntId { get; set; }
 
-        [Column("compromiso_id")]
-        public int CompromisoId { get; set; }
+    [Column("compromiso_id")]
+    public long CompromisoId { get; set; }
 
-        [Column("entidad_id")]
-        public int EntidadId { get; set; }
+    [Column("entidad_id")]
+    public Guid EntidadId { get; set; }
 
-        [Column("url_datos_abiertos")]
-        [StringLength(500)]
-        public string? UrlDatosAbiertos { get; set; }
+    [Column("etapa_formulario")]
+    [MaxLength(20)]
+    public string EtapaFormulario { get; set; } = "paso1";
 
-        [Column("total_datasets")]
-        public int? TotalDatasets { get; set; }
+    [Column("estado")]
+    [MaxLength(15)]
+    public string Estado { get; set; } = "bandeja";
 
-        [Column("fecha_ultima_actualizacion_da")]
-        public DateTime? FechaUltimaActualizacionDa { get; set; }
+    [Column("check_privacidad")]
+    public bool CheckPrivacidad { get; set; }
 
-        [Column("responsable_da")]
-        [StringLength(200)]
-        public string? ResponsableDa { get; set; }
+    [Column("check_ddjj")]
+    public bool CheckDdjj { get; set; }
 
-        [Column("cargo_responsable_da")]
-        [StringLength(200)]
-        public string? CargoResponsableDa { get; set; }
+    [Column("estado_PCM")]
+    [MaxLength(50)]
+    public string? EstadoPCM { get; set; }
 
-        [Column("correo_responsable_da")]
-        [StringLength(100)]
-        public string? CorreoResponsableDa { get; set; }
+    [Column("observaciones_PCM")]
+    [MaxLength(500)]
+    public string? ObservacionesPCM { get; set; }
 
-        [Column("telefono_responsable_da")]
-        [StringLength(20)]
-        public string? TelefonoResponsableDa { get; set; }
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        [Column("numero_norma_resolucion_da")]
-        [StringLength(100)]
-        public string? NumeroNormaResolucionDa { get; set; }
+    [Column("fec_registro")]
+    public DateTime FecRegistro { get; set; } = DateTime.UtcNow;
 
-        [Column("fecha_aprobacion_da")]
-        public DateTime? FechaAprobacionDa { get; set; }
+    [Column("usuario_registra")]
+    public Guid UsuarioRegistra { get; set; }
 
-        [Column("observacion_da")]
-        [StringLength(1000)]
-        public string? ObservacionDa { get; set; }
+    [Column("activo")]
+    public bool Activo { get; set; } = true;
 
-        [Column("ruta_pdf_da")]
-        [StringLength(500)]
-        public string? RutaPdfDa { get; set; }
+    // Campos específicos de Datos Abiertos (PNDA) - Nombres alineados con handlers
+    [Column("url_pnda")]
+    [MaxLength(200)]
+    public string? UrlDatosAbiertos { get; set; }
 
-        [Column("check_privacidad")]
-        public bool? CheckPrivacidad { get; set; }
+    [Column("total_datasets_publicados")]
+    public long? TotalDatasets { get; set; }
 
-        [Column("check_ddjj")]
-        public bool? CheckDdjj { get; set; }
+    [Column("fecha_ultima_actualizacion_pnda")]
+    public DateTime? FechaUltimaActualizacionDa { get; set; }
 
-        [Column("usuario_registra")]
-        public int? UsuarioRegistra { get; set; }
+    [Column("responsable_pnda")]
+    [MaxLength(100)]
+    public string? ResponsableDa { get; set; }
 
-        [Column("etapa_formulario")]
-        [StringLength(20)]
-        public string? EtapaFormulario { get; set; }
+    [Column("cargo_responsable_pnda")]
+    [MaxLength(100)]
+    public string? CargoResponsableDa { get; set; }
 
-        [Column("estado")]
-        [StringLength(20)]
-        public string? Estado { get; set; }
+    [Column("correo_responsable_pnda")]
+    [MaxLength(100)]
+    public string? CorreoResponsableDa { get; set; }
 
-        [Column("created_at")]
-        public DateTime? CreatedAt { get; set; }
+    [Column("telefono_responsable_pnda")]
+    [MaxLength(30)]
+    public string? TelefonoResponsableDa { get; set; }
 
-        [Column("updated_at")]
-        public DateTime? UpdatedAt { get; set; }
-    }
+    [Column("norma_aprobacion_pnda")]
+    [MaxLength(100)]
+    public string? NumeroNormaResolucionDa { get; set; }
+
+    [Column("fecha_aprobacion_pnda")]
+    public DateTime? FechaAprobacionDa { get; set; }
+
+    [Column("observacion_pnda")]
+    [MaxLength(255)]
+    public string? ObservacionDa { get; set; }
+
+    [Column("ruta_pdf_pnda")]
+    [MaxLength(255)]
+    public string? RutaPdfDa { get; set; }
+
+    [Column("rutaPDF_normativa")]
+    [MaxLength(500)]
+    public string? RutaPdfNormativa { get; set; }
+
+    [NotMapped]
+    public DateTime? UpdatedAt { get; set; }
 }

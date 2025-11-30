@@ -39,13 +39,17 @@ public class CreateCom14OficialSeguridadDigitalHandler : IRequestHandler<CreateC
                 CreatedAt = DateTime.UtcNow,
                 FecRegistro = DateTime.UtcNow,
                 Activo = true,
-                FechaElaboracion = request.FechaElaboracion,
+                FechaElaboracion = request.FechaElaboracion.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaElaboracion.Value, DateTimeKind.Utc) 
+                    : null,
                 NumeroDocumento = request.NumeroDocumento,
                 ArchivoDocumento = request.ArchivoDocumento,
                 Descripcion = request.Descripcion,
                 PoliticasSeguridad = request.PoliticasSeguridad,
                 Certificaciones = request.Certificaciones,
-                FechaVigencia = request.FechaVigencia,
+                FechaVigencia = request.FechaVigencia.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaVigencia.Value, DateTimeKind.Utc) 
+                    : null,
             };
 
             _context.Com14OficialSeguridadDigital.Add(entity);

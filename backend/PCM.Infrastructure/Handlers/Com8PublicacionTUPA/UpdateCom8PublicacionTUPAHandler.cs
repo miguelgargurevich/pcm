@@ -45,7 +45,7 @@ public class UpdateCom8PublicacionTUPAHandler : IRequestHandler<UpdateCom8Public
             if (request.NumeroResolucionTupa != null)
                 entity.NumeroResolucionTupa = request.NumeroResolucionTupa;
             if (request.FechaAprobacionTupa.HasValue)
-                entity.FechaAprobacionTupa = request.FechaAprobacionTupa;
+                entity.FechaAprobacionTupa = DateTime.SpecifyKind(request.FechaAprobacionTupa.Value, DateTimeKind.Utc);
             if (request.ResponsableTupa != null)
                 entity.ResponsableTupa = request.ResponsableTupa;
             if (request.CargoResponsableTupa != null)

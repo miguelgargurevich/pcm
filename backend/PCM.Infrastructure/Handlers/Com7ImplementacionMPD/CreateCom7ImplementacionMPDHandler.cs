@@ -34,7 +34,9 @@ public class CreateCom7ImplementacionMPDHandler : IRequestHandler<CreateCom7Impl
                 EtapaFormulario = request.EtapaFormulario,
                 Estado = request.Estado,
                 UrlMpd = request.UrlMpd,
-                FechaImplementacionMpd = request.FechaImplementacionMpd,
+                FechaImplementacionMpd = request.FechaImplementacionMpd.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaImplementacionMpd.Value, DateTimeKind.Utc) 
+                    : null,
                 ResponsableMpd = request.ResponsableMpd,
                 CargoResponsableMpd = request.CargoResponsableMpd,
                 CorreoResponsableMpd = request.CorreoResponsableMpd,
@@ -68,7 +70,7 @@ public class CreateCom7ImplementacionMPDHandler : IRequestHandler<CreateCom7Impl
                 CorreoResponsableMpd = entity.CorreoResponsableMpd,
                 TelefonoResponsableMpd = entity.TelefonoResponsableMpd,
                 TipoMpd = entity.TipoMpd,
-                InteroperabilidadMpd = entity.InteroperabilidadMpd,
+                InteroperabilidadMpd = entity.InteroperabilidadMpd ?? false,
                 ObservacionMpd = entity.ObservacionMpd,
                 RutaPdfMpd = entity.RutaPdfMpd,
                 CheckPrivacidad = entity.CheckPrivacidad,

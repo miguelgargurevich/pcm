@@ -1,8 +1,13 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PCM.Domain.Entities;
 
+/// <summary>
+/// Compromiso 12: Designación del Responsable de Software Público
+/// Tabla Supabase: com12_drsp
+/// </summary>
 [Table("com12_drsp")]
 public class Com12ResponsableSoftwarePublico
 {
@@ -50,27 +55,83 @@ public class Com12ResponsableSoftwarePublico
     [Column("activo")]
     public bool Activo { get; set; } = true;
 
-    // Campos específicos
-    [Column("fecha_elaboracion")]
-    public DateTime? FechaElaboracion { get; set; }
+    // Campos específicos del Responsable de Software Público
+    [Column("dni_rsp")]
+    [MaxLength(12)]
+    public string DniRsp { get; set; } = "";
 
-    [Column("numero_documento")]
+    [Column("nombre_rsp")]
+    [MaxLength(100)]
+    public string NombreRsp { get; set; } = "";
+
+    [Column("ape_pat_rsp")]
+    [MaxLength(60)]
+    public string ApePatRsp { get; set; } = "";
+
+    [Column("ape_mat_rsp")]
+    [MaxLength(60)]
+    public string ApeMatRsp { get; set; } = "";
+
+    [Column("cargo_rsp")]
+    [MaxLength(100)]
+    public string CargoRsp { get; set; } = "";
+
+    [Column("correo_rsp")]
+    [MaxLength(100)]
+    public string CorreoRsp { get; set; } = "";
+
+    [Column("telefono_rsp")]
+    [MaxLength(30)]
+    public string TelefonoRsp { get; set; } = "";
+
+    [Column("fecha_designacion_rsp")]
+    public DateTime? FechaDesignacionRsp { get; set; }
+
+    [Column("numero_resolucion_rsp")]
     [MaxLength(50)]
-    public string? NumeroDocumento { get; set; }
+    public string NumeroResolucionRsp { get; set; } = "";
 
-    [Column("archivo_documento")]
+    [Column("ruta_pdf_rsp")]
+    [MaxLength(255)]
+    public string RutaPdfRsp { get; set; } = "";
+
+    [Column("observacion_rsp")]
+    [MaxLength(255)]
+    public string ObservacionRsp { get; set; } = "";
+
+    [Column("rutaPDF_normativa")]
     [MaxLength(500)]
-    public string? ArchivoDocumento { get; set; }
+    public string? RutaPdfNormativa { get; set; }
 
-    [Column("descripcion")]
-    public string? Descripcion { get; set; }
+    // Propiedades de compatibilidad para handlers existentes
+    [NotMapped]
+    public DateTime? FechaElaboracion { get => FechaDesignacionRsp; set => FechaDesignacionRsp = value; }
+    
+    [NotMapped]
+    public string? NumeroDocumento { get => NumeroResolucionRsp; set => NumeroResolucionRsp = value ?? ""; }
+    
+    [NotMapped]
+    public string? ArchivoDocumento { get => RutaPdfRsp; set => RutaPdfRsp = value ?? ""; }
+    
+    [NotMapped]
+    public string? Descripcion { get => ObservacionRsp; set => ObservacionRsp = value ?? ""; }
+    
+    [NotMapped]
+    public string? NombreCompleto { get => $"{NombreRsp} {ApePatRsp} {ApeMatRsp}"; set { } }
+    
+    [NotMapped]
+    public string? CorreoElectronico { get => CorreoRsp; set => CorreoRsp = value ?? ""; }
+    
+    [NotMapped]
+    public string? Telefono { get => TelefonoRsp; set => TelefonoRsp = value ?? ""; }
 
-    [Column("requisitos_seguridad")]
-    public string? RequisitosSeguridad { get; set; }
-
-    [Column("requisitos_privacidad")]
-    public string? RequisitosPrivacidad { get; set; }
-
-    [Column("fecha_vigencia")]
-    public DateTime? FechaVigencia { get; set; }
+    // Alias adicionales para handlers
+    [NotMapped]
+    public string? RequisitosSeguridad { get => null; set { } }
+    
+    [NotMapped]
+    public string? RequisitosPrivacidad { get => null; set { } }
+    
+    [NotMapped]
+    public DateTime? FechaVigencia { get => null; set { } }
 }

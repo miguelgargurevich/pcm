@@ -84,4 +84,8 @@ public class Com6MigracionGobPe
     [Column("ruta_pdf_gobpe")]
     [MaxLength(255)]
     public string? RutaPdfGobPe { get; set; }
+
+    [Column("rutaPDF_normativa")]
+    [MaxLength(500)]
+    public string? RutaPdfNormativa { get; set; }
 }

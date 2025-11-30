@@ -11,7 +11,7 @@ public class UpdateCom7ImplementacionMPDCommand : IRequest<Result<Com7Implementa
     public string? EtapaFormulario { get; set; }
     public string? Estado { get; set; }
     
-    // Campos específicos de Implementación de Metodología de Proyectos Digitales
+    // Campos específicos de Implementación de Mesa de Partes Digital
     public string? UrlMpd { get; set; }
     public DateTime? FechaImplementacionMpd { get; set; }
     public string? ResponsableMpd { get; set; }

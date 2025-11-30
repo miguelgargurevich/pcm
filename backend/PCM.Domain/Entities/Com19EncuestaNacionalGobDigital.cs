@@ -1,8 +1,13 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PCM.Domain.Entities;
 
+/// <summary>
+/// Compromiso 19: Responder la Encuesta Nacional de Gobierno Digital (ENAD)
+/// Tabla Supabase: com19_renad
+/// </summary>
 [Table("com19_renad")]
 public class Com19EncuestaNacionalGobDigital
 {
@@ -50,26 +55,65 @@ public class Com19EncuestaNacionalGobDigital
     [Column("activo")]
     public bool Activo { get; set; } = true;
 
-    // Campos específicos
-    [Column("fecha_conexion")]
-    public DateTime? FechaConexion { get; set; }
+    // Campos específicos de la Encuesta Nacional de Gobierno Digital
+    [Column("anio_enad")]
+    public long AnioEnad { get; set; }
 
-    [Column("tipo_conexion")]
-    [MaxLength(50)]
-    public string? TipoConexion { get; set; }
-
-    [Column("ancho_banda")]
-    [MaxLength(50)]
-    public string? AnchoBanda { get; set; }
-
-    [Column("proveedor")]
+    [Column("responsable_enad")]
     [MaxLength(100)]
-    public string? Proveedor { get; set; }
+    public string ResponsableEnad { get; set; } = "";
 
-    [Column("archivo_contrato")]
+    [Column("cargo_responsable_enad")]
+    [MaxLength(100)]
+    public string CargoResponsableEnad { get; set; } = "";
+
+    [Column("correo_enad")]
+    [MaxLength(100)]
+    public string CorreoEnad { get; set; } = "";
+
+    [Column("telefono_enad")]
+    [MaxLength(30)]
+    public string TelefonoEnad { get; set; } = "";
+
+    [Column("fecha_envio_enad")]
+    public DateTime? FechaEnvioEnad { get; set; }
+
+    [Column("estado_respuesta_enad")]
+    [MaxLength(50)]
+    public string EstadoRespuestaEnad { get; set; } = "";
+
+    [Column("enlace_formulario_enad")]
+    [MaxLength(200)]
+    public string EnlaceFormularioEnad { get; set; } = "";
+
+    [Column("observacion_enad")]
+    [MaxLength(255)]
+    public string ObservacionEnad { get; set; } = "";
+
+    [Column("ruta_pdf_enad")]
+    [MaxLength(255)]
+    public string RutaPdfEnad { get; set; } = "";
+
+    [Column("rutaPDF_normativa")]
     [MaxLength(500)]
-    public string? ArchivoContrato { get; set; }
+    public string? RutaPdfNormativa { get; set; }
 
-    [Column("descripcion")]
-    public string? Descripcion { get; set; }
+    // Propiedades de compatibilidad para handlers existentes
+    [NotMapped]
+    public DateTime? FechaConexion { get => FechaEnvioEnad; set => FechaEnvioEnad = value; }
+    
+    [NotMapped]
+    public string? TipoConexion { get => EstadoRespuestaEnad; set => EstadoRespuestaEnad = value ?? ""; }
+    
+    [NotMapped]
+    public string? AnchoBanda { get => null; set { } }
+    
+    [NotMapped]
+    public string? Proveedor { get => ResponsableEnad; set => ResponsableEnad = value ?? ""; }
+    
+    [NotMapped]
+    public string? ArchivoContrato { get => RutaPdfEnad; set => RutaPdfEnad = value ?? ""; }
+    
+    [NotMapped]
+    public string? Descripcion { get => ObservacionEnad; set => ObservacionEnad = value ?? ""; }
 }

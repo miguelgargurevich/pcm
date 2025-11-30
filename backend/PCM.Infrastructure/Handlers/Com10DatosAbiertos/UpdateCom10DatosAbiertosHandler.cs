@@ -39,18 +39,22 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                 // Actualizar campos
                 registro.UrlDatosAbiertos = request.UrlDatosAbiertos ?? registro.UrlDatosAbiertos;
                 registro.TotalDatasets = request.TotalDatasets ?? registro.TotalDatasets;
-                registro.FechaUltimaActualizacionDa = request.FechaUltimaActualizacionDa ?? registro.FechaUltimaActualizacionDa;
+                registro.FechaUltimaActualizacionDa = request.FechaUltimaActualizacionDa.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaUltimaActualizacionDa.Value, DateTimeKind.Utc) 
+                    : registro.FechaUltimaActualizacionDa;
                 registro.ResponsableDa = request.ResponsableDa ?? registro.ResponsableDa;
                 registro.CargoResponsableDa = request.CargoResponsableDa ?? registro.CargoResponsableDa;
                 registro.CorreoResponsableDa = request.CorreoResponsableDa ?? registro.CorreoResponsableDa;
                 registro.TelefonoResponsableDa = request.TelefonoResponsableDa ?? registro.TelefonoResponsableDa;
                 registro.NumeroNormaResolucionDa = request.NumeroNormaResolucionDa ?? registro.NumeroNormaResolucionDa;
-                registro.FechaAprobacionDa = request.FechaAprobacionDa ?? registro.FechaAprobacionDa;
+                registro.FechaAprobacionDa = request.FechaAprobacionDa.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaAprobacionDa.Value, DateTimeKind.Utc) 
+                    : registro.FechaAprobacionDa;
                 registro.ObservacionDa = request.ObservacionDa ?? registro.ObservacionDa;
                 registro.RutaPdfDa = request.RutaPdfDa ?? registro.RutaPdfDa;
-                registro.CheckPrivacidad = request.CheckPrivacidad ?? registro.CheckPrivacidad;
-                registro.CheckDdjj = request.CheckDdjj ?? registro.CheckDdjj;
-                registro.UsuarioRegistra = request.UsuarioRegistra ?? registro.UsuarioRegistra;
+                registro.CheckPrivacidad = request.CheckPrivacidad;
+                registro.CheckDdjj = request.CheckDdjj;
+                registro.UsuarioRegistra = request.UsuarioRegistra;
                 registro.EtapaFormulario = request.EtapaFormulario ?? registro.EtapaFormulario;
                 registro.UpdatedAt = DateTime.UtcNow;
 

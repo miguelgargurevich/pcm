@@ -39,8 +39,12 @@ public class CreateCom17PlanTransicionIPv6Handler : IRequestHandler<CreateCom17P
                 CreatedAt = DateTime.UtcNow,
                 FecRegistro = DateTime.UtcNow,
                 Activo = true,
-                FechaInicioTransicion = request.FechaInicioTransicion,
-                FechaFinTransicion = request.FechaFinTransicion,
+                FechaInicioTransicion = request.FechaInicioTransicion.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaInicioTransicion.Value, DateTimeKind.Utc) 
+                    : null,
+                FechaFinTransicion = request.FechaFinTransicion.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaFinTransicion.Value, DateTimeKind.Utc) 
+                    : null,
                 PorcentajeAvance = request.PorcentajeAvance,
                 SistemasMigrados = request.SistemasMigrados,
                 SistemasTotal = request.SistemasTotal,

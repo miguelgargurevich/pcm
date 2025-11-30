@@ -42,10 +42,10 @@ public class UpdateCom16SistemaGestionSeguridadHandler : IRequestHandler<UpdateC
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
             // Actualizar campos específicos
-            if (request.FechaImplementacion.HasValue) entity.FechaImplementacion = request.FechaImplementacion;
+            if (request.FechaImplementacion.HasValue) entity.FechaImplementacion = DateTime.SpecifyKind(request.FechaImplementacion.Value, DateTimeKind.Utc);
             if (!string.IsNullOrEmpty(request.NormaAplicable)) entity.NormaAplicable = request.NormaAplicable;
             if (!string.IsNullOrEmpty(request.Certificacion)) entity.Certificacion = request.Certificacion;
-            if (request.FechaCertificacion.HasValue) entity.FechaCertificacion = request.FechaCertificacion;
+            if (request.FechaCertificacion.HasValue) entity.FechaCertificacion = DateTime.SpecifyKind(request.FechaCertificacion.Value, DateTimeKind.Utc);
             if (!string.IsNullOrEmpty(request.ArchivoCertificado)) entity.ArchivoCertificado = request.ArchivoCertificado;
             if (!string.IsNullOrEmpty(request.Descripcion)) entity.Descripcion = request.Descripcion;
             if (!string.IsNullOrEmpty(request.Alcance)) entity.Alcance = request.Alcance;

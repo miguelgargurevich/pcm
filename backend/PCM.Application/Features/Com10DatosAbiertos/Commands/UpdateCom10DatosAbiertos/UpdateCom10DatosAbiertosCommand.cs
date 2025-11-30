@@ -6,9 +6,9 @@ namespace PCM.Application.Features.Com10DatosAbiertos.Commands.UpdateCom10DatosA
 {
     public class UpdateCom10DatosAbiertosCommand : IRequest<Result<bool>>
     {
-        public int ComdaEntId { get; set; }
+        public long ComdaEntId { get; set; }
         public string? UrlDatosAbiertos { get; set; }
-        public int? TotalDatasets { get; set; }
+        public long? TotalDatasets { get; set; }
         public DateTime? FechaUltimaActualizacionDa { get; set; }
         public string? ResponsableDa { get; set; }
         public string? CargoResponsableDa { get; set; }
@@ -18,9 +18,9 @@ namespace PCM.Application.Features.Com10DatosAbiertos.Commands.UpdateCom10DatosA
         public DateTime? FechaAprobacionDa { get; set; }
         public string? ObservacionDa { get; set; }
         public string? RutaPdfDa { get; set; }
-        public bool? CheckPrivacidad { get; set; }
-        public bool? CheckDdjj { get; set; }
-        public int? UsuarioRegistra { get; set; }
+        public bool CheckPrivacidad { get; set; }
+        public bool CheckDdjj { get; set; }
+        public Guid UsuarioRegistra { get; set; }
         public string? EtapaFormulario { get; set; }
     }
 }

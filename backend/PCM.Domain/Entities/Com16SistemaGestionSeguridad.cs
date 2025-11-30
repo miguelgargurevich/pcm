@@ -1,8 +1,13 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PCM.Domain.Entities;
 
+/// <summary>
+/// Compromiso 16: Implementación del Sistema de Gestión de Seguridad de la Información
+/// Tabla Supabase: com16_sgsi
+/// </summary>
 [Table("com16_sgsi")]
 public class Com16SistemaGestionSeguridad
 {
@@ -50,28 +55,109 @@ public class Com16SistemaGestionSeguridad
     [Column("activo")]
     public bool Activo { get; set; } = true;
 
-    // Campos específicos
-    [Column("fecha_implementacion")]
-    public DateTime? FechaImplementacion { get; set; }
-
-    [Column("norma_aplicable")]
-    [MaxLength(50)]
-    public string? NormaAplicable { get; set; }
-
-    [Column("certificacion")]
+    // Campos específicos del Sistema de Gestión de Seguridad de la Información
+    [Column("responsable_sgsi")]
     [MaxLength(100)]
-    public string? Certificacion { get; set; }
+    public string ResponsableSgsi { get; set; } = "";
 
-    [Column("fecha_certificacion")]
-    public DateTime? FechaCertificacion { get; set; }
+    [Column("cargo_responsable_sgsi")]
+    [MaxLength(100)]
+    public string CargoResponsableSgsi { get; set; } = "";
 
-    [Column("archivo_certificado")]
+    [Column("correo_sgsi")]
+    [MaxLength(100)]
+    public string CorreoSgsi { get; set; } = "";
+
+    [Column("telefono_sgsi")]
+    [MaxLength(30)]
+    public string TelefonoSgsi { get; set; } = "";
+
+    [Column("estado_implementacion_sgsi")]
+    [MaxLength(50)]
+    public string EstadoImplementacionSgsi { get; set; } = "";
+
+    [Column("alcance_sgsi")]
+    [MaxLength(255)]
+    public string AlcanceSgsi { get; set; } = "";
+
+    [Column("fecha_inicio_sgsi")]
+    public DateTime? FechaInicioSgsi { get; set; }
+
+    [Column("fecha_certificacion_sgsi")]
+    public DateTime? FechaCertificacionSgsi { get; set; }
+
+    [Column("entidad_certificadora_sgsi")]
+    [MaxLength(150)]
+    public string EntidadCertificadoraSgsi { get; set; } = "";
+
+    [Column("version_norma_sgsi")]
+    [MaxLength(20)]
+    public string VersionNormaSgsi { get; set; } = "";
+
+    [Column("ruta_pdf_certificado_sgsi")]
+    [MaxLength(255)]
+    public string RutaPdfCertificadoSgsi { get; set; } = "";
+
+    [Column("ruta_pdf_politicas_sgsi")]
+    [MaxLength(255)]
+    public string RutaPdfPoliticasSgsi { get; set; } = "";
+
+    [Column("observacion_sgsi")]
+    [MaxLength(255)]
+    public string ObservacionSgsi { get; set; } = "";
+
+    [Column("rutaPDF_normativa")]
     [MaxLength(500)]
-    public string? ArchivoCertificado { get; set; }
+    public string? RutaPdfNormativa { get; set; }
 
-    [Column("descripcion")]
-    public string? Descripcion { get; set; }
+    // Campos adicionales necesarios para los alias de compatibilidad
+    [Column("fecha_implementacion_sgsi")]
+    public DateTime? FechaImplementacionSgsi { get; set; }
 
-    [Column("alcance")]
-    public string? Alcance { get; set; }
+    [Column("norma_aplicada_sgsi")]
+    [MaxLength(100)]
+    public string NormaAplicadaSgsi { get; set; } = "";
+
+    [Column("ruta_pdf_sgsi")]
+    [MaxLength(255)]
+    public string RutaPdfSgsi { get; set; } = "";
+
+    [Column("nivel_implementacion_sgsi")]
+    [MaxLength(50)]
+    public string NivelImplementacionSgsi { get; set; } = "";
+
+    // Propiedades de compatibilidad para handlers existentes
+    [NotMapped]
+    public DateTime? FechaImplementacion { get => FechaImplementacionSgsi; set => FechaImplementacionSgsi = value; }
+    
+    [NotMapped]
+    public string? NumeroDocumento { get => NormaAplicadaSgsi; set => NormaAplicadaSgsi = value ?? ""; }
+    
+    [NotMapped]
+    public string? ArchivoEvidencia { get => RutaPdfSgsi; set => RutaPdfSgsi = value ?? ""; }
+    
+    [NotMapped]
+    public string? Descripcion { get => ObservacionSgsi; set => ObservacionSgsi = value ?? ""; }
+    
+    [NotMapped]
+    public string? AlcanceSGSI { get => AlcanceSgsi; set => AlcanceSgsi = value ?? ""; }
+    
+    [NotMapped]
+    public string? NivelMadurez { get => NivelImplementacionSgsi; set => NivelImplementacionSgsi = value ?? ""; }
+    
+    [NotMapped]
+    public DateTime? FechaCertificacion { get => FechaCertificacionSgsi; set => FechaCertificacionSgsi = value; }
+
+    // Alias adicionales para handlers
+    [NotMapped]
+    public string? NormaAplicable { get => VersionNormaSgsi; set => VersionNormaSgsi = value ?? ""; }
+    
+    [NotMapped]
+    public string? Certificacion { get => EntidadCertificadoraSgsi; set => EntidadCertificadoraSgsi = value ?? ""; }
+    
+    [NotMapped]
+    public string? ArchivoCertificado { get => RutaPdfCertificadoSgsi; set => RutaPdfCertificadoSgsi = value ?? ""; }
+    
+    [NotMapped]
+    public string? Alcance { get => AlcanceSgsi; set => AlcanceSgsi = value ?? ""; }
 }

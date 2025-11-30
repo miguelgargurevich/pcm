@@ -78,5 +78,9 @@ namespace PCM.Domain.Entities
         [Column("ruta_pdf_pei")]
         [StringLength(255)]
         public string? RutaPdfPei { get; set; }
+
+        [Column("rutaPDF_normativa")]
+        [StringLength(500)]
+        public string? RutaPdfNormativa { get; set; }
     }
 }

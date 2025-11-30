@@ -21,7 +21,7 @@ namespace PCM.API.Controllers
         }
 
         [HttpGet("{compromisoId}/entidad/{entidadId}")]
-        public async Task<IActionResult> GetByEntidad(int compromisoId, int entidadId)
+        public async Task<IActionResult> GetByEntidad(long compromisoId, Guid entidadId)
         {
             var query = new GetCom9ModeloGestionDocumentalQuery
             {
@@ -53,7 +53,7 @@ namespace PCM.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateCom9ModeloGestionDocumentalCommand command)
+        public async Task<IActionResult> Update(long id, [FromBody] UpdateCom9ModeloGestionDocumentalCommand command)
         {
             command.CommgdEntId = id;
             var result = await _mediator.Send(command);

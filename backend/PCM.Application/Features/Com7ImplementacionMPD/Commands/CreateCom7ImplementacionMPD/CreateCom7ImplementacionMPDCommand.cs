@@ -10,7 +10,7 @@ public class CreateCom7ImplementacionMPDCommand : IRequest<Result<Com7Implementa
     public string EtapaFormulario { get; set; } = "paso1";
     public string Estado { get; set; } = "bandeja";
     
-    // Campos específicos de Implementación de Metodología de Proyectos Digitales
+    // Campos específicos de Implementación de Mesa de Partes Digital
     public string? UrlMpd { get; set; }
     public DateTime? FechaImplementacionMpd { get; set; }
     public string? ResponsableMpd { get; set; }
@@ -18,7 +18,7 @@ public class CreateCom7ImplementacionMPDCommand : IRequest<Result<Com7Implementa
     public string? CorreoResponsableMpd { get; set; }
     public string? TelefonoResponsableMpd { get; set; }
     public string? TipoMpd { get; set; }
-    public bool InteroperabilidadMpd { get; set; }
+    public bool? InteroperabilidadMpd { get; set; }
     public string? ObservacionMpd { get; set; }
     public string? RutaPdfMpd { get; set; }
     

@@ -24,9 +24,17 @@ public class Com20DigitalizacionServiciosFacilitaResponse
     public DateTime FecRegistro { get; set; }
     public Guid UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
-    public int? SistemasDocumentados { get; set; }
-    public int? SistemasTotal { get; set; }
-    public decimal? PorcentajeDocumentacion { get; set; }
-    public string? ArchivoRepositorio { get; set; }
-    public string? Descripcion { get; set; }
+
+    // Campos específicos de Digitalización de Servicios Facilita Perú
+    public string ResponsableFacilita { get; set; } = string.Empty;
+    public string CargoResponsableFacilita { get; set; } = string.Empty;
+    public string CorreoFacilita { get; set; } = string.Empty;
+    public string TelefonoFacilita { get; set; } = string.Empty;
+    public string EstadoImplementacionFacilita { get; set; } = string.Empty;
+    public DateTime? FechaInicioFacilita { get; set; }
+    public DateTime? FechaUltimoAvanceFacilita { get; set; }
+    public long TotalServiciosDigitalizados { get; set; }
+    public string RutaPdfFacilita { get; set; } = string.Empty;
+    public string ObservacionFacilita { get; set; } = string.Empty;
+    public string? RutaPdfNormativa { get; set; }
 }

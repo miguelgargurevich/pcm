@@ -39,7 +39,9 @@ public class CreateCom15CSIRTInstitucionalHandler : IRequestHandler<CreateCom15C
                 CreatedAt = DateTime.UtcNow,
                 FecRegistro = DateTime.UtcNow,
                 Activo = true,
-                FechaConformacion = request.FechaConformacion,
+                FechaConformacion = request.FechaConformacion.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaConformacion.Value, DateTimeKind.Utc) 
+                    : null,
                 NumeroResolucion = request.NumeroResolucion,
                 Responsable = request.Responsable,
                 EmailContacto = request.EmailContacto,

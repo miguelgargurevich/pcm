@@ -42,13 +42,13 @@ public class UpdateCom21OficialGobiernoDatosHandler : IRequestHandler<UpdateCom2
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
             // Actualizar campos específicos
-            if (request.FechaElaboracion.HasValue) entity.FechaElaboracion = request.FechaElaboracion;
+            if (request.FechaElaboracion.HasValue) entity.FechaElaboracion = DateTime.SpecifyKind(request.FechaElaboracion.Value, DateTimeKind.Utc);
             if (!string.IsNullOrEmpty(request.NumeroDocumento)) entity.NumeroDocumento = request.NumeroDocumento;
             if (!string.IsNullOrEmpty(request.ArchivoDocumento)) entity.ArchivoDocumento = request.ArchivoDocumento;
             if (!string.IsNullOrEmpty(request.Descripcion)) entity.Descripcion = request.Descripcion;
             if (!string.IsNullOrEmpty(request.Procedimientos)) entity.Procedimientos = request.Procedimientos;
             if (!string.IsNullOrEmpty(request.Responsables)) entity.Responsables = request.Responsables;
-            if (request.FechaVigencia.HasValue) entity.FechaVigencia = request.FechaVigencia;
+            if (request.FechaVigencia.HasValue) entity.FechaVigencia = DateTime.SpecifyKind(request.FechaVigencia.Value, DateTimeKind.Utc);
 
             await _context.SaveChangesAsync(cancellationToken);
 

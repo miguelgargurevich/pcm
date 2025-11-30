@@ -1,8 +1,13 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PCM.Domain.Entities;
 
+/// <summary>
+/// Compromiso 11: Aportación a GeoPeru
+/// Tabla Supabase: com11_ageop
+/// </summary>
 [Table("com11_ageop")]
 public class Com11AportacionGeoPeru
 {
@@ -50,29 +55,103 @@ public class Com11AportacionGeoPeru
     [Column("activo")]
     public bool Activo { get; set; } = true;
 
-    // Campos específicos
-    [Column("fecha_inicio")]
-    public DateTime? FechaInicio { get; set; }
+    // Campos específicos de Aportación a GeoPeru
+    [Column("url_geo")]
+    [MaxLength(200)]
+    public string UrlGeo { get; set; } = "";
 
-    [Column("fecha_fin")]
-    public DateTime? FechaFin { get; set; }
+    [Column("tipo_informacion_geo")]
+    [MaxLength(100)]
+    public string TipoInformacionGeo { get; set; } = "";
 
-    [Column("servicios_digitalizados")]
-    public int? ServiciosDigitalizados { get; set; }
+    [Column("total_capas_publicadas")]
+    public long TotalCapasPublicadas { get; set; }
 
-    [Column("servicios_total")]
-    public int? ServiciosTotal { get; set; }
+    [Column("fecha_ultima_actualizacion_geo")]
+    public DateTime? FechaUltimaActualizacionGeo { get; set; }
 
-    [Column("porcentaje_digitalizacion", TypeName = "decimal(5,2)")]
-    public decimal? PorcentajeDigitalizacion { get; set; }
+    [Column("responsable_geo")]
+    [MaxLength(100)]
+    public string ResponsableGeo { get; set; } = "";
 
-    [Column("archivo_plan")]
+    [Column("cargo_responsable_geo")]
+    [MaxLength(100)]
+    public string CargoResponsableGeo { get; set; } = "";
+
+    [Column("correo_responsable_geo")]
+    [MaxLength(100)]
+    public string CorreoResponsableGeo { get; set; } = "";
+
+    [Column("telefono_responsable_geo")]
+    [MaxLength(30)]
+    public string TelefonoResponsableGeo { get; set; } = "";
+
+    [Column("norma_aprobacion_geo")]
+    [MaxLength(100)]
+    public string NormaAprobacionGeo { get; set; } = "";
+
+    [Column("fecha_aprobacion_geo")]
+    public DateTime? FechaAprobacionGeo { get; set; }
+
+    [Column("interoperabilidad_geo")]
+    public bool InteroperabilidadGeo { get; set; }
+
+    [Column("observacion_geo")]
+    [MaxLength(255)]
+    public string ObservacionGeo { get; set; } = "";
+
+    [Column("ruta_pdf_geo")]
+    [MaxLength(255)]
+    public string RutaPdfGeo { get; set; } = "";
+
+    [Column("rutaPDF_normativa")]
     [MaxLength(500)]
-    public string? ArchivoPlan { get; set; }
+    public string? RutaPdfNormativa { get; set; }
 
-    [Column("descripcion")]
-    public string? Descripcion { get; set; }
+    // Propiedades de compatibilidad para handlers existentes
+    [NotMapped]
+    public string? UrlPlataforma { get => UrlGeo; set => UrlGeo = value ?? ""; }
+    
+    [NotMapped]
+    public DateTime? FechaImplementacion { get => FechaUltimaActualizacionGeo; set => FechaUltimaActualizacionGeo = value; }
+    
+    [NotMapped]
+    public int? CapasPublicadas { get => (int?)TotalCapasPublicadas; set => TotalCapasPublicadas = value ?? 0; }
+    
+    [NotMapped]
+    public int? CapasTotal { get => (int?)TotalCapasPublicadas; set => TotalCapasPublicadas = value ?? 0; }
+    
+    [NotMapped]
+    public string? ArchivoEvidencia { get => RutaPdfGeo; set => RutaPdfGeo = value ?? ""; }
+    
+    [NotMapped]
+    public string? Descripcion { get => ObservacionGeo; set => ObservacionGeo = value ?? ""; }
+    
+    [NotMapped]
+    public int? DatosPublicados { get => (int?)TotalCapasPublicadas; set => TotalCapasPublicadas = value ?? 0; }
+    
+    [NotMapped]
+    public string? TipoDatos { get => TipoInformacionGeo; set => TipoInformacionGeo = value ?? ""; }
 
-    [Column("beneficiarios_estimados")]
-    public int? BeneficiariosEstimados { get; set; }
+    // Alias adicionales para handlers
+    [NotMapped]
+    public DateTime? FechaInicio { get => FechaUltimaActualizacionGeo; set => FechaUltimaActualizacionGeo = value; }
+    
+    [NotMapped]
+    public DateTime? FechaFin { get => null; set { } }
+    
+    [NotMapped]
+    public int? ServiciosDigitalizados { get => (int?)TotalCapasPublicadas; set => TotalCapasPublicadas = value ?? 0; }
+    
+    [NotMapped]
+    public int? ServiciosTotal { get => (int?)TotalCapasPublicadas; set => TotalCapasPublicadas = value ?? 0; }
+    
+    [NotMapped]
+    public decimal? PorcentajeDigitalizacion { get => 100; set { } }
+    
+    [NotMapped]
+    public string? ArchivoPlan { get => RutaPdfGeo; set => RutaPdfGeo = value ?? ""; }
+    
+    [NotMapped]
+    public int? BeneficiariosEstimados { get => null; set { } }
 }
