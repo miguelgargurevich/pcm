@@ -39,14 +39,18 @@ public class CreateCom1LiderGTDHandler : IRequestHandler<CreateCom1LiderGTDComma
                 TelefonoLider = request.TelefonoLider ?? string.Empty,
                 RolLider = request.RolLider ?? string.Empty,
                 CargoLider = request.CargoLider ?? string.Empty,
-                FecIniLider = request.FecIniLider ?? DateTime.UtcNow,
+                FecIniLider = request.FecIniLider.HasValue 
+                    ? DateTime.SpecifyKind(request.FecIniLider.Value, DateTimeKind.Utc) 
+                    : DateTime.UtcNow,
                 UrlDocPcm = request.UrlDocUrl,
                 CheckPrivacidad = request.CheckPrivacidad,
                 CheckDdjj = request.CheckDdjj,
                 EstadoPCM = "en_revision",
                 ObservacionesPCM = "",
                 CreatedAt = DateTime.UtcNow,
-                FecRegistro = request.FecIniLider ?? DateTime.UtcNow,
+                FecRegistro = request.FecIniLider.HasValue 
+                    ? DateTime.SpecifyKind(request.FecIniLider.Value, DateTimeKind.Utc) 
+                    : DateTime.UtcNow,
                 UsuarioRegistra = request.UsuarioRegistra ?? Guid.Empty,
                 Activo = true
             };

@@ -432,6 +432,11 @@ const CumplimientoNormativoDetalle = () => {
               } else if (Array.isArray(criteriosData)) {
                 criteriosParsed = criteriosData;
               }
+              // Normalizar criterioId a número para consistencia en comparaciones
+              criteriosParsed = criteriosParsed.map(c => ({
+                ...c,
+                criterioId: Number(c.criterioId)
+              }));
               console.log('✅ Criterios evaluados cargados desde cumplimiento_normativo:', criteriosParsed);
             } catch (e) {
               console.error('❌ Error al parsear criterios evaluados:', e);
@@ -2551,7 +2556,7 @@ const CumplimientoNormativoDetalle = () => {
       if (compromisoSeleccionado?.criteriosEvaluacion) {
         const criteriosActivos = compromisoSeleccionado.criteriosEvaluacion.filter(c => c.activo);
         const criteriosFaltantes = criteriosActivos.filter(criterio => {
-          const evaluado = formData.criteriosEvaluados.find(c => c.criterioId === criterio.criterioEvaluacionId);
+          const evaluado = formData.criteriosEvaluados.find(c => Number(c.criterioId) === Number(criterio.criterioEvaluacionId));
           return !evaluado || !evaluado.cumple;
         });
         
@@ -2652,8 +2657,8 @@ const CumplimientoNormativoDetalle = () => {
         console.log('🔄 Compromiso 1 - Guardando datos del líder en com1_liderg_td');
         
         const com1Data = {
-          compromiso_id: 1,
-          entidad_id: user.entidadId,
+          compromisoId: 1,
+          entidadId: user.entidadId,
           dniLider: formData.nroDni,
           nombreLider: formData.nombres,
           apePatLider: formData.apellidoPaterno,
@@ -9204,7 +9209,7 @@ const CumplimientoNormativoDetalle = () => {
                   {compromisoSeleccionado.criteriosEvaluacion
                     .filter(criterio => criterio.activo)
                     .map((criterio, index) => {
-                      const criterioEvaluado = formData.criteriosEvaluados.find(c => c.criterioId === criterio.criterioEvaluacionId);
+                      const criterioEvaluado = formData.criteriosEvaluados.find(c => Number(c.criterioId) === Number(criterio.criterioEvaluacionId));
                       console.log(`🔍 Criterio ${criterio.criterioEvaluacionId}:`, { criterioEvaluado, criterioEvaluacionId: criterio.criterioEvaluacionId, formDataCriterios: formData.criteriosEvaluados });
                       return (
                         <div key={criterio.criterioEvaluacionId}>
@@ -9213,9 +9218,9 @@ const CumplimientoNormativoDetalle = () => {
                               type="checkbox"
                               checked={criterioEvaluado?.cumple || false}
                               onChange={(e) => {
-                                const criteriosActualizados = formData.criteriosEvaluados.filter(c => c.criterioId !== criterio.criterioEvaluacionId);
+                                const criteriosActualizados = formData.criteriosEvaluados.filter(c => Number(c.criterioId) !== Number(criterio.criterioEvaluacionId));
                                 if (e.target.checked) {
-                                  criteriosActualizados.push({ criterioId: criterio.criterioEvaluacionId, cumple: true });
+                                  criteriosActualizados.push({ criterioId: Number(criterio.criterioEvaluacionId), cumple: true });
                                 }
                                 setFormData(prev => ({ ...prev, criteriosEvaluados: criteriosActualizados }));
                               }}

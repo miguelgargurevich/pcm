@@ -516,7 +516,7 @@ public class PCMDbContext : DbContext
         {
             entity.ToTable("com1_liderg_td");
             entity.HasKey(e => e.ComlgtdEntId);
-            entity.Property(e => e.ComlgtdEntId).HasColumnName("comlgtd_ent_id");
+            entity.Property(e => e.ComlgtdEntId).HasColumnName("comlgtd_ent_id").ValueGeneratedOnAdd();
             entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id").IsRequired();
             entity.Property(e => e.EntidadId).HasColumnName("entidad_id").IsRequired();
             entity.Property(e => e.EtapaFormulario).HasColumnName("etapa_formulario").HasMaxLength(20).IsRequired();
