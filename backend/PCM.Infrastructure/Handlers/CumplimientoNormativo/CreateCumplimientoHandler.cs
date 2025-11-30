@@ -36,37 +36,10 @@ public class CreateCumplimientoHandler : IRequestHandler<CreateCumplimientoComma
             {
                 CompromisoId = request.CompromisoId,
                 EntidadId = request.EntidadId,
-                
-                // Paso 1: Datos Generales
-                NroDni = request.NroDni,
-                Nombres = request.Nombres,
-                ApellidoPaterno = request.ApellidoPaterno,
-                ApellidoMaterno = request.ApellidoMaterno,
-                CorreoElectronico = request.CorreoElectronico,
-                Telefono = request.Telefono,
-                Rol = request.Rol,
-                Cargo = request.Cargo,
-                FechaInicio = request.FechaInicio.HasValue ? DateTime.SpecifyKind(request.FechaInicio.Value, DateTimeKind.Utc) : DateTime.UtcNow,
-                
-                // Paso 2: Normativa
-                DocumentoUrl = request.DocumentoUrl,
-                DocumentoNombre = request.DocumentoNombre,
-                DocumentoTamano = request.DocumentoTamano,
-                DocumentoTipo = request.DocumentoTipo,
-                DocumentoFechaSubida = !string.IsNullOrEmpty(request.DocumentoUrl) ? DateTime.UtcNow : null,
-                ValidacionResolucionAutoridad = request.ValidacionResolucionAutoridad,
-                ValidacionLiderFuncionario = request.ValidacionLiderFuncionario,
-                ValidacionDesignacionArticulo = request.ValidacionDesignacionArticulo,
-                ValidacionFuncionesDefinidas = request.ValidacionFuncionesDefinidas,
-                CriteriosEvaluados = request.CriteriosEvaluados,
-                
-                // Paso 3: Confirmación
-                AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad,
-                AceptaDeclaracionJurada = request.AceptaDeclaracionJurada,
-                
-                EtapaFormulario = request.EtapaFormulario ?? "paso1",
-                Estado = request.Estado,
-                Activo = true,
+                EstadoId = request.EstadoId,
+                OperadorId = request.OperadorId,
+                FechaAsignacion = request.FechaAsignacion,
+                ObservacionPcm = request.ObservacionPcm,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -98,39 +71,13 @@ public class CreateCumplimientoHandler : IRequestHandler<CreateCumplimientoComma
             CumplimientoId = cumplimiento.CumplimientoId,
             CompromisoId = cumplimiento.CompromisoId,
             EntidadId = cumplimiento.EntidadId,
+            EstadoId = cumplimiento.EstadoId,
+            OperadorId = cumplimiento.OperadorId,
+            FechaAsignacion = cumplimiento.FechaAsignacion,
+            ObservacionPcm = cumplimiento.ObservacionPcm,
             NombreCompromiso = cumplimiento.Compromiso?.NombreCompromiso,
             NombreEntidad = cumplimiento.Entidad?.Nombre,
-            
-            // Paso 1
-            NroDni = cumplimiento.NroDni,
-            Nombres = cumplimiento.Nombres,
-            ApellidoPaterno = cumplimiento.ApellidoPaterno,
-            ApellidoMaterno = cumplimiento.ApellidoMaterno,
-            CorreoElectronico = cumplimiento.CorreoElectronico,
-            Telefono = cumplimiento.Telefono,
-            Rol = cumplimiento.Rol,
-            Cargo = cumplimiento.Cargo,
-            FechaInicio = cumplimiento.FechaInicio,
-            
-            // Paso 2
-            DocumentoUrl = cumplimiento.DocumentoUrl,
-            DocumentoNombre = cumplimiento.DocumentoNombre,
-            DocumentoTamano = cumplimiento.DocumentoTamano,
-            DocumentoTipo = cumplimiento.DocumentoTipo,
-            DocumentoFechaSubida = cumplimiento.DocumentoFechaSubida,
-            ValidacionResolucionAutoridad = cumplimiento.ValidacionResolucionAutoridad,
-            ValidacionLiderFuncionario = cumplimiento.ValidacionLiderFuncionario,
-            ValidacionDesignacionArticulo = cumplimiento.ValidacionDesignacionArticulo,
-            ValidacionFuncionesDefinidas = cumplimiento.ValidacionFuncionesDefinidas,
-            
-            // Paso 3
-            AceptaPoliticaPrivacidad = cumplimiento.AceptaPoliticaPrivacidad,
-            AceptaDeclaracionJurada = cumplimiento.AceptaDeclaracionJurada,
-            
-            EtapaFormulario = cumplimiento.EtapaFormulario,
-            Estado = cumplimiento.Estado,
-            EstadoNombre = GetEstadoNombre(cumplimiento.Estado),
-            Activo = cumplimiento.Activo,
+            EstadoNombre = GetEstadoNombre(cumplimiento.EstadoId),
             CreatedAt = cumplimiento.CreatedAt,
             UpdatedAt = cumplimiento.UpdatedAt
         };
@@ -140,10 +87,10 @@ public class CreateCumplimientoHandler : IRequestHandler<CreateCumplimientoComma
     {
         return estadoId switch
         {
-            1 => "bandeja",
-            2 => "sin_reportar",
-            3 => "publicado",
-            _ => "desconocido"
+            1 => "Pendiente",
+            2 => "En Proceso",
+            3 => "Completado",
+            _ => "Desconocido"
         };
     }
 }

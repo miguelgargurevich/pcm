@@ -4,82 +4,26 @@ using System.Text.Json.Serialization;
 namespace PCM.Application.DTOs.CumplimientoNormativo;
 
 // ============================================
-// REQUEST DTOs
+// REQUEST DTOs (adaptados a estructura Supabase)
 // ============================================
 
 public class CreateCumplimientoRequest
 {
     public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
-    
-    // Paso 1: Datos Generales
-    public string? NroDni { get; set; }
-    public string? Nombres { get; set; }
-    public string? ApellidoPaterno { get; set; }
-    public string? ApellidoMaterno { get; set; }
-    public string? CorreoElectronico { get; set; }
-    public string? Telefono { get; set; }
-    public string? Rol { get; set; }
-    public string? Cargo { get; set; }
-    public DateTime? FechaInicio { get; set; }
-    
-    // Paso 2: Normativa
-    public string? DocumentoUrl { get; set; }
-    public string? DocumentoNombre { get; set; }
-    public long? DocumentoTamano { get; set; }
-    public string? DocumentoTipo { get; set; }
-    public bool ValidacionResolucionAutoridad { get; set; }
-    public bool ValidacionLiderFuncionario { get; set; }
-    public bool ValidacionDesignacionArticulo { get; set; }
-    public bool ValidacionFuncionesDefinidas { get; set; }
-    public string? CriteriosEvaluados { get; set; } // JSON
-    
-    // Paso 3: Confirmación
-    [JsonPropertyName("acepta_politica_privacidad")]
-    public bool AceptaPoliticaPrivacidad { get; set; }
-    
-    [JsonPropertyName("acepta_declaracion_jurada")]
-    public bool AceptaDeclaracionJurada { get; set; }
-    
-    public string? EtapaFormulario { get; set; }
-    public int Estado { get; set; } = 1; // 1=bandeja
+    public int EstadoId { get; set; } = 1; // 1=pendiente, 2=en_proceso, 3=completado
+    public Guid? OperadorId { get; set; }
+    public DateTime? FechaAsignacion { get; set; }
+    public string? ObservacionPcm { get; set; }
 }
 
 public class UpdateCumplimientoRequest
 {
-    public int CumplimientoId { get; set; }
-    
-    // Paso 1: Datos Generales
-    public string? NroDni { get; set; }
-    public string? Nombres { get; set; }
-    public string? ApellidoPaterno { get; set; }
-    public string? ApellidoMaterno { get; set; }
-    public string? CorreoElectronico { get; set; }
-    public string? Telefono { get; set; }
-    public string? Rol { get; set; }
-    public string? Cargo { get; set; }
-    public DateTime? FechaInicio { get; set; }
-    
-    // Paso 2: Normativa
-    public string? DocumentoUrl { get; set; }
-    public string? DocumentoNombre { get; set; }
-    public long? DocumentoTamano { get; set; }
-    public string? DocumentoTipo { get; set; }
-    public bool ValidacionResolucionAutoridad { get; set; }
-    public bool ValidacionLiderFuncionario { get; set; }
-    public bool ValidacionDesignacionArticulo { get; set; }
-    public bool ValidacionFuncionesDefinidas { get; set; }
-    public string? CriteriosEvaluados { get; set; } // JSON
-    
-    // Paso 3: Confirmación
-    [JsonPropertyName("acepta_politica_privacidad")]
-    public bool AceptaPoliticaPrivacidad { get; set; }
-    
-    [JsonPropertyName("acepta_declaracion_jurada")]
-    public bool AceptaDeclaracionJurada { get; set; }
-    
-    public string? EtapaFormulario { get; set; }
-    public int Estado { get; set; }
+    public long CumplimientoId { get; set; }
+    public int EstadoId { get; set; }
+    public Guid? OperadorId { get; set; }
+    public DateTime? FechaAsignacion { get; set; }
+    public string? ObservacionPcm { get; set; }
 }
 
 // ============================================
@@ -88,9 +32,13 @@ public class UpdateCumplimientoRequest
 
 public class CumplimientoResponseDto
 {
-    public int CumplimientoId { get; set; }
+    public long CumplimientoId { get; set; }
     public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
+    public int EstadoId { get; set; }
+    public Guid? OperadorId { get; set; }
+    public DateTime? FechaAsignacion { get; set; }
+    public string? ObservacionPcm { get; set; }
     
     // Datos del Compromiso (para mostrar en listado)
     public string? NombreCompromiso { get; set; }
@@ -98,67 +46,26 @@ public class CumplimientoResponseDto
     // Datos de la Entidad (para mostrar en listado)
     public string? NombreEntidad { get; set; }
     
-    // Paso 1: Datos Generales
-    public string? NroDni { get; set; }
-    public string? Nombres { get; set; }
-    public string? ApellidoPaterno { get; set; }
-    public string? ApellidoMaterno { get; set; }
-    public string? CorreoElectronico { get; set; }
-    public string? Telefono { get; set; }
-    public string? Rol { get; set; }
-    public string? Cargo { get; set; }
-    public DateTime? FechaInicio { get; set; }
+    // Estado descriptivo
+    public string? EstadoNombre { get; set; }
     
-    // Paso 2: Normativa
-    public string? DocumentoUrl { get; set; }
-    public string? DocumentoNombre { get; set; }
-    public long? DocumentoTamano { get; set; }
-    public string? DocumentoTipo { get; set; }
-    public DateTime? DocumentoFechaSubida { get; set; }
-    public bool ValidacionResolucionAutoridad { get; set; }
-    public bool ValidacionLiderFuncionario { get; set; }
-    public bool ValidacionDesignacionArticulo { get; set; }
-    public bool ValidacionFuncionesDefinidas { get; set; }
-    public string? CriteriosEvaluados { get; set; } // JSON
-    
-    // Paso 3: Confirmación
-    public bool AceptaPoliticaPrivacidad { get; set; }
-    public bool AceptaDeclaracionJurada { get; set; }
-    
-    // Metadatos
-    public string? EtapaFormulario { get; set; }
-    public int Estado { get; set; } // 1=bandeja, 2=sin_reportar, 3=publicado
-    public string? EstadoNombre { get; set; } // Para mostrar en UI
-    public bool Activo { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }
 
 // DTO simplificado para listado
 public class CumplimientoListItemDto
 {
-    public int CumplimientoId { get; set; }
+    public long CumplimientoId { get; set; }
     public long CompromisoId { get; set; }
     public string NombreCompromiso { get; set; } = string.Empty;
+    public Guid EntidadId { get; set; }
     public string NombreEntidad { get; set; } = string.Empty;
-    public string NombreLider { get; set; } = string.Empty; // Nombres + Apellidos
-    public int Estado { get; set; }
+    public int EstadoId { get; set; }
     public string EstadoNombre { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
+    public Guid? OperadorId { get; set; }
+    public DateTime? FechaAsignacion { get; set; }
+    public string? ObservacionPcm { get; set; }
+    public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    
-    // Documento y validaciones (Paso 2)
-    public string? DocumentoUrl { get; set; }
-    public bool TieneDocumento { get; set; }
-    public bool ValidacionResolucionAutoridad { get; set; }
-    public bool ValidacionLiderFuncionario { get; set; }
-    public bool ValidacionDesignacionArticulo { get; set; }
-    public bool ValidacionFuncionesDefinidas { get; set; }
-    public string? CriteriosEvaluados { get; set; } // JSON
-    
-    // Aceptaciones (Paso 3)
-    public bool AceptaPoliticaPrivacidad { get; set; }
-    public bool AceptaDeclaracionJurada { get; set; }
-    
-    public string? EtapaFormulario { get; set; }
 }

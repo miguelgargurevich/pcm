@@ -52,36 +52,13 @@ public class GetCumplimientoByIdHandler : IRequestHandler<GetCumplimientoByIdQue
             CumplimientoId = cumplimiento.CumplimientoId,
             CompromisoId = cumplimiento.CompromisoId,
             EntidadId = cumplimiento.EntidadId,
+            EstadoId = cumplimiento.EstadoId,
+            OperadorId = cumplimiento.OperadorId,
+            FechaAsignacion = cumplimiento.FechaAsignacion,
+            ObservacionPcm = cumplimiento.ObservacionPcm,
             NombreCompromiso = cumplimiento.Compromiso?.NombreCompromiso,
             NombreEntidad = cumplimiento.Entidad?.Nombre,
-            
-            NroDni = cumplimiento.NroDni,
-            Nombres = cumplimiento.Nombres,
-            ApellidoPaterno = cumplimiento.ApellidoPaterno,
-            ApellidoMaterno = cumplimiento.ApellidoMaterno,
-            CorreoElectronico = cumplimiento.CorreoElectronico,
-            Telefono = cumplimiento.Telefono,
-            Rol = cumplimiento.Rol,
-            Cargo = cumplimiento.Cargo,
-            FechaInicio = cumplimiento.FechaInicio,
-            
-            DocumentoUrl = cumplimiento.DocumentoUrl,
-            DocumentoNombre = cumplimiento.DocumentoNombre,
-            DocumentoTamano = cumplimiento.DocumentoTamano,
-            DocumentoTipo = cumplimiento.DocumentoTipo,
-            DocumentoFechaSubida = cumplimiento.DocumentoFechaSubida,
-            ValidacionResolucionAutoridad = cumplimiento.ValidacionResolucionAutoridad,
-            ValidacionLiderFuncionario = cumplimiento.ValidacionLiderFuncionario,
-            ValidacionDesignacionArticulo = cumplimiento.ValidacionDesignacionArticulo,
-            ValidacionFuncionesDefinidas = cumplimiento.ValidacionFuncionesDefinidas,
-            CriteriosEvaluados = cumplimiento.CriteriosEvaluados,
-            
-            AceptaPoliticaPrivacidad = cumplimiento.AceptaPoliticaPrivacidad,
-            AceptaDeclaracionJurada = cumplimiento.AceptaDeclaracionJurada,
-            
-            Estado = cumplimiento.Estado,
-            EstadoNombre = GetEstadoNombre(cumplimiento.Estado),
-            Activo = cumplimiento.Activo,
+            EstadoNombre = GetEstadoNombre(cumplimiento.EstadoId),
             CreatedAt = cumplimiento.CreatedAt,
             UpdatedAt = cumplimiento.UpdatedAt
         };
@@ -91,10 +68,10 @@ public class GetCumplimientoByIdHandler : IRequestHandler<GetCumplimientoByIdQue
     {
         return estadoId switch
         {
-            1 => "bandeja",
-            2 => "sin_reportar",
-            3 => "publicado",
-            _ => "desconocido"
+            1 => "Pendiente",
+            2 => "En Proceso",
+            3 => "Completado",
+            _ => "Desconocido"
         };
     }
 }

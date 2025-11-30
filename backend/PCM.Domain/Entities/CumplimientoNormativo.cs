@@ -5,60 +5,18 @@ namespace PCM.Domain.Entities;
 
 /// <summary>
 /// Entidad para gestionar el cumplimiento normativo de compromisos de gobierno digital por entidad.
-/// Una entidad solo puede tener un cumplimiento por compromiso (constraint único en BD).
+/// Estructura adaptada a Supabase.
 /// </summary>
 public class CumplimientoNormativo
 {
-    public int CumplimientoId { get; set; }
-    public long CompromisoId { get; set; }
+    public long CumplimientoId { get; set; }
     public Guid EntidadId { get; set; }
-    
-    // ============================================
-    // PASO 1: DATOS GENERALES DEL LÍDER
-    // ============================================
-    public string? NroDni { get; set; }
-    public string? Nombres { get; set; }
-    public string? ApellidoPaterno { get; set; }
-    public string? ApellidoMaterno { get; set; }
-    public string? CorreoElectronico { get; set; }
-    public string? Telefono { get; set; }
-    public string? Rol { get; set; }
-    public string? Cargo { get; set; }
-    public DateTime? FechaInicio { get; set; }
-    
-    // ============================================
-    // PASO 2: NORMATIVA (Documento y Validaciones)
-    // ============================================
-    public string? DocumentoUrl { get; set; }
-    public string? DocumentoNombre { get; set; }
-    public long? DocumentoTamano { get; set; }
-    public string? DocumentoTipo { get; set; }
-    public DateTime? DocumentoFechaSubida { get; set; }
-    
-    // Checkboxes de Validación (fijos - 4 validaciones comunes)
-    public bool ValidacionResolucionAutoridad { get; set; }
-    public bool ValidacionLiderFuncionario { get; set; }
-    public bool ValidacionDesignacionArticulo { get; set; }
-    public bool ValidacionFuncionesDefinidas { get; set; }
-    
-    // Criterios de Evaluación dinámicos (JSON)
-    [Column("criterios_evaluados", TypeName = "jsonb")]
-    public string? CriteriosEvaluados { get; set; }
-    
-    // ============================================
-    // PASO 3: CONFIRMACIÓN
-    // ============================================
-    public bool AceptaPoliticaPrivacidad { get; set; }
-    public bool AceptaDeclaracionJurada { get; set; }
-    
-    // ============================================
-    // METADATOS
-    // ============================================
-    [Column("etapa_formulario")]
-    public string EtapaFormulario { get; set; } = "paso1"; // paso1, paso2, paso3, completado
-    public int Estado { get; set; } = 1; // 1=bandeja, 2=sin_reportar, 3=publicado
-    public bool Activo { get; set; } = true;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public long CompromisoId { get; set; }
+    public int EstadoId { get; set; } = 1; // 1=pendiente, 2=en_proceso, 3=completado
+    public Guid? OperadorId { get; set; }
+    public DateTime? FechaAsignacion { get; set; }
+    public string? ObservacionPcm { get; set; }
+    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
     
     // ============================================

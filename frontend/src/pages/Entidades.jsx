@@ -35,11 +35,14 @@ const Entidades = () => {
   const [nivelesGobierno, setNivelesGobierno] = useState([]);
   const [sectores, setSectores] = useState([]);
   const [clasificaciones, setClasificaciones] = useState([]);
+  const [subclasificaciones, setSubclasificaciones] = useState([]);
+  const [subclasificacionesModal, setSubclasificacionesModal] = useState([]);
 
   // Estados para selects en cascada
   const [selectedDepartamento, setSelectedDepartamento] = useState('');
   const [selectedProvincia, setSelectedProvincia] = useState('');
   const [selectedDistrito, setSelectedDistrito] = useState('');
+  const [selectedClasificacion, setSelectedClasificacion] = useState('');
   const [provinciasModal, setProvinciasModal] = useState([]);
   const [distritosModal, setDistritosModal] = useState([]);
   const [consultingRUC, setConsultingRUC] = useState(false);
@@ -54,7 +57,7 @@ const Entidades = () => {
     ubigeoId: '',
     nivelGobiernoId: '',
     sectorId: '',
-    clasificacionId: '',
+    clasificacionId: '', // Este ahora es subclasificacion_id en BD
     nombreAlcalde: '',
     apePatAlcalde: '',
     apeMatAlcalde: '',
@@ -143,6 +146,13 @@ const Entidades = () => {
         setClasificaciones(Array.isArray(clasificacionesData) ? clasificacionesData : []);
       }
 
+      // Cargar subclasificaciones (todas)
+      const subclasificacionesResponse = await catalogosService.getSubclasificaciones();
+      if (subclasificacionesResponse.isSuccess || subclasificacionesResponse.IsSuccess) {
+        const subclasificacionesData = subclasificacionesResponse.data || subclasificacionesResponse.Data;
+        setSubclasificaciones(Array.isArray(subclasificacionesData) ? subclasificacionesData : []);
+      }
+
       // Cargar departamentos
       const departamentosResponse = await ubigeoService.getDepartamentos();
       if (departamentosResponse.isSuccess || departamentosResponse.IsSuccess) {
@@ -163,8 +173,12 @@ const Entidades = () => {
         { sectorId: 3, nombre: 'Salud' },
       ]);
       setClasificaciones([
-        { clasificacionId: 1, nombre: 'Ministerio' },
-        { clasificacionId: 2, nombre: 'Organismo Público' },
+        { clasificacionId: 1, nombre: 'Poder Ejecutivo' },
+        { clasificacionId: 2, nombre: 'Poder Legislativo' },
+      ]);
+      setSubclasificaciones([
+        { subclasificacionId: 1, nombre: 'Ministerio', clasificacionId: 1 },
+        { subclasificacionId: 2, nombre: 'Organismo Público', clasificacionId: 1 },
       ]);
     }
   };
@@ -318,8 +332,10 @@ const Entidades = () => {
     setSelectedDepartamento('');
     setSelectedProvincia('');
     setSelectedDistrito('');
+    setSelectedClasificacion('');
     setProvinciasModal([]);
     setDistritosModal([]);
+    setSubclasificacionesModal([]);
     setFormData({
       ruc: '',
       nombre: '',
@@ -330,7 +346,7 @@ const Entidades = () => {
       ubigeoId: '',
       nivelGobiernoId: '',
       sectorId: '',
-      clasificacionId: '',
+      clasificacionId: '', // Este ahora es subclasificacion_id en BD
       nombreAlcalde: '',
       apePatAlcalde: '',
       apeMatAlcalde: '',
@@ -370,6 +386,26 @@ const Entidades = () => {
           }
         } catch (error) {
           console.error('Error al cargar distritos:', error);
+        }
+      }
+    }
+
+    // Buscar la clasificación de la subclasificación seleccionada
+    if (entidad.clasificacionId) {
+      // Buscar en subclasificaciones para obtener su clasificacion padre
+      const subclasificacion = subclasificaciones.find(
+        s => s.subclasificacionId === entidad.clasificacionId
+      );
+      if (subclasificacion && subclasificacion.clasificacionId) {
+        setSelectedClasificacion(String(subclasificacion.clasificacionId));
+        // Cargar subclasificaciones de esa clasificación
+        try {
+          const subResponse = await catalogosService.getSubclasificacionesByClasificacion(subclasificacion.clasificacionId);
+          if (subResponse.isSuccess || subResponse.IsSuccess) {
+            setSubclasificacionesModal(subResponse.data || subResponse.Data || []);
+          }
+        } catch (error) {
+          console.error('Error al cargar subclasificaciones:', error);
         }
       }
     }
@@ -525,6 +561,33 @@ const Entidades = () => {
     const ubigeoId = e.target.value;
     setSelectedDistrito(ubigeoId);
     setFormData({ ...formData, ubigeoId });
+  };
+
+  // Manejar cambio de clasificación en el modal (carga subclasificaciones)
+  const handleClasificacionChange = async (e) => {
+    const clasificacionId = e.target.value;
+    setSelectedClasificacion(clasificacionId);
+    setSubclasificacionesModal([]);
+    setFormData({ ...formData, clasificacionId: '' }); // Reset subclasificación
+
+    if (clasificacionId) {
+      try {
+        const response = await catalogosService.getSubclasificacionesByClasificacion(clasificacionId);
+        if (response.isSuccess || response.IsSuccess) {
+          const subData = response.data || response.Data;
+          setSubclasificacionesModal(Array.isArray(subData) ? subData : []);
+        }
+      } catch (error) {
+        console.error('Error al cargar subclasificaciones:', error);
+        showErrorToast('Error al cargar subclasificaciones');
+      }
+    }
+  };
+
+  // Manejar cambio de subclasificación en el modal
+  const handleSubclasificacionChange = (e) => {
+    const subclasificacionId = e.target.value;
+    setFormData({ ...formData, clasificacionId: subclasificacionId });
   };
 
   // Consultar RUC en SUNAT (mock por ahora, se puede integrar con API real)
@@ -1107,7 +1170,7 @@ const Entidades = () => {
                     </div>
 
                     {/* Clasificación Administrativa */}
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-4 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Nivel de Gobierno *
@@ -1153,9 +1216,8 @@ const Entidades = () => {
                           Clasificación *
                         </label>
                         <select
-                          name="clasificacionId"
-                          value={formData.clasificacionId}
-                          onChange={handleChange}
+                          value={selectedClasificacion}
+                          onChange={handleClasificacionChange}
                           className="input-field"
                           required
                         >
@@ -1163,6 +1225,27 @@ const Entidades = () => {
                           {clasificaciones.map((clasificacion) => (
                             <option key={clasificacion.clasificacionId} value={clasificacion.clasificacionId}>
                               {clasificacion.nombre}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Subclasificación *
+                        </label>
+                        <select
+                          name="clasificacionId"
+                          value={formData.clasificacionId}
+                          onChange={handleSubclasificacionChange}
+                          className="input-field"
+                          required
+                          disabled={!selectedClasificacion}
+                        >
+                          <option value="">Seleccione...</option>
+                          {subclasificacionesModal.map((sub) => (
+                            <option key={sub.subclasificacionId} value={sub.subclasificacionId}>
+                              {sub.nombre}
                             </option>
                           ))}
                         </select>

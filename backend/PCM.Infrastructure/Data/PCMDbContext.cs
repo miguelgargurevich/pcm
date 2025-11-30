@@ -459,7 +459,7 @@ public class PCMDbContext : DbContext
             entity.HasKey(e => e.AlcanceCompromisoId);
             entity.Property(e => e.AlcanceCompromisoId).HasColumnName("alc_com_id");
             entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id").IsRequired();
-            entity.Property(e => e.ClasificacionId).HasColumnName("clasificacion_id").IsRequired();
+            entity.Property(e => e.ClasificacionId).HasColumnName("subclasificacion_id").IsRequired();
             entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
 
@@ -471,53 +471,26 @@ public class PCMDbContext : DbContext
             entity.HasOne(e => e.Clasificacion)
                 .WithMany()
                 .HasForeignKey(e => e.ClasificacionId)
-                .HasConstraintName("fk_alcance_compromiso_clasificacion");
+                .HasPrincipalKey(c => c.SubclasificacionId)
+                .HasConstraintName("fk_alcance_compromiso_subclasificacion");
 
             entity.HasIndex(e => new { e.CompromisoId, e.ClasificacionId }).IsUnique();
         });
 
-        // Configuración de CumplimientoNormativo
+        // Configuración de CumplimientoNormativo (adaptado a estructura Supabase)
         modelBuilder.Entity<CumplimientoNormativo>(entity =>
         {
             entity.ToTable("cumplimiento_normativo");
             entity.HasKey(e => e.CumplimientoId);
             entity.Property(e => e.CumplimientoId).HasColumnName("cumplimiento_id");
-            entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id").IsRequired();
             entity.Property(e => e.EntidadId).HasColumnName("entidad_id").IsRequired();
-            
-            // Paso 1: Datos Generales
-            entity.Property(e => e.NroDni).HasColumnName("nro_dni").HasMaxLength(8);
-            entity.Property(e => e.Nombres).HasColumnName("nombres").HasMaxLength(200);
-            entity.Property(e => e.ApellidoPaterno).HasColumnName("apellido_paterno").HasMaxLength(100);
-            entity.Property(e => e.ApellidoMaterno).HasColumnName("apellido_materno").HasMaxLength(100);
-            entity.Property(e => e.CorreoElectronico).HasColumnName("correo_electronico").HasMaxLength(200);
-            entity.Property(e => e.Telefono).HasColumnName("telefono").HasMaxLength(20);
-            entity.Property(e => e.Rol).HasColumnName("rol").HasMaxLength(100);
-            entity.Property(e => e.Cargo).HasColumnName("cargo").HasMaxLength(200);
-            entity.Property(e => e.FechaInicio).HasColumnName("fecha_inicio");
-            
-            // Paso 2: Normativa
-            entity.Property(e => e.DocumentoUrl).HasColumnName("documento_url").HasColumnType("text");
-            entity.Property(e => e.DocumentoNombre).HasColumnName("documento_nombre").HasMaxLength(500);
-            entity.Property(e => e.DocumentoTamano).HasColumnName("documento_tamano");
-            entity.Property(e => e.DocumentoTipo).HasColumnName("documento_tipo").HasMaxLength(100);
-            entity.Property(e => e.DocumentoFechaSubida).HasColumnName("documento_fecha_subida");
-            entity.Property(e => e.ValidacionResolucionAutoridad).HasColumnName("validacion_resolucion_autoridad").HasDefaultValue(false);
-            entity.Property(e => e.ValidacionLiderFuncionario).HasColumnName("validacion_lider_funcionario").HasDefaultValue(false);
-            entity.Property(e => e.ValidacionDesignacionArticulo).HasColumnName("validacion_designacion_articulo").HasDefaultValue(false);
-            entity.Property(e => e.ValidacionFuncionesDefinidas).HasColumnName("validacion_funciones_definidas").HasDefaultValue(false);
-            entity.Property(e => e.CriteriosEvaluados).HasColumnName("criterios_evaluados").HasColumnType("jsonb");
-            
-            // Paso 3: Confirmación
-            entity.Property(e => e.AceptaPoliticaPrivacidad).HasColumnName("acepta_politica_privacidad").HasDefaultValue(false);
-            entity.Property(e => e.AceptaDeclaracionJurada).HasColumnName("acepta_declaracion_jurada").HasDefaultValue(false);
-            
-            // Metadatos
-            entity.Property(e => e.EtapaFormulario).HasColumnName("etapa_formulario").HasMaxLength(20).HasDefaultValue("paso1");
-            entity.Property(e => e.Estado).HasColumnName("estado").IsRequired().HasDefaultValue(1);
-            entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+            entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id").IsRequired();
+            entity.Property(e => e.EstadoId).HasColumnName("estado_id").IsRequired().HasDefaultValue(1);
+            entity.Property(e => e.OperadorId).HasColumnName("operador_id");
+            entity.Property(e => e.FechaAsignacion).HasColumnName("fecha_asignacion");
+            entity.Property(e => e.ObservacionPcm).HasColumnName("observacion_pcm").HasColumnType("text");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("now()");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("now()");
 
             // Relaciones
             entity.HasOne(e => e.Compromiso)
@@ -548,8 +521,8 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(15).IsRequired();
             entity.Property(e => e.CheckPrivacidad).HasColumnName("check_privacidad").IsRequired();
             entity.Property(e => e.CheckDdjj).HasColumnName("check_ddjj").IsRequired();
-            entity.Property(e => e.EstadoPCM).HasColumnName("estado_pcm").HasMaxLength(50).IsRequired();
-            entity.Property(e => e.ObservacionesPCM).HasColumnName("observaciones_pcm").HasMaxLength(500).IsRequired();
+            entity.Property(e => e.EstadoPCM).HasColumnName("estado_PCM").HasMaxLength(50);
+            entity.Property(e => e.ObservacionesPCM).HasColumnName("observaciones_PCM").HasMaxLength(500);
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").IsRequired();
             entity.Property(e => e.FecRegistro).HasColumnName("fec_registro").IsRequired();
             entity.Property(e => e.UsuarioRegistra).HasColumnName("usuario_registra").IsRequired();
@@ -590,8 +563,8 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(15).IsRequired();
             entity.Property(e => e.CheckPrivacidad).HasColumnName("check_privacidad").IsRequired();
             entity.Property(e => e.CheckDdjj).HasColumnName("check_ddjj").IsRequired();
-            entity.Property(e => e.EstadoPcm).HasColumnName("estado_pcm").HasMaxLength(50).IsRequired();
-            entity.Property(e => e.ObservacionesPcm).HasColumnName("observaciones_pcm").HasMaxLength(500).IsRequired();
+            entity.Property(e => e.EstadoPcm).HasColumnName("estado_PCM").HasMaxLength(50);
+            entity.Property(e => e.ObservacionesPcm).HasColumnName("observaciones_PCM").HasMaxLength(500);
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").IsRequired();
             entity.Property(e => e.FecRegistro).HasColumnName("fec_registro").IsRequired();
             entity.Property(e => e.UsuarioRegistra).HasColumnName("usuario_registra").IsRequired();

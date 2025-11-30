@@ -37,7 +37,7 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                 if (registro == null)
                 {
                     _logger.LogInformation("No se encontró registro Com10 Datos Abiertos");
-                    return Result<Com10DatosAbiertosResponse>.Success(null);
+                    return Result<Com10DatosAbiertosResponse>.Success(null!, "No se encontró registro");
                 }
 
                 var response = new Com10DatosAbiertosResponse

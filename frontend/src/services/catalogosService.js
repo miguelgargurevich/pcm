@@ -70,4 +70,24 @@ export const catalogosService = {
       throw error;
     }
   },
+
+  getSubclasificaciones: async () => {
+    try {
+      const response = await api.get('/catalogos/subclasificaciones');
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener subclasificaciones:', error);
+      throw error;
+    }
+  },
+
+  getSubclasificacionesByClasificacion: async (clasificacionId) => {
+    try {
+      const response = await api.get(`/catalogos/subclasificaciones/por-clasificacion/${clasificacionId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener subclasificaciones por clasificación:', error);
+      throw error;
+    }
+  },
 };

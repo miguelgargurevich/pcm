@@ -30,11 +30,11 @@ public class Com8PublicacionTUPA
     [Column("check_ddjj")]
     public bool CheckDdjj { get; set; }
 
-    [Column("estado_pcm")]
+    [Column("estado_PCM")]
     [MaxLength(50)]
     public string? EstadoPCM { get; set; }
 
-    [Column("observaciones_pcm")]
+    [Column("observaciones_PCM")]
     [MaxLength(500)]
     public string? ObservacionesPCM { get; set; }
 

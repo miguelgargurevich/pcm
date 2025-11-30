@@ -108,7 +108,7 @@ public class Com18AccesoPortalTransparencia
 
     // Propiedades de compatibilidad para handlers existentes
     [NotMapped]
-    public string? UrlPlataforma { get => EnlacePortalPte; set => EnlacePortalPte = value; }
+    public string? UrlPlataforma { get => EnlacePortalPte; set => EnlacePortalPte = value ?? ""; }
     
     [NotMapped]
     public DateTime? FechaImplementacion { get => FechaAccesoPte; set => FechaAccesoPte = value; }
@@ -123,8 +123,8 @@ public class Com18AccesoPortalTransparencia
     public int? TramitesProcesados { get => null; set { } }
     
     [NotMapped]
-    public string? ArchivoEvidencia { get => RutaPdfPte; set => RutaPdfPte = value; }
+    public string? ArchivoEvidencia { get => RutaPdfPte; set => RutaPdfPte = value ?? ""; }
     
     [NotMapped]
-    public string? Descripcion { get => DescripcionPte ?? ObservacionPte; set => ObservacionPte = value; }
+    public string? Descripcion { get => DescripcionPte ?? ObservacionPte; set => ObservacionPte = value ?? ""; }
 }

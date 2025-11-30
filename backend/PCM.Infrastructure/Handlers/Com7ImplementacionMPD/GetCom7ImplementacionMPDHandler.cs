@@ -37,7 +37,7 @@ public class GetCom7ImplementacionMPDHandler : IRequestHandler<GetCom7Implementa
             if (entity == null)
             {
                 _logger.LogInformation("No se encontró registro Com7ImplementacionMPD");
-                return Result<Com7ImplementacionMPDResponse>.Success(null, "No se encontró registro");
+                return Result<Com7ImplementacionMPDResponse>.Success(null!, "No se encontró registro");
             }
 
             var response = new Com7ImplementacionMPDResponse

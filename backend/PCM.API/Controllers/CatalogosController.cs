@@ -220,4 +220,60 @@ public class CatalogosController : ControllerBase
             ));
         }
     }
+
+    [HttpGet("subclasificaciones")]
+    public async Task<ActionResult<Result<List<object>>>> GetSubclasificaciones()
+    {
+        try
+        {
+            var subclasificaciones = await _context.Subclasificaciones
+                .Where(s => s.Activo)
+                .OrderBy(s => s.Nombre)
+                .Select(s => new
+                {
+                    subclasificacionId = s.SubclasificacionId,
+                    nombre = s.Nombre,
+                    descripcion = s.Descripcion,
+                    clasificacionId = s.ClasificacionId
+                })
+                .ToListAsync();
+
+            return Ok(Result<List<object>>.Success(subclasificaciones.Cast<object>().ToList()));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, Result<List<object>>.Failure(
+                "Error al obtener subclasificaciones",
+                new List<string> { ex.Message }
+            ));
+        }
+    }
+
+    [HttpGet("subclasificaciones/por-clasificacion/{clasificacionId}")]
+    public async Task<ActionResult<Result<List<object>>>> GetSubclasificacionesByClasificacion(long clasificacionId)
+    {
+        try
+        {
+            var subclasificaciones = await _context.Subclasificaciones
+                .Where(s => s.Activo && s.ClasificacionId == clasificacionId)
+                .OrderBy(s => s.Nombre)
+                .Select(s => new
+                {
+                    subclasificacionId = s.SubclasificacionId,
+                    nombre = s.Nombre,
+                    descripcion = s.Descripcion,
+                    clasificacionId = s.ClasificacionId
+                })
+                .ToListAsync();
+
+            return Ok(Result<List<object>>.Success(subclasificaciones.Cast<object>().ToList()));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, Result<List<object>>.Failure(
+                "Error al obtener subclasificaciones por clasificación",
+                new List<string> { ex.Message }
+            ));
+        }
+    }
 }

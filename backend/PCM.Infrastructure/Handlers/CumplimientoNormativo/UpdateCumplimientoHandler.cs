@@ -24,8 +24,6 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
         try
         {
             _logger.LogInformation("🔍 UpdateCumplimiento - Request recibido para CumplimientoId: {CumplimientoId}", request.CumplimientoId);
-            _logger.LogInformation("📋 Checkboxes recibidos - AceptaPoliticaPrivacidad: {Politica}, AceptaDeclaracionJurada: {Declaracion}", 
-                request.AceptaPoliticaPrivacidad, request.AceptaDeclaracionJurada);
             
             var cumplimiento = await _context.CumplimientosNormativos
                 .FirstOrDefaultAsync(c => c.CumplimientoId == request.CumplimientoId, cancellationToken);
@@ -35,63 +33,28 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
                 return Result<CumplimientoResponseDto>.Failure("Cumplimiento normativo no encontrado");
             }
 
-            // Actualizar Paso 1: Datos Generales (solo si vienen en el request)
-            if (!string.IsNullOrEmpty(request.NroDni))
-                cumplimiento.NroDni = request.NroDni;
-            if (!string.IsNullOrEmpty(request.Nombres))
-                cumplimiento.Nombres = request.Nombres;
-            if (!string.IsNullOrEmpty(request.ApellidoPaterno))
-                cumplimiento.ApellidoPaterno = request.ApellidoPaterno;
-            if (!string.IsNullOrEmpty(request.ApellidoMaterno))
-                cumplimiento.ApellidoMaterno = request.ApellidoMaterno;
-            if (!string.IsNullOrEmpty(request.CorreoElectronico))
-                cumplimiento.CorreoElectronico = request.CorreoElectronico;
-            if (!string.IsNullOrEmpty(request.Telefono))
-                cumplimiento.Telefono = request.Telefono;
-            if (!string.IsNullOrEmpty(request.Rol))
-                cumplimiento.Rol = request.Rol;
-            if (!string.IsNullOrEmpty(request.Cargo))
-                cumplimiento.Cargo = request.Cargo;
-            if (request.FechaInicio.HasValue)
+            // Actualizar estado si viene un valor válido (1, 2 o 3)
+            if (request.EstadoId > 0 && request.EstadoId <= 3)
             {
-                cumplimiento.FechaInicio = DateTime.SpecifyKind(request.FechaInicio.Value, DateTimeKind.Utc);
+                cumplimiento.EstadoId = request.EstadoId;
             }
             
-            // Actualizar Paso 2: Normativa (solo si vienen datos, no sobrescribir con null)
-            if (!string.IsNullOrEmpty(request.DocumentoUrl))
+            // Actualizar operador si viene
+            if (request.OperadorId.HasValue)
             {
-                cumplimiento.DocumentoUrl = request.DocumentoUrl;
-                cumplimiento.DocumentoNombre = request.DocumentoNombre;
-                cumplimiento.DocumentoTamano = request.DocumentoTamano;
-                cumplimiento.DocumentoTipo = request.DocumentoTipo;
-                cumplimiento.DocumentoFechaSubida = DateTime.UtcNow;
+                cumplimiento.OperadorId = request.OperadorId.Value;
             }
             
-            cumplimiento.ValidacionResolucionAutoridad = request.ValidacionResolucionAutoridad;
-            cumplimiento.ValidacionLiderFuncionario = request.ValidacionLiderFuncionario;
-            cumplimiento.ValidacionDesignacionArticulo = request.ValidacionDesignacionArticulo;
-            cumplimiento.ValidacionFuncionesDefinidas = request.ValidacionFuncionesDefinidas;
-            
-            // Actualizar criterios evaluados si vienen datos
-            if (!string.IsNullOrEmpty(request.CriteriosEvaluados))
+            // Actualizar fecha asignación si viene
+            if (request.FechaAsignacion.HasValue)
             {
-                cumplimiento.CriteriosEvaluados = request.CriteriosEvaluados;
+                cumplimiento.FechaAsignacion = DateTime.SpecifyKind(request.FechaAsignacion.Value, DateTimeKind.Utc);
             }
             
-            // Actualizar Paso 3: Confirmación
-            cumplimiento.AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad;
-            cumplimiento.AceptaDeclaracionJurada = request.AceptaDeclaracionJurada;
-            
-            // Actualizar etapa del formulario
-            if (!string.IsNullOrEmpty(request.EtapaFormulario))
+            // Actualizar observación si viene
+            if (!string.IsNullOrEmpty(request.ObservacionPcm))
             {
-                cumplimiento.EtapaFormulario = request.EtapaFormulario;
-            }
-            
-            // Solo actualizar estado si viene un valor válido (1, 2 o 3)
-            if (request.Estado > 0 && request.Estado <= 3)
-            {
-                cumplimiento.Estado = request.Estado;
+                cumplimiento.ObservacionPcm = request.ObservacionPcm;
             }
             
             cumplimiento.UpdatedAt = DateTime.UtcNow;
@@ -123,37 +86,13 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
             CumplimientoId = cumplimiento.CumplimientoId,
             CompromisoId = cumplimiento.CompromisoId,
             EntidadId = cumplimiento.EntidadId,
+            EstadoId = cumplimiento.EstadoId,
+            OperadorId = cumplimiento.OperadorId,
+            FechaAsignacion = cumplimiento.FechaAsignacion,
+            ObservacionPcm = cumplimiento.ObservacionPcm,
             NombreCompromiso = cumplimiento.Compromiso?.NombreCompromiso,
             NombreEntidad = cumplimiento.Entidad?.Nombre,
-            
-            NroDni = cumplimiento.NroDni,
-            Nombres = cumplimiento.Nombres,
-            ApellidoPaterno = cumplimiento.ApellidoPaterno,
-            ApellidoMaterno = cumplimiento.ApellidoMaterno,
-            CorreoElectronico = cumplimiento.CorreoElectronico,
-            Telefono = cumplimiento.Telefono,
-            Rol = cumplimiento.Rol,
-            Cargo = cumplimiento.Cargo,
-            FechaInicio = cumplimiento.FechaInicio,
-            
-            DocumentoUrl = cumplimiento.DocumentoUrl,
-            DocumentoNombre = cumplimiento.DocumentoNombre,
-            DocumentoTamano = cumplimiento.DocumentoTamano,
-            DocumentoTipo = cumplimiento.DocumentoTipo,
-            DocumentoFechaSubida = cumplimiento.DocumentoFechaSubida,
-            ValidacionResolucionAutoridad = cumplimiento.ValidacionResolucionAutoridad,
-            ValidacionLiderFuncionario = cumplimiento.ValidacionLiderFuncionario,
-            ValidacionDesignacionArticulo = cumplimiento.ValidacionDesignacionArticulo,
-            ValidacionFuncionesDefinidas = cumplimiento.ValidacionFuncionesDefinidas,
-            CriteriosEvaluados = cumplimiento.CriteriosEvaluados,
-            
-            AceptaPoliticaPrivacidad = cumplimiento.AceptaPoliticaPrivacidad,
-            AceptaDeclaracionJurada = cumplimiento.AceptaDeclaracionJurada,
-            
-            EtapaFormulario = cumplimiento.EtapaFormulario,
-            Estado = cumplimiento.Estado,
-            EstadoNombre = GetEstadoNombre(cumplimiento.Estado),
-            Activo = cumplimiento.Activo,
+            EstadoNombre = GetEstadoNombre(cumplimiento.EstadoId),
             CreatedAt = cumplimiento.CreatedAt,
             UpdatedAt = cumplimiento.UpdatedAt
         };
@@ -163,10 +102,10 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
     {
         return estadoId switch
         {
-            1 => "bandeja",
-            2 => "sin_reportar",
-            3 => "publicado",
-            _ => "desconocido"
+            1 => "Pendiente",
+            2 => "En Proceso",
+            3 => "Completado",
+            _ => "Desconocido"
         };
     }
 }

@@ -103,32 +103,10 @@ public class CumplimientoNormativoController : ControllerBase
             {
                 CompromisoId = request.CompromisoId,
                 EntidadId = request.EntidadId,
-                
-                NroDni = request.NroDni,
-                Nombres = request.Nombres,
-                ApellidoPaterno = request.ApellidoPaterno,
-                ApellidoMaterno = request.ApellidoMaterno,
-                CorreoElectronico = request.CorreoElectronico,
-                Telefono = request.Telefono,
-                Rol = request.Rol,
-                Cargo = request.Cargo,
-                FechaInicio = request.FechaInicio,
-                
-                DocumentoUrl = request.DocumentoUrl,
-                DocumentoNombre = request.DocumentoNombre,
-                DocumentoTamano = request.DocumentoTamano,
-                DocumentoTipo = request.DocumentoTipo,
-                ValidacionResolucionAutoridad = request.ValidacionResolucionAutoridad,
-                ValidacionLiderFuncionario = request.ValidacionLiderFuncionario,
-                ValidacionDesignacionArticulo = request.ValidacionDesignacionArticulo,
-                ValidacionFuncionesDefinidas = request.ValidacionFuncionesDefinidas,
-                CriteriosEvaluados = request.CriteriosEvaluados,
-                
-                AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad,
-                AceptaDeclaracionJurada = request.AceptaDeclaracionJurada,
-                
-                EtapaFormulario = request.EtapaFormulario,
-                Estado = request.Estado
+                EstadoId = request.EstadoId,
+                OperadorId = request.OperadorId,
+                FechaAsignacion = request.FechaAsignacion,
+                ObservacionPcm = request.ObservacionPcm
             };
 
             var result = await _mediator.Send(command);
@@ -161,32 +139,10 @@ public class CumplimientoNormativoController : ControllerBase
             var command = new UpdateCumplimientoCommand
             {
                 CumplimientoId = id,
-                
-                NroDni = request.NroDni,
-                Nombres = request.Nombres,
-                ApellidoPaterno = request.ApellidoPaterno,
-                ApellidoMaterno = request.ApellidoMaterno,
-                CorreoElectronico = request.CorreoElectronico,
-                Telefono = request.Telefono,
-                Rol = request.Rol,
-                Cargo = request.Cargo,
-                FechaInicio = request.FechaInicio,
-                
-                DocumentoUrl = request.DocumentoUrl,
-                DocumentoNombre = request.DocumentoNombre,
-                DocumentoTamano = request.DocumentoTamano,
-                DocumentoTipo = request.DocumentoTipo,
-                ValidacionResolucionAutoridad = request.ValidacionResolucionAutoridad,
-                ValidacionLiderFuncionario = request.ValidacionLiderFuncionario,
-                ValidacionDesignacionArticulo = request.ValidacionDesignacionArticulo,
-                ValidacionFuncionesDefinidas = request.ValidacionFuncionesDefinidas,
-                CriteriosEvaluados = request.CriteriosEvaluados,
-                
-                AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad,
-                AceptaDeclaracionJurada = request.AceptaDeclaracionJurada,
-                
-                EtapaFormulario = request.EtapaFormulario,
-                Estado = request.Estado
+                EstadoId = request.EstadoId,
+                OperadorId = request.OperadorId,
+                FechaAsignacion = request.FechaAsignacion,
+                ObservacionPcm = request.ObservacionPcm
             };
 
             var result = await _mediator.Send(command);

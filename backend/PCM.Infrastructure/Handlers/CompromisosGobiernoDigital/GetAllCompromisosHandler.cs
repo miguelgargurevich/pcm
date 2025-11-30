@@ -25,18 +25,24 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
         try
         {
             // Obtener la clasificación y entidadId del usuario (si está autenticado)
+            // NOTA: Entidad.ClasificacionId apunta a subclasificacion_id en la BD
+            // Necesitamos obtener el clasificacion_id padre de la subclasificación
             long? userClasificacionId = null;
             Guid? userEntidadId = null;
             if (request.UserId.HasValue)
             {
                 var usuario = await _context.Usuarios
                     .Include(u => u.Entidad)
+                        .ThenInclude(e => e!.Clasificacion) // Clasificacion es realmente Subclasificacion
                     .FirstOrDefaultAsync(u => u.UserId == request.UserId.Value, cancellationToken);
                 
                 if (usuario?.Entidad != null)
                 {
-                    userClasificacionId = usuario.Entidad.ClasificacionId;
-                    userEntidadId = usuario.Entidad.EntidadId;
+                    // Entidad.ClasificacionId es subclasificacion_id
+                    // Entidad.Clasificacion es la Subclasificacion
+                    // Subclasificacion.ClasificacionId es el ID de la clasificación padre
+                    userClasificacionId = usuario.Entidad?.Clasificacion?.ClasificacionId;
+                    userEntidadId = usuario.Entidad?.EntidadId;
                 }
             }
 
@@ -52,7 +58,8 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                         .ThenInclude(norma => norma.Sector)
                 .Include(c => c.CriteriosEvaluacion)
                 .Include(c => c.AlcancesCompromisos)
-                    .ThenInclude(ac => ac.Clasificacion)
+                    .ThenInclude(ac => ac.Clasificacion) // Clasificacion es Subclasificacion
+                        .ThenInclude(s => s!.Clasificacion) // Cargar Clasificacion padre
                 .AsQueryable();
 
             // Filtrar por clasificación de la entidad del usuario
@@ -84,12 +91,12 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                 .OrderBy(c => c.CompromisoId)
                 .ToListAsync(cancellationToken);
 
-            // Obtener cumplimientos de la entidad del usuario (tabla genérica paso 2-3)
+            // Obtener cumplimientos de la entidad del usuario
             var cumplimientosPorCompromiso = new Dictionary<long, PCM.Domain.Entities.CumplimientoNormativo>();
             if (userEntidadId.HasValue)
             {
                 var cumplimientos = await _context.CumplimientosNormativos
-                    .Where(cn => cn.EntidadId == userEntidadId.Value && cn.Activo)
+                    .Where(cn => cn.EntidadId == userEntidadId.Value)
                     .ToListAsync(cancellationToken);
                 
                 cumplimientosPorCompromiso = cumplimientos.ToDictionary(c => c.CompromisoId);
@@ -159,7 +166,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
         Dictionary<long, PCM.Domain.Entities.CumplimientoNormativo> cumplimientosPorCompromiso,
         Dictionary<long, (DateTime fecha, string? estado)> registrosEspecificos)
     {
-        // Obtener cumplimiento de este compromiso si existe (tabla genérica paso 2-3)
+        // Obtener cumplimiento de este compromiso si existe
         cumplimientosPorCompromiso.TryGetValue(compromiso.CompromisoId, out var cumplimiento);
         
         // Obtener registro específico si existe (tabla específica paso 1)
@@ -177,12 +184,12 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                 "bandeja" => 1,
                 "sin_reportar" => 2,
                 "publicado" => 3,
-                _ => cumplimiento?.Estado
+                _ => cumplimiento?.EstadoId
             };
         }
         else if (cumplimiento != null)
         {
-            estadoCumplimiento = cumplimiento.Estado;
+            estadoCumplimiento = cumplimiento.EstadoId;
         }
         
         return new CompromisoResponseDto
@@ -192,7 +199,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
             Descripcion = compromiso.Descripcion,
             Alcances = compromiso.AlcancesCompromisos?
                 .Where(ac => ac.Activo)
-                .Select(ac => ac.Clasificacion?.Nombre ?? string.Empty)
+                .Select(ac => ac.Clasificacion?.Clasificacion?.Nombre ?? ac.Clasificacion?.Nombre ?? string.Empty) // Mostrar nombre de clasificación padre o subclasificación
                 .Where(nombre => !string.IsNullOrEmpty(nombre))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList() ?? new List<string>(),

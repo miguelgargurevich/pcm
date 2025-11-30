@@ -48,13 +48,13 @@ public class CreateEntidadHandler : IRequestHandler<CreateEntidadCommand, Result
                 return Result<EntidadDetailDto>.Failure("El ubigeo especificado no existe");
             }
 
-            // Validar que la clasificación existe
-            var clasificacionExiste = await _context.Clasificaciones
-                .AnyAsync(c => c.ClasificacionId == request.ClasificacionId, cancellationToken);
+            // Validar que la subclasificación existe (ClasificacionId en Entidad apunta a subclasificacion_id)
+            var subclasificacionExiste = await _context.Subclasificaciones
+                .AnyAsync(s => s.SubclasificacionId == request.ClasificacionId, cancellationToken);
 
-            if (!clasificacionExiste)
+            if (!subclasificacionExiste)
             {
-                return Result<EntidadDetailDto>.Failure("La clasificación especificada no existe");
+                return Result<EntidadDetailDto>.Failure("La subclasificación especificada no existe");
             }
 
             // Crear entidad

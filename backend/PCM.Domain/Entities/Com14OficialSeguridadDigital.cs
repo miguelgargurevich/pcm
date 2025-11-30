@@ -111,13 +111,13 @@ public class Com14OficialSeguridadDigital
     public DateTime? FechaElaboracion { get => FechaDesignacionOscd; set => FechaDesignacionOscd = value; }
     
     [NotMapped]
-    public string? NumeroDocumento { get => NumeroResolucionOscd; set => NumeroResolucionOscd = value; }
+    public string? NumeroDocumento { get => NumeroResolucionOscd; set => NumeroResolucionOscd = value ?? ""; }
     
     [NotMapped]
-    public string? ArchivoDocumento { get => RutaPdfOscd; set => RutaPdfOscd = value; }
+    public string? ArchivoDocumento { get => RutaPdfOscd; set => RutaPdfOscd = value ?? ""; }
     
     [NotMapped]
-    public string? Descripcion { get => ObservacionOscd; set => ObservacionOscd = value; }
+    public string? Descripcion { get => ObservacionOscd; set => ObservacionOscd = value ?? ""; }
     
     [NotMapped]
     public string? PoliticasSeguridad { get => null; set { } }

@@ -37,7 +37,7 @@ namespace PCM.Infrastructure.Handlers.Com9ModeloGestionDocumental
                 if (registro == null)
                 {
                     _logger.LogInformation("No se encontró registro Com9 MGD");
-                    return Result<Com9ModeloGestionDocumentalResponse>.Success(null);
+                    return Result<Com9ModeloGestionDocumentalResponse>.Success(null!, "No se encontró registro");
                 }
 
                 var response = new Com9ModeloGestionDocumentalResponse

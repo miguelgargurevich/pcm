@@ -21,6 +21,8 @@ public class GetAllEntidadesHandler : IRequestHandler<GetAllEntidadesQuery, Resu
         try
         {
             var query = _context.Entidades
+                .Include(e => e.Clasificacion) // Esto es Subclasificacion
+                    .ThenInclude(s => s!.Clasificacion) // Cargar clasificación padre
                 .AsNoTracking()
                 .AsQueryable();
 
@@ -30,9 +32,13 @@ public class GetAllEntidadesHandler : IRequestHandler<GetAllEntidadesQuery, Resu
                 query = query.Where(e => e.UbigeoId == request.UbigeoId.Value);
             }
 
+            // IMPORTANTE: ClasificacionId del filtro es el ID de la clasificación PADRE
+            // Pero Entidad.ClasificacionId apunta a subclasificacion_id en BD
+            // Entonces filtramos por la clasificación padre de la subclasificación
             if (request.ClasificacionId.HasValue)
             {
-                query = query.Where(e => e.ClasificacionId == request.ClasificacionId.Value);
+                query = query.Where(e => e.Clasificacion != null && 
+                                         e.Clasificacion.ClasificacionId == request.ClasificacionId.Value);
             }
 
             if (request.NivelGobiernoId.HasValue)
@@ -90,11 +96,11 @@ public class GetAllEntidadesHandler : IRequestHandler<GetAllEntidadesQuery, Resu
                         .Where(s => s.SectorId == e.SectorId)
                         .Select(s => s.Nombre)
                         .FirstOrDefault() ?? "",
-                    ClasificacionId = e.ClasificacionId,
-                    NombreClasificacion = _context.Clasificaciones
-                        .Where(c => c.ClasificacionId == e.ClasificacionId)
-                        .Select(c => c.Nombre)
-                        .FirstOrDefault() ?? "",
+                    // ClasificacionId devuelve el ID de la clasificación PADRE para el filtro del frontend
+                    ClasificacionId = e.Clasificacion != null ? e.Clasificacion.ClasificacionId : 0,
+                    NombreClasificacion = e.Clasificacion != null && e.Clasificacion.Clasificacion != null 
+                        ? e.Clasificacion.Clasificacion.Nombre 
+                        : (e.Clasificacion != null ? e.Clasificacion.Nombre : ""),
                     Email = e.Email ?? "",
                     Telefono = e.Telefono ?? "",
                     Web = e.Web,

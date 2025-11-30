@@ -47,7 +47,7 @@ namespace PCM.Infrastructure.Handlers.Com9ModeloGestionDocumental
                     CheckPrivacidad = request.CheckPrivacidad,
                     CheckDdjj = request.CheckDdjj,
                     UsuarioRegistra = request.UsuarioRegistra,
-                    EtapaFormulario = request.EtapaFormulario,
+                    EtapaFormulario = request.EtapaFormulario ?? "",
                     Estado = "bandeja",
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
