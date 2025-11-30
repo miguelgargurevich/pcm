@@ -12,5 +12,6 @@ public class Clasificacion
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // Navigation properties
-    public virtual ICollection<Entidad> Entidades { get; set; } = new List<Entidad>();
+    // Las entidades ahora se relacionan con Subclasificacion, no directamente con Clasificacion
+    public virtual ICollection<Subclasificacion> Subclasificaciones { get; set; } = new List<Subclasificacion>();
 }

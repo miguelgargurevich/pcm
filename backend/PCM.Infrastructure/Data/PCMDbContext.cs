@@ -16,6 +16,7 @@ public class PCMDbContext : DbContext
     public DbSet<Perfil> Perfiles { get; set; }
     public DbSet<Ubigeo> Ubigeos { get; set; }
     public DbSet<Clasificacion> Clasificaciones { get; set; }
+    public DbSet<Subclasificacion> Subclasificaciones { get; set; }
     public DbSet<NivelGobierno> NivelesGobierno { get; set; }
     public DbSet<Sector> Sectores { get; set; }
     public DbSet<TipoNorma> TiposNorma { get; set; }
@@ -101,18 +102,18 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.EntidadId).HasColumnName("entidad_id");
             entity.Property(e => e.Ruc).HasColumnName("ruc").HasMaxLength(11).IsRequired();
             entity.Property(e => e.Nombre).HasColumnName("nombre").HasMaxLength(300).IsRequired();
-            entity.Property(e => e.Direccion).HasColumnName("direccion").HasMaxLength(200).IsRequired();
-            entity.Property(e => e.UbigeoId).HasColumnName("ubigeo_id").IsRequired();
-            entity.Property(e => e.NivelGobiernoId).HasColumnName("nivel_gobierno_id").IsRequired();
+            entity.Property(e => e.Direccion).HasColumnName("direccion").HasMaxLength(200);
+            entity.Property(e => e.UbigeoId).HasColumnName("ubigeo_id");
+            entity.Property(e => e.NivelGobiernoId).HasColumnName("nivel_gobierno_id");
             entity.Property(e => e.Telefono).HasColumnName("telefono").HasMaxLength(20);
-            entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(100);
             entity.Property(e => e.Web).HasColumnName("web").HasMaxLength(100);
-            entity.Property(e => e.SectorId).HasColumnName("sector_id").IsRequired();
-            entity.Property(e => e.ClasificacionId).HasColumnName("clasificacion_id").IsRequired();
-            entity.Property(e => e.NombreAlcalde).HasColumnName("nombre_alcalde").HasMaxLength(100).IsRequired();
-            entity.Property(e => e.ApePatAlcalde).HasColumnName("ape_pat_alcalde").HasMaxLength(60).IsRequired();
-            entity.Property(e => e.ApeMatAlcalde).HasColumnName("ape_mat_alcalde").HasMaxLength(60).IsRequired();
-            entity.Property(e => e.EmailAlcalde).HasColumnName("email_alcalde").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.SectorId).HasColumnName("sector_id");
+            entity.Property(e => e.ClasificacionId).HasColumnName("subclasificacion_id");
+            entity.Property(e => e.NombreAlcalde).HasColumnName("nombre_alcalde").HasMaxLength(100);
+            entity.Property(e => e.ApePatAlcalde).HasColumnName("ape_pat_alcalde").HasMaxLength(60);
+            entity.Property(e => e.ApeMatAlcalde).HasColumnName("ape_mat_alcalde").HasMaxLength(60);
+            entity.Property(e => e.EmailAlcalde).HasColumnName("email_alcalde").HasMaxLength(100);
             entity.Property(e => e.Activo).HasColumnName("activo").HasDefaultValue(true);
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
@@ -127,7 +128,8 @@ public class PCMDbContext : DbContext
             entity.HasOne(e => e.Clasificacion)
                 .WithMany(c => c.Entidades)
                 .HasForeignKey(e => e.ClasificacionId)
-                .HasConstraintName("fk_entidades_clasificacion");
+                .HasPrincipalKey(c => c.SubclasificacionId)
+                .HasConstraintName("fk_entidades_subclasificacion");
 
             entity.HasOne(e => e.NivelGobierno)
                 .WithMany(n => n.Entidades)
