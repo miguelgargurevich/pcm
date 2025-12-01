@@ -23,6 +23,17 @@ public class CreateCumplimientoHandler : IRequestHandler<CreateCumplimientoComma
     {
         try
         {
+            _logger.LogInformation("Creando cumplimiento - CompromisoId: {CompromisoId}, EntidadId: {EntidadId}", 
+                request.CompromisoId, request.EntidadId);
+            
+            // Verificar que la entidad exista
+            var entidadExiste = await _context.Entidades.AnyAsync(e => e.EntidadId == request.EntidadId, cancellationToken);
+            if (!entidadExiste)
+            {
+                _logger.LogWarning("La entidad {EntidadId} no existe en la base de datos", request.EntidadId);
+                return Result<CumplimientoResponseDto>.Failure($"La entidad con ID {request.EntidadId} no existe en la base de datos. Por favor, verifique que ha iniciado sesión correctamente.");
+            }
+            
             // Verificar que no exista ya un cumplimiento para esta entidad y compromiso
             var existente = await _context.CumplimientosNormativos
                 .FirstOrDefaultAsync(c => c.EntidadId == request.EntidadId && c.CompromisoId == request.CompromisoId, cancellationToken);
@@ -40,6 +51,11 @@ public class CreateCumplimientoHandler : IRequestHandler<CreateCumplimientoComma
                 OperadorId = request.OperadorId,
                 FechaAsignacion = request.FechaAsignacion,
                 ObservacionPcm = request.ObservacionPcm,
+                CriteriosEvaluados = request.CriteriosEvaluados,
+                DocumentoUrl = request.DocumentoUrl,
+                AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad,
+                AceptaDeclaracionJurada = request.AceptaDeclaracionJurada,
+                EtapaFormulario = request.EtapaFormulario,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -75,6 +91,11 @@ public class CreateCumplimientoHandler : IRequestHandler<CreateCumplimientoComma
             OperadorId = cumplimiento.OperadorId,
             FechaAsignacion = cumplimiento.FechaAsignacion,
             ObservacionPcm = cumplimiento.ObservacionPcm,
+            CriteriosEvaluados = cumplimiento.CriteriosEvaluados,
+            DocumentoUrl = cumplimiento.DocumentoUrl,
+            AceptaPoliticaPrivacidad = cumplimiento.AceptaPoliticaPrivacidad,
+            AceptaDeclaracionJurada = cumplimiento.AceptaDeclaracionJurada,
+            EtapaFormulario = cumplimiento.EtapaFormulario,
             NombreCompromiso = cumplimiento.Compromiso?.NombreCompromiso,
             NombreEntidad = cumplimiento.Entidad?.Nombre,
             EstadoNombre = GetEstadoNombre(cumplimiento.EstadoId),

@@ -2555,10 +2555,20 @@ const CumplimientoNormativoDetalle = () => {
       // Validar que todos los criterios activos del compromiso estén marcados
       if (compromisoSeleccionado?.criteriosEvaluacion) {
         const criteriosActivos = compromisoSeleccionado.criteriosEvaluacion.filter(c => c.activo);
+        console.log('🔍 VALIDACIÓN - criteriosActivos:', criteriosActivos);
+        console.log('🔍 VALIDACIÓN - formData.criteriosEvaluados:', formData.criteriosEvaluados);
+        
         const criteriosFaltantes = criteriosActivos.filter(criterio => {
-          const evaluado = formData.criteriosEvaluados.find(c => Number(c.criterioId) === Number(criterio.criterioEvaluacionId));
+          const evaluado = formData.criteriosEvaluados.find(c => {
+            const match = Number(c.criterioId) === Number(criterio.criterioEvaluacionId);
+            console.log(`🔍 Comparando: c.criterioId=${c.criterioId} (${typeof c.criterioId}) vs criterio.criterioEvaluacionId=${criterio.criterioEvaluacionId} (${typeof criterio.criterioEvaluacionId}) => match=${match}`);
+            return match;
+          });
+          console.log(`🔍 Criterio ${criterio.criterioEvaluacionId}: evaluado=`, evaluado, 'cumple=', evaluado?.cumple);
           return !evaluado || !evaluado.cumple;
         });
+        
+        console.log('🔍 VALIDACIÓN - criteriosFaltantes:', criteriosFaltantes);
         
         if (criteriosFaltantes.length > 0) {
           nuevosErrores.criteriosEvaluacion = `Debe cumplir con todos los criterios de evaluación (${criteriosFaltantes.length} pendientes)`;
@@ -2994,23 +3004,23 @@ const CumplimientoNormativoDetalle = () => {
         // Paso 2 y 3: Guardar en cumplimiento_normativo
         else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 5,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 5,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           console.log(`📤 Datos Com5 Paso ${pasoActual} a enviar a cumplimiento_normativo:`, cumplimientoData);
-          console.log('🔍 CompromisoId:', cumplimientoData.CompromisoId, 'tipo:', typeof cumplimientoData.CompromisoId);
+          console.log('🔍 compromiso_id:', cumplimientoData.compromiso_id, 'tipo:', typeof cumplimientoData.compromiso_id);
           
           if (cumplimientoNormativoId) {
             console.log('Actualizando cumplimiento normativo existente:', cumplimientoNormativoId);
@@ -3076,19 +3086,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 6,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 6,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -3158,19 +3168,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 7,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 7,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -3236,19 +3246,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 8,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 8,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -3315,19 +3325,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 9,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 9,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -3394,19 +3404,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 10,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 10,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -3549,19 +3559,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 12,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 12,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -3627,19 +3637,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 13,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 13,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -3704,19 +3714,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 14,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 14,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -3781,19 +3791,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 15,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 15,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -3858,19 +3868,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 16,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 16,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -3935,19 +3945,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 17,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 17,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -4012,19 +4022,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 18,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 18,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -4088,19 +4098,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 19,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 19,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -4163,19 +4173,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 20,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 20,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -4240,19 +4250,19 @@ const CumplimientoNormativoDetalle = () => {
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
           const cumplimientoData = {
-            CompromisoId: 21,
-            EntidadId: user.entidadId,
-            FechaInicio: new Date().toISOString().split('T')[0],
-            ...(pasoActual === 2 && documentoUrl && { DocumentoUrl: documentoUrl }),
+            compromiso_id: 21,
+            entidad_id: user.entidadId,
+            fecha_inicio: new Date().toISOString().split('T')[0],
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
             ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-              CriteriosEvaluados: JSON.stringify(formData.criteriosEvaluados) 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
             }),
             ...(pasoActual === 3 && {
               acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad || false,
               acepta_declaracion_jurada: formData.aceptaDeclaracionJurada || false,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: formData.estado || 1
+            etapa_formulario: pasoActual === 3 ? 'completado' : 'paso2',
+            estado: formData.estado || 1
           };
           
           if (cumplimientoNormativoId) {
@@ -9218,10 +9228,13 @@ const CumplimientoNormativoDetalle = () => {
                               type="checkbox"
                               checked={criterioEvaluado?.cumple || false}
                               onChange={(e) => {
+                                console.log(`📝 Checkbox onChange - criterioId: ${criterio.criterioEvaluacionId}, checked: ${e.target.checked}`);
+                                console.log('📝 Estado actual antes:', formData.criteriosEvaluados);
                                 const criteriosActualizados = formData.criteriosEvaluados.filter(c => Number(c.criterioId) !== Number(criterio.criterioEvaluacionId));
                                 if (e.target.checked) {
                                   criteriosActualizados.push({ criterioId: Number(criterio.criterioEvaluacionId), cumple: true });
                                 }
+                                console.log('📝 Nuevo estado después:', criteriosActualizados);
                                 setFormData(prev => ({ ...prev, criteriosEvaluados: criteriosActualizados }));
                               }}
                               className="mt-1"

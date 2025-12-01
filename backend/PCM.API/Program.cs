@@ -14,7 +14,12 @@ var port = Environment.GetEnvironmentVariable("PORT") ?? "5164";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 // Configuración de servicios
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Permitir deserialización case-insensitive (acepta tanto PascalCase como snake_case)
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
 builder.Services.AddEndpointsApiExplorer();
 
 // Configuración de Swagger con JWT

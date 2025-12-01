@@ -57,6 +57,22 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
                 cumplimiento.ObservacionPcm = request.ObservacionPcm;
             }
             
+            // Actualizar campos adicionales del formulario
+            if (!string.IsNullOrEmpty(request.CriteriosEvaluados))
+            {
+                cumplimiento.CriteriosEvaluados = request.CriteriosEvaluados;
+            }
+            if (!string.IsNullOrEmpty(request.DocumentoUrl))
+            {
+                cumplimiento.DocumentoUrl = request.DocumentoUrl;
+            }
+            cumplimiento.AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad;
+            cumplimiento.AceptaDeclaracionJurada = request.AceptaDeclaracionJurada;
+            if (!string.IsNullOrEmpty(request.EtapaFormulario))
+            {
+                cumplimiento.EtapaFormulario = request.EtapaFormulario;
+            }
+            
             cumplimiento.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync(cancellationToken);
@@ -90,6 +106,11 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
             OperadorId = cumplimiento.OperadorId,
             FechaAsignacion = cumplimiento.FechaAsignacion,
             ObservacionPcm = cumplimiento.ObservacionPcm,
+            CriteriosEvaluados = cumplimiento.CriteriosEvaluados,
+            DocumentoUrl = cumplimiento.DocumentoUrl,
+            AceptaPoliticaPrivacidad = cumplimiento.AceptaPoliticaPrivacidad,
+            AceptaDeclaracionJurada = cumplimiento.AceptaDeclaracionJurada,
+            EtapaFormulario = cumplimiento.EtapaFormulario,
             NombreCompromiso = cumplimiento.Compromiso?.NombreCompromiso,
             NombreEntidad = cumplimiento.Entidad?.Nombre,
             EstadoNombre = GetEstadoNombre(cumplimiento.EstadoId),

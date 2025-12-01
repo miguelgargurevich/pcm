@@ -99,6 +99,9 @@ public class CumplimientoNormativoController : ControllerBase
     {
         try
         {
+            _logger.LogInformation("Recibiendo request - CompromisoId: {CompromisoId}, EntidadId: {EntidadId}", 
+                request.CompromisoId, request.EntidadId);
+            
             var command = new CreateCumplimientoCommand
             {
                 CompromisoId = request.CompromisoId,
@@ -106,7 +109,12 @@ public class CumplimientoNormativoController : ControllerBase
                 EstadoId = request.EstadoId,
                 OperadorId = request.OperadorId,
                 FechaAsignacion = request.FechaAsignacion,
-                ObservacionPcm = request.ObservacionPcm
+                ObservacionPcm = request.ObservacionPcm,
+                CriteriosEvaluados = request.CriteriosEvaluados,
+                DocumentoUrl = request.DocumentoUrl,
+                AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad,
+                AceptaDeclaracionJurada = request.AceptaDeclaracionJurada,
+                EtapaFormulario = request.EtapaFormulario
             };
 
             var result = await _mediator.Send(command);

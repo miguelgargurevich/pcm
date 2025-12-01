@@ -20,6 +20,15 @@ public class CumplimientoNormativo
     public DateTime? UpdatedAt { get; set; }
     
     // ============================================
+    // CAMPOS ADICIONALES PARA FORMULARIO
+    // ============================================
+    public string? CriteriosEvaluados { get; set; } // JSON: [{"criterioId": 1, "cumple": true}]
+    public string? DocumentoUrl { get; set; }
+    public bool AceptaPoliticaPrivacidad { get; set; }
+    public bool AceptaDeclaracionJurada { get; set; }
+    public string? EtapaFormulario { get; set; } // paso1, paso2, paso3, completado
+    
+    // ============================================
     // RELACIONES DE NAVEGACIÓN
     // ============================================
     public CompromisoGobiernoDigital Compromiso { get; set; } = null!;
