@@ -705,13 +705,13 @@ const CumplimientoNormativoDetalle = () => {
               alineadoPgd: data.alineadoPgd || false,
               documentoFile: null,
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.AceptaPoliticaPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.AceptaPoliticaPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.AceptaPoliticaPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.AceptaPoliticaPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             console.log('🔍 DEBUG - Datos completos de Com4:', data);
@@ -797,13 +797,13 @@ const CumplimientoNormativoDetalle = () => {
               estadoImplementacion: data.estadoImplementacionEstrategia || '',
               documentoFile: null,
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfEstrategia) {
@@ -982,13 +982,13 @@ const CumplimientoNormativoDetalle = () => {
               observacionMpd: data.observacionMpd || '',
               documentoFile: null,
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfMpd) {
@@ -1062,13 +1062,13 @@ const CumplimientoNormativoDetalle = () => {
               observacionesTupa: data.observacionTupa || '',
               documentoFile: null,
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfTupa) {
@@ -1143,13 +1143,13 @@ const CumplimientoNormativoDetalle = () => {
               observacionesMgd: data.observacionMgd || '',
               documentoFile: null,
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfMgd) {
@@ -1224,13 +1224,13 @@ const CumplimientoNormativoDetalle = () => {
               observacionesDa: data.observacionDa || '',
               documentoFile: null,
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfDa) {
@@ -1301,13 +1301,13 @@ const CumplimientoNormativoDetalle = () => {
               archivoPlan: data.archivoPlan || '',
               descripcion: data.descripcion || '',
               beneficiariosEstimados: data.beneficiariosEstimados || '',
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay archivo de plan guardado, establecer la URL para vista previa (Paso 1)
             if (data.archivoPlan) {
@@ -1373,13 +1373,13 @@ const CumplimientoNormativoDetalle = () => {
               requisitosSeguridad: data.requisitosSeguridad || '',
               requisitosPrivacidad: data.requisitosPrivacidad || '',
               fechaVigencia: data.fechaVigencia ? data.fechaVigencia.split('T')[0] : '',
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.archivoDocumento) {
@@ -1446,13 +1446,13 @@ const CumplimientoNormativoDetalle = () => {
               estrategiasMitigacion: data.estrategiasMitigacion || '',
               fechaRevision: data.fechaRevision ? data.fechaRevision.split('T')[0] : '',
               responsable: data.responsable || '',
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.archivoPlan) {
@@ -1518,13 +1518,13 @@ const CumplimientoNormativoDetalle = () => {
               politicasSeguridad: data.politicasSeguridad || '',
               certificaciones: data.certificaciones || '',
               fechaVigencia: data.fechaVigencia ? data.fechaVigencia.split('T')[0] : '',
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.archivoDocumento) {
@@ -1590,13 +1590,13 @@ const CumplimientoNormativoDetalle = () => {
               telefonoContacto: data.telefonoContacto || '',
               descripcion: data.descripcion || '',
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Intentar cargar datos de Paso 2 (cumplimiento_normativo) si existen
             try {
@@ -1649,13 +1649,13 @@ const CumplimientoNormativoDetalle = () => {
               descripcion: data.descripcion || '',
               alcance: data.alcance || '',
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Intentar cargar datos de Paso 2 (cumplimiento_normativo) si existen
             try {
@@ -1708,13 +1708,13 @@ const CumplimientoNormativoDetalle = () => {
               sistemasTotal: data.sistemasTotal || '',
               descripcion: data.descripcion || '',
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfPtipv6) {
@@ -1773,13 +1773,13 @@ const CumplimientoNormativoDetalle = () => {
               tramitesProcesados: data.tramitesProcesados || '',
               descripcion: data.descripcion || '',
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfApte) {
@@ -1837,13 +1837,13 @@ const CumplimientoNormativoDetalle = () => {
               proveedor: data.proveedor || '',
               descripcion: data.descripcion || '',
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfEnad) {
@@ -1900,13 +1900,13 @@ const CumplimientoNormativoDetalle = () => {
               porcentajeDocumentacion: data.porcentajeDocumentacion || '',
               descripcion: data.descripcion || '',
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfDsfp) {
@@ -1976,13 +1976,13 @@ const CumplimientoNormativoDetalle = () => {
               responsables: data.responsables || '',
               fechaVigencia: data.fechaVigencia ? data.fechaVigencia.split('T')[0] : '',
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
+              aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
+              aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
             });
             
-            setHaVistoPolitica(cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
-            setHaVistoDeclaracion(cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
+            setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             if (data.rutaPdfOgd) {
