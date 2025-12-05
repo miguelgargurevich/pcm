@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5190/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5164/api';
 
 const com4PEIService = {
   /**
