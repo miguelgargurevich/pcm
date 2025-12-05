@@ -4,8 +4,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using PCM.Application.Common;
 using PCM.Application.DTOs.Auth;
+using PCM.Application.Interfaces;
 using PCM.Infrastructure.Data;
 
 namespace PCM.Infrastructure.Handlers.Auth;
@@ -13,10 +16,20 @@ namespace PCM.Infrastructure.Handlers.Auth;
 public class ForgotPasswordHandler
 {
     private readonly PCMDbContext _context;
+    private readonly IEmailService _emailService;
+    private readonly ILogger<ForgotPasswordHandler> _logger;
+    private readonly string _frontendUrl;
 
-    public ForgotPasswordHandler(PCMDbContext context)
+    public ForgotPasswordHandler(
+        PCMDbContext context,
+        IEmailService emailService,
+        IConfiguration configuration,
+        ILogger<ForgotPasswordHandler> logger)
     {
         _context = context;
+        _emailService = emailService;
+        _logger = logger;
+        _frontendUrl = configuration["Resend:FrontendUrl"] ?? "http://localhost:5173";
     }
 
     public async Task<Result<string>> Handle(ForgotPasswordRequestDto request)
@@ -43,12 +56,34 @@ public class ForgotPasswordHandler
 
             await _context.SaveChangesAsync();
 
-            // TODO: Enviar email con el enlace de recuperación
-            // Por ahora, devolvemos el token en la consola (solo para desarrollo)
-            var resetLink = $"http://localhost:5173/reset-password/{token}";
-            Console.WriteLine($"🔗 Reset Password Link: {resetLink}");
-            Console.WriteLine($"📧 Email: {usuario.Email}");
-            Console.WriteLine($"⏰ Expira: {usuario.ResetPasswordExpiry}");
+            // Generar enlace de recuperación
+            var resetLink = $"{_frontendUrl}/reset-password/{token}";
+            
+            // Obtener nombre del usuario para el email
+            var nombreUsuario = !string.IsNullOrEmpty(usuario.Nombres) 
+                ? $"{usuario.Nombres} {usuario.ApePaterno}".Trim() 
+                : usuario.Email;
+            
+            // Enviar email de recuperación
+            var emailEnviado = await _emailService.SendPasswordResetEmailAsync(
+                usuario.Email, 
+                nombreUsuario, 
+                resetLink
+            );
+
+            if (emailEnviado)
+            {
+                _logger.LogInformation("Email de recuperación enviado a {Email}", usuario.Email);
+            }
+            else
+            {
+                _logger.LogWarning("No se pudo enviar email de recuperación a {Email}", usuario.Email);
+            }
+
+            // En desarrollo, también mostramos en consola
+            _logger.LogDebug("🔗 Reset Password Link: {ResetLink}", resetLink);
+            _logger.LogDebug("📧 Email: {Email}", usuario.Email);
+            _logger.LogDebug("⏰ Expira: {Expiry}", usuario.ResetPasswordExpiry);
 
             return Result<string>.Success("Si el correo existe, recibirás un enlace de recuperación.");
         }

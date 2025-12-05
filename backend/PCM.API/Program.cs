@@ -84,6 +84,7 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddHttpClient<IReCaptchaService, ReCaptchaService>();
+builder.Services.AddHttpClient<IEmailService, ResendEmailService>();
 
 // Registro de handlers de Auth
 builder.Services.AddScoped<PCM.Infrastructure.Handlers.Auth.ForgotPasswordHandler>();
