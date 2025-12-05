@@ -66,7 +66,7 @@ public class UpdateCom1LiderGTDHandler : IRequestHandler<UpdateCom1LiderGTDComma
                 entity.CargoLider = request.CargoLider;
             
             if (request.FecIniLider.HasValue)
-                entity.FecIniLider = request.FecIniLider.Value;
+                entity.FecIniLider = DateTime.SpecifyKind(request.FecIniLider.Value, DateTimeKind.Utc);
 
             if (request.UrlDocUrl != null)
                 entity.UrlDocPcm = request.UrlDocUrl;
