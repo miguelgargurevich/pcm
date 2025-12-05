@@ -146,7 +146,165 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     registrosEspecificos[5] = (com5.CreatedAt, com5.EstadoPCM);
                 }
 
-                // TODO: Agregar Com6-Com21 cuando estén listos
+                // Com6: Migración Gob.pe
+                var com6 = await _context.Com6MigracionGobPe
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com6 != null)
+                {
+                    registrosEspecificos[6] = (com6.CreatedAt, com6.EstadoPCM);
+                }
+
+                // Com7: Implementación MPD
+                var com7 = await _context.Com7ImplementacionMPD
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com7 != null)
+                {
+                    registrosEspecificos[7] = (com7.CreatedAt, com7.EstadoPCM);
+                }
+
+                // Com8: Publicación TUPA
+                var com8 = await _context.Com8PublicacionTUPA
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com8 != null)
+                {
+                    registrosEspecificos[8] = (com8.CreatedAt, com8.EstadoPCM);
+                }
+
+                // Com9: Modelo Gestión Documental
+                var com9 = await _context.Com9ModeloGestionDocumental
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com9 != null)
+                {
+                    registrosEspecificos[9] = (com9.CreatedAt, com9.EstadoPCM);
+                }
+
+                // Com10: Datos Abiertos
+                var com10 = await _context.Com10DatosAbiertos
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com10 != null)
+                {
+                    registrosEspecificos[10] = (com10.CreatedAt, com10.EstadoPCM);
+                }
+
+                // Com11: Aportación GeoPeru
+                var com11 = await _context.Com11AportacionGeoPeru
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com11 != null)
+                {
+                    registrosEspecificos[11] = (com11.CreatedAt, com11.EstadoPCM);
+                }
+
+                // Com12: Responsable Software Público
+                var com12 = await _context.Com12ResponsableSoftwarePublico
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com12 != null)
+                {
+                    registrosEspecificos[12] = (com12.CreatedAt, com12.EstadoPCM);
+                }
+
+                // Com13: Interoperabilidad PIDE
+                var com13 = await _context.Com13InteroperabilidadPIDE
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com13 != null)
+                {
+                    registrosEspecificos[13] = (com13.CreatedAt, com13.EstadoPCM);
+                }
+
+                // Com14: Oficial Seguridad Digital
+                var com14 = await _context.Com14OficialSeguridadDigital
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com14 != null)
+                {
+                    registrosEspecificos[14] = (com14.CreatedAt, com14.EstadoPCM);
+                }
+
+                // Com15: CSIRT Institucional
+                var com15 = await _context.Com15CSIRTInstitucional
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com15 != null)
+                {
+                    registrosEspecificos[15] = (com15.CreatedAt, com15.EstadoPCM);
+                }
+
+                // Com16: Sistema Gestión Seguridad
+                var com16 = await _context.Com16SistemaGestionSeguridad
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com16 != null)
+                {
+                    registrosEspecificos[16] = (com16.CreatedAt, com16.EstadoPCM);
+                }
+
+                // Com17: Plan Transición IPv6
+                var com17 = await _context.Com17PlanTransicionIPv6
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com17 != null)
+                {
+                    registrosEspecificos[17] = (com17.CreatedAt, com17.EstadoPCM);
+                }
+
+                // Com18: Acceso Portal Transparencia
+                var com18 = await _context.Com18AccesoPortalTransparencia
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com18 != null)
+                {
+                    registrosEspecificos[18] = (com18.CreatedAt, com18.EstadoPCM);
+                }
+
+                // Com19: Encuesta Nacional Gobierno Digital
+                var com19 = await _context.Com19EncuestaNacionalGobDigital
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com19 != null)
+                {
+                    registrosEspecificos[19] = (com19.CreatedAt, com19.EstadoPCM);
+                }
+
+                // Com20: Digitalización Servicios Facilita
+                var com20 = await _context.Com20DigitalizacionServiciosFacilita
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com20 != null)
+                {
+                    registrosEspecificos[20] = (com20.CreatedAt, com20.EstadoPCM);
+                }
+
+                // Com21: Oficial Gobierno de Datos
+                var com21 = await _context.Com21OficialGobiernoDatos
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com21 != null)
+                {
+                    registrosEspecificos[21] = (com21.CreatedAt, com21.EstadoPCM);
+                }
             }
 
             var response = compromisos.Select(c => MapToResponseDto(c, cumplimientosPorCompromiso, registrosEspecificos)).ToList();
