@@ -73,8 +73,9 @@ public class SunatService : ISunatService
     }
 
     /// <summary>
-    /// Intenta consultar con APIs Perú
-    /// Documentación: https://apisperu.com/api/v1/ruc
+    /// Intenta consultar con APIs Perú (dniruc.apisperu.com)
+    /// Documentación: https://apisperu.com/servicios/dniruc/
+    /// URL: https://dniruc.apisperu.com/api/v1/ruc/{numero}?token={token}
     /// </summary>
     private async Task<RucValidationResultDto?> TryApisPeruAsync(string ruc)
     {
@@ -86,12 +87,10 @@ public class SunatService : ISunatService
                 return null;
             }
 
-            var url = $"https://api.apis.net.pe/v2/sunat/ruc?numero={ruc}";
+            // URL correcta según OpenAPI spec: https://dniruc.apisperu.com/api/v1/ruc/{numero}?token={token}
+            var url = $"https://dniruc.apisperu.com/api/v1/ruc/{ruc}?token={_apiToken}";
             
-            using var request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.Add("Authorization", $"Bearer {_apiToken}");
-            
-            var response = await _httpClient.SendAsync(request);
+            var response = await _httpClient.GetAsync(url);
             
             if (!response.IsSuccessStatusCode)
             {
@@ -100,17 +99,36 @@ public class SunatService : ISunatService
             }
 
             var content = await response.Content.ReadAsStringAsync();
+            _logger.LogDebug("APIs Perú response: {Content}", content);
+            
             var data = JsonSerializer.Deserialize<ApisPeruResponse>(content);
 
-            if (data == null)
+            // Verificar si es una respuesta de error
+            if (data == null || data.Success == false)
+            {
+                _logger.LogDebug("APIs Perú retornó error: {Message}", data?.Message);
                 return null;
+            }
+
+            // Construir dirección completa si hay componentes separados
+            var direccionCompleta = data.Direccion;
+            if (!string.IsNullOrEmpty(data.Departamento) || !string.IsNullOrEmpty(data.Provincia) || !string.IsNullOrEmpty(data.Distrito))
+            {
+                direccionCompleta = $"{data.Direccion} {data.Departamento} - {data.Provincia} - {data.Distrito}".Trim();
+            }
 
             return new RucValidationResultDto
             {
                 IsValid = true,
-                RazonSocial = data.RazonSocial ?? data.Nombre,
-                Direccion = data.Direccion,
+                RazonSocial = data.RazonSocial,
+                NombreComercial = data.NombreComercial,
+                Direccion = direccionCompleta,
+                Departamento = data.Departamento,
+                Provincia = data.Provincia,
+                Distrito = data.Distrito,
+                Ubigeo = data.Ubigeo,
                 Estado = data.Estado,
+                Condicion = data.Condicion,
                 Message = "Datos obtenidos de SUNAT"
             };
         }
@@ -239,16 +257,29 @@ public class SunatService : ISunatService
 
     #region Response DTOs para APIs externas
 
+    /// <summary>
+    /// Respuesta de APIs Perú (dniruc.apisperu.com)
+    /// Según OpenAPI spec de https://apisperu.com/servicios/dniruc/
+    /// </summary>
     private class ApisPeruResponse
     {
-        [JsonPropertyName("nombre")]
-        public string? Nombre { get; set; }
+        [JsonPropertyName("success")]
+        public bool? Success { get; set; }
+
+        [JsonPropertyName("message")]
+        public string? Message { get; set; }
+
+        [JsonPropertyName("ruc")]
+        public string? Ruc { get; set; }
 
         [JsonPropertyName("razonSocial")]
         public string? RazonSocial { get; set; }
 
-        [JsonPropertyName("direccion")]
-        public string? Direccion { get; set; }
+        [JsonPropertyName("nombreComercial")]
+        public string? NombreComercial { get; set; }
+
+        [JsonPropertyName("telefonos")]
+        public string[]? Telefonos { get; set; }
 
         [JsonPropertyName("estado")]
         public string? Estado { get; set; }
@@ -256,8 +287,8 @@ public class SunatService : ISunatService
         [JsonPropertyName("condicion")]
         public string? Condicion { get; set; }
 
-        [JsonPropertyName("ubigeo")]
-        public string? Ubigeo { get; set; }
+        [JsonPropertyName("direccion")]
+        public string? Direccion { get; set; }
 
         [JsonPropertyName("departamento")]
         public string? Departamento { get; set; }
@@ -267,6 +298,12 @@ public class SunatService : ISunatService
 
         [JsonPropertyName("distrito")]
         public string? Distrito { get; set; }
+
+        [JsonPropertyName("ubigeo")]
+        public string? Ubigeo { get; set; }
+
+        [JsonPropertyName("capital")]
+        public string? Capital { get; set; }
     }
 
     private class MigoPeruResponse

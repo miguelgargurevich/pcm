@@ -101,7 +101,13 @@ public record RucValidationResultDto
 {
     public bool IsValid { get; init; }
     public string? RazonSocial { get; init; }
+    public string? NombreComercial { get; init; }
     public string? Direccion { get; init; }
+    public string? Departamento { get; init; }
+    public string? Provincia { get; init; }
+    public string? Distrito { get; init; }
+    public string? Ubigeo { get; init; }
     public string? Estado { get; init; }
+    public string? Condicion { get; init; }
     public string? Message { get; init; }
 }
