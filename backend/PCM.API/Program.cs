@@ -7,6 +7,10 @@ using PCM.Infrastructure.Data;
 using PCM.Infrastructure.Services;
 using System.Text;
 
+// Habilitar comportamiento legacy de timestamps para Npgsql
+// Esto permite que las fechas sin Kind especificado se manejen correctamente
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Configurar el puerto desde la variable de entorno (para Render u otros servicios en la nube)

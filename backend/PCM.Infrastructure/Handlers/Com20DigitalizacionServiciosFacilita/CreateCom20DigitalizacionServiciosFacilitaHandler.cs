@@ -44,8 +44,12 @@ public class CreateCom20DigitalizacionServiciosFacilitaHandler : IRequestHandler
                 CorreoFacilita = request.CorreoFacilita,
                 TelefonoFacilita = request.TelefonoFacilita,
                 EstadoImplementacionFacilita = request.EstadoImplementacionFacilita,
-                FechaInicioFacilita = request.FechaInicioFacilita,
-                FechaUltimoAvanceFacilita = request.FechaUltimoAvanceFacilita,
+                FechaInicioFacilita = request.FechaInicioFacilita.HasValue
+                    ? DateTime.SpecifyKind(request.FechaInicioFacilita.Value, DateTimeKind.Utc)
+                    : null,
+                FechaUltimoAvanceFacilita = request.FechaUltimoAvanceFacilita.HasValue
+                    ? DateTime.SpecifyKind(request.FechaUltimoAvanceFacilita.Value, DateTimeKind.Utc)
+                    : null,
                 TotalServiciosDigitalizados = request.TotalServiciosDigitalizados,
                 RutaPdfFacilita = request.RutaPdfFacilita,
                 ObservacionFacilita = request.ObservacionFacilita,
