@@ -50,4 +50,14 @@ export const entidadesService = {
       throw error.response?.data || { success: false, message: 'Error al eliminar entidad' };
     }
   },
+
+  // Validar RUC con SUNAT
+  async validateRuc(ruc) {
+    try {
+      const response = await api.post('/entidades/validate-ruc', { ruc });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { success: false, message: 'Error al validar RUC' };
+    }
+  },
 };

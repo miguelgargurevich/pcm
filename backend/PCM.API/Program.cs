@@ -85,6 +85,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddHttpClient<IReCaptchaService, ReCaptchaService>();
 builder.Services.AddHttpClient<IEmailService, ResendEmailService>();
+builder.Services.AddHttpClient<ISunatService, SunatService>();
 
 // Registro de handlers de Auth
 builder.Services.AddScoped<PCM.Infrastructure.Handlers.Auth.ForgotPasswordHandler>();

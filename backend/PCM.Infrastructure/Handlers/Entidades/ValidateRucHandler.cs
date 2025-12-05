@@ -1,19 +1,30 @@
 using MediatR;
+using Microsoft.Extensions.Logging;
 using PCM.Application.Common;
 using PCM.Application.DTOs.Entidad;
 using PCM.Application.Features.Entidades.Queries.ValidateRuc;
+using PCM.Application.Interfaces;
 
 namespace PCM.Infrastructure.Handlers.Entidades;
 
 public class ValidateRucHandler : IRequestHandler<ValidateRucQuery, Result<RucValidationResultDto>>
 {
+    private readonly ISunatService _sunatService;
+    private readonly ILogger<ValidateRucHandler> _logger;
+
+    public ValidateRucHandler(ISunatService sunatService, ILogger<ValidateRucHandler> logger)
+    {
+        _sunatService = sunatService;
+        _logger = logger;
+    }
+
     public async Task<Result<RucValidationResultDto>> Handle(ValidateRucQuery request, CancellationToken cancellationToken)
     {
         try
         {
-            // TODO: Implementar integración con API de SUNAT
-            // Por ahora, solo validamos el formato básico del RUC
+            _logger.LogInformation("Validando RUC: {Ruc}", request.Ruc);
 
+            // Validación básica de formato
             if (string.IsNullOrWhiteSpace(request.Ruc))
             {
                 return Result<RucValidationResultDto>.Failure("El RUC no puede estar vacío");
@@ -29,22 +40,17 @@ public class ValidateRucHandler : IRequestHandler<ValidateRucQuery, Result<RucVa
                 return Result<RucValidationResultDto>.Failure("El RUC solo debe contener números");
             }
 
-            // Simulación de validación (reemplazar con API real de SUNAT)
-            await Task.CompletedTask;
-
-            var result = new RucValidationResultDto
-            {
-                IsValid = true,
-                RazonSocial = "Validación con SUNAT pendiente de implementar",
-                Direccion = "-",
-                Estado = "Pendiente",
-                Message = "Validación básica de formato exitosa. Integración con SUNAT pendiente."
-            };
+            // Consultar SUNAT
+            var result = await _sunatService.ConsultarRucAsync(request.Ruc);
+            
+            _logger.LogInformation("Resultado validación RUC {Ruc}: {IsValid} - {RazonSocial}", 
+                request.Ruc, result.IsValid, result.RazonSocial);
 
             return Result<RucValidationResultDto>.Success(result);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error al validar RUC {Ruc}", request.Ruc);
             return Result<RucValidationResultDto>.Failure(
                 "Error al validar RUC",
                 new List<string> { ex.Message }

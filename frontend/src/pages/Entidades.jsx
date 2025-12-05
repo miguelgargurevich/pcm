@@ -590,7 +590,7 @@ const Entidades = () => {
     setFormData({ ...formData, clasificacionId: subclasificacionId });
   };
 
-  // Consultar RUC en SUNAT (mock por ahora, se puede integrar con API real)
+  // Consultar RUC en SUNAT
   const consultarRUC = async () => {
     if (!formData.ruc || formData.ruc.length !== 11) {
       showErrorToast('Ingrese un RUC válido de 11 dígitos');
@@ -599,22 +599,33 @@ const Entidades = () => {
 
     setConsultingRUC(true);
     try {
-      // TODO: Integrar con API de SUNAT o servicio de consulta RUC
-      // Por ahora, simulamos una consulta
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await entidadesService.validateRuc(formData.ruc);
       
-      showInfoToast('Consulta RUC: Funcionalidad pendiente de integración con SUNAT');
-      
-      // Cuando se integre con SUNAT, se puede autocompletar:
-      // setFormData({
-      //   ...formData,
-      //   nombre: response.razonSocial,
-      //   direccion: response.direccion,
-      //   // etc...
-      // });
+      if (response.isSuccess && response.data?.isValid) {
+        const { razonSocial, direccion, estado, message } = response.data;
+        
+        // Autocompletar datos
+        setFormData(prev => ({
+          ...prev,
+          nombre: razonSocial || prev.nombre,
+          direccion: direccion || prev.direccion,
+        }));
+        
+        if (estado === 'ACTIVO') {
+          showSuccessToast(`RUC válido: ${razonSocial}`);
+        } else {
+          showInfoToast(`RUC encontrado (Estado: ${estado}): ${razonSocial}`);
+        }
+        
+        if (message?.includes('desarrollo') || message?.includes('mock')) {
+          showInfoToast(message);
+        }
+      } else {
+        showErrorToast(response.data?.message || response.message || 'No se pudo validar el RUC');
+      }
     } catch (err) {
       console.error('Error al consultar RUC:', err);
-      showErrorToast('Error al consultar RUC');
+      showErrorToast('Error al consultar RUC: ' + (err.message || 'Error desconocido'));
     } finally {
       setConsultingRUC(false);
     }
