@@ -144,13 +144,21 @@ public class CumplimientoNormativoController : ControllerBase
     {
         try
         {
+            _logger.LogInformation("Actualizando cumplimiento {Id} - EtapaFormulario: {Etapa}, AceptaPrivacidad: {Privacidad}, AceptaDDJJ: {DDJJ}", 
+                id, request.EtapaFormulario, request.AceptaPoliticaPrivacidad, request.AceptaDeclaracionJurada);
+            
             var command = new UpdateCumplimientoCommand
             {
                 CumplimientoId = id,
                 EstadoId = request.EstadoId,
                 OperadorId = request.OperadorId,
                 FechaAsignacion = request.FechaAsignacion,
-                ObservacionPcm = request.ObservacionPcm
+                ObservacionPcm = request.ObservacionPcm,
+                CriteriosEvaluados = request.CriteriosEvaluados,
+                DocumentoUrl = request.DocumentoUrl,
+                AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad,
+                AceptaDeclaracionJurada = request.AceptaDeclaracionJurada,
+                EtapaFormulario = request.EtapaFormulario
             };
 
             var result = await _mediator.Send(command);
