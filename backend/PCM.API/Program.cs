@@ -21,7 +21,9 @@ builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        // Permitir deserialización case-insensitive (acepta tanto PascalCase como snake_case)
+        // Usar camelCase para los nombres de propiedades en las respuestas JSON
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+        // Permitir deserialización case-insensitive (acepta tanto PascalCase como camelCase)
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
     });
 builder.Services.AddEndpointsApiExplorer();

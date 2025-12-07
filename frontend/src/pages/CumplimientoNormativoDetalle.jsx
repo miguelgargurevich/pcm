@@ -3,7 +3,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import cumplimientoService from '../services/cumplimientoService';
 import com1LiderGTDService from '../services/com1LiderGTDService';
 import com2CGTDService from '../services/com2CGTDService';
-// import com3EstrategiaGobiernoPeService from '../services/com3EstrategiaGobiernoPeService'; // TODO: Crear este servicio
+import com3EPGDService from '../services/com3EPGDService';
 import com4PEIService from '../services/com4PEIService';
 import com5EstrategiaDigitalService from '../services/com5EstrategiaDigitalService';
 import com6MigracionGobPeService from '../services/com6MigracionGobPeService';
@@ -26,6 +26,7 @@ import { compromisosService } from '../services/compromisosService';
 import { getCatalogoOptions, getConfigValue } from '../services/catalogoService';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
 import PDFViewer from '../components/PDFViewer';
+import Compromiso3Paso1 from '../components/Compromiso3/Compromiso3Paso1';
 import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save, Eye, ExternalLink, Plus, Trash2, Edit2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import emailService from '../services/emailService';
@@ -44,6 +45,8 @@ const CumplimientoNormativoDetalle = () => {
   const [saving, setSaving] = useState(false);
   const [pasoActual, setPasoActual] = useState(1);
   const [com2RecordId, setCom2RecordId] = useState(null); // ID del registro en com2_cgtd
+  const [com3RecordId, setCom3RecordId] = useState(null); // ID del registro en com3_epgd
+  const [com3Data, setCom3Data] = useState(null); // Datos del formulario de Compromiso 3
   const [com4RecordId, setCom4RecordId] = useState(null); // ID del registro en com4_pei
   const [com5RecordId, setCom5RecordId] = useState(null); // ID del registro en com5_estrategia_digital
   const [com6RecordId, setCom6RecordId] = useState(null); // ID del registro en com6_mpgobpe
@@ -544,77 +547,99 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
       
-      // COMPROMISO 3: Estrategia Gobierno Digital Perú (Usar tabla com3_epgd)
-      // TODO: Implementar cuando exista el servicio com3EstrategiaGobiernoPeService
-      /* if (compromisoId === 3 && user?.entidadId) {
-        console.log('📞 Llamando Com3EstrategiaGobPe.getByEntidad con:', 3, user.entidadId);
-        const response = await com3EstrategiaGobiernoPeService.getByEntidad(3, user.entidadId);
-        console.log('📦 Respuesta de Com3 getByEntidad:', response);
-        
-        if (response.isSuccess || response.success) {
-          const data = response.data;
-          console.log('📄 Datos Com3 recibidos:', data);
+      // COMPROMISO 3: Plan de Gobierno Digital (Usar tabla com3_epgd)
+      if (compromisoId === 3 && user?.entidadId) {
+        console.log('📞 Llamando Com3EPGD.getByEntidad con:', user.entidadId);
+        try {
+          const response = await com3EPGDService.getByEntidad(user.entidadId);
+          console.log('📦 Respuesta de Com3 getByEntidad:', response);
           
-          if (data) {
-            // Guardar el ID del registro
-            setCom5RecordId(data.comepgdEntId); // Usar com5RecordId para almacenar el ID
+          if (response.isSuccess || response.success) {
+            const data = response.data;
+            console.log('📄 Datos Com3 EPGD recibidos:', data);
             
-            // Cargar datos de cumplimiento_normativo (sección 2 y 3, incluye criterios)
-            const cumplimientoData = await loadCumplimientoNormativo(3);
-            console.log('✅ Datos cumplimiento retornados para Com3:', cumplimientoData);
-            
-            setFormData({
-              compromisoId: '3',
-              documentoFile: null,
-              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              aceptaPoliticaPrivacidad: cumplimientoData?.AceptaPoliticaPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || data.checkPrivacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || data.checkDdjj || false,
-              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
-            });
-            
-            setHaVistoPolitica(data.checkPrivacidad);
-            setHaVistoDeclaracion(data.checkDdjj);
-            
-            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
-            if (data.urlDocPcm) {
-              console.log('📄 Cargando PDF de Estrategia Gob Digital (Paso 1) desde:', data.urlDocPcm);
-              setPdfUrl(data.urlDocPcm);
-            }
-            
-            // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
-            try {
-              const cumplimientoResponse = await cumplimientoService.getAll({ 
-                compromiso_id: 3, 
-                entidad_id: user.entidadId 
+            if (data) {
+              // Guardar el ID del registro
+              setCom3RecordId(data.com3EPGDId);
+              
+              // Guardar los datos completos para el componente
+              setCom3Data({
+                objetivosEstrategicos: data.objetivosEstrategicos || [],
+                objetivosGobiernoDigital: data.objetivosGobiernoDigital || [],
+                situacionActual: data.situacionActual || {},
+                portafolioProyectos: data.portafolioProyectos || []
               });
-              if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
-                const cumplimientoList = cumplimientoResponse.data || [];
-                const cumplimientoData = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
-                if (cumplimientoData) {
-                  console.log('📄 Datos de cumplimiento (Paso 2) encontrados:', cumplimientoData);
-                  // Guardar el ID del registro de cumplimiento normativo
-                  if (cumplimientoData.cumplimientoId) {
-                    console.log('📋 ID Cumplimiento Normativo:', cumplimientoData.cumplimientoId);
-                    setCumplimientoNormativoId(cumplimientoData.cumplimientoId);
-                  }
-                  // Cargar PDF de Paso 2 si existe
-                  if (cumplimientoData.documentoUrl) {
-                    console.log('📄 Cargando PDF Paso 2:', cumplimientoData.documentoUrl);
-                    setPdfUrlPaso2(cumplimientoData.documentoUrl);
+              
+              // Cargar datos de cumplimiento_normativo (sección 2 y 3, incluye criterios)
+              const cumplimientoData = await loadCumplimientoNormativo(3);
+              console.log('✅ Datos cumplimiento retornados para Com3:', cumplimientoData);
+              
+              setFormData({
+                compromisoId: '3',
+                documentoFile: null,
+                criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
+                aceptaPoliticaPrivacidad: cumplimientoData?.AceptaPoliticaPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || false,
+                aceptaDeclaracionJurada: cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || false,
+                estado: data.estado || 1
+              });
+              
+              // Cargar también datos de cumplimiento normativo para Paso 2 y 3
+              try {
+                const cumplimientoResponse = await cumplimientoService.getAll({ 
+                  compromiso_id: 3, 
+                  entidad_id: user.entidadId 
+                });
+                if (cumplimientoResponse.isSuccess || cumplimientoResponse.success) {
+                  const cumplimientoList = cumplimientoResponse.data || [];
+                  const cumplimientoRecord = Array.isArray(cumplimientoList) ? cumplimientoList[0] : cumplimientoList;
+                  if (cumplimientoRecord) {
+                    console.log('📄 Datos de cumplimiento (Paso 2/3) encontrados:', cumplimientoRecord);
+                    if (cumplimientoRecord.cumplimientoId) {
+                      setCumplimientoNormativoId(cumplimientoRecord.cumplimientoId);
+                    }
+                    if (cumplimientoRecord.documentoUrl) {
+                      setPdfUrlPaso2(cumplimientoRecord.documentoUrl);
+                    }
+                    setHaVistoPolitica(cumplimientoRecord.aceptaPoliticaPrivacidad || false);
+                    setHaVistoDeclaracion(cumplimientoRecord.aceptaDeclaracionJurada || false);
                   }
                 }
+              } catch (error) {
+                console.log('ℹ️ No hay datos de cumplimiento (Paso 2/3) aún:', error.message);
               }
-            } catch (error) {
-              console.log('ℹ️ No hay datos de cumplimiento (Paso 2) aún:', error.message);
+            } else {
+              // No existe registro, inicializar
+              setFormData(prev => ({ ...prev, compromisoId: '3' }));
+              setCom3Data({
+                objetivosEstrategicos: [],
+                objetivosGobiernoDigital: [],
+                situacionActual: {},
+                portafolioProyectos: []
+              });
             }
           } else {
-            // No existe registro, inicializar
+            // Error o no encontrado, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '3' }));
+            setCom3Data({
+              objetivosEstrategicos: [],
+              objetivosGobiernoDigital: [],
+              situacionActual: {},
+              portafolioProyectos: []
+            });
           }
-          setLoading(false);
-          return;
+        } catch (error) {
+          console.error('❌ Error cargando datos Com3:', error);
+          setFormData(prev => ({ ...prev, compromisoId: '3' }));
+          setCom3Data({
+            objetivosEstrategicos: [],
+            objetivosGobiernoDigital: [],
+            situacionActual: {},
+            portafolioProyectos: []
+          });
         }
-      } */
+        setLoading(false);
+        return;
+      }
       
       // COMPROMISO 2: Comité GTD (Usar tabla com2_cgtd para Paso 1)
       if (compromisoId === 2 && user?.entidadId) {
@@ -2794,55 +2819,67 @@ const CumplimientoNormativoDetalle = () => {
         
         console.log(`Respuesta final Com${formData.compromisoId}:`, response);
       }
-      // COMPROMISO 3: Usar cumplimientoService genérico (pendiente de refactorización)
+      // COMPROMISO 3: Elaborar Plan de Gobierno Digital (Usar tabla com3_epgd)
       else if (parseInt(formData.compromisoId) === 3) {
-        console.log(`🔄 Compromiso 3 - Usando cumplimientoService genérico (PENDIENTE REFACTOR)`);
+        console.log(`🚀 Preparando datos para Com3 EPGD (Paso ${pasoActual})`);
         
-        const datosLider = {
-          nroDni: formData.nroDni || '',
-          nombres: formData.nombres || '',
-          apellidoPaterno: formData.apellidoPaterno || '',
-          apellidoMaterno: formData.apellidoMaterno || '',
-          correoElectronico: formData.correoElectronico || '',
-          telefono: formData.telefono || '',
-          rol: formData.rol || '',
-          cargo: formData.cargo || ''
-        };
-        
-        const cumplimientoData = {
-          compromiso_id: 3,
-          entidad_id: user.entidadId,
-          ...datosLider,
-          fecha_inicio: formData.fechaInicio || new Date().toISOString(),
-          ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
-          validacion_resolucion_autoridad: formData.validacionResolucionAutoridad || false,
-          validacion_lider_funcionario: formData.validacionLiderFuncionario || false,
-          validacion_designacion_articulo: formData.validacionDesignacionArticulo || false,
-          validacion_funciones_definidas: formData.validacionFuncionesDefinidas || false,
-          ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
-            criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
-          }),
-          acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
-          acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
-          etapa_formulario: pasoActual === 3 ? 'completado' : `paso${pasoActual}`,
-          estado: formData.estado || 1
-        };
-        
-        if (id) {
-          response = await cumplimientoService.update(id, cumplimientoData);
-        } else {
-          response = await cumplimientoService.create(cumplimientoData);
-          if (response.isSuccess || response.success) {
-            const newId = response.data?.cumplimientoId;
-            if (newId) {
-              navigate(`/dashboard/cumplimiento/${newId}?compromiso=3`, { replace: true });
+        // Paso 1: Guardar en com3_epgd usando el nuevo servicio
+        if (pasoActual === 1 && com3Data) {
+          console.log('📋 Paso 1 Com3 - Guardando datos del Plan de Gobierno Digital');
+          
+          const com3Payload = {
+            ...com3Data,
+            entidadId: user.entidadId,
+            cumplimientoNormativoId: cumplimientoNormativoId,
+            usuarioRegistra: user.userId
+          };
+          
+          if (com3RecordId) {
+            response = await com3EPGDService.update(com3RecordId, com3Payload);
+          } else {
+            response = await com3EPGDService.create(com3Payload);
+            if (response.isSuccess || response.success) {
+              const newId = response.data?.com3EPGDId;
+              if (newId) {
+                setCom3RecordId(newId);
+              }
             }
           }
+          
+          console.log('Respuesta Com3 Paso 1:', response);
         }
-        
-        if ((response.isSuccess || response.success) && response.data?.documentoUrl && pasoActual === 2) {
-          setPdfUrlPaso2(response.data.documentoUrl);
-          if (blobUrlToRevoke) URL.revokeObjectURL(blobUrlToRevoke);
+        // Paso 2 y 3: Usar cumplimientoService para criterios y declaraciones
+        else if (pasoActual >= 2) {
+          const cumplimientoData = {
+            compromiso_id: 3,
+            entidad_id: user.entidadId,
+            ...(pasoActual === 2 && documentoUrl && { documento_url: documentoUrl }),
+            ...(pasoActual === 2 && formData.criteriosEvaluados && formData.criteriosEvaluados.length > 0 && { 
+              criterios_evaluados: JSON.stringify(formData.criteriosEvaluados) 
+            }),
+            acepta_politica_privacidad: formData.aceptaPoliticaPrivacidad,
+            acepta_declaracion_jurada: formData.aceptaDeclaracionJurada,
+            etapa_formulario: pasoActual === 3 ? 'completado' : `paso${pasoActual}`,
+            estado: formData.estado || 1
+          };
+          
+          if (cumplimientoNormativoId) {
+            response = await cumplimientoService.update(cumplimientoNormativoId, cumplimientoData);
+          } else {
+            response = await cumplimientoService.create(cumplimientoData);
+            if (response.isSuccess || response.success) {
+              const newId = response.data?.cumplimientoId;
+              if (newId) {
+                setCumplimientoNormativoId(newId);
+                navigate(`/dashboard/cumplimiento/${newId}?compromiso=3`, { replace: true });
+              }
+            }
+          }
+          
+          if ((response.isSuccess || response.success) && response.data?.documentoUrl && pasoActual === 2) {
+            setPdfUrlPaso2(response.data.documentoUrl);
+            if (blobUrlToRevoke) URL.revokeObjectURL(blobUrlToRevoke);
+          }
         }
         
         console.log('Respuesta final Com3:', response);
@@ -4701,6 +4738,19 @@ const CumplimientoNormativoDetalle = () => {
                   </div>
                 </div>
               </>
+            ) : parseInt(formData.compromisoId) === 3 ? (
+              // COMPROMISO 3: Elaborar Plan de Gobierno Digital
+              <Compromiso3Paso1
+                entidadId={user?.entidadId}
+                cumplimientoNormativoId={cumplimientoNormativoId}
+                onDataChange={(data) => {
+                  setCom3Data(data);
+                  if (data?.com3EPGDId) {
+                    setCom3RecordId(data.com3EPGDId);
+                  }
+                }}
+                viewMode={viewMode}
+              />
             ) : parseInt(formData.compromisoId) === 5 ? (
               // COMPROMISO 5: Estrategia Digital
               <>
