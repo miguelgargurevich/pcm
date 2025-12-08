@@ -7,15 +7,17 @@
 DO $$
 DECLARE
     v_entidad_id UUID;
+    v_user_id UUID;
     v_com3_id BIGINT;
+    v_next_id BIGINT;
     v_obj_est_1 BIGINT;
     v_obj_est_2 BIGINT;
     v_obj_gd_1 BIGINT;
     v_obj_gd_2 BIGINT;
     v_seginfo_id BIGINT;
 BEGIN
-    -- Obtener entidad_id del usuario de prueba
-    SELECT entidad_id INTO v_entidad_id 
+    -- Obtener entidad_id y user_id del usuario de prueba
+    SELECT entidad_id, user_id INTO v_entidad_id, v_user_id 
     FROM usuarios 
     WHERE email = 'entidad.test@gob.pe' 
     LIMIT 1;
@@ -41,27 +43,34 @@ BEGIN
     
     RAISE NOTICE 'Datos anteriores eliminados';
     
+    -- Obtener siguiente ID disponible
+    SELECT COALESCE(MAX(comepgd_ent_id), 0) + 1 INTO v_next_id FROM com3_epgd;
+    
     -- 1. Crear registro principal de Com3EPGD
     INSERT INTO com3_epgd (
+        comepgd_ent_id,
         compromiso_id,
         entidad_id,
         etapa_formulario,
         estado,
         check_privacidad,
         check_ddjj,
-        estado_pcm,
-        observaciones_pcm,
+        "estado_PCM",
+        "observaciones_PCM",
         created_at,
         fec_registro,
         usuario_registra,
         activo,
+        fecha_reporte,
         sede,
         observaciones,
         ubicacion_area_ti,
+        organigrama_ti,
         dependencia_area_ti,
         costo_anual_ti,
         existe_comision_gd_ti
     ) VALUES (
+        v_next_id,
         3,
         v_entidad_id,
         'paso1',
@@ -72,11 +81,13 @@ BEGIN
         '',
         NOW(),
         NOW(),
-        v_entidad_id, -- Usar mismo ID como usuario
+        v_user_id, -- user_id del usuario
         true,
+        NOW()::date,
         'Lima',
         'Datos de prueba para Compromiso 3',
         'Oficina de Tecnologías de la Información',
+        'Unidad de TI en el Organigrama',
         'Secretaría General',
         250000.00,
         true
@@ -84,120 +95,120 @@ BEGIN
     
     RAISE NOTICE 'Com3EPGD creado con ID: %', v_com3_id;
     
-    -- 2. Insertar Personal TI
-    INSERT INTO personal_ti (com_entidad_id, nombre_persona, dni, cargo, rol, especialidad, grado_instruccion, certificacion, acreditadora, codigo_certificacion, colegiatura, email_personal, telefono, activo, created_at) VALUES
-    (v_com3_id, 'Juan Carlos Pérez García', '12345678', 'Jefe de TI', 'Líder', 'Gestión de TI', 'Magister', 'PMP', 'PMI', 'PMP-123456', 'CIP-12345', 'jperez@entidad.gob.pe', '987654321', true, NOW()),
-    (v_com3_id, 'María Elena Torres López', '23456789', 'Analista de Sistemas', 'Desarrollador', 'Desarrollo Web', 'Bachiller', 'SCRUM Master', 'Scrum Alliance', 'CSM-789', NULL, 'mtorres@entidad.gob.pe', '987654322', true, NOW()),
-    (v_com3_id, 'Roberto Sánchez Mendoza', '34567890', 'Administrador de BD', 'DBA', 'Base de Datos', 'Titulado', 'Oracle DBA', 'Oracle', 'OCA-456', 'CIP-23456', 'rsanchez@entidad.gob.pe', '987654323', true, NOW()),
-    (v_com3_id, 'Ana Lucía Ramírez Castro', '45678901', 'Soporte Técnico', 'Soporte', 'Infraestructura', 'Técnico', 'ITIL Foundation', 'AXELOS', 'ITIL-789', NULL, 'aramirez@entidad.gob.pe', '987654324', true, NOW());
+    -- 2. Insertar Personal TI (con IDs explícitos)
+    INSERT INTO personal_ti (personal_id, com_entidad_id, nombre_persona, dni, cargo, rol, especialidad, grado_instruccion, certificacion, acreditadora, codigo_certificacion, colegiatura, email_personal, telefono) VALUES
+    ((SELECT COALESCE(MAX(personal_id), 0) + 1 FROM personal_ti), v_com3_id, 'Juan Carlos Pérez García', '12345678', 'Jefe de TI', 'Líder', 'Gestión de TI', 'Magister', 'PMP', 'PMI', 'PMP-123456', 'CIP-12345', 'jperez@entidad.gob.pe', '987654321'),
+    ((SELECT COALESCE(MAX(personal_id), 0) + 2 FROM personal_ti), v_com3_id, 'María Elena Torres López', '23456789', 'Analista de Sistemas', 'Desarrollador', 'Desarrollo Web', 'Bachiller', 'SCRUM Master', 'Scrum Alliance', 'CSM-789', 'N/A', 'mtorres@entidad.gob.pe', '987654322'),
+    ((SELECT COALESCE(MAX(personal_id), 0) + 3 FROM personal_ti), v_com3_id, 'Roberto Sánchez Mendoza', '34567890', 'Administrador de BD', 'DBA', 'Base de Datos', 'Titulado', 'Oracle DBA', 'Oracle', 'OCA-456', 'CIP-23456', 'rsanchez@entidad.gob.pe', '987654323'),
+    ((SELECT COALESCE(MAX(personal_id), 0) + 4 FROM personal_ti), v_com3_id, 'Ana Lucía Ramírez Castro', '45678901', 'Soporte Técnico', 'Soporte', 'Infraestructura', 'Técnico', 'ITIL Foundation', 'AXELOS', 'ITIL-789', 'N/A', 'aramirez@entidad.gob.pe', '987654324');
     
     RAISE NOTICE 'Personal TI insertado';
     
-    -- 3. Insertar Inventario Software
-    INSERT INTO inventario_software (com_entidad_id, cod_producto, nombre_producto, version, tipo_software, cantidad_instalaciones, cantidad_licencias, exceso_deficiencia, costo_licencias, activo, created_at) VALUES
-    (v_com3_id, 'SW-001', 'Microsoft Office 365', '2024', 'Ofimática', 150, 200, 50, 45000.00, true, NOW()),
-    (v_com3_id, 'SW-002', 'Windows 11 Pro', '23H2', 'Sistema Operativo', 150, 150, 0, 30000.00, true, NOW()),
-    (v_com3_id, 'SW-003', 'Visual Studio Enterprise', '2024', 'Desarrollo', 10, 10, 0, 12000.00, true, NOW()),
-    (v_com3_id, 'SW-004', 'Adobe Creative Cloud', '2024', 'Diseño', 5, 5, 0, 8000.00, true, NOW()),
-    (v_com3_id, 'SW-005', 'Antivirus Kaspersky', '2024', 'Seguridad', 150, 200, 50, 5000.00, true, NOW());
+    -- 3. Insertar Inventario Software (con IDs explícitos)
+    INSERT INTO inventario_software (inv_soft_id, com_entidad_id, cod_producto, nombre_producto, version, tipo_software, cantidad_instalaciones, cantidad_licencias, exceso_deficiencia, costo_licencias) VALUES
+    ((SELECT COALESCE(MAX(inv_soft_id), 0) + 1 FROM inventario_software), v_com3_id, 'SW-001', 'Microsoft Office 365', '2024', 'Ofimática', 150, 200, 50, 45000.00),
+    ((SELECT COALESCE(MAX(inv_soft_id), 0) + 2 FROM inventario_software), v_com3_id, 'SW-002', 'Windows 11 Pro', '23H2', 'Sistema Operativo', 150, 150, 0, 30000.00),
+    ((SELECT COALESCE(MAX(inv_soft_id), 0) + 3 FROM inventario_software), v_com3_id, 'SW-003', 'Visual Studio Enterprise', '2024', 'Desarrollo', 10, 10, 0, 12000.00),
+    ((SELECT COALESCE(MAX(inv_soft_id), 0) + 4 FROM inventario_software), v_com3_id, 'SW-004', 'Adobe Creative Cloud', '2024', 'Diseño', 5, 5, 0, 8000.00),
+    ((SELECT COALESCE(MAX(inv_soft_id), 0) + 5 FROM inventario_software), v_com3_id, 'SW-005', 'Antivirus Kaspersky', '2024', 'Seguridad', 150, 200, 50, 5000.00);
     
     RAISE NOTICE 'Inventario Software insertado';
     
-    -- 4. Insertar Inventario Sistemas de Información
-    INSERT INTO inventario_sistemas_info (com_entidad_id, codigo, nombre_sistema, descripcion, tipo_sistema, lenguaje_programacion, base_datos, plataforma, activo, created_at) VALUES
-    (v_com3_id, 'SI-001', 'Sistema de Trámite Documentario', 'Gestión de documentos y expedientes', 'Transaccional', 'Java', 'PostgreSQL', 'Web', true, NOW()),
-    (v_com3_id, 'SI-002', 'Sistema de Recursos Humanos', 'Gestión de personal y planillas', 'Transaccional', 'C#', 'SQL Server', 'Web', true, NOW()),
-    (v_com3_id, 'SI-003', 'Sistema de Contabilidad', 'Gestión contable y presupuestal', 'Transaccional', 'Java', 'Oracle', 'Web', true, NOW()),
-    (v_com3_id, 'SI-004', 'Portal Web Institucional', 'Sitio web de la entidad', 'Informativo', 'PHP', 'MySQL', 'Web', true, NOW()),
-    (v_com3_id, 'SI-005', 'Sistema de Mesa de Partes Virtual', 'Recepción de documentos en línea', 'Transaccional', 'Python', 'PostgreSQL', 'Web', true, NOW());
+    -- 4. Insertar Inventario Sistemas de Información (con IDs explícitos)
+    INSERT INTO inventario_sistemas_info (inv_si_id, com_entidad_id, codigo, nombre_sistema, descripcion, tipo_sistema, lenguaje_programacion, base_datos, plataforma) VALUES
+    ((SELECT COALESCE(MAX(inv_si_id), 0) + 1 FROM inventario_sistemas_info), v_com3_id, 'SI-001', 'Sistema de Trámite Documentario', 'Gestión de documentos y expedientes', 'Transaccional', 'Java', 'PostgreSQL', 'Web'),
+    ((SELECT COALESCE(MAX(inv_si_id), 0) + 2 FROM inventario_sistemas_info), v_com3_id, 'SI-002', 'Sistema de Recursos Humanos', 'Gestión de personal y planillas', 'Transaccional', 'C#', 'SQL Server', 'Web'),
+    ((SELECT COALESCE(MAX(inv_si_id), 0) + 3 FROM inventario_sistemas_info), v_com3_id, 'SI-003', 'Sistema de Contabilidad', 'Gestión contable y presupuestal', 'Transaccional', 'Java', 'Oracle', 'Web'),
+    ((SELECT COALESCE(MAX(inv_si_id), 0) + 4 FROM inventario_sistemas_info), v_com3_id, 'SI-004', 'Portal Web Institucional', 'Sitio web de la entidad', 'Informativo', 'PHP', 'MySQL', 'Web'),
+    ((SELECT COALESCE(MAX(inv_si_id), 0) + 5 FROM inventario_sistemas_info), v_com3_id, 'SI-005', 'Sistema de Mesa de Partes Virtual', 'Recepción de documentos en línea', 'Transaccional', 'Python', 'PostgreSQL', 'Web');
     
     RAISE NOTICE 'Inventario Sistemas insertado';
     
-    -- 5. Insertar Inventario Red
-    INSERT INTO inventario_red (com_entidad_id, tipo_equipo, cantidad, puertos_operativos, puertos_inoperativos, total_puertos, costo_mantenimiento_anual, observaciones, activo, created_at) VALUES
-    (v_com3_id, 'Switch Capa 3', 5, 120, 0, 120, 5000.00, 'Switches core de la red', true, NOW()),
-    (v_com3_id, 'Switch Capa 2', 20, 480, 5, 485, 8000.00, 'Switches de acceso', true, NOW()),
-    (v_com3_id, 'Router', 3, 12, 0, 12, 3000.00, 'Routers de borde', true, NOW()),
-    (v_com3_id, 'Firewall', 2, 8, 0, 8, 6000.00, 'Firewalls perimetrales', true, NOW()),
-    (v_com3_id, 'Access Point', 30, 30, 2, 32, 2000.00, 'Puntos de acceso WiFi', true, NOW());
+    -- 5. Insertar Inventario Red (con IDs explícitos)
+    INSERT INTO inventario_red (inv_red_id, com_entidad_id, tipo_equipo, cantidad, puertos_operativos, puertos_inoperativos, total_puertos, costo_mantenimiento_anual, observaciones) VALUES
+    ((SELECT COALESCE(MAX(inv_red_id), 0) + 1 FROM inventario_red), v_com3_id, 'Switch Capa 3', 5, 120, 0, 120, 5000.00, 'Switches core de la red'),
+    ((SELECT COALESCE(MAX(inv_red_id), 0) + 2 FROM inventario_red), v_com3_id, 'Switch Capa 2', 20, 480, 5, 485, 8000.00, 'Switches de acceso'),
+    ((SELECT COALESCE(MAX(inv_red_id), 0) + 3 FROM inventario_red), v_com3_id, 'Router', 3, 12, 0, 12, 3000.00, 'Routers de borde'),
+    ((SELECT COALESCE(MAX(inv_red_id), 0) + 4 FROM inventario_red), v_com3_id, 'Firewall', 2, 8, 0, 8, 6000.00, 'Firewalls perimetrales'),
+    ((SELECT COALESCE(MAX(inv_red_id), 0) + 5 FROM inventario_red), v_com3_id, 'Access Point', 30, 30, 2, 32, 2000.00, 'Puntos de acceso WiFi');
     
     RAISE NOTICE 'Inventario Red insertado';
     
-    -- 6. Insertar Inventario Servidores
-    INSERT INTO inventario_servidores (com_entidad_id, nombre_equipo, tipo_equipo, estado, capa, propiedad, montaje, marca_cpu, modelo_cpu, velocidad_ghz, nucleos, memoria_gb, marca_memoria, modelo_memoria, cantidad_memoria, costo_mantenimiento_anual, observaciones, activo, created_at) VALUES
-    (v_com3_id, 'SRV-DB-01', 'Físico', 'Operativo', 'Base de Datos', 'Propio', 'Rack', 'Intel', 'Xeon Gold 6248', 2.5, 20, 256, 'Kingston', 'DDR4 ECC', 8, 8000.00, 'Servidor de base de datos principal', true, NOW()),
-    (v_com3_id, 'SRV-APP-01', 'Físico', 'Operativo', 'Aplicación', 'Propio', 'Rack', 'Intel', 'Xeon Silver 4214', 2.2, 12, 128, 'Samsung', 'DDR4 ECC', 4, 6000.00, 'Servidor de aplicaciones', true, NOW()),
-    (v_com3_id, 'SRV-WEB-01', 'Virtual', 'Operativo', 'Web', 'Propio', 'Virtual', 'Virtual', 'vCPU', 2.0, 8, 32, 'Virtual', 'vRAM', 1, 2000.00, 'Servidor web principal', true, NOW()),
-    (v_com3_id, 'SRV-FILE-01', 'Físico', 'Operativo', 'Archivos', 'Propio', 'Rack', 'Intel', 'Xeon E-2236', 3.4, 6, 64, 'Crucial', 'DDR4 ECC', 2, 3000.00, 'Servidor de archivos', true, NOW()),
-    (v_com3_id, 'SRV-BACKUP-01', 'Físico', 'Operativo', 'Backup', 'Propio', 'Rack', 'Intel', 'Xeon E-2124', 3.3, 4, 32, 'Kingston', 'DDR4', 2, 2500.00, 'Servidor de respaldo', true, NOW());
+    -- 6. Insertar Inventario Servidores (con IDs explícitos)
+    INSERT INTO inventario_servidores (inv_srv_id, com_entidad_id, nombre_equipo, tipo_equipo, estado, capa, propiedad, montaje, marca_cpu, modelo_cpu, velocidad_ghz, nucleos, memoria_gb, marca_memoria, modelo_memoria, cantidad_memoria, costo_mantenimiento_anual, observaciones) VALUES
+    ((SELECT COALESCE(MAX(inv_srv_id), 0) + 1 FROM inventario_servidores), v_com3_id, 'SRV-DB-01', 'Físico', 'Operativo', 'Base de Datos', 'Propio', 'Rack', 'Intel', 'Xeon Gold 6248', 2.5, 20, 256, 'Kingston', 'DDR4 ECC', 8, 8000.00, 'Servidor de base de datos principal'),
+    ((SELECT COALESCE(MAX(inv_srv_id), 0) + 2 FROM inventario_servidores), v_com3_id, 'SRV-APP-01', 'Físico', 'Operativo', 'Aplicación', 'Propio', 'Rack', 'Intel', 'Xeon Silver 4214', 2.2, 12, 128, 'Samsung', 'DDR4 ECC', 4, 6000.00, 'Servidor de aplicaciones'),
+    ((SELECT COALESCE(MAX(inv_srv_id), 0) + 3 FROM inventario_servidores), v_com3_id, 'SRV-WEB-01', 'Virtual', 'Operativo', 'Web', 'Propio', 'Virtual', 'Virtual', 'vCPU', 2.0, 8, 32, 'Virtual', 'vRAM', 1, 2000.00, 'Servidor web principal'),
+    ((SELECT COALESCE(MAX(inv_srv_id), 0) + 4 FROM inventario_servidores), v_com3_id, 'SRV-FILE-01', 'Físico', 'Operativo', 'Archivos', 'Propio', 'Rack', 'Intel', 'Xeon E-2236', 3.4, 6, 64, 'Crucial', 'DDR4 ECC', 2, 3000.00, 'Servidor de archivos'),
+    ((SELECT COALESCE(MAX(inv_srv_id), 0) + 5 FROM inventario_servidores), v_com3_id, 'SRV-BACKUP-01', 'Físico', 'Operativo', 'Backup', 'Propio', 'Rack', 'Intel', 'Xeon E-2124', 3.3, 4, 32, 'Kingston', 'DDR4', 2, 2500.00, 'Servidor de respaldo');
     
     RAISE NOTICE 'Inventario Servidores insertado';
     
-    -- 7. Insertar Seguridad Info
-    INSERT INTO seguridad_info (com_entidad_id, plan_sgsi, comite_seguridad, oficial_seguridad_en_organigrama, politica_seguridad, inventario_activos, analisis_riesgos, metodologia_riesgos, plan_continuidad, programa_auditorias, informes_direccion, certificacion_iso27001, observaciones, activo, created_at)
-    VALUES (v_com3_id, true, true, true, true, true, true, true, false, true, true, false, 'En proceso de implementación de ISO 27001', true, NOW())
+    -- 7. Insertar Seguridad Info (con ID explícito)
+    INSERT INTO seguridad_info (seginfo_id, com_entidad_id, plan_sgsi, comite_seguridad, oficial_seguridad_en_organigrama, politica_seguridad, inventario_activos, analisis_riesgos, metodologia_riesgos, plan_continuidad, programa_auditorias, informes_direccion, certificacion_iso27001, observaciones)
+    VALUES ((SELECT COALESCE(MAX(seginfo_id), 0) + 1 FROM seguridad_info), v_com3_id, true, true, true, true, true, true, true, false, true, true, false, 'En proceso de implementación de ISO 27001')
     RETURNING seginfo_id INTO v_seginfo_id;
     
     RAISE NOTICE 'Seguridad Info insertada con ID: %', v_seginfo_id;
     
-    -- 8. Insertar Capacitaciones de Seguridad
-    INSERT INTO capacitaciones_seginfo (com_entidad_id, curso, cantidad_personas, activo, created_at) VALUES
-    (v_com3_id, 'Concientización en Seguridad de la Información', 150, true, NOW()),
-    (v_com3_id, 'Gestión de Incidentes de Seguridad', 20, true, NOW()),
-    (v_com3_id, 'ISO 27001 - Fundamentos', 15, true, NOW()),
-    (v_com3_id, 'Protección de Datos Personales', 50, true, NOW());
+    -- 8. Insertar Capacitaciones de Seguridad (con IDs explícitos)
+    INSERT INTO capacitaciones_seginfo (capseg_id, com_entidad_id, curso, cantidad_personas) VALUES
+    ((SELECT COALESCE(MAX(capseg_id), 0) + 1 FROM capacitaciones_seginfo), v_com3_id, 'Concientización en Seguridad de la Información', 150),
+    ((SELECT COALESCE(MAX(capseg_id), 0) + 2 FROM capacitaciones_seginfo), v_com3_id, 'Gestión de Incidentes de Seguridad', 20),
+    ((SELECT COALESCE(MAX(capseg_id), 0) + 3 FROM capacitaciones_seginfo), v_com3_id, 'ISO 27001 - Fundamentos', 15),
+    ((SELECT COALESCE(MAX(capseg_id), 0) + 4 FROM capacitaciones_seginfo), v_com3_id, 'Protección de Datos Personales', 50);
     
     RAISE NOTICE 'Capacitaciones insertadas';
     
-    -- 9. Insertar Objetivos Estratégicos (tipo 'E')
-    INSERT INTO objetivos_entidades (com_entidad_id, tipo_obj, numeracion_obj, descripcion_objetivo, activo, created_at)
-    VALUES (v_com3_id, 'E', 'OE-01', 'Fortalecer la gestión institucional mediante el uso de tecnologías digitales', true, NOW())
+    -- 9. Insertar Objetivos Estratégicos (tipo 'E') - con ID explícito
+    INSERT INTO objetivos_entidades (obj_ent_id, com_entidad_id, tipo_obj, numeracion_obj, descripcion_objetivo)
+    VALUES ((SELECT COALESCE(MAX(obj_ent_id), 0) + 1 FROM objetivos_entidades), v_com3_id, 'E', 'OE-01', 'Fortalecer la gestión institucional mediante el uso de tecnologías digitales')
     RETURNING obj_ent_id INTO v_obj_est_1;
     
-    INSERT INTO objetivos_entidades (com_entidad_id, tipo_obj, numeracion_obj, descripcion_objetivo, activo, created_at)
-    VALUES (v_com3_id, 'E', 'OE-02', 'Mejorar la calidad de los servicios públicos digitales', true, NOW())
+    INSERT INTO objetivos_entidades (obj_ent_id, com_entidad_id, tipo_obj, numeracion_obj, descripcion_objetivo)
+    VALUES ((SELECT COALESCE(MAX(obj_ent_id), 0) + 1 FROM objetivos_entidades), v_com3_id, 'E', 'OE-02', 'Mejorar la calidad de los servicios públicos digitales')
     RETURNING obj_ent_id INTO v_obj_est_2;
     
-    -- Insertar acciones para OE-01
-    INSERT INTO acciones_objetivos_entidades (obj_ent_id, numeracion_acc, descripcion_accion, activo, created_at) VALUES
-    (v_obj_est_1, 'OE-01.01', 'Implementar sistema de gestión documental electrónica', true, NOW()),
-    (v_obj_est_1, 'OE-01.02', 'Digitalizar procesos administrativos internos', true, NOW()),
-    (v_obj_est_1, 'OE-01.03', 'Capacitar al personal en herramientas digitales', true, NOW());
+    -- Insertar acciones para OE-01 (con IDs explícitos)
+    INSERT INTO acciones_objetivos_entidades (acc_obj_ent_id, obj_ent_id, numeracion_acc, descripcion_accion) VALUES
+    ((SELECT COALESCE(MAX(acc_obj_ent_id), 0) + 1 FROM acciones_objetivos_entidades), v_obj_est_1, 'A1.1', 'Implementar sistema de gestión documental electrónica'),
+    ((SELECT COALESCE(MAX(acc_obj_ent_id), 0) + 2 FROM acciones_objetivos_entidades), v_obj_est_1, 'A1.2', 'Digitalizar procesos administrativos internos'),
+    ((SELECT COALESCE(MAX(acc_obj_ent_id), 0) + 3 FROM acciones_objetivos_entidades), v_obj_est_1, 'A1.3', 'Capacitar al personal en herramientas digitales');
     
-    -- Insertar acciones para OE-02
-    INSERT INTO acciones_objetivos_entidades (obj_ent_id, numeracion_acc, descripcion_accion, activo, created_at) VALUES
-    (v_obj_est_2, 'OE-02.01', 'Desarrollar aplicación móvil para servicios ciudadanos', true, NOW()),
-    (v_obj_est_2, 'OE-02.02', 'Implementar chatbot de atención 24/7', true, NOW());
+    -- Insertar acciones para OE-02 (con IDs explícitos)
+    INSERT INTO acciones_objetivos_entidades (acc_obj_ent_id, obj_ent_id, numeracion_acc, descripcion_accion) VALUES
+    ((SELECT COALESCE(MAX(acc_obj_ent_id), 0) + 1 FROM acciones_objetivos_entidades), v_obj_est_2, 'A2.1', 'Desarrollar aplicación móvil para servicios ciudadanos'),
+    ((SELECT COALESCE(MAX(acc_obj_ent_id), 0) + 2 FROM acciones_objetivos_entidades), v_obj_est_2, 'A2.2', 'Implementar chatbot de atención 24/7');
     
     RAISE NOTICE 'Objetivos Estratégicos y acciones insertados';
     
-    -- 10. Insertar Objetivos de Gobierno Digital (tipo 'G')
-    INSERT INTO objetivos_entidades (com_entidad_id, tipo_obj, numeracion_obj, descripcion_objetivo, activo, created_at)
-    VALUES (v_com3_id, 'G', 'OGD-01', 'Garantizar la interoperabilidad de los sistemas de información', true, NOW())
+    -- 10. Insertar Objetivos de Gobierno Digital (tipo 'G') - con ID explícito
+    INSERT INTO objetivos_entidades (obj_ent_id, com_entidad_id, tipo_obj, numeracion_obj, descripcion_objetivo)
+    VALUES ((SELECT COALESCE(MAX(obj_ent_id), 0) + 1 FROM objetivos_entidades), v_com3_id, 'G', 'OGD01', 'Garantizar la interoperabilidad de los sistemas de información')
     RETURNING obj_ent_id INTO v_obj_gd_1;
     
-    INSERT INTO objetivos_entidades (com_entidad_id, tipo_obj, numeracion_obj, descripcion_objetivo, activo, created_at)
-    VALUES (v_com3_id, 'G', 'OGD-02', 'Promover la apertura de datos públicos', true, NOW())
+    INSERT INTO objetivos_entidades (obj_ent_id, com_entidad_id, tipo_obj, numeracion_obj, descripcion_objetivo)
+    VALUES ((SELECT COALESCE(MAX(obj_ent_id), 0) + 1 FROM objetivos_entidades), v_com3_id, 'G', 'OGD02', 'Promover la apertura de datos públicos')
     RETURNING obj_ent_id INTO v_obj_gd_2;
     
-    -- Insertar acciones para OGD-01
-    INSERT INTO acciones_objetivos_entidades (obj_ent_id, numeracion_acc, descripcion_accion, activo, created_at) VALUES
-    (v_obj_gd_1, 'OGD-01.01', 'Integrar sistemas con la PIDE', true, NOW()),
-    (v_obj_gd_1, 'OGD-01.02', 'Implementar APIs públicas', true, NOW());
+    -- Insertar acciones para OGD-01 (con IDs explícitos)
+    INSERT INTO acciones_objetivos_entidades (acc_obj_ent_id, obj_ent_id, numeracion_acc, descripcion_accion) VALUES
+    ((SELECT COALESCE(MAX(acc_obj_ent_id), 0) + 1 FROM acciones_objetivos_entidades), v_obj_gd_1, 'G1.1', 'Integrar sistemas con la PIDE'),
+    ((SELECT COALESCE(MAX(acc_obj_ent_id), 0) + 2 FROM acciones_objetivos_entidades), v_obj_gd_1, 'G1.2', 'Implementar APIs públicas');
     
-    -- Insertar acciones para OGD-02
-    INSERT INTO acciones_objetivos_entidades (obj_ent_id, numeracion_acc, descripcion_accion, activo, created_at) VALUES
-    (v_obj_gd_2, 'OGD-02.01', 'Publicar datasets en datos abiertos', true, NOW()),
-    (v_obj_gd_2, 'OGD-02.02', 'Crear portal de datos abiertos institucional', true, NOW());
+    -- Insertar acciones para OGD-02 (con IDs explícitos)
+    INSERT INTO acciones_objetivos_entidades (acc_obj_ent_id, obj_ent_id, numeracion_acc, descripcion_accion) VALUES
+    ((SELECT COALESCE(MAX(acc_obj_ent_id), 0) + 1 FROM acciones_objetivos_entidades), v_obj_gd_2, 'G2.1', 'Publicar datasets en datos abiertos'),
+    ((SELECT COALESCE(MAX(acc_obj_ent_id), 0) + 2 FROM acciones_objetivos_entidades), v_obj_gd_2, 'G2.2', 'Crear portal de datos abiertos institucional');
     
     RAISE NOTICE 'Objetivos de Gobierno Digital y acciones insertados';
     
-    -- 11. Insertar Proyectos del Portafolio
-    INSERT INTO proyectos_entidades (com_entidad_id, numeracion_proy, nombre, alcance, justificacion, tipo_proy, area_proy, area_ejecuta, tipo_beneficiario, etapa_proyecto, ambito_proyecto, fec_ini_prog, fec_fin_prog, alineado_pgd, obj_tran_dig, obj_est, acc_est, monto_inversion, estado_proyecto, activo, created_at) VALUES
-    (v_com3_id, 'PP-2024-001', 'Modernización del Sistema de Trámite Documentario', 'Implementación de firma digital y expediente electrónico', 'Reducir tiempos de atención y uso de papel', 'Transformación Digital', 'Tecnología', 'Oficina de TI', 'Ciudadano', 'En ejecución', 'Nacional', '2024-01-15', '2024-12-31', 'OGD-01', 'Simplificación administrativa', 'OE-01', 'OE-01.01', 150000.00, true, true, NOW()),
-    (v_com3_id, 'PP-2024-002', 'Implementación de Mesa de Partes Virtual', 'Sistema de recepción de documentos en línea 24/7', 'Facilitar el acceso de los ciudadanos', 'Servicio Digital', 'Atención al Ciudadano', 'Oficina de TI', 'Ciudadano', 'Completado', 'Nacional', '2024-02-01', '2024-06-30', 'OGD-02', 'Servicios digitales', 'OE-02', 'OE-02.01', 80000.00, true, true, NOW()),
-    (v_com3_id, 'PP-2024-003', 'Plataforma de Datos Abiertos', 'Portal de publicación de datos institucionales', 'Promover la transparencia y participación ciudadana', 'Datos Abiertos', 'Transparencia', 'Oficina de TI', 'Ciudadano', 'Planificado', 'Nacional', '2025-01-01', '2025-06-30', 'OGD-02', 'Datos abiertos', 'OE-02', 'OE-02.02', 50000.00, true, true, NOW()),
-    (v_com3_id, 'PP-2024-004', 'Fortalecimiento de Ciberseguridad', 'Implementación de SOC y herramientas de monitoreo', 'Proteger los activos de información institucionales', 'Seguridad', 'Infraestructura', 'Oficina de TI', 'Interno', 'En ejecución', 'Nacional', '2024-03-01', '2024-12-31', 'OGD-01', 'Seguridad digital', 'OE-01', 'OE-01.02', 200000.00, true, true, NOW());
+    -- 11. Insertar Proyectos del Portafolio (con IDs explícitos)
+    INSERT INTO proyectos_entidades (proy_ent_id, com_entidad_id, numeracion_proy, nombre, alcance, justificacion, tipo_proy, area_proy, area_ejecuta, tipo_beneficiario, etapa_proyecto, ambito_proyecto, fec_ini_prog, fec_fin_prog, fec_ini_real, fec_fin_real, alienado_pgd, obj_tran_dig, obj_est, acc_est, estado_proyecto, porcentaje_avance, informo_avance) VALUES
+    ((SELECT COALESCE(MAX(proy_ent_id), 0) + 1 FROM proyectos_entidades), v_com3_id, 'P001', 'Modernización del Sistema de Trámite Documentario', 'Implementación de firma digital', 'Reducir tiempos de atención', 'TransDig', 'Tecnolog', 'OficTI', 'Ciudada', 'Ejecucion', 'Nacional', '2024-01-15', '2024-12-31', '2024-01-20', '2024-12-31', 'OGD01', 'Simplif', 'OE-01', 'A1.1', true, 45, true),
+    ((SELECT COALESCE(MAX(proy_ent_id), 0) + 2 FROM proyectos_entidades), v_com3_id, 'P002', 'Mesa de Partes Virtual', 'Sistema de recepción de documentos', 'Facilitar el acceso', 'ServDig', 'Atencion', 'OficTI', 'Ciudada', 'Complet', 'Nacional', '2024-02-01', '2024-06-30', '2024-02-01', '2024-06-30', 'OGD02', 'Servdig', 'OE-02', 'A2.1', true, 100, true),
+    ((SELECT COALESCE(MAX(proy_ent_id), 0) + 3 FROM proyectos_entidades), v_com3_id, 'P003', 'Plataforma de Datos Abiertos', 'Portal de publicación', 'Promover transparencia', 'DatosAb', 'Transpar', 'OficTI', 'Ciudada', 'Planif', 'Nacional', '2025-01-01', '2025-06-30', '2025-01-01', '2025-06-30', 'OGD02', 'DatAb', 'OE-02', 'A2.2', false, 0, false),
+    ((SELECT COALESCE(MAX(proy_ent_id), 0) + 4 FROM proyectos_entidades), v_com3_id, 'P004', 'Fortalecimiento Ciberseguridad', 'Implementación de SOC', 'Proteger activos', 'Segurid', 'Infraest', 'OficTI', 'Interno', 'Ejecucion', 'Nacional', '2024-03-01', '2024-12-31', '2024-03-15', '2024-12-31', 'OGD01', 'SegDig', 'OE-01', 'A1.2', true, 60, true);
     
     RAISE NOTICE 'Proyectos del Portafolio insertados';
     
