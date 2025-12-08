@@ -828,6 +828,13 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.Observaciones).HasColumnName("observaciones").HasMaxLength(255);
             entity.Property(e => e.Activo).HasColumnName("activo");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            
+            // Configurar relación uno-a-uno con Com3EPGD
+            // SeguridadInfo es el lado dependiente (tiene la FK)
+            entity.HasOne(e => e.Com3EPGD)
+                .WithOne(c => c.SeguridadInfo)
+                .HasForeignKey<SeguridadInfo>(e => e.ComEntidadId)
+                .HasPrincipalKey<Com3EPGD>(c => c.ComepgdEntId);
         });
 
         // Configuración de CapacitacionSeginfo
