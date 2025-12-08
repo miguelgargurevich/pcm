@@ -13,6 +13,7 @@ import MarcoNormativo from './pages/MarcoNormativo';
 import CompromisoGobiernoDigital from './pages/CompromisoGobiernoDigital';
 import CumplimientoNormativo from './pages/CumplimientoNormativo';
 import CumplimientoNormativoDetalle from './pages/CumplimientoNormativoDetalle';
+import SeguimientoPGDPP from './pages/SeguimientoPGDPP';
 import DashboardLayout from './layouts/DashboardLayout';
 
 function App() {
@@ -70,7 +71,7 @@ function App() {
             <Route path="cumplimiento" element={<CumplimientoNormativo />} />
             <Route path="cumplimiento/nuevo" element={<CumplimientoNormativoDetalle />} />
             <Route path="cumplimiento/:id" element={<CumplimientoNormativoDetalle />} />
-            <Route path="seguimiento" element={<div className="card">Módulo de Seguimiento</div>} />
+            <Route path="seguimiento" element={<SeguimientoPGDPP />} />
             <Route path="evaluacion" element={<div className="card">Módulo de Evaluación</div>} />
             <Route path="reportes" element={<div className="card">Módulo de Reportes</div>} />
           </Route>

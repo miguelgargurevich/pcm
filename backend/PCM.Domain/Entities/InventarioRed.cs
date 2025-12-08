@@ -3,20 +3,20 @@ namespace PCM.Domain.Entities;
 /// <summary>
 /// Inventario de Equipos de Red
 /// Tabla: inventario_red
+/// NOTA: Esta tabla NO tiene columnas activo ni created_at en la BD
 /// </summary>
 public class InventarioRed
 {
     public long InvRedId { get; set; }
     public long ComEntidadId { get; set; }
-    public string? TipoEquipo { get; set; }
-    public int Cantidad { get; set; }
-    public int PuertosOperativos { get; set; }
-    public int PuertosInoperativos { get; set; }
-    public int TotalPuertos { get; set; }
+    public string TipoEquipo { get; set; } = string.Empty;
+    public long Cantidad { get; set; }
+    public long PuertosOperativos { get; set; }
+    public long PuertosInoperativos { get; set; }
+    public long TotalPuertos { get; set; }
     public decimal CostoMantenimientoAnual { get; set; }
-    public string? Observaciones { get; set; }
-    public bool Activo { get; set; } = true;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public string Observaciones { get; set; } = string.Empty;
+    // NO tiene Activo ni CreatedAt en la BD
     
     // Navegación
     public virtual Com3EPGD? Com3EPGD { get; set; }

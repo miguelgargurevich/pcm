@@ -680,154 +680,149 @@ public class PCMDbContext : DbContext
             entity.ToTable("com3_epgd");
             entity.HasKey(e => e.ComepgdEntId);
             entity.Property(e => e.ComepgdEntId).HasColumnName("comepgd_ent_id").ValueGeneratedOnAdd();
-            entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id");
-            entity.Property(e => e.EntidadId).HasColumnName("entidad_id");
-            entity.Property(e => e.EtapaFormulario).HasColumnName("etapa_formulario").HasMaxLength(20);
-            entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(15);
-            entity.Property(e => e.CheckPrivacidad).HasColumnName("check_privacidad");
-            entity.Property(e => e.CheckDdjj).HasColumnName("check_ddjj");
-            entity.Property(e => e.EstadoPcm).HasColumnName("estado_pcm").HasMaxLength(50);
-            entity.Property(e => e.ObservacionesPcm).HasColumnName("observaciones_pcm").HasMaxLength(500);
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
-            entity.Property(e => e.FecRegistro).HasColumnName("fec_registro");
-            entity.Property(e => e.UsuarioRegistra).HasColumnName("usuario_registra");
-            entity.Property(e => e.Activo).HasColumnName("activo");
-            entity.Property(e => e.FechaReporte).HasColumnName("fecha_reporte");
-            entity.Property(e => e.Sede).HasColumnName("sede").HasMaxLength(100);
-            entity.Property(e => e.Observaciones).HasColumnName("observaciones").HasMaxLength(255);
-            entity.Property(e => e.UbicacionAreaTi).HasColumnName("ubicacion_area_ti").HasMaxLength(255);
-            entity.Property(e => e.OrganigramaTi).HasColumnName("organigrama_ti").HasMaxLength(255);
-            entity.Property(e => e.DependenciaAreaTi).HasColumnName("dependencia_area_ti").HasMaxLength(100);
-            entity.Property(e => e.CostoAnualTi).HasColumnName("costo_anual_ti").HasColumnType("numeric(12,2)");
-            entity.Property(e => e.ExisteComisionGdTi).HasColumnName("existe_comision_gd_ti");
+            entity.Property(e => e.CompromisoId).HasColumnName("compromiso_id").IsRequired();
+            entity.Property(e => e.EntidadId).HasColumnName("entidad_id").IsRequired();
+            entity.Property(e => e.EtapaFormulario).HasColumnName("etapa_formulario").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(15).IsRequired();
+            entity.Property(e => e.CheckPrivacidad).HasColumnName("check_privacidad").IsRequired();
+            entity.Property(e => e.CheckDdjj).HasColumnName("check_ddjj").IsRequired();
+            entity.Property(e => e.EstadoPcm).HasColumnName("\"estado_PCM\"").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.ObservacionesPcm).HasColumnName("\"observaciones_PCM\"").HasMaxLength(500).IsRequired();
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").IsRequired();
+            entity.Property(e => e.FecRegistro).HasColumnName("fec_registro").IsRequired();
+            entity.Property(e => e.UsuarioRegistra).HasColumnName("usuario_registra").IsRequired();
+            entity.Property(e => e.Activo).HasColumnName("activo").IsRequired();
+            entity.Property(e => e.FechaReporte).HasColumnName("fecha_reporte").IsRequired();
+            entity.Property(e => e.Sede).HasColumnName("sede").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Observaciones).HasColumnName("observaciones").HasMaxLength(255).IsRequired();
+            entity.Property(e => e.UbicacionAreaTi).HasColumnName("ubicacion_area_ti").HasMaxLength(255).IsRequired();
+            entity.Property(e => e.OrganigramaTi).HasColumnName("organigrama_ti").HasMaxLength(255).IsRequired();
+            entity.Property(e => e.DependenciaAreaTi).HasColumnName("dependencia_area_ti").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.CostoAnualTi).HasColumnName("costo_anual_ti").HasColumnType("numeric(12,2)").IsRequired();
+            entity.Property(e => e.ExisteComisionGdTi).HasColumnName("existe_comision_gd_ti").IsRequired();
+            entity.Property(e => e.RutaPdfNormativa).HasColumnName("\"rutaPDF_normativa\"").HasMaxLength(500);
         });
 
-        // Configuración de PersonalTI
+        // Configuración de PersonalTI - NO tiene activo ni created_at en BD
         modelBuilder.Entity<PersonalTI>(entity =>
         {
             entity.ToTable("personal_ti");
             entity.HasKey(e => e.PersonalId);
             entity.Property(e => e.PersonalId).HasColumnName("personal_id").ValueGeneratedOnAdd();
-            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id");
-            entity.Property(e => e.NombrePersona).HasColumnName("nombre_persona").HasMaxLength(100);
-            entity.Property(e => e.Dni).HasColumnName("dni").HasMaxLength(12);
-            entity.Property(e => e.Cargo).HasColumnName("cargo").HasMaxLength(100);
-            entity.Property(e => e.Rol).HasColumnName("rol").HasMaxLength(50);
-            entity.Property(e => e.Especialidad).HasColumnName("especialidad").HasMaxLength(80);
-            entity.Property(e => e.GradoInstruccion).HasColumnName("grado_instruccion").HasMaxLength(50);
-            entity.Property(e => e.Certificacion).HasColumnName("certificacion").HasMaxLength(80);
-            entity.Property(e => e.Acreditadora).HasColumnName("acreditadora").HasMaxLength(80);
-            entity.Property(e => e.CodigoCertificacion).HasColumnName("codigo_certificacion").HasMaxLength(50);
-            entity.Property(e => e.Colegiatura).HasColumnName("colegiatura").HasMaxLength(20);
-            entity.Property(e => e.EmailPersonal).HasColumnName("email_personal").HasMaxLength(100);
-            entity.Property(e => e.Telefono).HasColumnName("telefono").HasMaxLength(30);
-            entity.Property(e => e.Activo).HasColumnName("activo");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id").IsRequired();
+            entity.Property(e => e.NombrePersona).HasColumnName("nombre_persona").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Dni).HasColumnName("dni").HasMaxLength(12).IsRequired();
+            entity.Property(e => e.Cargo).HasColumnName("cargo").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Rol).HasColumnName("rol").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Especialidad).HasColumnName("especialidad").HasMaxLength(80).IsRequired();
+            entity.Property(e => e.GradoInstruccion).HasColumnName("grado_instruccion").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Certificacion).HasColumnName("certificacion").HasMaxLength(80).IsRequired();
+            entity.Property(e => e.Acreditadora).HasColumnName("acreditadora").HasMaxLength(80).IsRequired();
+            entity.Property(e => e.CodigoCertificacion).HasColumnName("codigo_certificacion").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Colegiatura).HasColumnName("colegiatura").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.EmailPersonal).HasColumnName("email_personal").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Telefono).HasColumnName("telefono").HasMaxLength(30).IsRequired();
+            // NO mapear Activo ni CreatedAt - no existen en la BD
         });
 
-        // Configuración de InventarioSoftware
+        // Configuración de InventarioSoftware - NO tiene activo ni created_at en BD
         modelBuilder.Entity<InventarioSoftware>(entity =>
         {
             entity.ToTable("inventario_software");
             entity.HasKey(e => e.InvSoftId);
             entity.Property(e => e.InvSoftId).HasColumnName("inv_soft_id").ValueGeneratedOnAdd();
-            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id");
-            entity.Property(e => e.CodProducto).HasColumnName("cod_producto").HasMaxLength(50);
-            entity.Property(e => e.NombreProducto).HasColumnName("nombre_producto").HasMaxLength(150);
-            entity.Property(e => e.Version).HasColumnName("version").HasMaxLength(50);
-            entity.Property(e => e.TipoSoftware).HasColumnName("tipo_software").HasMaxLength(50);
-            entity.Property(e => e.CantidadInstalaciones).HasColumnName("cantidad_instalaciones");
-            entity.Property(e => e.CantidadLicencias).HasColumnName("cantidad_licencias");
-            entity.Property(e => e.ExcesoDeficiencia).HasColumnName("exceso_deficiencia");
-            entity.Property(e => e.CostoLicencias).HasColumnName("costo_licencias").HasColumnType("numeric(12,2)");
-            entity.Property(e => e.Activo).HasColumnName("activo");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id").IsRequired();
+            entity.Property(e => e.CodProducto).HasColumnName("cod_producto").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.NombreProducto).HasColumnName("nombre_producto").HasMaxLength(150).IsRequired();
+            entity.Property(e => e.Version).HasColumnName("version").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.TipoSoftware).HasColumnName("tipo_software").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.CantidadInstalaciones).HasColumnName("cantidad_instalaciones").IsRequired();
+            entity.Property(e => e.CantidadLicencias).HasColumnName("cantidad_licencias").IsRequired();
+            entity.Property(e => e.ExcesoDeficiencia).HasColumnName("exceso_deficiencia").IsRequired();
+            entity.Property(e => e.CostoLicencias).HasColumnName("costo_licencias").HasColumnType("numeric(12,2)").IsRequired();
+            // NO mapear Activo ni CreatedAt - no existen en la BD
         });
 
-        // Configuración de InventarioSistemasInfo
+        // Configuración de InventarioSistemasInfo - NO tiene activo ni created_at en BD
         modelBuilder.Entity<InventarioSistemasInfo>(entity =>
         {
             entity.ToTable("inventario_sistemas_info");
             entity.HasKey(e => e.InvSiId);
             entity.Property(e => e.InvSiId).HasColumnName("inv_si_id").ValueGeneratedOnAdd();
-            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id");
-            entity.Property(e => e.Codigo).HasColumnName("codigo").HasMaxLength(20);
-            entity.Property(e => e.NombreSistema).HasColumnName("nombre_sistema").HasMaxLength(150);
-            entity.Property(e => e.Descripcion).HasColumnName("descripcion").HasMaxLength(255);
-            entity.Property(e => e.TipoSistema).HasColumnName("tipo_sistema").HasMaxLength(50);
-            entity.Property(e => e.LenguajeProgramacion).HasColumnName("lenguaje_programacion").HasMaxLength(50);
-            entity.Property(e => e.BaseDatos).HasColumnName("base_datos").HasMaxLength(50);
-            entity.Property(e => e.Plataforma).HasColumnName("plataforma").HasMaxLength(10);
-            entity.Property(e => e.Activo).HasColumnName("activo");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id").IsRequired();
+            entity.Property(e => e.Codigo).HasColumnName("codigo").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.NombreSistema).HasColumnName("nombre_sistema").HasMaxLength(150).IsRequired();
+            entity.Property(e => e.Descripcion).HasColumnName("descripcion").HasMaxLength(255).IsRequired();
+            entity.Property(e => e.TipoSistema).HasColumnName("tipo_sistema").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.LenguajeProgramacion).HasColumnName("lenguaje_programacion").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.BaseDatos).HasColumnName("base_datos").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Plataforma).HasColumnName("plataforma").HasMaxLength(10).IsRequired();
+            // NO mapear Activo ni CreatedAt - no existen en la BD
         });
 
-        // Configuración de InventarioRed
+        // Configuración de InventarioRed - NO tiene activo ni created_at en BD
         modelBuilder.Entity<InventarioRed>(entity =>
         {
             entity.ToTable("inventario_red");
             entity.HasKey(e => e.InvRedId);
             entity.Property(e => e.InvRedId).HasColumnName("inv_red_id").ValueGeneratedOnAdd();
-            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id");
-            entity.Property(e => e.TipoEquipo).HasColumnName("tipo_equipo").HasMaxLength(80);
-            entity.Property(e => e.Cantidad).HasColumnName("cantidad");
-            entity.Property(e => e.PuertosOperativos).HasColumnName("puertos_operativos");
-            entity.Property(e => e.PuertosInoperativos).HasColumnName("puertos_inoperativos");
-            entity.Property(e => e.TotalPuertos).HasColumnName("total_puertos");
-            entity.Property(e => e.CostoMantenimientoAnual).HasColumnName("costo_mantenimiento_anual").HasColumnType("numeric(12,2)");
-            entity.Property(e => e.Observaciones).HasColumnName("observaciones").HasMaxLength(255);
-            entity.Property(e => e.Activo).HasColumnName("activo");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id").IsRequired();
+            entity.Property(e => e.TipoEquipo).HasColumnName("tipo_equipo").HasMaxLength(80).IsRequired();
+            entity.Property(e => e.Cantidad).HasColumnName("cantidad").IsRequired();
+            entity.Property(e => e.PuertosOperativos).HasColumnName("puertos_operativos").IsRequired();
+            entity.Property(e => e.PuertosInoperativos).HasColumnName("puertos_inoperativos").IsRequired();
+            entity.Property(e => e.TotalPuertos).HasColumnName("total_puertos").IsRequired();
+            entity.Property(e => e.CostoMantenimientoAnual).HasColumnName("costo_mantenimiento_anual").HasColumnType("numeric(12,2)").IsRequired();
+            entity.Property(e => e.Observaciones).HasColumnName("observaciones").HasMaxLength(255).IsRequired();
+            // NO mapear Activo ni CreatedAt - no existen en la BD
         });
 
-        // Configuración de InventarioServidores
+        // Configuración de InventarioServidores - NO tiene activo ni created_at en BD
         modelBuilder.Entity<InventarioServidores>(entity =>
         {
             entity.ToTable("inventario_servidores");
             entity.HasKey(e => e.InvSrvId);
             entity.Property(e => e.InvSrvId).HasColumnName("inv_srv_id").ValueGeneratedOnAdd();
-            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id");
-            entity.Property(e => e.NombreEquipo).HasColumnName("nombre_equipo").HasMaxLength(100);
-            entity.Property(e => e.TipoEquipo).HasColumnName("tipo_equipo").HasMaxLength(10);
-            entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(30);
-            entity.Property(e => e.Capa).HasColumnName("capa").HasMaxLength(30);
-            entity.Property(e => e.Propiedad).HasColumnName("propiedad").HasMaxLength(20);
-            entity.Property(e => e.Montaje).HasColumnName("montaje").HasMaxLength(20);
-            entity.Property(e => e.MarcaCpu).HasColumnName("marca_cpu").HasMaxLength(50);
-            entity.Property(e => e.ModeloCpu).HasColumnName("modelo_cpu").HasMaxLength(50);
-            entity.Property(e => e.VelocidadGhz).HasColumnName("velocidad_ghz").HasColumnType("numeric(5,2)");
-            entity.Property(e => e.Nucleos).HasColumnName("nucleos");
-            entity.Property(e => e.MemoriaGb).HasColumnName("memoria_gb");
-            entity.Property(e => e.MarcaMemoria).HasColumnName("marca_memoria").HasMaxLength(50);
-            entity.Property(e => e.ModeloMemoria).HasColumnName("modelo_memoria").HasMaxLength(50);
-            entity.Property(e => e.CantidadMemoria).HasColumnName("cantidad_memoria");
-            entity.Property(e => e.CostoMantenimientoAnual).HasColumnName("costo_mantenimiento_anual").HasColumnType("numeric(12,2)");
-            entity.Property(e => e.Observaciones).HasColumnName("observaciones").HasMaxLength(255);
-            entity.Property(e => e.Activo).HasColumnName("activo");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id").IsRequired();
+            entity.Property(e => e.NombreEquipo).HasColumnName("nombre_equipo").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.TipoEquipo).HasColumnName("tipo_equipo").HasMaxLength(10).IsRequired();
+            entity.Property(e => e.Estado).HasColumnName("estado").HasMaxLength(30).IsRequired();
+            entity.Property(e => e.Capa).HasColumnName("capa").HasMaxLength(30).IsRequired();
+            entity.Property(e => e.Propiedad).HasColumnName("propiedad").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.Montaje).HasColumnName("montaje").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.MarcaCpu).HasColumnName("marca_cpu").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.ModeloCpu).HasColumnName("modelo_cpu").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.VelocidadGhz).HasColumnName("velocidad_ghz").HasColumnType("numeric(5,2)").IsRequired();
+            entity.Property(e => e.Nucleos).HasColumnName("nucleos").IsRequired();
+            entity.Property(e => e.MemoriaGb).HasColumnName("memoria_gb").IsRequired();
+            entity.Property(e => e.MarcaMemoria).HasColumnName("marca_memoria").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.ModeloMemoria).HasColumnName("modelo_memoria").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.CantidadMemoria).HasColumnName("cantidad_memoria").IsRequired();
+            entity.Property(e => e.CostoMantenimientoAnual).HasColumnName("costo_mantenimiento_anual").HasColumnType("numeric(12,2)").IsRequired();
+            entity.Property(e => e.Observaciones).HasColumnName("observaciones").HasMaxLength(255).IsRequired();
+            // NO mapear Activo ni CreatedAt - no existen en la BD
         });
 
-        // Configuración de SeguridadInfo
+        // Configuración de SeguridadInfo - NO tiene activo ni created_at en BD
         modelBuilder.Entity<SeguridadInfo>(entity =>
         {
             entity.ToTable("seguridad_info");
             entity.HasKey(e => e.SeginfoId);
             entity.Property(e => e.SeginfoId).HasColumnName("seginfo_id").ValueGeneratedOnAdd();
-            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id");
-            entity.Property(e => e.PlanSgsi).HasColumnName("plan_sgsi");
-            entity.Property(e => e.ComiteSeguridad).HasColumnName("comite_seguridad");
-            entity.Property(e => e.OficialSeguridadEnOrganigrama).HasColumnName("oficial_seguridad_en_organigrama");
-            entity.Property(e => e.PoliticaSeguridad).HasColumnName("politica_seguridad");
-            entity.Property(e => e.InventarioActivos).HasColumnName("inventario_activos");
-            entity.Property(e => e.AnalisisRiesgos).HasColumnName("analisis_riesgos");
-            entity.Property(e => e.MetodologiaRiesgos).HasColumnName("metodologia_riesgos");
-            entity.Property(e => e.PlanContinuidad).HasColumnName("plan_continuidad");
-            entity.Property(e => e.ProgramaAuditorias).HasColumnName("programa_auditorias");
-            entity.Property(e => e.InformesDireccion).HasColumnName("informes_direccion");
-            entity.Property(e => e.CertificacionIso27001).HasColumnName("certificacion_iso27001");
-            entity.Property(e => e.Observaciones).HasColumnName("observaciones").HasMaxLength(255);
-            entity.Property(e => e.Activo).HasColumnName("activo");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id").IsRequired();
+            entity.Property(e => e.PlanSgsi).HasColumnName("plan_sgsi").IsRequired();
+            entity.Property(e => e.ComiteSeguridad).HasColumnName("comite_seguridad").IsRequired();
+            entity.Property(e => e.OficialSeguridadEnOrganigrama).HasColumnName("oficial_seguridad_en_organigrama").IsRequired();
+            entity.Property(e => e.PoliticaSeguridad).HasColumnName("politica_seguridad").IsRequired();
+            entity.Property(e => e.InventarioActivos).HasColumnName("inventario_activos").IsRequired();
+            entity.Property(e => e.AnalisisRiesgos).HasColumnName("analisis_riesgos").IsRequired();
+            entity.Property(e => e.MetodologiaRiesgos).HasColumnName("metodologia_riesgos").IsRequired();
+            entity.Property(e => e.PlanContinuidad).HasColumnName("plan_continuidad").IsRequired();
+            entity.Property(e => e.ProgramaAuditorias).HasColumnName("programa_auditorias").IsRequired();
+            entity.Property(e => e.InformesDireccion).HasColumnName("informes_direccion").IsRequired();
+            entity.Property(e => e.CertificacionIso27001).HasColumnName("certificacion_iso27001").IsRequired();
+            entity.Property(e => e.Observaciones).HasColumnName("observaciones").HasMaxLength(255).IsRequired();
+            // NO mapear Activo ni CreatedAt - no existen en la BD
             
             // Configurar relación uno-a-uno con Com3EPGD
             // SeguridadInfo es el lado dependiente (tiene la FK)
@@ -837,75 +832,75 @@ public class PCMDbContext : DbContext
                 .HasPrincipalKey<Com3EPGD>(c => c.ComepgdEntId);
         });
 
-        // Configuración de CapacitacionSeginfo
+        // Configuración de CapacitacionSeginfo - NO tiene activo ni created_at en BD
         modelBuilder.Entity<CapacitacionSeginfo>(entity =>
         {
             entity.ToTable("capacitaciones_seginfo");
             entity.HasKey(e => e.CapsegId);
             entity.Property(e => e.CapsegId).HasColumnName("capseg_id").ValueGeneratedOnAdd();
-            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id");
-            entity.Property(e => e.Curso).HasColumnName("curso").HasMaxLength(100);
-            entity.Property(e => e.CantidadPersonas).HasColumnName("cantidad_personas");
-            entity.Property(e => e.Activo).HasColumnName("activo");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id").IsRequired();
+            entity.Property(e => e.Curso).HasColumnName("curso").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.CantidadPersonas).HasColumnName("cantidad_personas").IsRequired();
+            // NO mapear Activo ni CreatedAt - no existen en la BD
         });
 
-        // Configuración de ObjetivoEntidad
+        // Configuración de ObjetivoEntidad - NO tiene activo ni created_at en BD
         modelBuilder.Entity<ObjetivoEntidad>(entity =>
         {
             entity.ToTable("objetivos_entidades");
             entity.HasKey(e => e.ObjEntId);
             entity.Property(e => e.ObjEntId).HasColumnName("obj_ent_id").ValueGeneratedOnAdd();
-            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id");
-            entity.Property(e => e.TipoObj).HasColumnName("tipo_obj").HasMaxLength(1);
-            entity.Property(e => e.NumeracionObj).HasColumnName("numeracion_obj").HasMaxLength(5);
-            entity.Property(e => e.DescripcionObjetivo).HasColumnName("descripcion_objetivo").HasMaxLength(240);
-            entity.Property(e => e.Activo).HasColumnName("activo");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id").IsRequired();
+            entity.Property(e => e.TipoObj).HasColumnName("tipo_obj").HasMaxLength(1).IsRequired();
+            entity.Property(e => e.NumeracionObj).HasColumnName("numeracion_obj").HasMaxLength(5).IsRequired();
+            entity.Property(e => e.DescripcionObjetivo).HasColumnName("descripcion_objetivo").HasMaxLength(240).IsRequired();
+            // NO mapear Activo ni CreatedAt - no existen en la BD
         });
 
-        // Configuración de AccionObjetivoEntidad
+        // Configuración de AccionObjetivoEntidad - NO tiene activo ni created_at en BD
         modelBuilder.Entity<AccionObjetivoEntidad>(entity =>
         {
             entity.ToTable("acciones_objetivos_entidades");
             entity.HasKey(e => e.AccObjEntId);
             entity.Property(e => e.AccObjEntId).HasColumnName("acc_obj_ent_id").ValueGeneratedOnAdd();
-            entity.Property(e => e.ObjEntId).HasColumnName("obj_ent_id");
-            entity.Property(e => e.NumeracionAcc).HasColumnName("numeracion_acc").HasMaxLength(5);
-            entity.Property(e => e.DescripcionAccion).HasColumnName("descripcion_accion").HasMaxLength(240);
-            entity.Property(e => e.Activo).HasColumnName("activo");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.ObjEntId).HasColumnName("obj_ent_id").IsRequired();
+            entity.Property(e => e.NumeracionAcc).HasColumnName("numeracion_acc").HasMaxLength(5).IsRequired();
+            entity.Property(e => e.DescripcionAccion).HasColumnName("descripcion_accion").HasMaxLength(240).IsRequired();
+            // NO mapear Activo ni CreatedAt - no existen en la BD
         });
 
-        // Configuración de ProyectoEntidad
+        // Configuración de ProyectoEntidad - NO tiene activo ni created_at en BD
+        // Columna "alienado_pgd" (typo en BD, no alineado_pgd)
+        // Columnas porcentaje_avance e informo_avance tienen valores por defecto
         modelBuilder.Entity<ProyectoEntidad>(entity =>
         {
             entity.ToTable("proyectos_entidades");
             entity.HasKey(e => e.ProyEntId);
             entity.Property(e => e.ProyEntId).HasColumnName("proy_ent_id").ValueGeneratedOnAdd();
-            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id");
-            entity.Property(e => e.NumeracionProy).HasColumnName("numeracion_proy").HasMaxLength(5);
-            entity.Property(e => e.Nombre).HasColumnName("nombre").HasMaxLength(100);
-            entity.Property(e => e.Alcance).HasColumnName("alcance").HasMaxLength(240);
-            entity.Property(e => e.Justificacion).HasColumnName("justificacion").HasMaxLength(240);
-            entity.Property(e => e.TipoProy).HasColumnName("tipo_proy").HasMaxLength(100);
-            entity.Property(e => e.AreaProy).HasColumnName("area_proy").HasMaxLength(50);
-            entity.Property(e => e.AreaEjecuta).HasColumnName("area_ejecuta").HasMaxLength(50);
-            entity.Property(e => e.TipoBeneficiario).HasColumnName("tipo_beneficiario").HasMaxLength(100);
-            entity.Property(e => e.EtapaProyecto).HasColumnName("etapa_proyecto").HasMaxLength(100);
-            entity.Property(e => e.AmbitoProyecto).HasColumnName("ambito_proyecto").HasMaxLength(100);
-            entity.Property(e => e.FecIniProg).HasColumnName("fec_ini_prog");
-            entity.Property(e => e.FecFinProg).HasColumnName("fec_fin_prog");
-            entity.Property(e => e.FecIniReal).HasColumnName("fec_ini_real");
-            entity.Property(e => e.FecFinReal).HasColumnName("fec_fin_real");
-            entity.Property(e => e.AlineadoPgd).HasColumnName("alineado_pgd").HasMaxLength(100);
-            entity.Property(e => e.ObjTranDig).HasColumnName("obj_tran_dig").HasMaxLength(100);
-            entity.Property(e => e.ObjEst).HasColumnName("obj_est").HasMaxLength(100);
-            entity.Property(e => e.AccEst).HasColumnName("acc_est").HasMaxLength(100);
+            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id").IsRequired();
+            entity.Property(e => e.NumeracionProy).HasColumnName("numeracion_proy").HasMaxLength(5).IsRequired();
+            entity.Property(e => e.Nombre).HasColumnName("nombre").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Alcance).HasColumnName("alcance").HasMaxLength(240).IsRequired();
+            entity.Property(e => e.Justificacion).HasColumnName("justificacion").HasMaxLength(240).IsRequired();
+            entity.Property(e => e.TipoProy).HasColumnName("tipo_proy").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.AreaProy).HasColumnName("area_proy").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.AreaEjecuta).HasColumnName("area_ejecuta").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.TipoBeneficiario).HasColumnName("tipo_beneficiario").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.EtapaProyecto).HasColumnName("etapa_proyecto").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.AmbitoProyecto).HasColumnName("ambito_proyecto").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.FecIniProg).HasColumnName("fec_ini_prog").IsRequired();
+            entity.Property(e => e.FecFinProg).HasColumnName("fec_fin_prog").IsRequired();
+            entity.Property(e => e.FecIniReal).HasColumnName("fec_ini_real").IsRequired();
+            entity.Property(e => e.FecFinReal).HasColumnName("fec_fin_real").IsRequired();
+            entity.Property(e => e.AlineadoPgd).HasColumnName("alienado_pgd").HasMaxLength(100).IsRequired(); // Typo en BD: alienado
+            entity.Property(e => e.ObjTranDig).HasColumnName("obj_tran_dig").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.ObjEst).HasColumnName("obj_est").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.AccEst).HasColumnName("acc_est").HasMaxLength(100).IsRequired();
             entity.Property(e => e.MontoInversion).HasColumnName("monto_inversion").HasColumnType("numeric(15,2)");
-            entity.Property(e => e.EstadoProyecto).HasColumnName("estado_proyecto");
-            entity.Property(e => e.Activo).HasColumnName("activo");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.EstadoProyecto).HasColumnName("estado_proyecto").IsRequired();
+            entity.Property(e => e.PorcentajeAvance).HasColumnName("porcentaje_avance").HasDefaultValue((short)0);
+            entity.Property(e => e.InformoAvance).HasColumnName("informo_avance").HasDefaultValue(false);
+            // NO mapear Activo ni CreatedAt - no existen en la BD
         });
     }
 }

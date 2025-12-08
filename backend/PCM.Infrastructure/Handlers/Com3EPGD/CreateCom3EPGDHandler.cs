@@ -48,7 +48,7 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                 FecRegistro = DateTime.UtcNow,
                 UsuarioRegistra = request.UsuarioRegistra,
                 Activo = true,
-                FechaReporte = request.FechaReporte,
+                FechaReporte = request.FechaReporte ?? DateTime.UtcNow,
                 Sede = request.Sede ?? string.Empty,
                 Observaciones = request.Observaciones ?? string.Empty,
                 UbicacionAreaTi = request.UbicacionAreaTi ?? string.Empty,
@@ -92,20 +92,18 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                 var personal = new PersonalTIEntity
                 {
                     ComEntidadId = entity.ComepgdEntId,
-                    NombrePersona = dto.NombrePersona,
-                    Dni = dto.Dni,
-                    Cargo = dto.Cargo,
-                    Rol = dto.Rol,
-                    Especialidad = dto.Especialidad,
-                    GradoInstruccion = dto.GradoInstruccion,
-                    Certificacion = dto.Certificacion,
-                    Acreditadora = dto.Acreditadora,
-                    CodigoCertificacion = dto.CodigoCertificacion,
-                    Colegiatura = dto.Colegiatura,
-                    EmailPersonal = dto.EmailPersonal,
-                    Telefono = dto.Telefono,
-                    Activo = true,
-                    CreatedAt = DateTime.UtcNow
+                    NombrePersona = dto.NombrePersona ?? string.Empty,
+                    Dni = dto.Dni ?? string.Empty,
+                    Cargo = dto.Cargo ?? string.Empty,
+                    Rol = dto.Rol ?? string.Empty,
+                    Especialidad = dto.Especialidad ?? string.Empty,
+                    GradoInstruccion = dto.GradoInstruccion ?? string.Empty,
+                    Certificacion = dto.Certificacion ?? string.Empty,
+                    Acreditadora = dto.Acreditadora ?? string.Empty,
+                    CodigoCertificacion = dto.CodigoCertificacion ?? string.Empty,
+                    Colegiatura = dto.Colegiatura ?? string.Empty,
+                    EmailPersonal = dto.EmailPersonal ?? string.Empty,
+                    Telefono = dto.Telefono ?? string.Empty
                 };
                 _context.PersonalTI.Add(personal);
                 await _context.SaveChangesAsync(cancellationToken);
@@ -121,8 +119,7 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                     GradoInstruccion = personal.GradoInstruccion,
                     Certificacion = personal.Certificacion,
                     EmailPersonal = personal.EmailPersonal,
-                    Telefono = personal.Telefono,
-                    Activo = personal.Activo
+                    Telefono = personal.Telefono
                 });
             }
         }
@@ -135,16 +132,14 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                 var software = new InventarioSoftwareEntity
                 {
                     ComEntidadId = entity.ComepgdEntId,
-                    CodProducto = dto.CodProducto,
-                    NombreProducto = dto.NombreProducto,
-                    Version = dto.Version,
-                    TipoSoftware = dto.TipoSoftware,
+                    CodProducto = dto.CodProducto ?? string.Empty,
+                    NombreProducto = dto.NombreProducto ?? string.Empty,
+                    Version = dto.Version ?? string.Empty,
+                    TipoSoftware = dto.TipoSoftware ?? string.Empty,
                     CantidadInstalaciones = dto.CantidadInstalaciones,
                     CantidadLicencias = dto.CantidadLicencias,
                     ExcesoDeficiencia = dto.ExcesoDeficiencia,
-                    CostoLicencias = dto.CostoLicencias,
-                    Activo = true,
-                    CreatedAt = DateTime.UtcNow
+                    CostoLicencias = dto.CostoLicencias
                 };
                 _context.InventarioSoftware.Add(software);
                 await _context.SaveChangesAsync(cancellationToken);
@@ -156,11 +151,10 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                     NombreProducto = software.NombreProducto,
                     Version = software.Version,
                     TipoSoftware = software.TipoSoftware,
-                    CantidadInstalaciones = software.CantidadInstalaciones,
-                    CantidadLicencias = software.CantidadLicencias,
-                    ExcesoDeficiencia = software.ExcesoDeficiencia,
-                    CostoLicencias = software.CostoLicencias,
-                    Activo = software.Activo
+                    CantidadInstalaciones = (int)software.CantidadInstalaciones,
+                    CantidadLicencias = (int)software.CantidadLicencias,
+                    ExcesoDeficiencia = (int)software.ExcesoDeficiencia,
+                    CostoLicencias = software.CostoLicencias
                 });
             }
         }
@@ -173,15 +167,13 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                 var sistema = new InventarioSistemasInfoEntity
                 {
                     ComEntidadId = entity.ComepgdEntId,
-                    Codigo = dto.Codigo,
-                    NombreSistema = dto.NombreSistema,
-                    Descripcion = dto.Descripcion,
-                    TipoSistema = dto.TipoSistema,
-                    LenguajeProgramacion = dto.LenguajeProgramacion,
-                    BaseDatos = dto.BaseDatos,
-                    Plataforma = dto.Plataforma,
-                    Activo = true,
-                    CreatedAt = DateTime.UtcNow
+                    Codigo = dto.Codigo ?? string.Empty,
+                    NombreSistema = dto.NombreSistema ?? string.Empty,
+                    Descripcion = dto.Descripcion ?? string.Empty,
+                    TipoSistema = dto.TipoSistema ?? string.Empty,
+                    LenguajeProgramacion = dto.LenguajeProgramacion ?? string.Empty,
+                    BaseDatos = dto.BaseDatos ?? string.Empty,
+                    Plataforma = dto.Plataforma ?? string.Empty
                 };
                 _context.InventarioSistemasInfo.Add(sistema);
                 await _context.SaveChangesAsync(cancellationToken);
@@ -195,8 +187,7 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                     TipoSistema = sistema.TipoSistema,
                     LenguajeProgramacion = sistema.LenguajeProgramacion,
                     BaseDatos = sistema.BaseDatos,
-                    Plataforma = sistema.Plataforma,
-                    Activo = sistema.Activo
+                    Plataforma = sistema.Plataforma
                 });
             }
         }
@@ -209,15 +200,13 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                 var red = new InventarioRedEntity
                 {
                     ComEntidadId = entity.ComepgdEntId,
-                    TipoEquipo = dto.TipoEquipo,
+                    TipoEquipo = dto.TipoEquipo ?? string.Empty,
                     Cantidad = dto.Cantidad,
                     PuertosOperativos = dto.PuertosOperativos,
                     PuertosInoperativos = dto.PuertosInoperativos,
                     TotalPuertos = dto.TotalPuertos,
                     CostoMantenimientoAnual = dto.CostoMantenimientoAnual,
-                    Observaciones = dto.Observaciones,
-                    Activo = true,
-                    CreatedAt = DateTime.UtcNow
+                    Observaciones = dto.Observaciones ?? string.Empty
                 };
                 _context.InventarioRed.Add(red);
                 await _context.SaveChangesAsync(cancellationToken);
@@ -226,13 +215,12 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                 {
                     InvRedId = red.InvRedId,
                     TipoEquipo = red.TipoEquipo,
-                    Cantidad = red.Cantidad,
-                    PuertosOperativos = red.PuertosOperativos,
-                    PuertosInoperativos = red.PuertosInoperativos,
-                    TotalPuertos = red.TotalPuertos,
+                    Cantidad = (int)red.Cantidad,
+                    PuertosOperativos = (int)red.PuertosOperativos,
+                    PuertosInoperativos = (int)red.PuertosInoperativos,
+                    TotalPuertos = (int)red.TotalPuertos,
                     CostoMantenimientoAnual = red.CostoMantenimientoAnual,
-                    Observaciones = red.Observaciones,
-                    Activo = red.Activo
+                    Observaciones = red.Observaciones
                 });
             }
         }
@@ -245,24 +233,22 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                 var servidor = new InventarioServidoresEntity
                 {
                     ComEntidadId = entity.ComepgdEntId,
-                    NombreEquipo = dto.NombreEquipo,
-                    TipoEquipo = dto.TipoEquipo,
-                    Estado = dto.Estado,
-                    Capa = dto.Capa,
-                    Propiedad = dto.Propiedad,
-                    Montaje = dto.Montaje,
-                    MarcaCpu = dto.MarcaCpu,
-                    ModeloCpu = dto.ModeloCpu,
-                    VelocidadGhz = dto.VelocidadGhz,
-                    Nucleos = dto.Nucleos,
-                    MemoriaGb = dto.MemoriaGb,
-                    MarcaMemoria = dto.MarcaMemoria,
-                    ModeloMemoria = dto.ModeloMemoria,
-                    CantidadMemoria = dto.CantidadMemoria,
+                    NombreEquipo = dto.NombreEquipo ?? string.Empty,
+                    TipoEquipo = dto.TipoEquipo ?? string.Empty,
+                    Estado = dto.Estado ?? string.Empty,
+                    Capa = dto.Capa ?? string.Empty,
+                    Propiedad = dto.Propiedad ?? string.Empty,
+                    Montaje = dto.Montaje ?? string.Empty,
+                    MarcaCpu = dto.MarcaCpu ?? string.Empty,
+                    ModeloCpu = dto.ModeloCpu ?? string.Empty,
+                    VelocidadGhz = dto.VelocidadGhz ?? 0,
+                    Nucleos = dto.Nucleos ?? 0,
+                    MemoriaGb = dto.MemoriaGb ?? 0,
+                    MarcaMemoria = dto.MarcaMemoria ?? string.Empty,
+                    ModeloMemoria = dto.ModeloMemoria ?? string.Empty,
+                    CantidadMemoria = dto.CantidadMemoria ?? 0,
                     CostoMantenimientoAnual = dto.CostoMantenimientoAnual,
-                    Observaciones = dto.Observaciones,
-                    Activo = true,
-                    CreatedAt = DateTime.UtcNow
+                    Observaciones = dto.Observaciones ?? string.Empty
                 };
                 _context.InventarioServidores.Add(servidor);
                 await _context.SaveChangesAsync(cancellationToken);
@@ -275,10 +261,9 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                     Estado = servidor.Estado,
                     Capa = servidor.Capa,
                     Propiedad = servidor.Propiedad,
-                    MemoriaGb = servidor.MemoriaGb,
+                    MemoriaGb = (int)servidor.MemoriaGb,
                     CostoMantenimientoAnual = servidor.CostoMantenimientoAnual,
-                    Observaciones = servidor.Observaciones,
-                    Activo = servidor.Activo
+                    Observaciones = servidor.Observaciones
                 });
             }
         }
@@ -300,9 +285,7 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                 ProgramaAuditorias = request.SeguridadInfo.ProgramaAuditorias,
                 InformesDireccion = request.SeguridadInfo.InformesDireccion,
                 CertificacionIso27001 = request.SeguridadInfo.CertificacionIso27001,
-                Observaciones = request.SeguridadInfo.Observaciones,
-                Activo = true,
-                CreatedAt = DateTime.UtcNow
+                Observaciones = request.SeguridadInfo.Observaciones ?? string.Empty
             };
             _context.SeguridadInfo.Add(seguridad);
             await _context.SaveChangesAsync(cancellationToken);
@@ -315,10 +298,8 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                     var cap = new CapacitacionSeginfoEntity
                     {
                         ComEntidadId = seguridad.SeginfoId,
-                        Curso = capDto.Curso,
-                        CantidadPersonas = capDto.CantidadPersonas,
-                        Activo = true,
-                        CreatedAt = DateTime.UtcNow
+                        Curso = capDto.Curso ?? string.Empty,
+                        CantidadPersonas = capDto.CantidadPersonas
                     };
                     _context.CapacitacionesSeginfo.Add(cap);
                     await _context.SaveChangesAsync(cancellationToken);
@@ -327,8 +308,7 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                     {
                         CapsegId = cap.CapsegId,
                         Curso = cap.Curso,
-                        CantidadPersonas = cap.CantidadPersonas,
-                        Activo = cap.Activo
+                        CantidadPersonas = (int)cap.CantidadPersonas
                     });
                 }
             }
@@ -354,11 +334,9 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                 var objetivo = new ObjetivoEntidadEntity
                 {
                     ComEntidadId = entity.ComepgdEntId,
-                    TipoObj = dto.TipoObj,
-                    NumeracionObj = dto.NumeracionObj,
-                    DescripcionObjetivo = dto.DescripcionObjetivo,
-                    Activo = true,
-                    CreatedAt = DateTime.UtcNow
+                    TipoObj = dto.TipoObj ?? "E",
+                    NumeracionObj = dto.NumeracionObj ?? string.Empty,
+                    DescripcionObjetivo = dto.DescripcionObjetivo ?? string.Empty
                 };
                 _context.ObjetivosEntidades.Add(objetivo);
                 await _context.SaveChangesAsync(cancellationToken);
@@ -371,10 +349,8 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                         var accion = new AccionObjetivoEntidadEntity
                         {
                             ObjEntId = objetivo.ObjEntId,
-                            NumeracionAcc = accDto.NumeracionAcc,
-                            DescripcionAccion = accDto.DescripcionAccion,
-                            Activo = true,
-                            CreatedAt = DateTime.UtcNow
+                            NumeracionAcc = accDto.NumeracionAcc ?? string.Empty,
+                            DescripcionAccion = accDto.DescripcionAccion ?? string.Empty
                         };
                         _context.AccionesObjetivosEntidades.Add(accion);
                         await _context.SaveChangesAsync(cancellationToken);
@@ -383,8 +359,7 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                         {
                             AccObjEntId = accion.AccObjEntId,
                             NumeracionAcc = accion.NumeracionAcc,
-                            DescripcionAccion = accion.DescripcionAccion,
-                            Activo = accion.Activo
+                            DescripcionAccion = accion.DescripcionAccion
                         });
                     }
                 }
@@ -395,8 +370,7 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                     TipoObj = objetivo.TipoObj,
                     NumeracionObj = objetivo.NumeracionObj,
                     DescripcionObjetivo = objetivo.DescripcionObjetivo,
-                    Acciones = accionesResponse,
-                    Activo = objetivo.Activo
+                    Acciones = accionesResponse
                 });
             }
         }
@@ -409,24 +383,26 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                 var proyecto = new ProyectoEntidadEntity
                 {
                     ComEntidadId = entity.ComepgdEntId,
-                    NumeracionProy = dto.NumeracionProy,
-                    Nombre = dto.Nombre,
-                    Alcance = dto.Alcance,
-                    Justificacion = dto.Justificacion,
-                    TipoProy = dto.TipoProy,
-                    AreaProy = dto.AreaProy,
-                    AreaEjecuta = dto.AreaEjecuta,
-                    TipoBeneficiario = dto.TipoBeneficiario,
-                    EtapaProyecto = dto.EtapaProyecto,
-                    AmbitoProyecto = dto.AmbitoProyecto,
-                    FecIniProg = dto.FecIniProg,
-                    FecFinProg = dto.FecFinProg,
-                    FecIniReal = dto.FecIniReal,
-                    FecFinReal = dto.FecFinReal,
+                    NumeracionProy = dto.NumeracionProy ?? string.Empty,
+                    Nombre = dto.Nombre ?? string.Empty,
+                    Alcance = dto.Alcance ?? string.Empty,
+                    Justificacion = dto.Justificacion ?? string.Empty,
+                    TipoProy = dto.TipoProy ?? string.Empty,
+                    AreaProy = dto.AreaProy ?? string.Empty,
+                    AreaEjecuta = dto.AreaEjecuta ?? string.Empty,
+                    TipoBeneficiario = dto.TipoBeneficiario ?? string.Empty,
+                    EtapaProyecto = dto.EtapaProyecto ?? string.Empty,
+                    AmbitoProyecto = dto.AmbitoProyecto ?? string.Empty,
+                    FecIniProg = dto.FecIniProg ?? DateTime.UtcNow,
+                    FecFinProg = dto.FecFinProg ?? DateTime.UtcNow,
+                    FecIniReal = dto.FecIniReal ?? DateTime.UtcNow,
+                    FecFinReal = dto.FecFinReal ?? DateTime.UtcNow,
                     MontoInversion = dto.MontoInversion,
                     EstadoProyecto = dto.EstadoProyecto,
-                    Activo = true,
-                    CreatedAt = DateTime.UtcNow
+                    AlineadoPgd = dto.AlineadoPgd ?? string.Empty,
+                    ObjTranDig = dto.ObjTranDig ?? string.Empty,
+                    ObjEst = dto.ObjEst ?? string.Empty,
+                    AccEst = dto.AccEst ?? string.Empty
                 };
                 _context.ProyectosEntidades.Add(proyecto);
                 await _context.SaveChangesAsync(cancellationToken);
@@ -445,8 +421,7 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                     FecFinProg = proyecto.FecFinProg,
                     FecIniReal = proyecto.FecIniReal,
                     FecFinReal = proyecto.FecFinReal,
-                    MontoInversion = proyecto.MontoInversion,
-                    Activo = proyecto.Activo
+                    MontoInversion = proyecto.MontoInversion
                 });
             }
         }

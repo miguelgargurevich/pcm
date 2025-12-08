@@ -3,6 +3,7 @@ namespace PCM.Domain.Entities;
 /// <summary>
 /// Seguridad de la Información
 /// Tabla: seguridad_info
+/// NOTA: Esta tabla NO tiene columnas activo ni created_at en la BD
 /// </summary>
 public class SeguridadInfo
 {
@@ -21,10 +22,9 @@ public class SeguridadInfo
     public bool ProgramaAuditorias { get; set; }
     public bool InformesDireccion { get; set; }
     public bool CertificacionIso27001 { get; set; }
-    public string? Observaciones { get; set; }
+    public string Observaciones { get; set; } = string.Empty;
     
-    public bool Activo { get; set; } = true;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    // NO tiene Activo ni CreatedAt en la BD
     
     // Navegación
     public virtual Com3EPGD? Com3EPGD { get; set; }

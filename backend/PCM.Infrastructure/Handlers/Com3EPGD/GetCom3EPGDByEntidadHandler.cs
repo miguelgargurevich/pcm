@@ -35,59 +35,58 @@ public class GetCom3EPGDByEntidadHandler : IRequestHandler<GetCom3EPGDByEntidadQ
 
             // Cargar Personal TI
             var personalList = await _context.PersonalTI
-                .Where(p => p.ComEntidadId == entity.ComepgdEntId && p.Activo)
+                .Where(p => p.ComEntidadId == entity.ComepgdEntId)
                 .ToListAsync(cancellationToken);
 
             // Cargar Inventario Software
             var softwareList = await _context.InventarioSoftware
-                .Where(s => s.ComEntidadId == entity.ComepgdEntId && s.Activo)
+                .Where(s => s.ComEntidadId == entity.ComepgdEntId)
                 .ToListAsync(cancellationToken);
 
             // Cargar Inventario Sistemas
             var sistemasList = await _context.InventarioSistemasInfo
-                .Where(s => s.ComEntidadId == entity.ComepgdEntId && s.Activo)
+                .Where(s => s.ComEntidadId == entity.ComepgdEntId)
                 .ToListAsync(cancellationToken);
 
             // Cargar Inventario Red
             var redList = await _context.InventarioRed
-                .Where(r => r.ComEntidadId == entity.ComepgdEntId && r.Activo)
+                .Where(r => r.ComEntidadId == entity.ComepgdEntId)
                 .ToListAsync(cancellationToken);
 
             // Cargar Inventario Servidores
             var servidoresList = await _context.InventarioServidores
-                .Where(s => s.ComEntidadId == entity.ComepgdEntId && s.Activo)
+                .Where(s => s.ComEntidadId == entity.ComepgdEntId)
                 .ToListAsync(cancellationToken);
 
             // Cargar Seguridad Info
             var seguridadInfo = await _context.SeguridadInfo
-                .FirstOrDefaultAsync(s => s.ComEntidadId == entity.ComepgdEntId && s.Activo, cancellationToken);
+                .FirstOrDefaultAsync(s => s.ComEntidadId == entity.ComepgdEntId, cancellationToken);
 
             List<CapacitacionSeginfoDto>? capacitacionesDto = null;
             if (seguridadInfo != null)
             {
                 var capacitaciones = await _context.CapacitacionesSeginfo
-                    .Where(c => c.ComEntidadId == seguridadInfo.SeginfoId && c.Activo)
+                    .Where(c => c.ComEntidadId == seguridadInfo.SeginfoId)
                     .ToListAsync(cancellationToken);
                 
                 capacitacionesDto = capacitaciones.Select(c => new CapacitacionSeginfoDto
                 {
                     CapsegId = c.CapsegId,
                     Curso = c.Curso,
-                    CantidadPersonas = c.CantidadPersonas,
-                    Activo = c.Activo
+                    CantidadPersonas = (int)c.CantidadPersonas
                 }).ToList();
             }
 
             // Cargar Objetivos y sus Acciones
             var objetivosList = await _context.ObjetivosEntidades
-                .Where(o => o.ComEntidadId == entity.ComepgdEntId && o.Activo)
+                .Where(o => o.ComEntidadId == entity.ComepgdEntId)
                 .ToListAsync(cancellationToken);
 
             var objetivosDto = new List<ObjetivoEntidadDto>();
             foreach (var obj in objetivosList)
             {
                 var acciones = await _context.AccionesObjetivosEntidades
-                    .Where(a => a.ObjEntId == obj.ObjEntId && a.Activo)
+                    .Where(a => a.ObjEntId == obj.ObjEntId)
                     .ToListAsync(cancellationToken);
 
                 objetivosDto.Add(new ObjetivoEntidadDto
@@ -96,20 +95,18 @@ public class GetCom3EPGDByEntidadHandler : IRequestHandler<GetCom3EPGDByEntidadQ
                     TipoObj = obj.TipoObj,
                     NumeracionObj = obj.NumeracionObj,
                     DescripcionObjetivo = obj.DescripcionObjetivo,
-                    Activo = obj.Activo,
                     Acciones = acciones.Select(a => new AccionObjetivoEntidadDto
                     {
                         AccObjEntId = a.AccObjEntId,
                         NumeracionAcc = a.NumeracionAcc,
-                        DescripcionAccion = a.DescripcionAccion,
-                        Activo = a.Activo
+                        DescripcionAccion = a.DescripcionAccion
                     }).ToList()
                 });
             }
 
             // Cargar Proyectos
             var proyectosList = await _context.ProyectosEntidades
-                .Where(p => p.ComEntidadId == entity.ComepgdEntId && p.Activo)
+                .Where(p => p.ComEntidadId == entity.ComepgdEntId)
                 .ToListAsync(cancellationToken);
 
             var response = new Com3EPGDResponse
@@ -149,8 +146,7 @@ public class GetCom3EPGDByEntidadHandler : IRequestHandler<GetCom3EPGDByEntidadQ
                     CodigoCertificacion = p.CodigoCertificacion,
                     Colegiatura = p.Colegiatura,
                     EmailPersonal = p.EmailPersonal,
-                    Telefono = p.Telefono,
-                    Activo = p.Activo
+                    Telefono = p.Telefono
                 }).ToList(),
                 InventariosSoftware = softwareList.Select(s => new InventarioSoftwareDto
                 {
@@ -159,11 +155,10 @@ public class GetCom3EPGDByEntidadHandler : IRequestHandler<GetCom3EPGDByEntidadQ
                     NombreProducto = s.NombreProducto,
                     Version = s.Version,
                     TipoSoftware = s.TipoSoftware,
-                    CantidadInstalaciones = s.CantidadInstalaciones,
-                    CantidadLicencias = s.CantidadLicencias,
-                    ExcesoDeficiencia = s.ExcesoDeficiencia,
-                    CostoLicencias = s.CostoLicencias,
-                    Activo = s.Activo
+                    CantidadInstalaciones = (int)s.CantidadInstalaciones,
+                    CantidadLicencias = (int)s.CantidadLicencias,
+                    ExcesoDeficiencia = (int)s.ExcesoDeficiencia,
+                    CostoLicencias = s.CostoLicencias
                 }).ToList(),
                 InventariosSistemas = sistemasList.Select(s => new InventarioSistemasInfoDto
                 {
@@ -174,20 +169,18 @@ public class GetCom3EPGDByEntidadHandler : IRequestHandler<GetCom3EPGDByEntidadQ
                     TipoSistema = s.TipoSistema,
                     LenguajeProgramacion = s.LenguajeProgramacion,
                     BaseDatos = s.BaseDatos,
-                    Plataforma = s.Plataforma,
-                    Activo = s.Activo
+                    Plataforma = s.Plataforma
                 }).ToList(),
                 InventariosRed = redList.Select(r => new InventarioRedDto
                 {
                     InvRedId = r.InvRedId,
                     TipoEquipo = r.TipoEquipo,
-                    Cantidad = r.Cantidad,
-                    PuertosOperativos = r.PuertosOperativos,
-                    PuertosInoperativos = r.PuertosInoperativos,
-                    TotalPuertos = r.TotalPuertos,
+                    Cantidad = (int)r.Cantidad,
+                    PuertosOperativos = (int)r.PuertosOperativos,
+                    PuertosInoperativos = (int)r.PuertosInoperativos,
+                    TotalPuertos = (int)r.TotalPuertos,
                     CostoMantenimientoAnual = r.CostoMantenimientoAnual,
-                    Observaciones = r.Observaciones,
-                    Activo = r.Activo
+                    Observaciones = r.Observaciones
                 }).ToList(),
                 InventariosServidores = servidoresList.Select(s => new InventarioServidoresDto
                 {
@@ -201,11 +194,10 @@ public class GetCom3EPGDByEntidadHandler : IRequestHandler<GetCom3EPGDByEntidadQ
                     MarcaCpu = s.MarcaCpu,
                     ModeloCpu = s.ModeloCpu,
                     VelocidadGhz = s.VelocidadGhz,
-                    Nucleos = s.Nucleos,
-                    MemoriaGb = s.MemoriaGb,
+                    Nucleos = (int)s.Nucleos,
+                    MemoriaGb = (int)s.MemoriaGb,
                     CostoMantenimientoAnual = s.CostoMantenimientoAnual,
-                    Observaciones = s.Observaciones,
-                    Activo = s.Activo
+                    Observaciones = s.Observaciones
                 }).ToList(),
                 SeguridadInfo = seguridadInfo != null ? new SeguridadInfoDto
                 {
@@ -247,8 +239,7 @@ public class GetCom3EPGDByEntidadHandler : IRequestHandler<GetCom3EPGDByEntidadQ
                     ObjEst = p.ObjEst,
                     AccEst = p.AccEst,
                     MontoInversion = p.MontoInversion,
-                    EstadoProyecto = p.EstadoProyecto,
-                    Activo = p.Activo
+                    EstadoProyecto = p.EstadoProyecto
                 }).ToList()
             };
 

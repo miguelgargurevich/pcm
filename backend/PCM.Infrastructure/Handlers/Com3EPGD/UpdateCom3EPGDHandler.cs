@@ -48,7 +48,7 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
             entity.CheckDdjj = request.CheckDdjj;
             entity.EstadoPcm = request.EstadoPcm ?? entity.EstadoPcm;
             entity.ObservacionesPcm = request.ObservacionesPcm ?? entity.ObservacionesPcm;
-            entity.FechaReporte = request.FechaReporte;
+            entity.FechaReporte = request.FechaReporte ?? entity.FechaReporte;
             entity.Sede = request.Sede ?? entity.Sede;
             entity.Observaciones = request.Observaciones ?? entity.Observaciones;
             entity.UbicacionAreaTi = request.UbicacionAreaTi ?? entity.UbicacionAreaTi;
@@ -100,16 +100,13 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
     {
         if (personalList == null) return;
 
-        // Marcar como inactivos los que no están en la lista
+        // Eliminar los que no están en la lista (hard delete, ya que no hay columna activo)
         var existingIds = personalList.Where(p => p.PersonalId.HasValue).Select(p => p.PersonalId!.Value).ToList();
-        var toDeactivate = await _context.PersonalTI
-            .Where(p => p.ComEntidadId == comEntidadId && p.Activo && !existingIds.Contains(p.PersonalId))
+        var toDelete = await _context.PersonalTI
+            .Where(p => p.ComEntidadId == comEntidadId && !existingIds.Contains(p.PersonalId))
             .ToListAsync(cancellationToken);
         
-        foreach (var item in toDeactivate)
-        {
-            item.Activo = false;
-        }
+        _context.PersonalTI.RemoveRange(toDelete);
 
         foreach (var dto in personalList)
         {
@@ -118,16 +115,15 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 var existing = await _context.PersonalTI.FindAsync(dto.PersonalId.Value);
                 if (existing != null)
                 {
-                    existing.NombrePersona = dto.NombrePersona;
-                    existing.Dni = dto.Dni;
-                    existing.Cargo = dto.Cargo;
-                    existing.Rol = dto.Rol;
-                    existing.Especialidad = dto.Especialidad;
-                    existing.GradoInstruccion = dto.GradoInstruccion;
-                    existing.Certificacion = dto.Certificacion;
-                    existing.EmailPersonal = dto.EmailPersonal;
-                    existing.Telefono = dto.Telefono;
-                    existing.Activo = dto.Activo;
+                    existing.NombrePersona = dto.NombrePersona ?? existing.NombrePersona;
+                    existing.Dni = dto.Dni ?? existing.Dni;
+                    existing.Cargo = dto.Cargo ?? existing.Cargo;
+                    existing.Rol = dto.Rol ?? existing.Rol;
+                    existing.Especialidad = dto.Especialidad ?? existing.Especialidad;
+                    existing.GradoInstruccion = dto.GradoInstruccion ?? existing.GradoInstruccion;
+                    existing.Certificacion = dto.Certificacion ?? existing.Certificacion;
+                    existing.EmailPersonal = dto.EmailPersonal ?? existing.EmailPersonal;
+                    existing.Telefono = dto.Telefono ?? existing.Telefono;
                 }
             }
             else
@@ -135,17 +131,15 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 var newItem = new PersonalTIEntity
                 {
                     ComEntidadId = comEntidadId,
-                    NombrePersona = dto.NombrePersona,
-                    Dni = dto.Dni,
-                    Cargo = dto.Cargo,
-                    Rol = dto.Rol,
-                    Especialidad = dto.Especialidad,
-                    GradoInstruccion = dto.GradoInstruccion,
-                    Certificacion = dto.Certificacion,
-                    EmailPersonal = dto.EmailPersonal,
-                    Telefono = dto.Telefono,
-                    Activo = true,
-                    CreatedAt = DateTime.UtcNow
+                    NombrePersona = dto.NombrePersona ?? string.Empty,
+                    Dni = dto.Dni ?? string.Empty,
+                    Cargo = dto.Cargo ?? string.Empty,
+                    Rol = dto.Rol ?? string.Empty,
+                    Especialidad = dto.Especialidad ?? string.Empty,
+                    GradoInstruccion = dto.GradoInstruccion ?? string.Empty,
+                    Certificacion = dto.Certificacion ?? string.Empty,
+                    EmailPersonal = dto.EmailPersonal ?? string.Empty,
+                    Telefono = dto.Telefono ?? string.Empty
                 };
                 _context.PersonalTI.Add(newItem);
             }
@@ -158,14 +152,11 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
         if (softwareList == null) return;
 
         var existingIds = softwareList.Where(s => s.InvSoftId.HasValue).Select(s => s.InvSoftId!.Value).ToList();
-        var toDeactivate = await _context.InventarioSoftware
-            .Where(s => s.ComEntidadId == comEntidadId && s.Activo && !existingIds.Contains(s.InvSoftId))
+        var toDelete = await _context.InventarioSoftware
+            .Where(s => s.ComEntidadId == comEntidadId && !existingIds.Contains(s.InvSoftId))
             .ToListAsync(cancellationToken);
         
-        foreach (var item in toDeactivate)
-        {
-            item.Activo = false;
-        }
+        _context.InventarioSoftware.RemoveRange(toDelete);
 
         foreach (var dto in softwareList)
         {
@@ -174,15 +165,14 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 var existing = await _context.InventarioSoftware.FindAsync(dto.InvSoftId.Value);
                 if (existing != null)
                 {
-                    existing.CodProducto = dto.CodProducto;
-                    existing.NombreProducto = dto.NombreProducto;
-                    existing.Version = dto.Version;
-                    existing.TipoSoftware = dto.TipoSoftware;
+                    existing.CodProducto = dto.CodProducto ?? existing.CodProducto;
+                    existing.NombreProducto = dto.NombreProducto ?? existing.NombreProducto;
+                    existing.Version = dto.Version ?? existing.Version;
+                    existing.TipoSoftware = dto.TipoSoftware ?? existing.TipoSoftware;
                     existing.CantidadInstalaciones = dto.CantidadInstalaciones;
                     existing.CantidadLicencias = dto.CantidadLicencias;
                     existing.ExcesoDeficiencia = dto.ExcesoDeficiencia;
                     existing.CostoLicencias = dto.CostoLicencias;
-                    existing.Activo = dto.Activo;
                 }
             }
             else
@@ -190,16 +180,14 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 var newItem = new InventarioSoftwareEntity
                 {
                     ComEntidadId = comEntidadId,
-                    CodProducto = dto.CodProducto,
-                    NombreProducto = dto.NombreProducto,
-                    Version = dto.Version,
-                    TipoSoftware = dto.TipoSoftware,
+                    CodProducto = dto.CodProducto ?? string.Empty,
+                    NombreProducto = dto.NombreProducto ?? string.Empty,
+                    Version = dto.Version ?? string.Empty,
+                    TipoSoftware = dto.TipoSoftware ?? string.Empty,
                     CantidadInstalaciones = dto.CantidadInstalaciones,
                     CantidadLicencias = dto.CantidadLicencias,
                     ExcesoDeficiencia = dto.ExcesoDeficiencia,
-                    CostoLicencias = dto.CostoLicencias,
-                    Activo = true,
-                    CreatedAt = DateTime.UtcNow
+                    CostoLicencias = dto.CostoLicencias
                 };
                 _context.InventarioSoftware.Add(newItem);
             }
@@ -212,14 +200,11 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
         if (sistemasList == null) return;
 
         var existingIds = sistemasList.Where(s => s.InvSiId.HasValue).Select(s => s.InvSiId!.Value).ToList();
-        var toDeactivate = await _context.InventarioSistemasInfo
-            .Where(s => s.ComEntidadId == comEntidadId && s.Activo && !existingIds.Contains(s.InvSiId))
+        var toDelete = await _context.InventarioSistemasInfo
+            .Where(s => s.ComEntidadId == comEntidadId && !existingIds.Contains(s.InvSiId))
             .ToListAsync(cancellationToken);
         
-        foreach (var item in toDeactivate)
-        {
-            item.Activo = false;
-        }
+        _context.InventarioSistemasInfo.RemoveRange(toDelete);
 
         foreach (var dto in sistemasList)
         {
@@ -228,14 +213,13 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 var existing = await _context.InventarioSistemasInfo.FindAsync(dto.InvSiId.Value);
                 if (existing != null)
                 {
-                    existing.Codigo = dto.Codigo;
-                    existing.NombreSistema = dto.NombreSistema;
-                    existing.Descripcion = dto.Descripcion;
-                    existing.TipoSistema = dto.TipoSistema;
-                    existing.LenguajeProgramacion = dto.LenguajeProgramacion;
-                    existing.BaseDatos = dto.BaseDatos;
-                    existing.Plataforma = dto.Plataforma;
-                    existing.Activo = dto.Activo;
+                    existing.Codigo = dto.Codigo ?? existing.Codigo;
+                    existing.NombreSistema = dto.NombreSistema ?? existing.NombreSistema;
+                    existing.Descripcion = dto.Descripcion ?? existing.Descripcion;
+                    existing.TipoSistema = dto.TipoSistema ?? existing.TipoSistema;
+                    existing.LenguajeProgramacion = dto.LenguajeProgramacion ?? existing.LenguajeProgramacion;
+                    existing.BaseDatos = dto.BaseDatos ?? existing.BaseDatos;
+                    existing.Plataforma = dto.Plataforma ?? existing.Plataforma;
                 }
             }
             else
@@ -243,15 +227,13 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 var newItem = new InventarioSistemasInfoEntity
                 {
                     ComEntidadId = comEntidadId,
-                    Codigo = dto.Codigo,
-                    NombreSistema = dto.NombreSistema,
-                    Descripcion = dto.Descripcion,
-                    TipoSistema = dto.TipoSistema,
-                    LenguajeProgramacion = dto.LenguajeProgramacion,
-                    BaseDatos = dto.BaseDatos,
-                    Plataforma = dto.Plataforma,
-                    Activo = true,
-                    CreatedAt = DateTime.UtcNow
+                    Codigo = dto.Codigo ?? string.Empty,
+                    NombreSistema = dto.NombreSistema ?? string.Empty,
+                    Descripcion = dto.Descripcion ?? string.Empty,
+                    TipoSistema = dto.TipoSistema ?? string.Empty,
+                    LenguajeProgramacion = dto.LenguajeProgramacion ?? string.Empty,
+                    BaseDatos = dto.BaseDatos ?? string.Empty,
+                    Plataforma = dto.Plataforma ?? string.Empty
                 };
                 _context.InventarioSistemasInfo.Add(newItem);
             }
@@ -264,14 +246,11 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
         if (redList == null) return;
 
         var existingIds = redList.Where(r => r.InvRedId.HasValue).Select(r => r.InvRedId!.Value).ToList();
-        var toDeactivate = await _context.InventarioRed
-            .Where(r => r.ComEntidadId == comEntidadId && r.Activo && !existingIds.Contains(r.InvRedId))
+        var toDelete = await _context.InventarioRed
+            .Where(r => r.ComEntidadId == comEntidadId && !existingIds.Contains(r.InvRedId))
             .ToListAsync(cancellationToken);
         
-        foreach (var item in toDeactivate)
-        {
-            item.Activo = false;
-        }
+        _context.InventarioRed.RemoveRange(toDelete);
 
         foreach (var dto in redList)
         {
@@ -280,14 +259,13 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 var existing = await _context.InventarioRed.FindAsync(dto.InvRedId.Value);
                 if (existing != null)
                 {
-                    existing.TipoEquipo = dto.TipoEquipo;
+                    existing.TipoEquipo = dto.TipoEquipo ?? existing.TipoEquipo;
                     existing.Cantidad = dto.Cantidad;
                     existing.PuertosOperativos = dto.PuertosOperativos;
                     existing.PuertosInoperativos = dto.PuertosInoperativos;
                     existing.TotalPuertos = dto.TotalPuertos;
                     existing.CostoMantenimientoAnual = dto.CostoMantenimientoAnual;
-                    existing.Observaciones = dto.Observaciones;
-                    existing.Activo = dto.Activo;
+                    existing.Observaciones = dto.Observaciones ?? existing.Observaciones;
                 }
             }
             else
@@ -295,15 +273,13 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 var newItem = new InventarioRedEntity
                 {
                     ComEntidadId = comEntidadId,
-                    TipoEquipo = dto.TipoEquipo,
+                    TipoEquipo = dto.TipoEquipo ?? string.Empty,
                     Cantidad = dto.Cantidad,
                     PuertosOperativos = dto.PuertosOperativos,
                     PuertosInoperativos = dto.PuertosInoperativos,
                     TotalPuertos = dto.TotalPuertos,
                     CostoMantenimientoAnual = dto.CostoMantenimientoAnual,
-                    Observaciones = dto.Observaciones,
-                    Activo = true,
-                    CreatedAt = DateTime.UtcNow
+                    Observaciones = dto.Observaciones ?? string.Empty
                 };
                 _context.InventarioRed.Add(newItem);
             }
@@ -316,14 +292,11 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
         if (servidoresList == null) return;
 
         var existingIds = servidoresList.Where(s => s.InvSrvId.HasValue).Select(s => s.InvSrvId!.Value).ToList();
-        var toDeactivate = await _context.InventarioServidores
-            .Where(s => s.ComEntidadId == comEntidadId && s.Activo && !existingIds.Contains(s.InvSrvId))
+        var toDelete = await _context.InventarioServidores
+            .Where(s => s.ComEntidadId == comEntidadId && !existingIds.Contains(s.InvSrvId))
             .ToListAsync(cancellationToken);
         
-        foreach (var item in toDeactivate)
-        {
-            item.Activo = false;
-        }
+        _context.InventarioServidores.RemoveRange(toDelete);
 
         foreach (var dto in servidoresList)
         {
@@ -332,15 +305,22 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 var existing = await _context.InventarioServidores.FindAsync(dto.InvSrvId.Value);
                 if (existing != null)
                 {
-                    existing.NombreEquipo = dto.NombreEquipo;
-                    existing.TipoEquipo = dto.TipoEquipo;
-                    existing.Estado = dto.Estado;
-                    existing.Capa = dto.Capa;
-                    existing.Propiedad = dto.Propiedad;
-                    existing.MemoriaGb = dto.MemoriaGb;
+                    existing.NombreEquipo = dto.NombreEquipo ?? existing.NombreEquipo;
+                    existing.TipoEquipo = dto.TipoEquipo ?? existing.TipoEquipo;
+                    existing.Estado = dto.Estado ?? existing.Estado;
+                    existing.Capa = dto.Capa ?? existing.Capa;
+                    existing.Propiedad = dto.Propiedad ?? existing.Propiedad;
+                    existing.Montaje = dto.Montaje ?? existing.Montaje;
+                    existing.MarcaCpu = dto.MarcaCpu ?? existing.MarcaCpu;
+                    existing.ModeloCpu = dto.ModeloCpu ?? existing.ModeloCpu;
+                    existing.VelocidadGhz = dto.VelocidadGhz ?? existing.VelocidadGhz;
+                    existing.Nucleos = dto.Nucleos ?? existing.Nucleos;
+                    existing.MemoriaGb = dto.MemoriaGb ?? existing.MemoriaGb;
+                    existing.MarcaMemoria = dto.MarcaMemoria ?? existing.MarcaMemoria;
+                    existing.ModeloMemoria = dto.ModeloMemoria ?? existing.ModeloMemoria;
+                    existing.CantidadMemoria = dto.CantidadMemoria ?? existing.CantidadMemoria;
                     existing.CostoMantenimientoAnual = dto.CostoMantenimientoAnual;
-                    existing.Observaciones = dto.Observaciones;
-                    existing.Activo = dto.Activo;
+                    existing.Observaciones = dto.Observaciones ?? existing.Observaciones;
                 }
             }
             else
@@ -348,16 +328,22 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 var newItem = new InventarioServidoresEntity
                 {
                     ComEntidadId = comEntidadId,
-                    NombreEquipo = dto.NombreEquipo,
-                    TipoEquipo = dto.TipoEquipo,
-                    Estado = dto.Estado,
-                    Capa = dto.Capa,
-                    Propiedad = dto.Propiedad,
-                    MemoriaGb = dto.MemoriaGb,
+                    NombreEquipo = dto.NombreEquipo ?? string.Empty,
+                    TipoEquipo = dto.TipoEquipo ?? string.Empty,
+                    Estado = dto.Estado ?? string.Empty,
+                    Capa = dto.Capa ?? string.Empty,
+                    Propiedad = dto.Propiedad ?? string.Empty,
+                    Montaje = dto.Montaje ?? string.Empty,
+                    MarcaCpu = dto.MarcaCpu ?? string.Empty,
+                    ModeloCpu = dto.ModeloCpu ?? string.Empty,
+                    VelocidadGhz = dto.VelocidadGhz ?? 0,
+                    Nucleos = dto.Nucleos ?? 0,
+                    MemoriaGb = dto.MemoriaGb ?? 0,
+                    MarcaMemoria = dto.MarcaMemoria ?? string.Empty,
+                    ModeloMemoria = dto.ModeloMemoria ?? string.Empty,
+                    CantidadMemoria = dto.CantidadMemoria ?? 0,
                     CostoMantenimientoAnual = dto.CostoMantenimientoAnual,
-                    Observaciones = dto.Observaciones,
-                    Activo = true,
-                    CreatedAt = DateTime.UtcNow
+                    Observaciones = dto.Observaciones ?? string.Empty
                 };
                 _context.InventarioServidores.Add(newItem);
             }
@@ -370,7 +356,7 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
         if (seguridadDto == null) return;
 
         var existing = await _context.SeguridadInfo
-            .FirstOrDefaultAsync(s => s.ComEntidadId == comEntidadId && s.Activo, cancellationToken);
+            .FirstOrDefaultAsync(s => s.ComEntidadId == comEntidadId, cancellationToken);
 
         if (existing != null)
         {
@@ -385,20 +371,17 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
             existing.ProgramaAuditorias = seguridadDto.ProgramaAuditorias;
             existing.InformesDireccion = seguridadDto.InformesDireccion;
             existing.CertificacionIso27001 = seguridadDto.CertificacionIso27001;
-            existing.Observaciones = seguridadDto.Observaciones;
+            existing.Observaciones = seguridadDto.Observaciones ?? existing.Observaciones;
 
             // Actualizar capacitaciones
             if (seguridadDto.Capacitaciones != null)
             {
                 var existingCapIds = seguridadDto.Capacitaciones.Where(c => c.CapsegId.HasValue).Select(c => c.CapsegId!.Value).ToList();
-                var toDeactivate = await _context.CapacitacionesSeginfo
-                    .Where(c => c.ComEntidadId == existing.SeginfoId && c.Activo && !existingCapIds.Contains(c.CapsegId))
+                var toDeleteCaps = await _context.CapacitacionesSeginfo
+                    .Where(c => c.ComEntidadId == existing.SeginfoId && !existingCapIds.Contains(c.CapsegId))
                     .ToListAsync(cancellationToken);
                 
-                foreach (var item in toDeactivate)
-                {
-                    item.Activo = false;
-                }
+                _context.CapacitacionesSeginfo.RemoveRange(toDeleteCaps);
 
                 foreach (var capDto in seguridadDto.Capacitaciones)
                 {
@@ -407,9 +390,8 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                         var existingCap = await _context.CapacitacionesSeginfo.FindAsync(capDto.CapsegId.Value);
                         if (existingCap != null)
                         {
-                            existingCap.Curso = capDto.Curso;
+                            existingCap.Curso = capDto.Curso ?? existingCap.Curso;
                             existingCap.CantidadPersonas = capDto.CantidadPersonas;
-                            existingCap.Activo = capDto.Activo;
                         }
                     }
                     else
@@ -417,10 +399,8 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                         var newCap = new CapacitacionSeginfoEntity
                         {
                             ComEntidadId = existing.SeginfoId,
-                            Curso = capDto.Curso,
-                            CantidadPersonas = capDto.CantidadPersonas,
-                            Activo = true,
-                            CreatedAt = DateTime.UtcNow
+                            Curso = capDto.Curso ?? string.Empty,
+                            CantidadPersonas = capDto.CantidadPersonas
                         };
                         _context.CapacitacionesSeginfo.Add(newCap);
                     }
@@ -443,9 +423,7 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 ProgramaAuditorias = seguridadDto.ProgramaAuditorias,
                 InformesDireccion = seguridadDto.InformesDireccion,
                 CertificacionIso27001 = seguridadDto.CertificacionIso27001,
-                Observaciones = seguridadDto.Observaciones,
-                Activo = true,
-                CreatedAt = DateTime.UtcNow
+                Observaciones = seguridadDto.Observaciones ?? string.Empty
             };
             _context.SeguridadInfo.Add(newSeguridad);
             await _context.SaveChangesAsync(cancellationToken);
@@ -457,10 +435,8 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                     var newCap = new CapacitacionSeginfoEntity
                     {
                         ComEntidadId = newSeguridad.SeginfoId,
-                        Curso = capDto.Curso,
-                        CantidadPersonas = capDto.CantidadPersonas,
-                        Activo = true,
-                        CreatedAt = DateTime.UtcNow
+                        Curso = capDto.Curso ?? string.Empty,
+                        CantidadPersonas = capDto.CantidadPersonas
                     };
                     _context.CapacitacionesSeginfo.Add(newCap);
                 }
@@ -473,23 +449,21 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
     {
         if (objetivosList == null) return;
 
+        // Eliminar objetivos que ya no están en la lista (hard delete, ya que no hay columna activo)
         var existingIds = objetivosList.Where(o => o.ObjEntId.HasValue).Select(o => o.ObjEntId!.Value).ToList();
-        var toDeactivate = await _context.ObjetivosEntidades
-            .Where(o => o.ComEntidadId == comEntidadId && o.Activo && !existingIds.Contains(o.ObjEntId))
+        var toDelete = await _context.ObjetivosEntidades
+            .Where(o => o.ComEntidadId == comEntidadId && !existingIds.Contains(o.ObjEntId))
             .ToListAsync(cancellationToken);
         
-        foreach (var item in toDeactivate)
+        foreach (var item in toDelete)
         {
-            item.Activo = false;
-            // También desactivar acciones
+            // Primero eliminar acciones asociadas
             var acciones = await _context.AccionesObjetivosEntidades
-                .Where(a => a.ObjEntId == item.ObjEntId && a.Activo)
+                .Where(a => a.ObjEntId == item.ObjEntId)
                 .ToListAsync(cancellationToken);
-            foreach (var accion in acciones)
-            {
-                accion.Activo = false;
-            }
+            _context.AccionesObjetivosEntidades.RemoveRange(acciones);
         }
+        _context.ObjetivosEntidades.RemoveRange(toDelete);
 
         foreach (var dto in objetivosList)
         {
@@ -498,23 +472,19 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 var existing = await _context.ObjetivosEntidades.FindAsync(dto.ObjEntId.Value);
                 if (existing != null)
                 {
-                    existing.TipoObj = dto.TipoObj;
-                    existing.NumeracionObj = dto.NumeracionObj;
-                    existing.DescripcionObjetivo = dto.DescripcionObjetivo;
-                    existing.Activo = dto.Activo;
+                    existing.TipoObj = dto.TipoObj ?? existing.TipoObj;
+                    existing.NumeracionObj = dto.NumeracionObj ?? existing.NumeracionObj;
+                    existing.DescripcionObjetivo = dto.DescripcionObjetivo ?? existing.DescripcionObjetivo;
 
                     // Actualizar acciones
                     if (dto.Acciones != null)
                     {
                         var existingAccIds = dto.Acciones.Where(a => a.AccObjEntId.HasValue).Select(a => a.AccObjEntId!.Value).ToList();
-                        var toDeactivateAcc = await _context.AccionesObjetivosEntidades
-                            .Where(a => a.ObjEntId == existing.ObjEntId && a.Activo && !existingAccIds.Contains(a.AccObjEntId))
+                        var toDeleteAcc = await _context.AccionesObjetivosEntidades
+                            .Where(a => a.ObjEntId == existing.ObjEntId && !existingAccIds.Contains(a.AccObjEntId))
                             .ToListAsync(cancellationToken);
                         
-                        foreach (var acc in toDeactivateAcc)
-                        {
-                            acc.Activo = false;
-                        }
+                        _context.AccionesObjetivosEntidades.RemoveRange(toDeleteAcc);
 
                         foreach (var accDto in dto.Acciones)
                         {
@@ -523,9 +493,8 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                                 var existingAcc = await _context.AccionesObjetivosEntidades.FindAsync(accDto.AccObjEntId.Value);
                                 if (existingAcc != null)
                                 {
-                                    existingAcc.NumeracionAcc = accDto.NumeracionAcc;
-                                    existingAcc.DescripcionAccion = accDto.DescripcionAccion;
-                                    existingAcc.Activo = accDto.Activo;
+                                    existingAcc.NumeracionAcc = accDto.NumeracionAcc ?? existingAcc.NumeracionAcc;
+                                    existingAcc.DescripcionAccion = accDto.DescripcionAccion ?? existingAcc.DescripcionAccion;
                                 }
                             }
                             else
@@ -533,10 +502,8 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                                 var newAcc = new AccionObjetivoEntidadEntity
                                 {
                                     ObjEntId = existing.ObjEntId,
-                                    NumeracionAcc = accDto.NumeracionAcc,
-                                    DescripcionAccion = accDto.DescripcionAccion,
-                                    Activo = true,
-                                    CreatedAt = DateTime.UtcNow
+                                    NumeracionAcc = accDto.NumeracionAcc ?? string.Empty,
+                                    DescripcionAccion = accDto.DescripcionAccion ?? string.Empty
                                 };
                                 _context.AccionesObjetivosEntidades.Add(newAcc);
                             }
@@ -549,11 +516,9 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 var newObj = new ObjetivoEntidadEntity
                 {
                     ComEntidadId = comEntidadId,
-                    TipoObj = dto.TipoObj,
-                    NumeracionObj = dto.NumeracionObj,
-                    DescripcionObjetivo = dto.DescripcionObjetivo,
-                    Activo = true,
-                    CreatedAt = DateTime.UtcNow
+                    TipoObj = dto.TipoObj ?? "E",
+                    NumeracionObj = dto.NumeracionObj ?? string.Empty,
+                    DescripcionObjetivo = dto.DescripcionObjetivo ?? string.Empty
                 };
                 _context.ObjetivosEntidades.Add(newObj);
                 await _context.SaveChangesAsync(cancellationToken);
@@ -565,10 +530,8 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                         var newAcc = new AccionObjetivoEntidadEntity
                         {
                             ObjEntId = newObj.ObjEntId,
-                            NumeracionAcc = accDto.NumeracionAcc,
-                            DescripcionAccion = accDto.DescripcionAccion,
-                            Activo = true,
-                            CreatedAt = DateTime.UtcNow
+                            NumeracionAcc = accDto.NumeracionAcc ?? string.Empty,
+                            DescripcionAccion = accDto.DescripcionAccion ?? string.Empty
                         };
                         _context.AccionesObjetivosEntidades.Add(newAcc);
                     }
@@ -582,15 +545,13 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
     {
         if (proyectosList == null) return;
 
+        // Eliminar proyectos que ya no están en la lista (hard delete, ya que no hay columna activo)
         var existingIds = proyectosList.Where(p => p.ProyEntId.HasValue).Select(p => p.ProyEntId!.Value).ToList();
-        var toDeactivate = await _context.ProyectosEntidades
-            .Where(p => p.ComEntidadId == comEntidadId && p.Activo && !existingIds.Contains(p.ProyEntId))
+        var toDelete = await _context.ProyectosEntidades
+            .Where(p => p.ComEntidadId == comEntidadId && !existingIds.Contains(p.ProyEntId))
             .ToListAsync(cancellationToken);
         
-        foreach (var item in toDeactivate)
-        {
-            item.Activo = false;
-        }
+        _context.ProyectosEntidades.RemoveRange(toDelete);
 
         foreach (var dto in proyectosList)
         {
@@ -599,23 +560,26 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 var existing = await _context.ProyectosEntidades.FindAsync(dto.ProyEntId.Value);
                 if (existing != null)
                 {
-                    existing.NumeracionProy = dto.NumeracionProy;
-                    existing.Nombre = dto.Nombre;
-                    existing.Alcance = dto.Alcance;
-                    existing.Justificacion = dto.Justificacion;
-                    existing.TipoProy = dto.TipoProy;
-                    existing.AreaProy = dto.AreaProy;
-                    existing.AreaEjecuta = dto.AreaEjecuta;
-                    existing.TipoBeneficiario = dto.TipoBeneficiario;
-                    existing.EtapaProyecto = dto.EtapaProyecto;
-                    existing.AmbitoProyecto = dto.AmbitoProyecto;
-                    existing.FecIniProg = dto.FecIniProg;
-                    existing.FecFinProg = dto.FecFinProg;
-                    existing.FecIniReal = dto.FecIniReal;
-                    existing.FecFinReal = dto.FecFinReal;
+                    existing.NumeracionProy = dto.NumeracionProy ?? existing.NumeracionProy;
+                    existing.Nombre = dto.Nombre ?? existing.Nombre;
+                    existing.Alcance = dto.Alcance ?? existing.Alcance;
+                    existing.Justificacion = dto.Justificacion ?? existing.Justificacion;
+                    existing.TipoProy = dto.TipoProy ?? existing.TipoProy;
+                    existing.AreaProy = dto.AreaProy ?? existing.AreaProy;
+                    existing.AreaEjecuta = dto.AreaEjecuta ?? existing.AreaEjecuta;
+                    existing.TipoBeneficiario = dto.TipoBeneficiario ?? existing.TipoBeneficiario;
+                    existing.EtapaProyecto = dto.EtapaProyecto ?? existing.EtapaProyecto;
+                    existing.AmbitoProyecto = dto.AmbitoProyecto ?? existing.AmbitoProyecto;
+                    existing.FecIniProg = dto.FecIniProg ?? existing.FecIniProg;
+                    existing.FecFinProg = dto.FecFinProg ?? existing.FecFinProg;
+                    existing.FecIniReal = dto.FecIniReal ?? existing.FecIniReal;
+                    existing.FecFinReal = dto.FecFinReal ?? existing.FecFinReal;
                     existing.MontoInversion = dto.MontoInversion;
                     existing.EstadoProyecto = dto.EstadoProyecto;
-                    existing.Activo = dto.Activo;
+                    existing.AlineadoPgd = dto.AlineadoPgd ?? existing.AlineadoPgd;
+                    existing.ObjTranDig = dto.ObjTranDig ?? existing.ObjTranDig;
+                    existing.ObjEst = dto.ObjEst ?? existing.ObjEst;
+                    existing.AccEst = dto.AccEst ?? existing.AccEst;
                 }
             }
             else
@@ -623,24 +587,26 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 var newProy = new ProyectoEntidadEntity
                 {
                     ComEntidadId = comEntidadId,
-                    NumeracionProy = dto.NumeracionProy,
-                    Nombre = dto.Nombre,
-                    Alcance = dto.Alcance,
-                    Justificacion = dto.Justificacion,
-                    TipoProy = dto.TipoProy,
-                    AreaProy = dto.AreaProy,
-                    AreaEjecuta = dto.AreaEjecuta,
-                    TipoBeneficiario = dto.TipoBeneficiario,
-                    EtapaProyecto = dto.EtapaProyecto,
-                    AmbitoProyecto = dto.AmbitoProyecto,
-                    FecIniProg = dto.FecIniProg,
-                    FecFinProg = dto.FecFinProg,
-                    FecIniReal = dto.FecIniReal,
-                    FecFinReal = dto.FecFinReal,
+                    NumeracionProy = dto.NumeracionProy ?? string.Empty,
+                    Nombre = dto.Nombre ?? string.Empty,
+                    Alcance = dto.Alcance ?? string.Empty,
+                    Justificacion = dto.Justificacion ?? string.Empty,
+                    TipoProy = dto.TipoProy ?? string.Empty,
+                    AreaProy = dto.AreaProy ?? string.Empty,
+                    AreaEjecuta = dto.AreaEjecuta ?? string.Empty,
+                    TipoBeneficiario = dto.TipoBeneficiario ?? string.Empty,
+                    EtapaProyecto = dto.EtapaProyecto ?? string.Empty,
+                    AmbitoProyecto = dto.AmbitoProyecto ?? string.Empty,
+                    FecIniProg = dto.FecIniProg ?? DateTime.UtcNow,
+                    FecFinProg = dto.FecFinProg ?? DateTime.UtcNow,
+                    FecIniReal = dto.FecIniReal ?? DateTime.UtcNow,
+                    FecFinReal = dto.FecFinReal ?? DateTime.UtcNow,
                     MontoInversion = dto.MontoInversion,
                     EstadoProyecto = dto.EstadoProyecto,
-                    Activo = true,
-                    CreatedAt = DateTime.UtcNow
+                    AlineadoPgd = dto.AlineadoPgd ?? string.Empty,
+                    ObjTranDig = dto.ObjTranDig ?? string.Empty,
+                    ObjEst = dto.ObjEst ?? string.Empty,
+                    AccEst = dto.AccEst ?? string.Empty
                 };
                 _context.ProyectosEntidades.Add(newProy);
             }
@@ -650,36 +616,36 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
 
     private async Task<Com3EPGDResponse> BuildResponse(PCM.Domain.Entities.Com3EPGD entity, CancellationToken cancellationToken)
     {
-        // Cargar datos relacionados
+        // Cargar datos relacionados - Sin filtro de Activo porque las tablas hijas no tienen esa columna
         var personalList = await _context.PersonalTI
-            .Where(p => p.ComEntidadId == entity.ComepgdEntId && p.Activo)
+            .Where(p => p.ComEntidadId == entity.ComepgdEntId)
             .ToListAsync(cancellationToken);
 
         var softwareList = await _context.InventarioSoftware
-            .Where(s => s.ComEntidadId == entity.ComepgdEntId && s.Activo)
+            .Where(s => s.ComEntidadId == entity.ComepgdEntId)
             .ToListAsync(cancellationToken);
 
         var sistemasList = await _context.InventarioSistemasInfo
-            .Where(s => s.ComEntidadId == entity.ComepgdEntId && s.Activo)
+            .Where(s => s.ComEntidadId == entity.ComepgdEntId)
             .ToListAsync(cancellationToken);
 
         var redList = await _context.InventarioRed
-            .Where(r => r.ComEntidadId == entity.ComepgdEntId && r.Activo)
+            .Where(r => r.ComEntidadId == entity.ComepgdEntId)
             .ToListAsync(cancellationToken);
 
         var servidoresList = await _context.InventarioServidores
-            .Where(s => s.ComEntidadId == entity.ComepgdEntId && s.Activo)
+            .Where(s => s.ComEntidadId == entity.ComepgdEntId)
             .ToListAsync(cancellationToken);
 
         var seguridadInfo = await _context.SeguridadInfo
-            .FirstOrDefaultAsync(s => s.ComEntidadId == entity.ComepgdEntId && s.Activo, cancellationToken);
+            .FirstOrDefaultAsync(s => s.ComEntidadId == entity.ComepgdEntId, cancellationToken);
 
         var objetivosList = await _context.ObjetivosEntidades
-            .Where(o => o.ComEntidadId == entity.ComepgdEntId && o.Activo)
+            .Where(o => o.ComEntidadId == entity.ComepgdEntId)
             .ToListAsync(cancellationToken);
 
         var proyectosList = await _context.ProyectosEntidades
-            .Where(p => p.ComEntidadId == entity.ComepgdEntId && p.Activo)
+            .Where(p => p.ComEntidadId == entity.ComepgdEntId)
             .ToListAsync(cancellationToken);
 
         return new Com3EPGDResponse
@@ -713,8 +679,7 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 GradoInstruccion = p.GradoInstruccion,
                 Certificacion = p.Certificacion,
                 EmailPersonal = p.EmailPersonal,
-                Telefono = p.Telefono,
-                Activo = p.Activo
+                Telefono = p.Telefono
             }).ToList(),
             InventariosSoftware = softwareList.Select(s => new InventarioSoftwareDto
             {
@@ -723,11 +688,10 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 NombreProducto = s.NombreProducto,
                 Version = s.Version,
                 TipoSoftware = s.TipoSoftware,
-                CantidadInstalaciones = s.CantidadInstalaciones,
-                CantidadLicencias = s.CantidadLicencias,
-                ExcesoDeficiencia = s.ExcesoDeficiencia,
-                CostoLicencias = s.CostoLicencias,
-                Activo = s.Activo
+                CantidadInstalaciones = (int)s.CantidadInstalaciones,
+                CantidadLicencias = (int)s.CantidadLicencias,
+                ExcesoDeficiencia = (int)s.ExcesoDeficiencia,
+                CostoLicencias = s.CostoLicencias
             }).ToList(),
             InventariosSistemas = sistemasList.Select(s => new InventarioSistemasInfoDto
             {
@@ -738,19 +702,17 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 TipoSistema = s.TipoSistema,
                 LenguajeProgramacion = s.LenguajeProgramacion,
                 BaseDatos = s.BaseDatos,
-                Plataforma = s.Plataforma,
-                Activo = s.Activo
+                Plataforma = s.Plataforma
             }).ToList(),
             InventariosRed = redList.Select(r => new InventarioRedDto
             {
                 InvRedId = r.InvRedId,
                 TipoEquipo = r.TipoEquipo,
-                Cantidad = r.Cantidad,
-                PuertosOperativos = r.PuertosOperativos,
-                PuertosInoperativos = r.PuertosInoperativos,
+                Cantidad = (int)r.Cantidad,
+                PuertosOperativos = (int)r.PuertosOperativos,
+                PuertosInoperativos = (int)r.PuertosInoperativos,
                 CostoMantenimientoAnual = r.CostoMantenimientoAnual,
-                Observaciones = r.Observaciones,
-                Activo = r.Activo
+                Observaciones = r.Observaciones
             }).ToList(),
             InventariosServidores = servidoresList.Select(s => new InventarioServidoresDto
             {
@@ -760,18 +722,16 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 Estado = s.Estado,
                 Capa = s.Capa,
                 Propiedad = s.Propiedad,
-                MemoriaGb = s.MemoriaGb,
+                MemoriaGb = (int)s.MemoriaGb,
                 CostoMantenimientoAnual = s.CostoMantenimientoAnual,
-                Observaciones = s.Observaciones,
-                Activo = s.Activo
+                Observaciones = s.Observaciones
             }).ToList(),
             Objetivos = objetivosList.Select(o => new ObjetivoEntidadDto
             {
                 ObjEntId = o.ObjEntId,
                 TipoObj = o.TipoObj,
                 NumeracionObj = o.NumeracionObj,
-                DescripcionObjetivo = o.DescripcionObjetivo,
-                Activo = o.Activo
+                DescripcionObjetivo = o.DescripcionObjetivo
             }).ToList(),
             Proyectos = proyectosList.Select(p => new ProyectoEntidadDto
             {
@@ -787,8 +747,7 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 FecFinProg = p.FecFinProg,
                 FecIniReal = p.FecIniReal,
                 FecFinReal = p.FecFinReal,
-                MontoInversion = p.MontoInversion,
-                Activo = p.Activo
+                MontoInversion = p.MontoInversion
             }).ToList()
         };
     }
