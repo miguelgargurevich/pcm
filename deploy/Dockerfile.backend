@@ -1,0 +1,35 @@
+# Usar la imagen oficial de .NET 9 SDK para build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+
+# Copiar archivos de proyecto y restaurar dependencias
+COPY PCM.Domain/*.csproj ./PCM.Domain/
+COPY PCM.Application/*.csproj ./PCM.Application/
+COPY PCM.Infrastructure/*.csproj ./PCM.Infrastructure/
+COPY PCM.Shared/*.csproj ./PCM.Shared/
+COPY PCM.API/*.csproj ./PCM.API/
+RUN dotnet restore PCM.API/PCM.API.csproj
+
+# Copiar todo el código y compilar
+COPY . .
+WORKDIR /src/PCM.API
+RUN dotnet clean && dotnet publish -c Release -o /app/publish --no-restore
+
+# Usar la imagen runtime de .NET 9 para ejecutar
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+WORKDIR /app
+COPY --from=build /app/publish .
+
+# Crear usuario no-root para seguridad
+RUN adduser --disabled-password --gecos '' appuser && chown -R appuser /app
+USER appuser
+
+# Exponer puerto
+EXPOSE 8080
+
+# Health check (usando wget ya que curl puede no estar disponible)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
+
+# Comando de inicio
+ENTRYPOINT ["dotnet", "PCM.API.dll"]
