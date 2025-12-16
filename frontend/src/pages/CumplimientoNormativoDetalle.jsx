@@ -2577,8 +2577,8 @@ const CumplimientoNormativoDetalle = () => {
           nuevosErrores.numeroDocumento = 'Ingrese el número de documento';
         }
       }
-      else {
-        // Validación para Compromiso 1 y otros (Líder)
+      else if (parseInt(formData.compromisoId) !== 3) {
+        // Validación para Compromiso 1 y otros (Líder) - EXCEPTO Compromiso 3
         if (!formData.nroDni) nuevosErrores.nroDni = 'Ingrese el DNI';
         if (formData.nroDni && formData.nroDni.length !== 8) nuevosErrores.nroDni = 'El DNI debe tener 8 dígitos';
         if (!formData.nombres) nuevosErrores.nombres = 'Ingrese los nombres';
@@ -9054,8 +9054,8 @@ const CumplimientoNormativoDetalle = () => {
                   </div>
                 </div>
               </>
-            ) : (
-              // COMPROMISO 1 y OTROS: Datos del Líder
+            ) : parseInt(formData.compromisoId) !== 3 ? (
+              // COMPROMISO 1 y OTROS: Datos del Líder (EXCEPTO Compromiso 3)
               <>
                 <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Registrar Compromiso - Datos Generales del Líder</h2>
 
@@ -9230,7 +9230,7 @@ const CumplimientoNormativoDetalle = () => {
               </div>
             </div>
             </>
-            )}
+            ) : null}
           </div>
         )}
 
