@@ -166,13 +166,13 @@ public class CatalogosController : ControllerBase
     {
         try
         {
-            // Consulta directa con SQL ya que EstadoCompromiso no está en el modelo EF
+            // Consulta directa con SQL ya que EstadoCumplimiento no está en el modelo EF
             var estados = await _context.Database
                 .SqlQuery<EstadoCompromisoDto>($@"
-                    SELECT estado_id AS EstadoId, nombre AS Nombre, descripcion AS Descripcion
-                    FROM estado_compromiso 
+                    SELECT estado_cump_id AS EstadoId, nombre AS Nombre, descripcion AS Descripcion
+                    FROM estado_cumplimiento 
                     WHERE activo = true 
-                    ORDER BY estado_id")
+                    ORDER BY estado_cump_id")
                 .ToListAsync();
 
             var result = estados.Select(e => new
