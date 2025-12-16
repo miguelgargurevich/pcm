@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2, Shield } from 'lucide-react';
+import { Plus, Trash2, Edit2, Shield, X } from 'lucide-react';
 
 /**
  * Componente para gestionar la Seguridad de la Información

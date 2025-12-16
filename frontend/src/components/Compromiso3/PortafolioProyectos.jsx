@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2, Upload, Download } from 'lucide-react';
+import { Plus, Trash2, Edit2, Upload, Download, X } from 'lucide-react';
 
 /**
  * Componente para gestionar el Portafolio de Proyectos
@@ -273,12 +273,20 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
 
       {/* Modal para Proyecto */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4">
-              {editingProyecto ? 'Editar Proyecto' : 'Nuevo Proyecto'}
-            </h3>
-            <div className="space-y-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+          <div className="relative bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900">
+                {editingProyecto ? 'Editar Proyecto' : 'Nuevo Proyecto'}
+              </h3>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="p-6 space-y-6">
               {/* Sección 1: Datos Básicos */}
               <div className="bg-gray-50 p-4 rounded-lg space-y-3">
                 <h4 className="text-sm font-medium text-gray-900">Datos Básicos</h4>
@@ -582,14 +590,16 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
               <button
+                type="button"
                 onClick={() => setShowModal(false)}
                 className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Cancelar
               </button>
               <button
+                type="button"
                 onClick={handleSaveProyecto}
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
               >

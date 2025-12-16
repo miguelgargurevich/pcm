@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Trash2, Edit2, ChevronDown, ChevronUp, X } from 'lucide-react';
 
 /**
  * Componente para gestionar Objetivos de Gobierno Digital

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2 } from 'lucide-react';
+import { Plus, Trash2, Edit2, X } from 'lucide-react';
 
 /**
  * Componente para gestionar el Inventario de Software
