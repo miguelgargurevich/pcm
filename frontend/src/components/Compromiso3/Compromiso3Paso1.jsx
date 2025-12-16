@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react';
-import { Target, Building2, FolderKanban, Monitor } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Target, Building2, FolderKanban, Monitor, Save, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import ObjetivosEstrategicos from './ObjetivosEstrategicos';
 import ObjetivosGobiernoDigital from './ObjetivosGobiernoDigital';
 import SituacionActualGD from './SituacionActualGD';
 import PortafolioProyectos from './PortafolioProyectos';
 import com3EPGDService from '../../services/com3EPGDService';
+import { showErrorToast } from '../../utils/toast';
 
 /**
  * Componente principal para el Paso 1 del Compromiso 3
  * Contiene 4 tabs: Objetivos Estratégicos, Objetivos GD, Situación Actual GD, Portafolio de Proyectos
+ * Implementa auto-guardado con debounce
  */
 const Compromiso3Paso1 = ({ 
   entidadId, 
@@ -20,6 +22,12 @@ const Compromiso3Paso1 = ({
   const [activeTab, setActiveTab] = useState('objetivosEstrategicos');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  
+  // Estado de auto-guardado
+  const [saveStatus, setSaveStatus] = useState('idle'); // 'idle' | 'saving' | 'saved' | 'error'
+  const [lastSaved, setLastSaved] = useState(null);
+  const saveTimeoutRef = useRef(null);
+  const isSavingRef = useRef(false);
   
   // Estado para todos los datos del Compromiso 3
   const [formData, setFormData] = useState({
@@ -350,8 +358,96 @@ const Compromiso3Paso1 = ({
         proyectos: proyectosMapped
       };
       onDataChange(apiData);
+      
+      // Iniciar auto-guardado con debounce
+      scheduleAutoSave(apiData);
     }
   };
+
+  // Auto-guardado con debounce
+  const scheduleAutoSave = (data) => {
+    // Cancelar guardado anterior si existe
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    // Si ya está guardando, no programar otro
+    if (isSavingRef.current) {
+      return;
+    }
+
+    // Cambiar estado a "guardando pendiente"
+    setSaveStatus('idle');
+
+    // Programar guardado en 2 segundos
+    saveTimeoutRef.current = setTimeout(() => {
+      autoSave(data);
+    }, 2000);
+  };
+
+  const autoSave = async (data) => {
+    // Si está en modo vista, no guardar
+    if (viewMode) return;
+
+    // Si ya está guardando, no intentar de nuevo
+    if (isSavingRef.current) return;
+
+    try {
+      isSavingRef.current = true;
+      setSaveStatus('saving');
+
+      // Determinar si es crear o actualizar
+      const isUpdate = data.com3EPGDId != null;
+
+      console.log(`🔄 Auto-guardando Com3 (${isUpdate ? 'UPDATE' : 'CREATE'})...`);
+
+      let response;
+      if (isUpdate) {
+        response = await com3EPGDService.update(data.com3EPGDId, data);
+      } else {
+        response = await com3EPGDService.create(data);
+      }
+
+      if (response.isSuccess || response.success) {
+        setSaveStatus('saved');
+        setLastSaved(new Date());
+        
+        // Si era creación, actualizar el ID
+        if (!isUpdate && response.data?.comepgdEntId) {
+          setFormData(prev => ({ ...prev, com3EPGDId: response.data.comepgdEntId }));
+        }
+
+        console.log('✅ Com3 guardado exitosamente');
+        
+        // Volver a 'idle' después de 3 segundos
+        setTimeout(() => {
+          setSaveStatus('idle');
+        }, 3000);
+      } else {
+        throw new Error(response.message || 'Error al guardar');
+      }
+    } catch (error) {
+      console.error('❌ Error en auto-guardado:', error);
+      setSaveStatus('error');
+      showErrorToast('Error al guardar automáticamente. Intente nuevamente.');
+      
+      // Volver a 'idle' después de 5 segundos para permitir reintentos
+      setTimeout(() => {
+        setSaveStatus('idle');
+      }, 5000);
+    } finally {
+      isSavingRef.current = false;
+    }
+  };
+
+  // Limpiar timeout al desmontar
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Obtener objetivos por tipo
   const getObjetivosPorTipo = (tipo) => {
@@ -420,16 +516,52 @@ const Compromiso3Paso1 = ({
     );
   }
 
+  // Renderizar indicador de guardado
+  const renderSaveIndicator = () => {
+    if (viewMode) return null;
+
+    const statusConfig = {
+      idle: { icon: null, text: '', color: '' },
+      saving: { icon: Loader2, text: 'Guardando...', color: 'text-blue-600' },
+      saved: { icon: CheckCircle2, text: 'Guardado', color: 'text-green-600' },
+      error: { icon: AlertCircle, text: 'Error al guardar', color: 'text-red-600' }
+    };
+
+    const config = statusConfig[saveStatus];
+    if (!config.icon) return null;
+
+    const Icon = config.icon;
+
+    return (
+      <div className={`flex items-center gap-2 text-sm ${config.color}`}>
+        <Icon className={`w-4 h-4 ${saveStatus === 'saving' ? 'animate-spin' : ''}`} />
+        <span>{config.text}</span>
+        {saveStatus === 'saved' && lastSaved && (
+          <span className="text-gray-500 text-xs">
+            {new Date(lastSaved).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}
+          </span>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
-        <h2 className="text-xl font-semibold text-gray-800">
-          Compromiso 3: Elaborar el Plan de Gobierno Digital
-        </h2>
-        <p className="text-gray-600 text-sm mt-1">
-          Complete la información requerida para la elaboración del Plan de Gobierno Digital de la entidad.
-        </p>
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h2 className="text-xl font-semibold text-gray-800">
+              Compromiso 3: Elaborar el Plan de Gobierno Digital
+            </h2>
+            <p className="text-gray-600 text-sm mt-1">
+              Complete la información requerida para la elaboración del Plan de Gobierno Digital de la entidad.
+            </p>
+          </div>
+          <div className="ml-4">
+            {renderSaveIndicator()}
+          </div>
+        </div>
       </div>
 
       {/* Tabs Navigation */}
