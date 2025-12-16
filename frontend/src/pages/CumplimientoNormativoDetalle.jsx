@@ -2216,6 +2216,8 @@ const CumplimientoNormativoDetalle = () => {
   const validarPaso = (paso) => {
     const nuevosErrores = {};
 
+    console.log('🔍 VALIDAR PASO:', paso, 'compromisoId:', formData.compromisoId, 'tipo:', typeof formData.compromisoId);
+
     if (paso === 1) {
       if (!formData.compromisoId) {
         showErrorToast('Debe seleccionar un compromiso desde la página principal');
