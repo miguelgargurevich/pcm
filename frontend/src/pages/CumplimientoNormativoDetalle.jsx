@@ -2230,6 +2230,23 @@ const CumplimientoNormativoDetalle = () => {
           showErrorToast('Debe agregar al menos un miembro del comité');
         }
       }
+      // Validación específica para Compromiso 3 (Elaboración PEGD)
+      else if (parseInt(formData.compromisoId) === 3) {
+        // Verificar que haya al menos un objetivo (estratégico o GD)
+        const objetivosEstrategicos = formData.objetivos?.filter(obj => obj.tipo === 'E') || [];
+        const objetivosGD = formData.objetivos?.filter(obj => obj.tipo === 'G') || [];
+        
+        if (objetivosEstrategicos.length === 0 && objetivosGD.length === 0) {
+          nuevosErrores.objetivos = 'Debe agregar al menos un objetivo (estratégico o de GD)';
+        } else {
+          // Verificar que cada objetivo tenga al menos una acción
+          const todosObjetivos = [...objetivosEstrategicos, ...objetivosGD];
+          const objetivosSinAcciones = todosObjetivos.filter(obj => !obj.acciones || obj.acciones.length === 0);
+          if (objetivosSinAcciones.length > 0) {
+            nuevosErrores.objetivos = 'Cada objetivo debe tener al menos una acción';
+          }
+        }
+      }
       // Validación específica para Compromiso 4 (Incorporar TD en el PEI)
       else if (parseInt(formData.compromisoId) === 4) {
         if (!formData.anioInicio) {
