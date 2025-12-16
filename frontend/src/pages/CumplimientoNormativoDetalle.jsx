@@ -2232,25 +2232,11 @@ const CumplimientoNormativoDetalle = () => {
       }
       // Validación específica para Compromiso 3 (Elaboración PEGD)
       else if (parseInt(formData.compromisoId) === 3) {
-        // Los datos de Compromiso 3 están en com3Data, no en formData
-        if (!com3Data || !com3Data.objetivos) {
-          nuevosErrores.objetivos = 'Debe completar la información del Plan de Gobierno Digital';
-        } else {
-          // Verificar que haya al menos un objetivo (estratégico o GD)
-          const objetivosEstrategicos = com3Data.objetivos.filter(obj => obj.tipo === 'E') || [];
-          const objetivosGD = com3Data.objetivos.filter(obj => obj.tipo === 'G') || [];
-          
-          if (objetivosEstrategicos.length === 0 && objetivosGD.length === 0) {
-            nuevosErrores.objetivos = 'Debe agregar al menos un objetivo (estratégico o de GD)';
-          } else {
-            // Verificar que cada objetivo tenga al menos una acción
-            const todosObjetivos = [...objetivosEstrategicos, ...objetivosGD];
-            const objetivosSinAcciones = todosObjetivos.filter(obj => !obj.acciones || obj.acciones.length === 0);
-            if (objetivosSinAcciones.length > 0) {
-              nuevosErrores.objetivos = 'Cada objetivo debe tener al menos una acción';
-            }
-          }
-        }
+        // Para Compromiso 3, NO se valida en este punto
+        // El componente Compromiso3Paso1 maneja su propia validación interna
+        // y guarda directamente al backend cuando el usuario interactúa
+        // Simplemente permitir avanzar al paso 2
+        console.log('✅ Compromiso 3 - Validación paso 1: permitir avanzar (sin validación frontend)');
       }
       // Validación específica para Compromiso 4 (Incorporar TD en el PEI)
       else if (parseInt(formData.compromisoId) === 4) {
