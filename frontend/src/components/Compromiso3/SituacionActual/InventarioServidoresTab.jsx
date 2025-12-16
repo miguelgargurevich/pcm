@@ -243,7 +243,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
             <div className="space-y-6">
               {/* Sección: Datos Generales */}
               <div>
-                <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">📋 Datos Generales</h4>
+                <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">Datos Generales</h4>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del Equipo *</label>
@@ -335,7 +335,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
 
               {/* Sección: Hardware - CPU */}
               <div>
-                <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">💻 Hardware - Procesador (CPU)</h4>
+                <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">Hardware - Procesador (CPU)</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Marca CPU *</label>
@@ -391,7 +391,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
 
               {/* Sección: Hardware - Memoria */}
               <div>
-                <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">🧠 Hardware - Memoria (RAM)</h4>
+                <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">Hardware - Memoria (RAM)</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Memoria Total (GB) *</label>
@@ -446,7 +446,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
 
               {/* Sección: Costos */}
               <div>
-                <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">💰 Costos</h4>
+                <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">Costos</h4>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Costo Mantenimiento Anual (S/) *</label>
                   <input

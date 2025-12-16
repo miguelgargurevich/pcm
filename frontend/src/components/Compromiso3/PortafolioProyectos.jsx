@@ -281,7 +281,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
             <div className="space-y-4">
               {/* Sección 1: Datos Básicos */}
               <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-                <h4 className="text-sm font-medium text-gray-900">📋 Datos Básicos</h4>
+                <h4 className="text-sm font-medium text-gray-900">Datos Básicos</h4>
                 <div className="grid grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Código</label>

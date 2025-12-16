@@ -137,7 +137,7 @@ const EstructuraOrganizacional = ({
     <div className="space-y-6">
       {/* Header - Datos Generales Obligatorios */}
       <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-        <h4 className="font-medium text-gray-800 mb-4">📋 Datos Generales (Obligatorios)</h4>
+        <h4 className="font-medium text-gray-800 mb-4">Datos Generales (Obligatorios)</h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
