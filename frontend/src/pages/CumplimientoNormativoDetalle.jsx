@@ -2591,29 +2591,52 @@ const CumplimientoNormativoDetalle = () => {
     }
 
     if (paso === 2) {
-      if (!formData.documentoFile && !pdfUrlPaso2) {
-        nuevosErrores.documentoFile = 'Debe adjuntar el documento normativo (PDF)';
-      }
-      // Validar que todos los criterios activos del compromiso estén marcados
-      if (compromisoSeleccionado?.criteriosEvaluacion) {
-        const criteriosActivos = compromisoSeleccionado.criteriosEvaluacion.filter(c => c.activo);
-        console.log('🔍 VALIDACIÓN - criteriosActivos:', criteriosActivos);
-        console.log('🔍 VALIDACIÓN - formData.criteriosEvaluados:', formData.criteriosEvaluados);
-        
-        const criteriosFaltantes = criteriosActivos.filter(criterio => {
-          const evaluado = formData.criteriosEvaluados.find(c => {
-            const match = Number(c.criterioId) === Number(criterio.criterioEvaluacionId);
-            console.log(`🔍 Comparando: c.criterioId=${c.criterioId} (${typeof c.criterioId}) vs criterio.criterioEvaluacionId=${criterio.criterioEvaluacionId} (${typeof criterio.criterioEvaluacionId}) => match=${match}`);
-            return match;
+      // Validación específica para Compromiso 3 (PEGD)
+      if (parseInt(formData.compromisoId) === 3) {
+        // Para Compromiso 3, el documento PDF es opcional
+        // Los datos importantes están en el paso 1 (objetivos, situación actual, proyectos)
+        // Solo validar criterios si existen
+        if (compromisoSeleccionado?.criteriosEvaluacion) {
+          const criteriosActivos = compromisoSeleccionado.criteriosEvaluacion.filter(c => c.activo);
+          if (criteriosActivos.length > 0) {
+            const criteriosFaltantes = criteriosActivos.filter(criterio => {
+              const evaluado = formData.criteriosEvaluados.find(c => {
+                return Number(c.criterioId) === Number(criterio.criterioEvaluacionId);
+              });
+              return !evaluado || !evaluado.cumple;
+            });
+            
+            if (criteriosFaltantes.length > 0) {
+              nuevosErrores.criteriosEvaluacion = `Debe cumplir con todos los criterios de evaluación (${criteriosFaltantes.length} pendientes)`;
+            }
+          }
+        }
+      } else {
+        // Validación para otros compromisos (1, 2, 4-21)
+        if (!formData.documentoFile && !pdfUrlPaso2) {
+          nuevosErrores.documentoFile = 'Debe adjuntar el documento normativo (PDF)';
+        }
+        // Validar que todos los criterios activos del compromiso estén marcados
+        if (compromisoSeleccionado?.criteriosEvaluacion) {
+          const criteriosActivos = compromisoSeleccionado.criteriosEvaluacion.filter(c => c.activo);
+          console.log('🔍 VALIDACIÓN - criteriosActivos:', criteriosActivos);
+          console.log('🔍 VALIDACIÓN - formData.criteriosEvaluados:', formData.criteriosEvaluados);
+          
+          const criteriosFaltantes = criteriosActivos.filter(criterio => {
+            const evaluado = formData.criteriosEvaluados.find(c => {
+              const match = Number(c.criterioId) === Number(criterio.criterioEvaluacionId);
+              console.log(`🔍 Comparando: c.criterioId=${c.criterioId} (${typeof c.criterioId}) vs criterio.criterioEvaluacionId=${criterio.criterioEvaluacionId} (${typeof criterio.criterioEvaluacionId}) => match=${match}`);
+              return match;
+            });
+            console.log(`🔍 Criterio ${criterio.criterioEvaluacionId}: evaluado=`, evaluado, 'cumple=', evaluado?.cumple);
+            return !evaluado || !evaluado.cumple;
           });
-          console.log(`🔍 Criterio ${criterio.criterioEvaluacionId}: evaluado=`, evaluado, 'cumple=', evaluado?.cumple);
-          return !evaluado || !evaluado.cumple;
-        });
-        
-        console.log('🔍 VALIDACIÓN - criteriosFaltantes:', criteriosFaltantes);
-        
-        if (criteriosFaltantes.length > 0) {
-          nuevosErrores.criteriosEvaluacion = `Debe cumplir con todos los criterios de evaluación (${criteriosFaltantes.length} pendientes)`;
+          
+          console.log('🔍 VALIDACIÓN - criteriosFaltantes:', criteriosFaltantes);
+          
+          if (criteriosFaltantes.length > 0) {
+            nuevosErrores.criteriosEvaluacion = `Debe cumplir con todos los criterios de evaluación (${criteriosFaltantes.length} pendientes)`;
+          }
         }
       }
     }
