@@ -376,6 +376,23 @@ const Compromiso3Paso1 = ({
       return;
     }
 
+    // No auto-guardar si no hay entidadId (datos incompletos)
+    if (!entidadId) {
+      return;
+    }
+
+    // No auto-guardar si es creación y no hay datos relevantes
+    const hasData = 
+      (data.objetivos && data.objetivos.length > 0) ||
+      (data.proyectos && data.proyectos.length > 0) ||
+      (data.situacionActual?.personalTI && data.situacionActual.personalTI.length > 0) ||
+      data.situacionActual?.header?.fechaReporte;
+    
+    if (!data.com3EPGDId && !hasData) {
+      // Es una creación nueva sin datos, no guardar aún
+      return;
+    }
+
     // Cambiar estado a "guardando pendiente"
     setSaveStatus('idle');
 
@@ -392,20 +409,36 @@ const Compromiso3Paso1 = ({
     // Si ya está guardando, no intentar de nuevo
     if (isSavingRef.current) return;
 
+    // Validar que exista entidadId
+    if (!entidadId) {
+      console.warn('⚠️ No se puede auto-guardar sin entidadId');
+      return;
+    }
+
     try {
       isSavingRef.current = true;
       setSaveStatus('saving');
 
-      // Determinar si es crear o actualizar
-      const isUpdate = data.com3EPGDId != null;
+      // Asegurar que el objeto tenga comEntidadId
+      const dataToSave = {
+        ...data,
+        comEntidadId: entidadId
+      };
 
-      console.log(`🔄 Auto-guardando Com3 (${isUpdate ? 'UPDATE' : 'CREATE'})...`);
+      // Determinar si es crear o actualizar
+      const isUpdate = dataToSave.com3EPGDId != null;
+
+      console.log(`🔄 Auto-guardando Com3 (${isUpdate ? 'UPDATE' : 'CREATE'})...`, {
+        hasId: !!dataToSave.com3EPGDId,
+        objetivos: dataToSave.objetivos?.length || 0,
+        proyectos: dataToSave.proyectos?.length || 0
+      });
 
       let response;
       if (isUpdate) {
-        response = await com3EPGDService.update(data.com3EPGDId, data);
+        response = await com3EPGDService.update(dataToSave.com3EPGDId, dataToSave);
       } else {
-        response = await com3EPGDService.create(data);
+        response = await com3EPGDService.create(dataToSave);
       }
 
       if (response.isSuccess || response.success) {
