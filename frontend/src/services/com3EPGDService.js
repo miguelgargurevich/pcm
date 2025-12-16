@@ -23,6 +23,14 @@ const com3EPGDService = {
           data: null // No existe registro aún
         };
       }
+      // Error 400 con mensaje de columna no existe - Backend desactualizado
+      if (error.response?.status === 400 && error.response?.data?.message?.includes('Com3EPGDComepgdEntId')) {
+        console.log('⚠️ Backend desactualizado - esperando deployment. Retornando datos vacíos.');
+        return {
+          isSuccess: true,
+          data: null // Tratar como sin datos hasta que se actualice backend
+        };
+      }
       console.error('❌ Error al obtener Com3EPGD:', error);
       return {
         isSuccess: false,
