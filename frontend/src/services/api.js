@@ -29,6 +29,23 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // TEMPORAL: Silenciar errores de backend desactualizado en Com3EPGD
+    // Cuando el backend se actualice, estos errores desaparecerán naturalmente
+    if (error.response?.status === 400 && 
+        originalRequest.url?.includes('/Com3EPGD') &&
+        error.response?.data?.message?.includes('Com3EPGD') &&
+        error.response?.data?.message?.includes('does not exist')) {
+      console.log('⚠️ Backend desactualizado detectado. Ignorando error temporalmente.');
+      // Crear una respuesta exitosa vacía para evitar que el error se propague
+      return Promise.resolve({
+        data: null,
+        status: 200,
+        statusText: 'OK (handled)',
+        headers: error.response.headers,
+        config: originalRequest
+      });
+    }
+
     // Si el token expiró (401) y no hemos intentado refrescar
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;

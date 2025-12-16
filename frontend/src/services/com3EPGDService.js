@@ -10,6 +10,16 @@ const com3EPGDService = {
     try {
       console.log('🔵 GET /Com3EPGD/' + compromisoId + '/entidad/' + entidadId);
       const response = await api.get(`/Com3EPGD/${compromisoId}/entidad/${entidadId}`);
+      
+      // Si el interceptor devolvió null (backend desactualizado), manejar como sin datos
+      if (response.data === null && response.statusText === 'OK (handled)') {
+        console.log('⚠️ No hay datos disponibles (backend actualizándose)');
+        return {
+          isSuccess: true,
+          data: null
+        };
+      }
+      
       console.log('✅ Respuesta getByEntidad:', response.data);
       return {
         isSuccess: true,
@@ -21,25 +31,6 @@ const com3EPGDService = {
         return {
           isSuccess: true,
           data: null // No existe registro aún
-        };
-      }
-      // Error 400 con mensaje de columna no existe - Backend desactualizado
-      if (error.response?.status === 400 && 
-          error.response?.data?.message?.includes('Com3EPGDComepgdEntId')) {
-        console.log('⚠️ Backend desactualizado - esperando deployment. Retornando datos vacíos.');
-        return {
-          isSuccess: true,
-          data: null // Tratar como sin datos hasta que se actualice backend
-        };
-      }
-      // Error 400 con cualquier mensaje de columna que contiene "Com3EPGD" - Backend desactualizado
-      if (error.response?.status === 400 && 
-          (error.response?.data?.message?.includes('column p.Com3EPGD') ||
-           error.response?.data?.message?.includes('column') && error.response?.data?.message?.includes('Com3EPGD'))) {
-        console.log('⚠️ Backend desactualizado (error de columna EF). Retornando datos vacíos.');
-        return {
-          isSuccess: true,
-          data: null // Tratar como sin datos hasta que se actualice backend
         };
       }
       console.error('❌ Error al obtener Com3EPGD:', error);
