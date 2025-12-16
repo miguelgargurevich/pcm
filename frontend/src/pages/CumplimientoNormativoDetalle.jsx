@@ -2856,30 +2856,11 @@ const CumplimientoNormativoDetalle = () => {
       else if (parseInt(formData.compromisoId) === 3) {
         console.log(`🚀 Preparando datos para Com3 EPGD (Paso ${pasoActual})`);
         
-        // Paso 1: Guardar en com3_epgd usando el nuevo servicio
-        if (pasoActual === 1 && com3Data) {
-          console.log('📋 Paso 1 Com3 - Guardando datos del Plan de Gobierno Digital');
-          
-          const com3Payload = {
-            ...com3Data,
-            entidadId: user.entidadId,
-            cumplimientoNormativoId: cumplimientoNormativoId,
-            usuarioRegistra: user.userId
-          };
-          
-          if (com3RecordId) {
-            response = await com3EPGDService.update(com3RecordId, com3Payload);
-          } else {
-            response = await com3EPGDService.create(com3Payload);
-            if (response.isSuccess || response.success) {
-              const newId = response.data?.com3EPGDId;
-              if (newId) {
-                setCom3RecordId(newId);
-              }
-            }
-          }
-          
-          console.log('Respuesta Com3 Paso 1:', response);
+        // Paso 1: NO guardar aquí - el componente Compromiso3Paso1 maneja su propio guardado
+        if (pasoActual === 1) {
+          console.log('⏭️ Paso 1 Com3 - El componente interno ya guardó los datos, solo avanzar');
+          // Simular respuesta exitosa para permitir avanzar
+          response = { isSuccess: true, success: true, data: {} };
         }
         // Paso 2 y 3: Usar cumplimientoService para criterios y declaraciones
         else if (pasoActual >= 2) {
