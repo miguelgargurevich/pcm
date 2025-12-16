@@ -24,8 +24,19 @@ const com3EPGDService = {
         };
       }
       // Error 400 con mensaje de columna no existe - Backend desactualizado
-      if (error.response?.status === 400 && error.response?.data?.message?.includes('Com3EPGDComepgdEntId')) {
+      if (error.response?.status === 400 && 
+          error.response?.data?.message?.includes('Com3EPGDComepgdEntId')) {
         console.log('⚠️ Backend desactualizado - esperando deployment. Retornando datos vacíos.');
+        return {
+          isSuccess: true,
+          data: null // Tratar como sin datos hasta que se actualice backend
+        };
+      }
+      // Error 400 con cualquier mensaje de columna que contiene "Com3EPGD" - Backend desactualizado
+      if (error.response?.status === 400 && 
+          (error.response?.data?.message?.includes('column p.Com3EPGD') ||
+           error.response?.data?.message?.includes('column') && error.response?.data?.message?.includes('Com3EPGD'))) {
+        console.log('⚠️ Backend desactualizado (error de columna EF). Retornando datos vacíos.');
         return {
           isSuccess: true,
           data: null // Tratar como sin datos hasta que se actualice backend
