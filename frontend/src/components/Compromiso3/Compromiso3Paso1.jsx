@@ -99,16 +99,29 @@ const Compromiso3Paso1 = ({
       const response = await com3EPGDService.getByEntidad(entidadId);
       if (response.isSuccess && response.data) {
         const data = response.data;
+        
+        // Helper para convertir fecha ISO a YYYY-MM-DD
+        const formatDateForInput = (isoDate) => {
+          if (!isoDate) return '';
+          const date = new Date(isoDate);
+          return date.toISOString().split('T')[0];
+        };
+        
         // Mapear respuesta del backend (camelCase) a estructura del frontend
         setFormData({
           com3EPGDId: data.comepgdEntId,
           objetivos: data.objetivos || [],
           situacionActual: {
             header: {
+              fechaReporte: formatDateForInput(data.fechaReporte),
+              sede: data.sede,
+              observaciones: data.observaciones,
               ubicacionAreaTi: data.ubicacionAreaTi,
+              organigramaTi: data.organigramaTi,
               dependenciaAreaTi: data.dependenciaAreaTi,
               costoAnualTi: data.costoAnualTi,
-              existeComisionGdTi: data.existeComisionGdTi
+              existeComisionGdTi: data.existeComisionGdTi,
+              rutaPdfNormativa: data.rutaPdfNormativa
             },
             personalTI: data.personalTI || [],
             inventarioSoftware: data.inventariosSoftware || [],
@@ -118,7 +131,13 @@ const Compromiso3Paso1 = ({
             seguridadInfo: data.seguridadInfo || {},
             capacitacionesSeginfo: data.seguridadInfo?.capacitaciones || []
           },
-          proyectos: data.proyectos || []
+          proyectos: (data.proyectos || []).map(p => ({
+            ...p,
+            fechaInicio: formatDateForInput(p.fechaInicio || p.fecIniProg),
+            fechaFin: formatDateForInput(p.fechaFin || p.fecFinProg),
+            fecIniReal: formatDateForInput(p.fecIniReal),
+            fecFinReal: formatDateForInput(p.fecFinReal)
+          }))
         });
       }
     } catch (err) {
@@ -166,17 +185,17 @@ const Compromiso3Paso1 = ({
       // Mapear personal TI al formato del backend
       const personalTIMapped = (data.situacionActual?.personalTI || []).map(p => ({
         personalId: p.personalId || p.pTiId || null,
-        nombrePersona: p.apellidosNombres || p.nombrePersona || '',
+        nombrePersona: p.nombrePersona || '',
         dni: p.dni || '',
         cargo: p.cargo || '',
-        rol: p.regimen || p.rol || '',
-        especialidad: p.condicion || p.especialidad || '',
+        rol: p.rol || '',
+        especialidad: p.especialidad || '',
         gradoInstruccion: p.gradoInstruccion || '',
         certificacion: p.certificacion || '',
         acreditadora: p.acreditadora || '',
         codigoCertificacion: p.codigoCertificacion || '',
         colegiatura: p.colegiatura || '',
-        emailPersonal: p.correo || p.emailPersonal || '',
+        emailPersonal: p.emailPersonal || '',
         telefono: p.telefono || '',
         activo: p.activo !== false
       }));

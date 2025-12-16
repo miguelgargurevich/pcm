@@ -10,18 +10,21 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
   const [editingItem, setEditingItem] = useState(null);
   
   const [formItem, setFormItem] = useState({
-    tipoServidor: '',
-    marca: '',
-    modelo: '',
-    serie: '',
-    procesador: '',
-    memoria: '',
-    almacenamiento: '',
-    sistemaOperativo: '',
-    ubicacion: '',
+    nombreEquipo: '',
+    tipoEquipo: '',
     estado: '',
-    anoAdquisicion: '',
-    garantiaVigente: false,
+    capa: '',
+    propiedad: '',
+    montaje: '',
+    marcaCpu: '',
+    modeloCpu: '',
+    velocidadGhz: '',
+    nucleos: '',
+    memoriaGb: '',
+    marcaMemoria: '',
+    modeloMemoria: '',
+    cantidadMemoria: '',
+    costoMantenimientoAnual: '',
     observaciones: ''
   });
 
@@ -32,18 +35,21 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
   const handleAddItem = () => {
     setEditingItem(null);
     setFormItem({
-      tipoServidor: '',
-      marca: '',
-      modelo: '',
-      serie: '',
-      procesador: '',
-      memoria: '',
-      almacenamiento: '',
-      sistemaOperativo: '',
-      ubicacion: '',
+      nombreEquipo: '',
+      tipoEquipo: '',
       estado: '',
-      anoAdquisicion: '',
-      garantiaVigente: false,
+      capa: '',
+      propiedad: '',
+      montaje: '',
+      marcaCpu: '',
+      modeloCpu: '',
+      velocidadGhz: '',
+      nucleos: '',
+      memoriaGb: '',
+      marcaMemoria: '',
+      modeloMemoria: '',
+      cantidadMemoria: '',
+      costoMantenimientoAnual: '',
       observaciones: ''
     });
     setShowModal(true);
@@ -52,18 +58,21 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
   const handleEditItem = (item) => {
     setEditingItem(item);
     setFormItem({
-      tipoServidor: item.tipoServidor || '',
-      marca: item.marca || '',
-      modelo: item.modelo || '',
-      serie: item.serie || '',
-      procesador: item.procesador || '',
-      memoria: item.memoria || '',
-      almacenamiento: item.almacenamiento || '',
-      sistemaOperativo: item.sistemaOperativo || '',
-      ubicacion: item.ubicacion || '',
+      nombreEquipo: item.nombreEquipo || '',
+      tipoEquipo: item.tipoEquipo || '',
       estado: item.estado || '',
-      anoAdquisicion: item.anoAdquisicion || '',
-      garantiaVigente: item.garantiaVigente || false,
+      capa: item.capa || '',
+      propiedad: item.propiedad || '',
+      montaje: item.montaje || '',
+      marcaCpu: item.marcaCpu || '',
+      modeloCpu: item.modeloCpu || '',
+      velocidadGhz: item.velocidadGhz || '',
+      nucleos: item.nucleos || '',
+      memoriaGb: item.memoriaGb || '',
+      marcaMemoria: item.marcaMemoria || '',
+      modeloMemoria: item.modeloMemoria || '',
+      cantidadMemoria: item.cantidadMemoria || '',
+      costoMantenimientoAnual: item.costoMantenimientoAnual || '',
       observaciones: item.observaciones || ''
     });
     setShowModal(true);
@@ -76,7 +85,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
   };
 
   const handleSaveItem = () => {
-    if (!formItem.tipoServidor.trim()) return;
+    if (!formItem.nombreEquipo.trim()) return;
 
     let updated;
     if (editingItem) {
@@ -100,13 +109,31 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
     setShowModal(false);
   };
 
-  const tiposServidor = [
+  const tiposEquipo = [
     { value: 'Físico', label: 'Servidor Físico' },
     { value: 'Virtual', label: 'Servidor Virtual' },
-    { value: 'Cloud', label: 'Servidor en Nube' },
-    { value: 'Blade', label: 'Servidor Blade' },
-    { value: 'NAS', label: 'NAS' },
-    { value: 'SAN', label: 'SAN' }
+    { value: 'Cloud', label: 'Servidor en Nube' }
+  ];
+
+  const capas = [
+    { value: 'Aplicación', label: 'Aplicación' },
+    { value: 'Base de Datos', label: 'Base de Datos' },
+    { value: 'Web', label: 'Web' },
+    { value: 'Correo', label: 'Correo' },
+    { value: 'Archivos', label: 'Archivos' },
+    { value: 'Backup', label: 'Backup' }
+  ];
+
+  const propiedades = [
+    { value: 'Propio', label: 'Propio' },
+    { value: 'Arrendado', label: 'Arrendado' },
+    { value: 'Comodato', label: 'Comodato' }
+  ];
+
+  const montajes = [
+    { value: 'Rack', label: 'Rack' },
+    { value: 'Torre', label: 'Torre' },
+    { value: 'Blade', label: 'Blade' }
   ];
 
   const estados = [
@@ -137,13 +164,13 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
           <thead className="bg-gray-50">
             <tr>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marca</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modelo</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Procesador</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">RAM</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S.O.</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Capa</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CPU</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">RAM (GB)</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo Mant.</th>
               {!viewMode && (
                 <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
               )}
@@ -162,12 +189,11 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                 return (
                   <tr key={itemId} className="hover:bg-gray-50">
                     <td className="px-3 py-2 text-sm text-gray-500">{index + 1}</td>
-                    <td className="px-3 py-2 text-sm text-gray-900">{item.tipoServidor}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.marca}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.modelo}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.procesador}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.memoria}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.sistemaOperativo}</td>
+                    <td className="px-3 py-2 text-sm text-gray-900">{item.nombreEquipo}</td>
+                    <td className="px-3 py-2 text-sm text-gray-500">{item.tipoEquipo}</td>
+                    <td className="px-3 py-2 text-sm text-gray-500">{item.capa}</td>
+                    <td className="px-3 py-2 text-sm text-gray-500">{item.marcaCpu} {item.modeloCpu} @ {item.velocidadGhz}GHz ({item.nucleos} núcleos)</td>
+                    <td className="px-3 py-2 text-sm text-gray-500">{item.memoriaGb}</td>
                     <td className="px-3 py-2 text-sm text-gray-500">
                       <span className={`px-2 py-1 rounded-full text-xs ${
                         item.estado === 'Operativo' ? 'bg-green-100 text-green-800' :
@@ -178,6 +204,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                         {item.estado}
                       </span>
                     </td>
+                    <td className="px-3 py-2 text-sm text-gray-500">S/ {parseFloat(item.costoMantenimientoAnual || 0).toFixed(2)}</td>
                     {!viewMode && (
                       <td className="px-3 py-2 text-center">
                         <div className="flex items-center justify-center gap-1">
@@ -213,153 +240,237 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
             <h3 className="text-lg font-semibold mb-4">
               {editingItem ? 'Editar Servidor' : 'Agregar Servidor'}
             </h3>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tipo de Servidor *
-                  </label>
-                  <select
-                    value={formItem.tipoServidor}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, tipoServidor: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Seleccione...</option>
-                    {tiposServidor.map(t => (
-                      <option key={t.value} value={t.value}>{t.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
-                  <select
-                    value={formItem.estado}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, estado: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Seleccione...</option>
-                    {estados.map(e => (
-                      <option key={e.value} value={e.value}>{e.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
-                  <input
-                    type="text"
-                    value={formItem.marca}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, marca: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Ej: HP, Dell, IBM"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Modelo</label>
-                  <input
-                    type="text"
-                    value={formItem.modelo}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, modelo: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">N° Serie</label>
-                  <input
-                    type="text"
-                    value={formItem.serie}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, serie: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Procesador</label>
-                  <input
-                    type="text"
-                    value={formItem.procesador}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, procesador: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Ej: Intel Xeon E5"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Memoria RAM</label>
-                  <input
-                    type="text"
-                    value={formItem.memoria}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, memoria: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Ej: 64 GB"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Almacenamiento</label>
-                  <input
-                    type="text"
-                    value={formItem.almacenamiento}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, almacenamiento: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Ej: 2 TB SSD"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Sistema Operativo</label>
-                  <input
-                    type="text"
-                    value={formItem.sistemaOperativo}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, sistemaOperativo: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Ej: Windows Server 2022, Ubuntu 22.04"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ubicación</label>
-                  <input
-                    type="text"
-                    value={formItem.ubicacion}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, ubicacion: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Ej: Data Center Principal"
-                  />
+            <div className="space-y-6">
+              {/* Sección: Datos Generales */}
+              <div>
+                <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">📋 Datos Generales</h4>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del Equipo *</label>
+                    <input
+                      type="text"
+                      value={formItem.nombreEquipo}
+                      onChange={(e) => setFormItem(prev => ({ ...prev, nombreEquipo: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      maxLength="100"
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Equipo *</label>
+                      <select
+                        value={formItem.tipoEquipo}
+                        onChange={(e) => setFormItem(prev => ({ ...prev, tipoEquipo: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {tiposEquipo.map(t => (
+                          <option key={t.value} value={t.value}>{t.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Estado *</label>
+                      <select
+                        value={formItem.estado}
+                        onChange={(e) => setFormItem(prev => ({ ...prev, estado: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {estados.map(e => (
+                          <option key={e.value} value={e.value}>{e.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Capa *</label>
+                      <select
+                        value={formItem.capa}
+                        onChange={(e) => setFormItem(prev => ({ ...prev, capa: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {capas.map(c => (
+                          <option key={c.value} value={c.value}>{c.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Propiedad *</label>
+                      <select
+                        value={formItem.propiedad}
+                        onChange={(e) => setFormItem(prev => ({ ...prev, propiedad: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {propiedades.map(p => (
+                          <option key={p.value} value={p.value}>{p.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Montaje *</label>
+                      <select
+                        value={formItem.montaje}
+                        onChange={(e) => setFormItem(prev => ({ ...prev, montaje: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      >
+                        <option value="">Seleccione...</option>
+                        {montajes.map(m => (
+                          <option key={m.value} value={m.value}>{m.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+
+              {/* Sección: Hardware - CPU */}
+              <div>
+                <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">💻 Hardware - Procesador (CPU)</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Marca CPU *</label>
+                    <input
+                      type="text"
+                      value={formItem.marcaCpu}
+                      onChange={(e) => setFormItem(prev => ({ ...prev, marcaCpu: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Ej: Intel, AMD"
+                      maxLength="50"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Modelo CPU *</label>
+                    <input
+                      type="text"
+                      value={formItem.modeloCpu}
+                      onChange={(e) => setFormItem(prev => ({ ...prev, modeloCpu: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Ej: Xeon E5-2680 v4"
+                      maxLength="50"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Velocidad (GHz) *</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={formItem.velocidadGhz}
+                      onChange={(e) => setFormItem(prev => ({ ...prev, velocidadGhz: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Ej: 2.40"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Núcleos *</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={formItem.nucleos}
+                      onChange={(e) => setFormItem(prev => ({ ...prev, nucleos: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Ej: 14"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Sección: Hardware - Memoria */}
+              <div>
+                <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">🧠 Hardware - Memoria (RAM)</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Memoria Total (GB) *</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={formItem.memoriaGb}
+                      onChange={(e) => setFormItem(prev => ({ ...prev, memoriaGb: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Ej: 64"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Cantidad de Módulos *</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={formItem.cantidadMemoria}
+                      onChange={(e) => setFormItem(prev => ({ ...prev, cantidadMemoria: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Ej: 4"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Marca Memoria *</label>
+                    <input
+                      type="text"
+                      value={formItem.marcaMemoria}
+                      onChange={(e) => setFormItem(prev => ({ ...prev, marcaMemoria: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Ej: Kingston, Samsung"
+                      maxLength="50"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Modelo Memoria *</label>
+                    <input
+                      type="text"
+                      value={formItem.modeloMemoria}
+                      onChange={(e) => setFormItem(prev => ({ ...prev, modeloMemoria: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Ej: DDR4-2666 ECC"
+                      maxLength="50"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Sección: Costos */}
+              <div>
+                <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">💰 Costos</h4>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Año Adquisición</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Costo Mantenimiento Anual (S/) *</label>
                   <input
                     type="number"
-                    value={formItem.anoAdquisicion}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, anoAdquisicion: e.target.value }))}
-                    min="2000"
-                    max="2030"
+                    step="0.01"
+                    min="0"
+                    value={formItem.costoMantenimientoAnual}
+                    onChange={(e) => setFormItem(prev => ({ ...prev, costoMantenimientoAnual: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="0.00"
+                    required
                   />
-                </div>
-                <div className="flex items-center gap-2 pt-6">
-                  <input
-                    type="checkbox"
-                    id="garantiaVigenteServ"
-                    checked={formItem.garantiaVigente}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, garantiaVigente: e.target.checked }))}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label htmlFor="garantiaVigenteServ" className="text-sm text-gray-700">
-                    Garantía vigente
-                  </label>
                 </div>
               </div>
+
+              {/* Observaciones */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
                 <textarea
                   value={formItem.observaciones}
                   onChange={(e) => setFormItem(prev => ({ ...prev, observaciones: e.target.value }))}
-                  rows={2}
+                  rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  maxLength="255"
                 />
               </div>
             </div>

@@ -10,14 +10,14 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
   const [editingItem, setEditingItem] = useState(null);
   
   const [formItem, setFormItem] = useState({
-    nombreSoftware: '',
+    codProducto: '',
+    nombreProducto: '',
     version: '',
+    cantidadInstalaciones: 0,
     tipoSoftware: '',
-    licencia: '',
-    cantidadLicencias: '',
-    vigenciaLicencia: '',
-    proveedor: '',
-    observaciones: ''
+    cantidadLicencias: 0,
+    excesoDeficiencia: 0,
+    costoLicencias: 0
   });
 
   useEffect(() => {
@@ -27,14 +27,14 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
   const handleAddItem = () => {
     setEditingItem(null);
     setFormItem({
-      nombreSoftware: '',
+      codProducto: '',
+      nombreProducto: '',
       version: '',
+      cantidadInstalaciones: 0,
       tipoSoftware: '',
-      licencia: '',
-      cantidadLicencias: '',
-      vigenciaLicencia: '',
-      proveedor: '',
-      observaciones: ''
+      cantidadLicencias: 0,
+      excesoDeficiencia: 0,
+      costoLicencias: 0
     });
     setShowModal(true);
   };
@@ -42,14 +42,14 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
   const handleEditItem = (item) => {
     setEditingItem(item);
     setFormItem({
-      nombreSoftware: item.nombreSoftware || '',
+      codProducto: item.codProducto || '',
+      nombreProducto: item.nombreProducto || '',
       version: item.version || '',
+      cantidadInstalaciones: item.cantidadInstalaciones || 0,
       tipoSoftware: item.tipoSoftware || '',
-      licencia: item.licencia || '',
-      cantidadLicencias: item.cantidadLicencias || '',
-      vigenciaLicencia: item.vigenciaLicencia || '',
-      proveedor: item.proveedor || '',
-      observaciones: item.observaciones || ''
+      cantidadLicencias: item.cantidadLicencias || 0,
+      excesoDeficiencia: item.excesoDeficiencia || 0,
+      costoLicencias: item.costoLicencias || 0
     });
     setShowModal(true);
   };
@@ -61,7 +61,11 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
   };
 
   const handleSaveItem = () => {
-    if (!formItem.nombreSoftware.trim()) return;
+    if (!formItem.nombreProducto.trim()) return;
+    
+    // Auto-calcular exceso/deficiencia
+    const exceso = parseInt(formItem.cantidadInstalaciones) - parseInt(formItem.cantidadLicencias);
+    formItem.excesoDeficiencia = exceso;
 
     let updated;
     if (editingItem) {
@@ -97,15 +101,6 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
     { value: 'Otro', label: 'Otro' }
   ];
 
-  const tiposLicencia = [
-    { value: 'Propietaria', label: 'Propietaria' },
-    { value: 'Open Source', label: 'Open Source' },
-    { value: 'Freeware', label: 'Freeware' },
-    { value: 'Shareware', label: 'Shareware' },
-    { value: 'Suscripción', label: 'Suscripción' },
-    { value: 'Perpetua', label: 'Perpetua' }
-  ];
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -126,13 +121,14 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
           <thead className="bg-gray-50">
             <tr>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Código</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Versión</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Licencia</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cant. Lic.</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vigencia</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Proveedor</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Instalaciones</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Licencias</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Exceso/Def.</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo (S/)</th>
               {!viewMode && (
                 <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
               )}
@@ -141,7 +137,7 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
           <tbody className="divide-y divide-gray-200">
             {localInventario.length === 0 ? (
               <tr>
-                <td colSpan={viewMode ? 8 : 9} className="px-3 py-4 text-center text-gray-500">
+                <td colSpan={viewMode ? 9 : 10} className="px-3 py-4 text-center text-gray-500">
                   No hay software registrado
                 </td>
               </tr>
@@ -151,13 +147,18 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
                 return (
                   <tr key={itemId} className="hover:bg-gray-50">
                     <td className="px-3 py-2 text-sm text-gray-500">{index + 1}</td>
-                    <td className="px-3 py-2 text-sm text-gray-900">{item.nombreSoftware}</td>
+                    <td className="px-3 py-2 text-sm text-gray-900">{item.codProducto}</td>
+                    <td className="px-3 py-2 text-sm text-gray-900">{item.nombreProducto}</td>
                     <td className="px-3 py-2 text-sm text-gray-500">{item.version}</td>
                     <td className="px-3 py-2 text-sm text-gray-500">{item.tipoSoftware}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.licencia}</td>
+                    <td className="px-3 py-2 text-sm text-gray-500">{item.cantidadInstalaciones}</td>
                     <td className="px-3 py-2 text-sm text-gray-500">{item.cantidadLicencias}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.vigenciaLicencia}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.proveedor}</td>
+                    <td className="px-3 py-2 text-sm text-gray-500">
+                      <span className={item.excesoDeficiencia > 0 ? 'text-red-600' : item.excesoDeficiencia < 0 ? 'text-orange-600' : 'text-green-600'}>
+                        {item.excesoDeficiencia}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-sm text-gray-500">{parseFloat(item.costoLicencias || 0).toFixed(2)}</td>
                     {!viewMode && (
                       <td className="px-3 py-2 text-center">
                         <div className="flex items-center justify-center gap-1">
@@ -196,31 +197,49 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Nombre del Software *
+                  Código del Producto *
                 </label>
                 <input
                   type="text"
-                  value={formItem.nombreSoftware}
-                  onChange={(e) => setFormItem(prev => ({ ...prev, nombreSoftware: e.target.value }))}
+                  value={formItem.codProducto}
+                  onChange={(e) => setFormItem(prev => ({ ...prev, codProducto: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  maxLength="50"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nombre del Producto *
+                </label>
+                <input
+                  type="text"
+                  value={formItem.nombreProducto}
+                  onChange={(e) => setFormItem(prev => ({ ...prev, nombreProducto: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  maxLength="150"
+                  required
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Versión</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Versión *</label>
                   <input
                     type="text"
                     value={formItem.version}
                     onChange={(e) => setFormItem(prev => ({ ...prev, version: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    maxLength="50"
+                    required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Software</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Software *</label>
                   <select
                     value={formItem.tipoSoftware}
                     onChange={(e) => setFormItem(prev => ({ ...prev, tipoSoftware: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
                   >
                     <option value="">Seleccione...</option>
                     {tiposSoftware.map(t => (
@@ -231,56 +250,71 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Licencia</label>
-                  <select
-                    value={formItem.licencia}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, licencia: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Seleccione...</option>
-                    {tiposLicencia.map(t => (
-                      <option key={t.value} value={t.value}>{t.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Cantidad de Licencias</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Cantidad de Instalaciones *</label>
                   <input
                     type="number"
-                    value={formItem.cantidadLicencias}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, cantidadLicencias: e.target.value }))}
+                    min="0"
+                    value={formItem.cantidadInstalaciones}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value) || 0;
+                      const exceso = value - (parseInt(formItem.cantidadLicencias) || 0);
+                      setFormItem(prev => ({ 
+                        ...prev, 
+                        cantidadInstalaciones: value,
+                        excesoDeficiencia: exceso
+                      }));
+                    }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Cantidad de Licencias *</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={formItem.cantidadLicencias}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value) || 0;
+                      const exceso = (parseInt(formItem.cantidadInstalaciones) || 0) - value;
+                      setFormItem(prev => ({ 
+                        ...prev, 
+                        cantidadLicencias: value,
+                        excesoDeficiencia: exceso
+                      }));
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Vigencia de Licencia</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Exceso/Deficiencia (Auto-calculado)
+                  </label>
                   <input
-                    type="date"
-                    value={formItem.vigenciaLicencia}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, vigenciaLicencia: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    type="number"
+                    value={formItem.excesoDeficiencia}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Positivo = Exceso | Negativo = Deficiencia
+                  </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Proveedor</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Costo de Licencias (S/) *</label>
                   <input
-                    type="text"
-                    value={formItem.proveedor}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, proveedor: e.target.value }))}
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formItem.costoLicencias}
+                    onChange={(e) => setFormItem(prev => ({ ...prev, costoLicencias: parseFloat(e.target.value) || 0 }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
                   />
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
-                <textarea
-                  value={formItem.observaciones}
-                  onChange={(e) => setFormItem(prev => ({ ...prev, observaciones: e.target.value }))}
-                  rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-6">

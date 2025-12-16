@@ -17,13 +17,8 @@ const SeguridadInfoTab = ({
   const [editingItem, setEditingItem] = useState(null);
   
   const [formItem, setFormItem] = useState({
-    nombreCapacitacion: '',
-    fechaCapacitacion: '',
-    duracionHoras: '',
-    participantes: '',
-    proveedor: '',
-    modalidad: '',
-    observaciones: ''
+    curso: '',
+    cantidadPersonas: ''
   });
 
   useEffect(() => {
@@ -34,20 +29,19 @@ const SeguridadInfoTab = ({
     setLocalCapacitaciones(capacitacionesSeginfo);
   }, [capacitacionesSeginfo]);
 
-  // Checkboxes de evaluación de seguridad
+  // Checkboxes de evaluación de seguridad - CORREGIDOS según BD
   const checkboxOptions = [
     { key: 'cuentaPoliticaSeguridad', label: '¿Cuenta con Política de Seguridad de la Información?' },
     { key: 'cuentaOficialSeguridad', label: '¿Cuenta con Oficial de Seguridad de la Información?' },
     { key: 'cuentaComiteSeguridad', label: '¿Cuenta con Comité de Seguridad de la Información?' },
     { key: 'realizaAnalisisRiesgos', label: '¿Realiza análisis de riesgos de seguridad de la información?' },
     { key: 'cuentaPlanContingencia', label: '¿Cuenta con Plan de Contingencia de TI?' },
-    { key: 'cuentaBackupPeriodico', label: '¿Realiza backup periódico de la información?' },
-    { key: 'cuentaAntivirusCorporativo', label: '¿Cuenta con antivirus corporativo?' },
-    { key: 'cuentaFirewall', label: '¿Cuenta con Firewall?' },
-    { key: 'cuentaCertificadosSSL', label: '¿Cuenta con certificados SSL en sus sistemas web?' },
-    { key: 'realizaPruebasPenetracion', label: '¿Realiza pruebas de penetración?' },
     { key: 'cuentaNormaISO27001', label: '¿Cuenta con certificación ISO 27001?' },
-    { key: 'cuentaSGSI', label: '¿Cuenta con Sistema de Gestión de Seguridad de la Información (SGSI)?' }
+    { key: 'cuentaSGSI', label: '¿Cuenta con Sistema de Gestión de Seguridad de la Información (SGSI)?' },
+    { key: 'inventarioActivos', label: '¿Cuenta con inventario de activos de información?' },
+    { key: 'metodologiaRiesgos', label: '¿Cuenta con metodología de evaluación de riesgos?' },
+    { key: 'programaAuditorias', label: '¿Cuenta con programa de auditorías de seguridad?' },
+    { key: 'informesDireccion', label: '¿Emite informes periódicos de seguridad a la dirección?' }
   ];
 
   const handleCheckboxChange = (key, value) => {
@@ -62,13 +56,8 @@ const SeguridadInfoTab = ({
   const handleAddCapacitacion = () => {
     setEditingItem(null);
     setFormItem({
-      nombreCapacitacion: '',
-      fechaCapacitacion: '',
-      duracionHoras: '',
-      participantes: '',
-      proveedor: '',
-      modalidad: '',
-      observaciones: ''
+      curso: '',
+      cantidadPersonas: ''
     });
     setShowModal(true);
   };
@@ -76,13 +65,8 @@ const SeguridadInfoTab = ({
   const handleEditCapacitacion = (item) => {
     setEditingItem(item);
     setFormItem({
-      nombreCapacitacion: item.nombreCapacitacion || '',
-      fechaCapacitacion: item.fechaCapacitacion || '',
-      duracionHoras: item.duracionHoras || '',
-      participantes: item.participantes || '',
-      proveedor: item.proveedor || '',
-      modalidad: item.modalidad || '',
-      observaciones: item.observaciones || ''
+      curso: item.curso || '',
+      cantidadPersonas: item.cantidadPersonas || ''
     });
     setShowModal(true);
   };
@@ -97,7 +81,7 @@ const SeguridadInfoTab = ({
   };
 
   const handleSaveCapacitacion = () => {
-    if (!formItem.nombreCapacitacion.trim()) return;
+    if (!formItem.curso.trim()) return;
 
     let updated;
     if (editingItem) {
@@ -124,12 +108,7 @@ const SeguridadInfoTab = ({
     setShowModal(false);
   };
 
-  const modalidades = [
-    { value: 'Presencial', label: 'Presencial' },
-    { value: 'Virtual', label: 'Virtual' },
-    { value: 'Híbrido', label: 'Híbrido' },
-    { value: 'E-learning', label: 'E-learning' }
-  ];
+  
 
   return (
     <div className="space-y-6">
@@ -196,12 +175,8 @@ const SeguridadInfoTab = ({
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Capacitación</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Horas</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participantes</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Proveedor</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modalidad</th>
+                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Curso de Capacitación</th>
+                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad de Personas</th>
                 {!viewMode && (
                   <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                 )}
@@ -210,7 +185,7 @@ const SeguridadInfoTab = ({
             <tbody className="divide-y divide-gray-200">
               {localCapacitaciones.length === 0 ? (
                 <tr>
-                  <td colSpan={viewMode ? 7 : 8} className="px-3 py-4 text-center text-gray-500">
+                  <td colSpan={viewMode ? 3 : 4} className="px-3 py-4 text-center text-gray-500">
                     No hay capacitaciones registradas
                   </td>
                 </tr>
@@ -220,12 +195,8 @@ const SeguridadInfoTab = ({
                   return (
                     <tr key={itemId} className="hover:bg-gray-50">
                       <td className="px-3 py-2 text-sm text-gray-500">{index + 1}</td>
-                      <td className="px-3 py-2 text-sm text-gray-900">{item.nombreCapacitacion}</td>
-                      <td className="px-3 py-2 text-sm text-gray-500">{item.fechaCapacitacion}</td>
-                      <td className="px-3 py-2 text-sm text-gray-500">{item.duracionHoras}</td>
-                      <td className="px-3 py-2 text-sm text-gray-500">{item.participantes}</td>
-                      <td className="px-3 py-2 text-sm text-gray-500">{item.proveedor}</td>
-                      <td className="px-3 py-2 text-sm text-gray-500">{item.modalidad}</td>
+                      <td className="px-3 py-2 text-sm text-gray-900">{item.curso}</td>
+                      <td className="px-3 py-2 text-sm text-gray-500 text-center font-medium">{item.cantidadPersonas}</td>
                       {!viewMode && (
                         <td className="px-3 py-2 text-center">
                           <div className="flex items-center justify-center gap-1">
@@ -265,79 +236,30 @@ const SeguridadInfoTab = ({
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Nombre de la Capacitación *
+                  Curso de Capacitación *
                 </label>
                 <input
                   type="text"
-                  value={formItem.nombreCapacitacion}
-                  onChange={(e) => setFormItem(prev => ({ ...prev, nombreCapacitacion: e.target.value }))}
+                  value={formItem.curso}
+                  onChange={(e) => setFormItem(prev => ({ ...prev, curso: e.target.value }))}
+                  required
+                  maxLength={100}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Ej: Curso de Ciberseguridad"
+                  placeholder="Ej: Curso de Ciberseguridad Básica"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
-                  <input
-                    type="date"
-                    value={formItem.fechaCapacitacion}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, fechaCapacitacion: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Duración (horas)</label>
-                  <input
-                    type="number"
-                    value={formItem.duracionHoras}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, duracionHoras: e.target.value }))}
-                    min="1"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">N° Participantes</label>
-                  <input
-                    type="number"
-                    value={formItem.participantes}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, participantes: e.target.value }))}
-                    min="1"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Modalidad</label>
-                  <select
-                    value={formItem.modalidad}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, modalidad: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Seleccione...</option>
-                    {modalidades.map(m => (
-                      <option key={m.value} value={m.value}>{m.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Proveedor</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Cantidad de Personas *
+                </label>
                 <input
-                  type="text"
-                  value={formItem.proveedor}
-                  onChange={(e) => setFormItem(prev => ({ ...prev, proveedor: e.target.value }))}
+                  type="number"
+                  value={formItem.cantidadPersonas}
+                  onChange={(e) => setFormItem(prev => ({ ...prev, cantidadPersonas: e.target.value }))}
+                  required
+                  min="1"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Ej: PECERT, CISO, Interno"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
-                <textarea
-                  value={formItem.observaciones}
-                  onChange={(e) => setFormItem(prev => ({ ...prev, observaciones: e.target.value }))}
-                  rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Número de personas capacitadas"
                 />
               </div>
             </div>
