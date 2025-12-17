@@ -938,7 +938,7 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.ObjTranDig).HasColumnName("obj_tran_dig").HasMaxLength(100).IsRequired();
             entity.Property(e => e.ObjEst).HasColumnName("obj_est").HasMaxLength(100).IsRequired();
             entity.Property(e => e.AccEst).HasColumnName("acc_est").HasMaxLength(100).IsRequired();
-            entity.Property(e => e.MontoInversion).HasColumnName("monto_inversion").HasColumnType("numeric(15,2)");
+            // entity.Property(e => e.MontoInversion).HasColumnName("monto_inversion").HasColumnType("numeric(15,2)"); // COLUMNA NO EXISTE EN BD
             entity.Property(e => e.EstadoProyecto).HasColumnName("estado_proyecto").IsRequired();
             entity.Property(e => e.PorcentajeAvance).HasColumnName("porcentaje_avance").HasDefaultValue((short)0);
             entity.Property(e => e.InformoAvance).HasColumnName("informo_avance").HasDefaultValue(false);

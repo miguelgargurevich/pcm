@@ -28,7 +28,7 @@ public class ProyectoEntidad
     public string ObjTranDig { get; set; } = string.Empty;
     public string ObjEst { get; set; } = string.Empty;
     public string AccEst { get; set; } = string.Empty;
-    public decimal? MontoInversion { get; set; }
+    // public decimal? MontoInversion { get; set; } // COLUMNA NO EXISTE EN BD
     public bool EstadoProyecto { get; set; } = true;
     public short PorcentajeAvance { get; set; } = 0; // 0-100
     public bool InformoAvance { get; set; } = false;
