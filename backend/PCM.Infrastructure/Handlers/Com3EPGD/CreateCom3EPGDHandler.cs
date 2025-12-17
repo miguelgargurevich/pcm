@@ -397,7 +397,7 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                     FecFinProg = dto.FecFinProg ?? DateTime.UtcNow,
                     FecIniReal = dto.FecIniReal ?? DateTime.UtcNow,
                     FecFinReal = dto.FecFinReal ?? DateTime.UtcNow,
-                    MontoInversion = dto.MontoInversion,
+                    // MontoInversion = dto.MontoInversion, // COLUMNA NO EXISTE EN BD
                     EstadoProyecto = dto.EstadoProyecto,
                     AlineadoPgd = dto.AlineadoPgd ?? string.Empty,
                     ObjTranDig = dto.ObjTranDig ?? string.Empty,
@@ -420,8 +420,8 @@ public class CreateCom3EPGDHandler : IRequestHandler<CreateCom3EPGDCommand, Resu
                     FecIniProg = proyecto.FecIniProg,
                     FecFinProg = proyecto.FecFinProg,
                     FecIniReal = proyecto.FecIniReal,
-                    FecFinReal = proyecto.FecFinReal,
-                    MontoInversion = proyecto.MontoInversion
+                    FecFinReal = proyecto.FecFinReal
+                    // MontoInversion = proyecto.MontoInversion // COLUMNA NO EXISTE EN BD
                 });
             }
         }

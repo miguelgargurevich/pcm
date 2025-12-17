@@ -238,7 +238,7 @@ public class GetCom3EPGDByEntidadHandler : IRequestHandler<GetCom3EPGDByEntidadQ
                     ObjTranDig = p.ObjTranDig,
                     ObjEst = p.ObjEst,
                     AccEst = p.AccEst,
-                    MontoInversion = p.MontoInversion,
+                    // MontoInversion = p.MontoInversion, // COLUMNA NO EXISTE EN BD
                     EstadoProyecto = p.EstadoProyecto
                 }).ToList()
             };

@@ -574,7 +574,7 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                     existing.FecFinProg = dto.FecFinProg ?? existing.FecFinProg;
                     existing.FecIniReal = dto.FecIniReal ?? existing.FecIniReal;
                     existing.FecFinReal = dto.FecFinReal ?? existing.FecFinReal;
-                    existing.MontoInversion = dto.MontoInversion;
+                    // existing.MontoInversion = dto.MontoInversion; // COLUMNA NO EXISTE EN BD
                     existing.EstadoProyecto = dto.EstadoProyecto;
                     existing.AlineadoPgd = dto.AlineadoPgd ?? existing.AlineadoPgd;
                     existing.ObjTranDig = dto.ObjTranDig ?? existing.ObjTranDig;
@@ -601,7 +601,7 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                     FecFinProg = dto.FecFinProg ?? DateTime.UtcNow,
                     FecIniReal = dto.FecIniReal ?? DateTime.UtcNow,
                     FecFinReal = dto.FecFinReal ?? DateTime.UtcNow,
-                    MontoInversion = dto.MontoInversion,
+                    // MontoInversion = dto.MontoInversion, // COLUMNA NO EXISTE EN BD
                     EstadoProyecto = dto.EstadoProyecto,
                     AlineadoPgd = dto.AlineadoPgd ?? string.Empty,
                     ObjTranDig = dto.ObjTranDig ?? string.Empty,
@@ -746,8 +746,8 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 FecIniProg = p.FecIniProg,
                 FecFinProg = p.FecFinProg,
                 FecIniReal = p.FecIniReal,
-                FecFinReal = p.FecFinReal,
-                MontoInversion = p.MontoInversion
+                FecFinReal = p.FecFinReal
+                // MontoInversion = p.MontoInversion // COLUMNA NO EXISTE EN BD
             }).ToList()
         };
     }
