@@ -31,14 +31,4 @@ public class Com3EPGD
     public decimal CostoAnualTi { get; set; } // NOT NULL en BD
     public bool ExisteComisionGdTi { get; set; }
     public string? RutaPdfNormativa { get; set; } // NULLABLE en BD: rutaPDF_normativa
-    
-    // Relaciones de navegación
-    public virtual ICollection<PersonalTI>? PersonalTI { get; set; }
-    public virtual ICollection<InventarioSoftware>? InventariosSoftware { get; set; }
-    public virtual ICollection<InventarioSistemasInfo>? InventariosSistemas { get; set; }
-    public virtual ICollection<InventarioRed>? InventariosRed { get; set; }
-    public virtual ICollection<InventarioServidores>? InventariosServidores { get; set; }
-    public virtual SeguridadInfo? SeguridadInfo { get; set; }
-    public virtual ICollection<ObjetivoEntidad>? Objetivos { get; set; }
-    public virtual ICollection<ProyectoEntidad>? Proyectos { get; set; }
 }
