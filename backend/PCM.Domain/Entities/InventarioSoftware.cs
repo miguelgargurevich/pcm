@@ -18,5 +18,4 @@ public class InventarioSoftware
     public long ExcesoDeficiencia { get; set; }
     public decimal CostoLicencias { get; set; }
     // NO tiene Activo ni CreatedAt en la BD
-    
 }

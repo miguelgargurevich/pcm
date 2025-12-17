@@ -25,6 +25,4 @@ public class SeguridadInfo
     public string Observaciones { get; set; } = string.Empty;
     
     // NO tiene Activo ni CreatedAt en la BD
-    
-    public virtual ICollection<CapacitacionSeginfo>? Capacitaciones { get; set; }
 }

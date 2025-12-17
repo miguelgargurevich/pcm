@@ -724,12 +724,12 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.Telefono).HasColumnName("telefono").HasMaxLength(30).IsRequired();
             // NO mapear Activo ni CreatedAt - no existen en la BD
             
-            // Configurar relación con Com3EPGD
-            entity.HasOne(e => e.Com3EPGD)
-                .WithMany()
-                .HasForeignKey(e => e.ComEntidadId)
-                .HasPrincipalKey(c => c.ComepgdEntId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Configurar relación con Com3EPGD - COMENTADO: navigation property eliminada
+            // entity.HasOne(e => e.Com3EPGD)
+            //     .WithMany()
+            //     .HasForeignKey(e => e.ComEntidadId)
+            //     .HasPrincipalKey(c => c.ComepgdEntId)
+            //     .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Configuración de InventarioSoftware - NO tiene activo ni created_at en BD
@@ -749,12 +749,12 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.CostoLicencias).HasColumnName("costo_licencias").HasColumnType("numeric(12,2)").IsRequired();
             // NO mapear Activo ni CreatedAt - no existen en la BD
             
-            // Configurar relación con Com3EPGD
-            entity.HasOne(e => e.Com3EPGD)
-                .WithMany()
-                .HasForeignKey(e => e.ComEntidadId)
-                .HasPrincipalKey(c => c.ComepgdEntId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Configurar relación con Com3EPGD - COMENTADO: navigation property eliminada
+            // entity.HasOne(e => e.Com3EPGD)
+            //     .WithMany()
+            //     .HasForeignKey(e => e.ComEntidadId)
+            //     .HasPrincipalKey(c => c.ComepgdEntId)
+            //     .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Configuración de InventarioSistemasInfo - NO tiene activo ni created_at en BD
@@ -773,12 +773,12 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.Plataforma).HasColumnName("plataforma").HasMaxLength(10).IsRequired();
             // NO mapear Activo ni CreatedAt - no existen en la BD
             
-            // Configurar relación con Com3EPGD
-            entity.HasOne(e => e.Com3EPGD)
-                .WithMany()
-                .HasForeignKey(e => e.ComEntidadId)
-                .HasPrincipalKey(c => c.ComepgdEntId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Configurar relación con Com3EPGD - COMENTADO: navigation property eliminada
+            // entity.HasOne(e => e.Com3EPGD)
+            //     .WithMany()
+            //     .HasForeignKey(e => e.ComEntidadId)
+            //     .HasPrincipalKey(c => c.ComepgdEntId)
+            //     .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Configuración de InventarioRed - NO tiene activo ni created_at en BD
@@ -797,12 +797,12 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.Observaciones).HasColumnName("observaciones").HasMaxLength(255).IsRequired();
             // NO mapear Activo ni CreatedAt - no existen en la BD
             
-            // Configurar relación con Com3EPGD
-            entity.HasOne(e => e.Com3EPGD)
-                .WithMany()
-                .HasForeignKey(e => e.ComEntidadId)
-                .HasPrincipalKey(c => c.ComepgdEntId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Configurar relación con Com3EPGD - COMENTADO: navigation property eliminada
+            // entity.HasOne(e => e.Com3EPGD)
+            //     .WithMany()
+            //     .HasForeignKey(e => e.ComEntidadId)
+            //     .HasPrincipalKey(c => c.ComepgdEntId)
+            //     .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Configuración de InventarioServidores - NO tiene activo ni created_at en BD
@@ -830,12 +830,12 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.Observaciones).HasColumnName("observaciones").HasMaxLength(255).IsRequired();
             // NO mapear Activo ni CreatedAt - no existen en la BD
             
-            // Configurar relación con Com3EPGD
-            entity.HasOne(e => e.Com3EPGD)
-                .WithMany()
-                .HasForeignKey(e => e.ComEntidadId)
-                .HasPrincipalKey(c => c.ComepgdEntId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Configurar relación con Com3EPGD - COMENTADO: navigation property eliminada
+            // entity.HasOne(e => e.Com3EPGD)
+            //     .WithMany()
+            //     .HasForeignKey(e => e.ComEntidadId)
+            //     .HasPrincipalKey(c => c.ComepgdEntId)
+            //     .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Configuración de SeguridadInfo - NO tiene activo ni created_at en BD
@@ -859,12 +859,12 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.Observaciones).HasColumnName("observaciones").HasMaxLength(255).IsRequired();
             // NO mapear Activo ni CreatedAt - no existen en la BD
             
-            // Configurar relación uno-a-uno con Com3EPGD
+            // Configurar relación uno-a-uno con Com3EPGD - COMENTADO: navigation property eliminada
             // SeguridadInfo es el lado dependiente (tiene la FK)
-            entity.HasOne(e => e.Com3EPGD)
-                .WithOne(c => c.SeguridadInfo)
-                .HasForeignKey<SeguridadInfo>(e => e.ComEntidadId)
-                .HasPrincipalKey<Com3EPGD>(c => c.ComepgdEntId);
+            // entity.HasOne(e => e.Com3EPGD)
+            //     .WithOne(c => c.SeguridadInfo)
+            //     .HasForeignKey<SeguridadInfo>(e => e.ComEntidadId)
+            //     .HasPrincipalKey<Com3EPGD>(c => c.ComepgdEntId);
         });
 
         // Configuración de CapacitacionSeginfo - NO tiene activo ni created_at en BD
@@ -891,12 +891,12 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.DescripcionObjetivo).HasColumnName("descripcion_objetivo").HasMaxLength(240).IsRequired();
             // NO mapear Activo ni CreatedAt - no existen en la BD
             
-            // Configurar relación con Com3EPGD
-            entity.HasOne(e => e.Com3EPGD)
-                .WithMany()
-                .HasForeignKey(e => e.ComEntidadId)
-                .HasPrincipalKey(c => c.ComepgdEntId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Configurar relación con Com3EPGD - COMENTADO: navigation property eliminada
+            // entity.HasOne(e => e.Com3EPGD)
+            //     .WithMany()
+            //     .HasForeignKey(e => e.ComEntidadId)
+            //     .HasPrincipalKey(c => c.ComepgdEntId)
+            //     .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Configuración de AccionObjetivoEntidad - NO tiene activo ni created_at en BD
@@ -944,12 +944,12 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.InformoAvance).HasColumnName("informo_avance").HasDefaultValue(false);
             // NO mapear Activo ni CreatedAt - no existen en la BD
             
-            // Configurar relación con Com3EPGD
-            entity.HasOne(e => e.Com3EPGD)
-                .WithMany()
-                .HasForeignKey(e => e.ComEntidadId)
-                .HasPrincipalKey(c => c.ComepgdEntId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Configurar relación con Com3EPGD - COMENTADO: navigation property eliminada
+            // entity.HasOne(e => e.Com3EPGD)
+            //     .WithMany()
+            //     .HasForeignKey(e => e.ComEntidadId)
+            //     .HasPrincipalKey(c => c.ComepgdEntId)
+            //     .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

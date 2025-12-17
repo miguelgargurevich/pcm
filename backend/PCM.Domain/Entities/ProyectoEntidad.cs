@@ -33,5 +33,4 @@ public class ProyectoEntidad
     public short PorcentajeAvance { get; set; } = 0; // 0-100
     public bool InformoAvance { get; set; } = false;
     // NO tiene Activo ni CreatedAt en la BD
-    
 }

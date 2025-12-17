@@ -15,6 +15,6 @@ public class InventarioRed
     public long PuertosInoperativos { get; set; }
     public long TotalPuertos { get; set; }
     public decimal CostoMantenimientoAnual { get; set; }
-    public string Modelo { get; set; } = string.Empty;
+    public string Observaciones { get; set; } = string.Empty;
     // NO tiene Activo ni CreatedAt en la BD
 }

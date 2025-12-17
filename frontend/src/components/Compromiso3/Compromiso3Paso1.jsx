@@ -583,14 +583,14 @@ const Compromiso3Paso1 = ({
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
         <div className="flex items-start justify-between">
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <h2 className="text-xl font-semibold text-gray-800">
               Compromiso 3: Elaborar el Plan de Gobierno Digital
             </h2>
             <p className="text-gray-600 text-sm mt-1">
               Complete la información requerida para la elaboración del Plan de Gobierno Digital de la entidad.
             </p>
-          </div>
+          </div> */}
           <div className="ml-4">
             {renderSaveIndicator()}
           </div>

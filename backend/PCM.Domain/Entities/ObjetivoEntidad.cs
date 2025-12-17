@@ -14,6 +14,4 @@ public class ObjetivoEntidad
     public string NumeracionObj { get; set; } = string.Empty; // Ej: "OE-01", "OGD-01"
     public string DescripcionObjetivo { get; set; } = string.Empty;
     // NO tiene Activo ni CreatedAt en la BD
-    
-    public virtual ICollection<AccionObjetivoEntidad>? Acciones { get; set; }
 }
