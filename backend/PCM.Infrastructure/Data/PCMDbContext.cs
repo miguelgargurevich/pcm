@@ -887,7 +887,7 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.ObjEntId).HasColumnName("obj_ent_id").ValueGeneratedOnAdd();
             entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id").IsRequired();
             entity.Property(e => e.TipoObj).HasColumnName("tipo_obj").HasMaxLength(1).IsRequired();
-            entity.Property(e => e.NumeracionObj).HasColumnName("numeracion_obj").HasMaxLength(5).IsRequired();
+            entity.Property(e => e.NumeracionObj).HasColumnName("numeracion_obj").HasMaxLength(20).IsRequired();
             entity.Property(e => e.DescripcionObjetivo).HasColumnName("descripcion_objetivo").HasMaxLength(240).IsRequired();
             // NO mapear Activo ni CreatedAt - no existen en la BD
             
@@ -906,7 +906,7 @@ public class PCMDbContext : DbContext
             entity.HasKey(e => e.AccObjEntId);
             entity.Property(e => e.AccObjEntId).HasColumnName("acc_obj_ent_id").ValueGeneratedOnAdd();
             entity.Property(e => e.ObjEntId).HasColumnName("obj_ent_id").IsRequired();
-            entity.Property(e => e.NumeracionAcc).HasColumnName("numeracion_acc").HasMaxLength(5).IsRequired();
+            entity.Property(e => e.NumeracionAcc).HasColumnName("numeracion_acc").HasMaxLength(20).IsRequired();
             entity.Property(e => e.DescripcionAccion).HasColumnName("descripcion_accion").HasMaxLength(240).IsRequired();
             // NO mapear Activo ni CreatedAt - no existen en la BD
         });
@@ -920,7 +920,7 @@ public class PCMDbContext : DbContext
             entity.HasKey(e => e.ProyEntId);
             entity.Property(e => e.ProyEntId).HasColumnName("proy_ent_id").ValueGeneratedOnAdd();
             entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id").IsRequired();
-            entity.Property(e => e.NumeracionProy).HasColumnName("numeracion_proy").HasMaxLength(5).IsRequired();
+            entity.Property(e => e.NumeracionProy).HasColumnName("numeracion_proy").HasMaxLength(20).IsRequired();
             entity.Property(e => e.Nombre).HasColumnName("nombre").HasMaxLength(100).IsRequired();
             entity.Property(e => e.Alcance).HasColumnName("alcance").HasMaxLength(240).IsRequired();
             entity.Property(e => e.Justificacion).HasColumnName("justificacion").HasMaxLength(240).IsRequired();
