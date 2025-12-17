@@ -12,7 +12,4 @@ public class CapacitacionSeginfo
     public string Curso { get; set; } = string.Empty;
     public long CantidadPersonas { get; set; }
     // NO tiene Activo ni CreatedAt en la BD
-    
-    // Navegación
-    public virtual SeguridadInfo? SeguridadInfo { get; set; }
 }

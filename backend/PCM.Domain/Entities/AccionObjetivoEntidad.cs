@@ -12,7 +12,4 @@ public class AccionObjetivoEntidad
     public string NumeracionAcc { get; set; } = string.Empty; // Ej: "OE-01.01", "OGD-01.01"
     public string DescripcionAccion { get; set; } = string.Empty;
     // NO tiene Activo ni CreatedAt en la BD
-    
-    // Navegación
-    public virtual ObjetivoEntidad? ObjetivoEntidad { get; set; }
 }
