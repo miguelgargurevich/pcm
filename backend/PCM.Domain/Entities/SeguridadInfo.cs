@@ -26,7 +26,5 @@ public class SeguridadInfo
     
     // NO tiene Activo ni CreatedAt en la BD
     
-    // Navegación
-    public virtual Com3EPGD? Com3EPGD { get; set; }
     public virtual ICollection<CapacitacionSeginfo>? Capacitaciones { get; set; }
 }

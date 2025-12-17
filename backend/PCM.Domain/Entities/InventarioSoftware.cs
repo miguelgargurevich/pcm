@@ -19,6 +19,4 @@ public class InventarioSoftware
     public decimal CostoLicencias { get; set; }
     // NO tiene Activo ni CreatedAt en la BD
     
-    // Navegación
-    public virtual Com3EPGD? Com3EPGD { get; set; }
 }

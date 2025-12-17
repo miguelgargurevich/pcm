@@ -34,6 +34,4 @@ public class ProyectoEntidad
     public bool InformoAvance { get; set; } = false;
     // NO tiene Activo ni CreatedAt en la BD
     
-    // Navegación
-    public virtual Com3EPGD? Com3EPGD { get; set; }
 }

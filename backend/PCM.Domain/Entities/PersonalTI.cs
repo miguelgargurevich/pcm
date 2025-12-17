@@ -22,7 +22,4 @@ public class PersonalTI
     public string EmailPersonal { get; set; } = string.Empty;
     public string Telefono { get; set; } = string.Empty;
     // NO tiene Activo ni CreatedAt en la BD
-    
-    // Navegación
-    public virtual Com3EPGD? Com3EPGD { get; set; }
 }

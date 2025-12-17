@@ -24,9 +24,6 @@ public class InventarioServidores
     public string ModeloMemoria { get; set; } = string.Empty;
     public long CantidadMemoria { get; set; }
     public decimal CostoMantenimientoAnual { get; set; }
-    public string Observaciones { get; set; } = string.Empty;
+    public string FrecuenciaBackup { get; set; } = string.Empty;
     // NO tiene Activo ni CreatedAt en la BD
-    
-    // Navegación
-    public virtual Com3EPGD? Com3EPGD { get; set; }
 }

@@ -15,9 +15,6 @@ public class InventarioSistemasInfo
     public string TipoSistema { get; set; } = string.Empty;
     public string LenguajeProgramacion { get; set; } = string.Empty;
     public string BaseDatos { get; set; } = string.Empty;
-    public string Plataforma { get; set; } = string.Empty;
+    public string Usuarios { get; set; } = string.Empty;
     // NO tiene Activo ni CreatedAt en la BD
-    
-    // Navegación
-    public virtual Com3EPGD? Com3EPGD { get; set; }
 }
