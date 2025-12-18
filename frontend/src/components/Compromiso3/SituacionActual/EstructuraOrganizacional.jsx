@@ -395,7 +395,7 @@ const EstructuraOrganizacional = ({
                     className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
-                    <option value="">Seleccione...</option>
+                    <option key="rol-empty" value="">Seleccione...</option>
                     {rolesPersonal.map(r => (
                       <option key={r.value} value={r.value}>{r.label}</option>
                     ))}
@@ -422,7 +422,7 @@ const EstructuraOrganizacional = ({
                     className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
-                    <option value="">Seleccione...</option>
+                    <option key="grado-empty" value="">Seleccione...</option>
                     {gradosInstruccion.map(g => (
                       <option key={g.value} value={g.value}>{g.label}</option>
                     ))}

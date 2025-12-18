@@ -29,19 +29,19 @@ const SeguridadInfoTab = ({
     setLocalCapacitaciones(capacitacionesSeginfo);
   }, [capacitacionesSeginfo]);
 
-  // Checkboxes de evaluación de seguridad - CORREGIDOS según BD
+  // Checkboxes de evaluación de seguridad - Nombres deben coincidir con el backend
   const checkboxOptions = [
-    { key: 'cuentaPoliticaSeguridad', label: '¿Cuenta con Política de Seguridad de la Información?' },
-    { key: 'cuentaOficialSeguridad', label: '¿Cuenta con Oficial de Seguridad de la Información?' },
-    { key: 'cuentaComiteSeguridad', label: '¿Cuenta con Comité de Seguridad de la Información?' },
-    { key: 'realizaAnalisisRiesgos', label: '¿Realiza análisis de riesgos de seguridad de la información?' },
-    { key: 'cuentaPlanContingencia', label: '¿Cuenta con Plan de Contingencia de TI?' },
-    { key: 'cuentaNormaISO27001', label: '¿Cuenta con certificación ISO 27001?' },
-    { key: 'cuentaSGSI', label: '¿Cuenta con Sistema de Gestión de Seguridad de la Información (SGSI)?' },
+    { key: 'planSgsi', label: '¿Cuenta con Sistema de Gestión de Seguridad de la Información (SGSI)?' },
+    { key: 'comiteSeguridad', label: '¿Cuenta con Comité de Seguridad de la Información?' },
+    { key: 'oficialSeguridadEnOrganigrama', label: '¿Cuenta con Oficial de Seguridad de la Información en el organigrama?' },
+    { key: 'politicaSeguridad', label: '¿Cuenta con Política de Seguridad de la Información?' },
     { key: 'inventarioActivos', label: '¿Cuenta con inventario de activos de información?' },
+    { key: 'analisisRiesgos', label: '¿Realiza análisis de riesgos de seguridad de la información?' },
     { key: 'metodologiaRiesgos', label: '¿Cuenta con metodología de evaluación de riesgos?' },
+    { key: 'planContinuidad', label: '¿Cuenta con Plan de Continuidad/Contingencia de TI?' },
     { key: 'programaAuditorias', label: '¿Cuenta con programa de auditorías de seguridad?' },
-    { key: 'informesDireccion', label: '¿Emite informes periódicos de seguridad a la dirección?' }
+    { key: 'informesDireccion', label: '¿Emite informes periódicos de seguridad a la dirección?' },
+    { key: 'certificacionIso27001', label: '¿Cuenta con certificación ISO 27001?' }
   ];
 
   const handleCheckboxChange = (key, value) => {
@@ -145,8 +145,8 @@ const SeguridadInfoTab = ({
             Observaciones de Seguridad
           </label>
           <textarea
-            value={localSeguridad.observacionesSeguridad || ''}
-            onChange={(e) => handleCheckboxChange('observacionesSeguridad', e.target.value)}
+            value={localSeguridad.observaciones || ''}
+            onChange={(e) => handleCheckboxChange('observaciones', e.target.value)}
             disabled={viewMode}
             rows={3}
             className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
