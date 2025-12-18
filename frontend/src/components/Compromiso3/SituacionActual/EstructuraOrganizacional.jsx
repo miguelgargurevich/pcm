@@ -137,10 +137,10 @@ const EstructuraOrganizacional = ({
   return (
     <div className="space-y-3">
       {/* Header - Datos Generales Obligatorios */}
-      <div key="seccion-datos-generales" className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+      <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
         <h4 className="font-medium text-gray-800 mb-3 text-sm">Datos Generales (Obligatorios)</h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div key="fecha-reporte">
+          <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Fecha de Reporte *
             </label>
@@ -155,7 +155,7 @@ const EstructuraOrganizacional = ({
             />
             <p className="text-xs text-gray-500 mt-0.5">No puede ser una fecha futura</p>
           </div>
-          <div key="sede">
+          <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Sede *
             </label>
@@ -170,7 +170,7 @@ const EstructuraOrganizacional = ({
               required
             />
           </div>
-          <div key="ubicacion-area" className="md:col-span-1">
+          <div className="md:col-span-1">
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Ubicación Área TI *
             </label>
@@ -204,10 +204,10 @@ const EstructuraOrganizacional = ({
       </div>
 
       {/* Header - Datos del Área de TI */}
-      <div key="seccion-datos-area-ti" className="bg-gray-50 p-3 rounded-lg">
+      <div className="bg-gray-50 p-3 rounded-lg">
         <h4 className="font-medium text-gray-800 mb-2 text-sm">Datos del Área de TI / Gobierno Digital</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div key="dependencia-area">
+          <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Dependencia del Área TI *
             </label>
@@ -222,7 +222,7 @@ const EstructuraOrganizacional = ({
               required
             />
           </div>
-          <div key="costo-anual">
+          <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Costo Anual TI (S/) *
             </label>
@@ -237,7 +237,7 @@ const EstructuraOrganizacional = ({
               required
             />
           </div>
-          <div key="existe-comision" className="md:col-span-2">
+          <div className="md:col-span-2">
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
               <input
                 type="checkbox"
@@ -253,7 +253,7 @@ const EstructuraOrganizacional = ({
       </div>
 
       {/* Grid de Personal */}
-      <div key="seccion-personal-ti">
+      <div>
         <div className="flex justify-between items-center mb-4">
           <h4 className="font-medium text-gray-800">Personal del Área de TI</h4>
           {!viewMode && (
@@ -349,7 +349,7 @@ const EstructuraOrganizacional = ({
               </button>
             </div>
             <div className="p-6 space-y-3">
-              <div key="nombre-completo-field">
+              <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
                   Nombre Completo *
                 </label>
@@ -362,8 +362,8 @@ const EstructuraOrganizacional = ({
                   required
                 />
               </div>
-              <div key="grid-dni-cargo" className="grid grid-cols-2 gap-3">
-                <div key="dni-field">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">DNI *</label>
                   <input
                     type="text"
@@ -374,7 +374,7 @@ const EstructuraOrganizacional = ({
                     required
                   />
                 </div>
-                <div key="cargo-field">
+                <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Cargo *</label>
                   <input
                     type="text"
@@ -386,8 +386,8 @@ const EstructuraOrganizacional = ({
                   />
                 </div>
               </div>
-              <div key="grid-rol-especialidad" className="grid grid-cols-2 gap-3">
-                <div key="rol-field">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Rol *</label>
                   <select
                     value={formPersonal.rol}
@@ -401,7 +401,7 @@ const EstructuraOrganizacional = ({
                     ))}
                   </select>
                 </div>
-                <div key="especialidad-field">
+                <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Especialidad *</label>
                   <input
                     type="text"
@@ -413,8 +413,8 @@ const EstructuraOrganizacional = ({
                   />
                 </div>
               </div>
-              <div key="grid-grado-certificacion" className="grid grid-cols-2 gap-3">
-                <div key="grado-field">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Grado de Instrucción *</label>
                   <select
                     value={formPersonal.gradoInstruccion}
@@ -428,7 +428,7 @@ const EstructuraOrganizacional = ({
                     ))}
                   </select>
                 </div>
-                <div key="certificacion-field">
+                <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Certificación *</label>
                   <input
                     type="text"
@@ -441,8 +441,8 @@ const EstructuraOrganizacional = ({
                   />
                 </div>
               </div>
-              <div key="grid-acreditadora-codigo" className="grid grid-cols-2 gap-3">
-                <div key="acreditadora-field">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Acreditadora *</label>
                   <input
                     type="text"
@@ -454,7 +454,7 @@ const EstructuraOrganizacional = ({
                     required
                   />
                 </div>
-                <div key="codigo-field">
+                <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Código Certificación *</label>
                   <input
                     type="text"
@@ -466,8 +466,8 @@ const EstructuraOrganizacional = ({
                   />
                 </div>
               </div>
-              <div key="grid-colegiatura-telefono" className="grid grid-cols-2 gap-3">
-                <div key="colegiatura-field">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Colegiatura *</label>
                   <input
                     type="text"
@@ -479,7 +479,7 @@ const EstructuraOrganizacional = ({
                     required
                   />
                 </div>
-                <div key="telefono-field">
+                <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Teléfono *</label>
                   <input
                     type="text"
@@ -491,7 +491,7 @@ const EstructuraOrganizacional = ({
                   />
                 </div>
               </div>
-              <div key="email-personal-field">
+              <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">Email Personal *</label>
                 <input
                   type="email"

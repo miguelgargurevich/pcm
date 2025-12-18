@@ -179,7 +179,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
               </button>
               <button
                 onClick={handleAddProyecto}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                className="flex items-center gap-2 px-3 py-1.5 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 Nuevo Proyecto
@@ -601,7 +601,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
               <button
                 type="button"
                 onClick={handleSaveProyecto}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                className="px-3 py-1.5 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700"
               >
                 {editingProyecto ? 'Guardar' : 'Agregar'}
               </button>

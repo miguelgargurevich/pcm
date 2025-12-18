@@ -203,7 +203,7 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
                   required
                   className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="">Seleccione...</option>
+                  <option key="tipo-empty" value="">Seleccione...</option>
                   {tiposEquipo.map(t => (
                     <option key={t.value} value={t.value}>{t.label}</option>
                   ))}

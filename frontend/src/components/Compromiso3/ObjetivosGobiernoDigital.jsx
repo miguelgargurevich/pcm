@@ -167,10 +167,10 @@ const ObjetivosGobiernoDigital = ({ objetivos = [], onObjetivosChange, viewMode 
         {!viewMode && (
           <button
             onClick={handleAddObjetivo}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
           >
             <Plus className="w-4 h-4" />
-            Nuevo Objetivo GD
+            Nuevo Objetivo
           </button>
         )}
       </div>
@@ -309,7 +309,7 @@ const ObjetivosGobiernoDigital = ({ objetivos = [], onObjetivosChange, viewMode 
               <button
                 type="button"
                 onClick={handleSaveObjetivo}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                className="px-3 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700"
               >
                 {editingObjetivo ? 'Guardar' : 'Agregar'}
               </button>
@@ -348,7 +348,7 @@ const ObjetivosGobiernoDigital = ({ objetivos = [], onObjetivosChange, viewMode 
               </button>
               <button
                 onClick={handleSaveAccion}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                className="px-3 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700"
               >
                 {editingAccion ? 'Guardar' : 'Agregar'}
               </button>

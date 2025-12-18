@@ -235,7 +235,7 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                     className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
-                    <option value="">Seleccione...</option>
+                    <option key="tipo-empty" value="">Seleccione...</option>
                     {tiposSistema.map(t => (
                       <option key={t.value} value={t.value}>{t.label}</option>
                     ))}
@@ -249,7 +249,7 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                     className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
-                    <option value="">Seleccione...</option>
+                    <option key="plataforma-empty" value="">Seleccione...</option>
                     {plataformas.map(p => (
                       <option key={p.value} value={p.value}>{p.label}</option>
                     ))}

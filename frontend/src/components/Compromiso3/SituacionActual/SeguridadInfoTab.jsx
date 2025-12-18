@@ -72,7 +72,7 @@ const SeguridadInfoTab = ({
   };
 
   const handleDeleteCapacitacion = (itemId) => {
-    const updated = localCapacitaciones.filter(c => (c.capSegId || c.tempId) !== itemId);
+    const updated = localCapacitaciones.filter(c => (c.capsegId || c.tempId) !== itemId);
     setLocalCapacitaciones(updated);
     onSeguridadChange({
       seguridadInfo: localSeguridad,
@@ -86,7 +86,7 @@ const SeguridadInfoTab = ({
     let updated;
     if (editingItem) {
       updated = localCapacitaciones.map(c => {
-        if ((c.capSegId || c.tempId) === (editingItem.capSegId || editingItem.tempId)) {
+        if ((c.capsegId || c.tempId) === (editingItem.capsegId || editingItem.tempId)) {
           return { ...c, ...formItem };
         }
         return c;
@@ -191,7 +191,7 @@ const SeguridadInfoTab = ({
                 </tr>
               ) : (
                 localCapacitaciones.map((item, index) => {
-                  const itemId = item.capSegId || item.tempId;
+                  const itemId = item.capsegId || item.tempId;
                   return (
                     <tr key={itemId} className="hover:bg-gray-50">
                       <td className="px-2 py-1.5 text-xs text-gray-500">{index + 1}</td>

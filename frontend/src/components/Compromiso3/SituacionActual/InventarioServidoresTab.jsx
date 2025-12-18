@@ -265,7 +265,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                         required
                       >
-                        <option value="">Seleccione...</option>
+                        <option key="tipo-empty" value="">Seleccione...</option>
                         {tiposEquipo.map(t => (
                           <option key={t.value} value={t.value}>{t.label}</option>
                         ))}
@@ -279,7 +279,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                         required
                       >
-                        <option value="">Seleccione...</option>
+                        <option key="estado-empty" value="">Seleccione...</option>
                         {estados.map(e => (
                           <option key={e.value} value={e.value}>{e.label}</option>
                         ))}
@@ -295,7 +295,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                         required
                       >
-                        <option value="">Seleccione...</option>
+                        <option key="capa-empty" value="">Seleccione...</option>
                         {capas.map(c => (
                           <option key={c.value} value={c.value}>{c.label}</option>
                         ))}
@@ -309,7 +309,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                         required
                       >
-                        <option value="">Seleccione...</option>
+                        <option key="propiedad-empty" value="">Seleccione...</option>
                         {propiedades.map(p => (
                           <option key={p.value} value={p.value}>{p.label}</option>
                         ))}
@@ -323,7 +323,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                         required
                       >
-                        <option value="">Seleccione...</option>
+                        <option key="montaje-empty" value="">Seleccione...</option>
                         {montajes.map(m => (
                           <option key={m.value} value={m.value}>{m.label}</option>
                         ))}
