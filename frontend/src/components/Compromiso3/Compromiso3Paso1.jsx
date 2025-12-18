@@ -60,12 +60,23 @@ const Compromiso3Paso1 = ({
         const response = await com3EPGDService.getByEntidad(entidadId);
         if (response.isSuccess && response.data) {
           const data = response.data;
+          
+          // Helper para convertir fecha ISO a YYYY-MM-DD
+          const formatDateForInput = (isoDate) => {
+            if (!isoDate) return '';
+            const date = new Date(isoDate);
+            return date.toISOString().split('T')[0];
+          };
+          
           // Mapear respuesta del backend (camelCase) a estructura del frontend
           setFormData({
             com3EPGDId: data.comepgdEntId,
             objetivos: data.objetivos || [],
             situacionActual: {
               header: {
+                fechaReporte: formatDateForInput(data.fechaReporte),
+                sede: data.sede,
+                observaciones: data.observaciones,
                 ubicacionAreaTi: data.ubicacionAreaTi,
                 dependenciaAreaTi: data.dependenciaAreaTi,
                 costoAnualTi: data.costoAnualTi,
@@ -340,7 +351,11 @@ const Compromiso3Paso1 = ({
         compromisoId: 3,
         etapaFormulario: 'paso1',
         estado: 'bandeja',
-        // Header de situación actual
+        // Header de situación actual - Datos Generales
+        fechaReporte: data.situacionActual?.header?.fechaReporte,
+        sede: data.situacionActual?.header?.sede,
+        observaciones: data.situacionActual?.header?.observaciones,
+        // Header de situación actual - Datos del Área TI
         ubicacionAreaTi: data.situacionActual?.header?.ubicacionAreaTi,
         dependenciaAreaTi: data.situacionActual?.header?.dependenciaAreaTi,
         costoAnualTi: parseFloat(data.situacionActual?.header?.costoAnualTi) || null,

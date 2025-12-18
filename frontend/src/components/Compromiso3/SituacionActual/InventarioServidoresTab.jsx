@@ -474,14 +474,16 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
               <button
+                type="button"
                 onClick={() => setShowModal(false)}
                 className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Cancelar
               </button>
               <button
+                type="button"
                 onClick={handleSaveItem}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >

@@ -10,18 +10,13 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
   const [editingItem, setEditingItem] = useState(null);
   
   const [formItem, setFormItem] = useState({
+    codigo: '',
     nombreSistema: '',
-    siglas: '',
     descripcion: '',
     tipoSistema: '',
     lenguajeProgramacion: '',
     baseDatos: '',
-    plataforma: '',
-    estadoSistema: '',
-    anoImplementacion: '',
-    responsable: '',
-    url: '',
-    observaciones: ''
+    plataforma: ''
   });
 
   useEffect(() => {
@@ -31,18 +26,13 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
   const handleAddItem = () => {
     setEditingItem(null);
     setFormItem({
+      codigo: '',
       nombreSistema: '',
-      siglas: '',
       descripcion: '',
       tipoSistema: '',
       lenguajeProgramacion: '',
       baseDatos: '',
-      plataforma: '',
-      estadoSistema: '',
-      anoImplementacion: '',
-      responsable: '',
-      url: '',
-      observaciones: ''
+      plataforma: ''
     });
     setShowModal(true);
   };
@@ -50,24 +40,19 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
   const handleEditItem = (item) => {
     setEditingItem(item);
     setFormItem({
+      codigo: item.codigo || '',
       nombreSistema: item.nombreSistema || '',
-      siglas: item.siglas || '',
       descripcion: item.descripcion || '',
       tipoSistema: item.tipoSistema || '',
       lenguajeProgramacion: item.lenguajeProgramacion || '',
       baseDatos: item.baseDatos || '',
-      plataforma: item.plataforma || '',
-      estadoSistema: item.estadoSistema || '',
-      anoImplementacion: item.anoImplementacion || '',
-      responsable: item.responsable || '',
-      url: item.url || '',
-      observaciones: item.observaciones || ''
+      plataforma: item.plataforma || ''
     });
     setShowModal(true);
   };
 
   const handleDeleteItem = (itemId) => {
-    const updated = localInventario.filter(i => (i.invSisId || i.tempId) !== itemId);
+    const updated = localInventario.filter(i => (i.invSiId || i.tempId) !== itemId);
     setLocalInventario(updated);
     onInventarioChange(updated);
   };
@@ -104,14 +89,6 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
     { value: 'Interoperabilidad', label: 'Interoperabilidad' },
     { value: 'Web', label: 'Web' },
     { value: 'Móvil', label: 'Móvil' }
-  ];
-
-  const estadosSistema = [
-    { value: 'En Producción', label: 'En Producción' },
-    { value: 'En Desarrollo', label: 'En Desarrollo' },
-    { value: 'En Mantenimiento', label: 'En Mantenimiento' },
-    { value: 'Descontinuado', label: 'Descontinuado' },
-    { value: 'Planificado', label: 'Planificado' }
   ];
 
   const plataformas = [
@@ -223,6 +200,20 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Código *
+                  </label>
+                  <input
+                    type="text"
+                    value={formItem.codigo}
+                    onChange={(e) => setFormItem(prev => ({ ...prev, codigo: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Ej: SIS-001"
+                    maxLength="20"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Nombre del Sistema *
                   </label>
                   <input
@@ -230,34 +221,30 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                     value={formItem.nombreSistema}
                     onChange={(e) => setFormItem(prev => ({ ...prev, nombreSistema: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Siglas</label>
-                  <input
-                    type="text"
-                    value={formItem.siglas}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, siglas: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    maxLength="150"
+                    required
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Descripción *</label>
                 <textarea
                   value={formItem.descripcion}
                   onChange={(e) => setFormItem(prev => ({ ...prev, descripcion: e.target.value }))}
                   rows={2}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  maxLength="255"
+                  required
                 />
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Sistema</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Sistema *</label>
                   <select
                     value={formItem.tipoSistema}
                     onChange={(e) => setFormItem(prev => ({ ...prev, tipoSistema: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
                   >
                     <option value="">Seleccione...</option>
                     {tiposSistema.map(t => (
@@ -266,11 +253,12 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Plataforma</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Plataforma *</label>
                   <select
                     value={formItem.plataforma}
                     onChange={(e) => setFormItem(prev => ({ ...prev, plataforma: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
                   >
                     <option value="">Seleccione...</option>
                     {plataformas.map(p => (
@@ -278,92 +266,44 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                     ))}
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
-                  <select
-                    value={formItem.estadoSistema}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, estadoSistema: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Seleccione...</option>
-                    {estadosSistema.map(e => (
-                      <option key={e.value} value={e.value}>{e.label}</option>
-                    ))}
-                  </select>
-                </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Lenguaje de Programación</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Lenguaje de Programación *</label>
                   <input
                     type="text"
                     value={formItem.lenguajeProgramacion}
                     onChange={(e) => setFormItem(prev => ({ ...prev, lenguajeProgramacion: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Ej: Java, Python, .NET"
+                    maxLength="50"
+                    required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Base de Datos</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Base de Datos *</label>
                   <input
                     type="text"
                     value={formItem.baseDatos}
                     onChange={(e) => setFormItem(prev => ({ ...prev, baseDatos: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Ej: PostgreSQL, MySQL, Oracle"
+                    maxLength="50"
+                    required
                   />
                 </div>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Año Implementación</label>
-                  <input
-                    type="number"
-                    value={formItem.anoImplementacion}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, anoImplementacion: e.target.value }))}
-                    min="1990"
-                    max="2030"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Responsable</label>
-                  <input
-                    type="text"
-                    value={formItem.responsable}
-                    onChange={(e) => setFormItem(prev => ({ ...prev, responsable: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">URL</label>
-                <input
-                  type="url"
-                  value={formItem.url}
-                  onChange={(e) => setFormItem(prev => ({ ...prev, url: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="https://..."
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
-                <textarea
-                  value={formItem.observaciones}
-                  onChange={(e) => setFormItem(prev => ({ ...prev, observaciones: e.target.value }))}
-                  rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
               </div>
             </div>
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
               <button
+                type="button"
                 onClick={() => setShowModal(false)}
                 className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Cancelar
               </button>
               <button
+                type="button"
                 onClick={handleSaveItem}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >

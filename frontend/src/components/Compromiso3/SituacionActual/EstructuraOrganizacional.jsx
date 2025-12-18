@@ -1,6 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, Edit2, X } from 'lucide-react';
 
+// Constantes fuera del componente para evitar recreación en cada render
+const rolesPersonal = [
+  { value: 'Analista', label: 'Analista' },
+  { value: 'Desarrollador', label: 'Desarrollador' },
+  { value: 'Administrador', label: 'Administrador' },
+  { value: 'Soporte Técnico', label: 'Soporte Técnico' },
+  { value: 'Jefe de Área', label: 'Jefe de Área' },
+  { value: 'Especialista', label: 'Especialista' },
+  { value: 'Otro', label: 'Otro' }
+];
+
+const gradosInstruccion = [
+  { value: 'Técnico', label: 'Técnico' },
+  { value: 'Bachiller', label: 'Bachiller' },
+  { value: 'Licenciado', label: 'Licenciado' },
+  { value: 'Magister', label: 'Magíster' },
+  { value: 'Doctor', label: 'Doctor' }
+];
+
 /**
  * Componente para gestionar la Estructura Organizacional del área de TI
  * Incluye datos del header y grilla de personal
@@ -114,24 +133,6 @@ const EstructuraOrganizacional = ({
     onPersonalChange(updated);
     setShowModal(false);
   };
-
-  const rolesPersonal = [
-    { value: 'Analista', label: 'Analista' },
-    { value: 'Desarrollador', label: 'Desarrollador' },
-    { value: 'Administrador', label: 'Administrador' },
-    { value: 'Soporte Técnico', label: 'Soporte Técnico' },
-    { value: 'Jefe de Área', label: 'Jefe de Área' },
-    { value: 'Especialista', label: 'Especialista' },
-    { value: 'Otro', label: 'Otro' }
-  ];
-
-  const gradosInstruccion = [
-    { value: 'Técnico', label: 'Técnico' },
-    { value: 'Bachiller', label: 'Bachiller' },
-    { value: 'Licenciado', label: 'Licenciado' },
-    { value: 'Magister', label: 'Magíster' },
-    { value: 'Doctor', label: 'Doctor' }
-  ];
 
   return (
     <div className="space-y-6">
