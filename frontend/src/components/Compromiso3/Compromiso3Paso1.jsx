@@ -150,8 +150,8 @@ const Compromiso3Paso1 = ({
           },
           proyectos: (data.proyectos || []).map(p => ({
             ...p,
-            fechaInicio: formatDateForInput(p.fechaInicio || p.fecIniProg),
-            fechaFin: formatDateForInput(p.fechaFin || p.fecFinProg),
+            fecIniProg: formatDateForInput(p.fecIniProg),
+            fecFinProg: formatDateForInput(p.fecFinProg),
             fecIniReal: formatDateForInput(p.fecIniReal),
             fecFinReal: formatDateForInput(p.fecFinReal)
           }))
@@ -305,27 +305,26 @@ const Compromiso3Paso1 = ({
       // Mapear proyectos al formato del backend
       const proyectosMapped = (data.proyectos || []).map(p => ({
         proyEntId: p.proyEntId || null,
-        numeracionProy: p.codigoProyecto || p.numeracionProy,
-        nombre: p.nombreProyecto || p.nombre,
-        alcance: p.descripcion || p.alcance,
+        numeracionProy: p.numeracionProy,
+        nombre: p.nombre,
+        alcance: p.alcance,
         justificacion: p.justificacion || '',
-        tipoProy: p.tipoProyecto || p.tipoProy,
+        tipoProy: p.tipoProy,
         areaProy: p.areaProy || '',
-        areaEjecuta: p.responsable || p.areaEjecuta,
+        areaEjecuta: p.areaEjecuta,
         tipoBeneficiario: p.tipoBeneficiario || '',
-        etapaProyecto: p.estado || p.etapaProyecto,
+        etapaProyecto: p.etapaProyecto,
         ambitoProyecto: p.ambitoProyecto || '',
         // Campos de fecha - convertir string a ISO
-        fecIniProg: p.fechaInicio ? new Date(p.fechaInicio).toISOString() : null,
-        fecFinProg: p.fechaFin ? new Date(p.fechaFin).toISOString() : null,
-        fecIniReal: p.fecIniReal || null,
-        fecFinReal: p.fecFinReal || null,
-        alineadoPgd: p.objetivoGD || p.alineadoPgd || '',
+        fecIniProg: p.fecIniProg ? new Date(p.fecIniProg).toISOString() : null,
+        fecFinProg: p.fecFinProg ? new Date(p.fecFinProg).toISOString() : null,
+        fecIniReal: p.fecIniReal ? new Date(p.fecIniReal).toISOString() : null,
+        fecFinReal: p.fecFinReal ? new Date(p.fecFinReal).toISOString() : null,
+        alineadoPgd: p.alineadoPgd || '',
         objTranDig: p.objTranDig || '',
-        objEst: p.objetivoEstrategico || p.objEst || '',
+        objEst: p.objEst || '',
         accEst: p.accEst || '',
-        montoInversion: parseFloat(p.presupuesto) || p.montoInversion || 0,
-        estadoProyecto: p.activo !== false,
+        estadoProyecto: p.estadoProyecto !== false,
         activo: p.activo !== false
       }));
 

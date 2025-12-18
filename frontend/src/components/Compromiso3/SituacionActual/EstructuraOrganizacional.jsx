@@ -104,7 +104,7 @@ const EstructuraOrganizacional = ({
   };
 
   const handleDeletePersonal = (personalId) => {
-    const updated = localPersonal.filter(p => (p.pTiId || p.tempId) !== personalId);
+    const updated = localPersonal.filter(p => (p.personalId || p.tempId) !== personalId);
     setLocalPersonal(updated);
     onPersonalChange(updated);
   };
@@ -115,7 +115,7 @@ const EstructuraOrganizacional = ({
     let updated;
     if (editingPersonal) {
       updated = localPersonal.map(p => {
-        if ((p.pTiId || p.tempId) === (editingPersonal.pTiId || editingPersonal.tempId)) {
+        if ((p.personalId || p.tempId) === (editingPersonal.personalId || editingPersonal.tempId)) {
           return { ...p, ...formPersonal };
         }
         return p;
@@ -293,7 +293,7 @@ const EstructuraOrganizacional = ({
                 </tr>
               ) : (
                 localPersonal.map((personal, index) => {
-                  const personalId = personal.pTiId || personal.tempId;
+                  const personalId = personal.personalId || personal.tempId;
                   return (
                     <tr key={personalId} className="hover:bg-gray-50">
                       <td className="px-2 py-1.5 text-xs text-gray-500">{index + 1}</td>

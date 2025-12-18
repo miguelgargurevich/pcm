@@ -87,14 +87,19 @@ const SeguridadInfoTab = ({
     if (editingItem) {
       updated = localCapacitaciones.map(c => {
         if ((c.capsegId || c.tempId) === (editingItem.capsegId || editingItem.tempId)) {
-          return { ...c, ...formItem };
+          return { 
+            ...c, 
+            curso: formItem.curso,
+            cantidadPersonas: parseInt(formItem.cantidadPersonas) || 0
+          };
         }
         return c;
       });
     } else {
       const newItem = {
         tempId: Date.now(),
-        ...formItem,
+        curso: formItem.curso,
+        cantidadPersonas: parseInt(formItem.cantidadPersonas) || 0,
         activo: true
       };
       updated = [...localCapacitaciones, newItem];

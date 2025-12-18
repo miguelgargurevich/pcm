@@ -398,7 +398,7 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                     {
                         var newCap = new CapacitacionSeginfoEntity
                         {
-                            ComEntidadId = existing.SeginfoId,
+                            ComEntidadId = comEntidadId, // Debe ser el ID de Com3EPGD, no SeginfoId
                             Curso = capDto.Curso ?? string.Empty,
                             CantidadPersonas = capDto.CantidadPersonas
                         };
@@ -434,7 +434,7 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
                 {
                     var newCap = new CapacitacionSeginfoEntity
                     {
-                        ComEntidadId = newSeguridad.SeginfoId,
+                        ComEntidadId = comEntidadId, // Debe ser el ID de Com3EPGD, no SeginfoId
                         Curso = capDto.Curso ?? string.Empty,
                         CantidadPersonas = capDto.CantidadPersonas
                     };

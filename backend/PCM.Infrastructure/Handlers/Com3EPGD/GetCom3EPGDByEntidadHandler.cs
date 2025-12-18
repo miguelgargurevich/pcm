@@ -65,8 +65,9 @@ public class GetCom3EPGDByEntidadHandler : IRequestHandler<GetCom3EPGDByEntidadQ
             List<CapacitacionSeginfoDto>? capacitacionesDto = null;
             if (seguridadInfo != null)
             {
+                // Las capacitaciones se relacionan con Com3EPGD, no con SeguridadInfo
                 var capacitaciones = await _context.CapacitacionesSeginfo
-                    .Where(c => c.ComEntidadId == seguridadInfo.SeginfoId)
+                    .Where(c => c.ComEntidadId == entity.ComepgdEntId)
                     .ToListAsync(cancellationToken);
                 
                 capacitacionesDto = capacitaciones.Select(c => new CapacitacionSeginfoDto

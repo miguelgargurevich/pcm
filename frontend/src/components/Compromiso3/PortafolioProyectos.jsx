@@ -10,31 +10,29 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
   const [editingProyecto, setEditingProyecto] = useState(null);
   
   const [formProyecto, setFormProyecto] = useState({
-    codigoProyecto: '',
-    nombreProyecto: '',
+    numeracionProy: '',
+    nombre: '',
     alcance: '',
     justificacion: '',
-    tipoProyecto: '',
-    objetivoEstrategico: '',
-    objetivoGD: '',
+    tipoProy: '',
+    objEst: '',
+    objTranDig: '',
     areaProy: '',
     areaEjecuta: '',
     tipoBeneficiario: '',
     etapaProyecto: '',
     ambitoProyecto: '',
-    fechaInicio: '',
-    fechaFin: '',
+    fecIniProg: '',
+    fecFinProg: '',
     fecIniReal: '',
     fecFinReal: '',
     estadoProyecto: false,
-    alienadoPgd: '',
-    accEst: '',
-    informoAvance: false,
-    porcentajeAvance: 0,
-    observaciones: ''
+    alineadoPgd: '',
+    accEst: ''
   });
 
   useEffect(() => {
+    console.log('📊 Proyectos recibidos en PortafolioProyectos:', proyectos);
     setLocalProyectos(proyectos);
   }, [proyectos]);
 
@@ -47,57 +45,69 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
   const handleAddProyecto = () => {
     setEditingProyecto(null);
     setFormProyecto({
-      codigoProyecto: generarCodigoProyecto(),
-      nombreProyecto: '',
+      numeracionProy: generarCodigoProyecto(),
+      nombre: '',
       alcance: '',
       justificacion: '',
-      tipoProyecto: '',
-      objetivoEstrategico: '',
-      objetivoGD: '',
+      tipoProy: '',
+      objEst: '',
+      objTranDig: '',
       areaProy: '',
       areaEjecuta: '',
       tipoBeneficiario: '',
       etapaProyecto: '',
       ambitoProyecto: '',
-      fechaInicio: '',
-      fechaFin: '',
+      fecIniProg: '',
+      fecFinProg: '',
       fecIniReal: '',
       fecFinReal: '',
       estadoProyecto: false,
-      alienadoPgd: '',
-      accEst: '',
-      informoAvance: false,
-      porcentajeAvance: 0,
-      observaciones: ''
+      alineadoPgd: '',
+      accEst: ''
     });
     setShowModal(true);
   };
 
   const handleEditProyecto = (proyecto) => {
+    console.log('✏️ Editando proyecto:', proyecto);
+    
+    // Helper para formatear fecha ISO a YYYY-MM-DD
+    const formatDateForInput = (isoDate) => {
+      if (!isoDate) return '';
+      try {
+        return new Date(isoDate).toISOString().split('T')[0];
+      } catch {
+        return '';
+      }
+    };
+    
     setEditingProyecto(proyecto);
     setFormProyecto({
-      codigoProyecto: proyecto.codigoProyecto || '',
-      nombreProyecto: proyecto.nombreProyecto || '',
+      numeracionProy: proyecto.numeracionProy || '',
+      nombre: proyecto.nombre || '',
       alcance: proyecto.alcance || '',
       justificacion: proyecto.justificacion || '',
-      tipoProyecto: proyecto.tipoProyecto || '',
-      objetivoEstrategico: proyecto.objetivoEstrategico || '',
-      objetivoGD: proyecto.objetivoGD || '',
+      tipoProy: proyecto.tipoProy || '',
+      objEst: proyecto.objEst || '',
+      objTranDig: proyecto.objTranDig || '',
       areaProy: proyecto.areaProy || '',
       areaEjecuta: proyecto.areaEjecuta || '',
       tipoBeneficiario: proyecto.tipoBeneficiario || '',
       etapaProyecto: proyecto.etapaProyecto || '',
       ambitoProyecto: proyecto.ambitoProyecto || '',
-      fechaInicio: proyecto.fechaInicio || '',
-      fechaFin: proyecto.fechaFin || '',
-      fecIniReal: proyecto.fecIniReal || '',
-      fecFinReal: proyecto.fecFinReal || '',
+      fecIniProg: formatDateForInput(proyecto.fecIniProg),
+      fecFinProg: formatDateForInput(proyecto.fecFinProg),
+      fecIniReal: formatDateForInput(proyecto.fecIniReal),
+      fecFinReal: formatDateForInput(proyecto.fecFinReal),
       estadoProyecto: proyecto.estadoProyecto || false,
-      alienadoPgd: proyecto.alienadoPgd || '',
-      accEst: proyecto.accEst || '',
-      informoAvance: proyecto.informoAvance || false,
-      porcentajeAvance: proyecto.porcentajeAvance || 0,
-      observaciones: proyecto.observaciones || ''
+      alineadoPgd: proyecto.alineadoPgd || '',
+      accEst: proyecto.accEst || ''
+    });
+    console.log('📝 FormProyecto después de mapear:', {
+      fecIniProg: formatDateForInput(proyecto.fecIniProg),
+      fecFinProg: formatDateForInput(proyecto.fecFinProg),
+      fecIniReal: formatDateForInput(proyecto.fecIniReal),
+      fecFinReal: formatDateForInput(proyecto.fecFinReal)
     });
     setShowModal(true);
   };
@@ -109,7 +119,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
   };
 
   const handleSaveProyecto = () => {
-    if (!formProyecto.nombreProyecto.trim()) return;
+    if (!formProyecto.nombre.trim()) return;
 
     let updated;
     if (editingProyecto) {
@@ -217,11 +227,27 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
             ) : (
               localProyectos.map((proyecto) => {
                 const proyectoId = proyecto.proyEntId || proyecto.tempId;
+                
+                // Formatear fechas para mostrar
+                const formatDateDisplay = (isoDate) => {
+                  if (!isoDate) return '-';
+                  try {
+                    const date = new Date(isoDate);
+                    return date.toLocaleDateString('es-PE', { 
+                      day: '2-digit', 
+                      month: '2-digit', 
+                      year: 'numeric' 
+                    });
+                  } catch {
+                    return '-';
+                  }
+                };
+                
                 return (
                   <tr key={proyectoId} className="hover:bg-gray-50">
-                    <td className="px-3 py-2 text-sm font-mono text-purple-600">{proyecto.codigoProyecto}</td>
-                    <td className="px-2 py-1.5 text-xs text-gray-900">{proyecto.nombreProyecto}</td>
-                    <td className="px-2 py-1.5 text-xs text-gray-500">{proyecto.tipoProyecto}</td>
+                    <td className="px-3 py-2 text-sm font-mono text-purple-600">{proyecto.numeracionProy}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-900">{proyecto.nombre}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{proyecto.tipoProy}</td>
                     <td className="px-2 py-1.5 text-xs text-gray-500">{proyecto.areaProy}</td>
                     <td className="px-3 py-2 text-sm">
                       <span className={`px-2 py-1 rounded-full text-xs ${
@@ -232,17 +258,11 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                     </td>
                     <td className="px-2 py-1.5 text-xs text-gray-500">
                       <div className="flex items-center gap-2">
-                        <div className="w-20 bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-purple-600 h-2 rounded-full" 
-                            style={{ width: `${proyecto.porcentajeAvance || 0}%` }}
-                          />
-                        </div>
-                        <span className="text-xs">{proyecto.porcentajeAvance || 0}%</span>
+                        <span className="text-xs text-gray-400">N/A</span>
                       </div>
                     </td>
-                    <td className="px-2 py-1.5 text-xs text-gray-500">{proyecto.fechaInicio}</td>
-                    <td className="px-2 py-1.5 text-xs text-gray-500">{proyecto.fechaFin}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-700">{formatDateDisplay(proyecto.fecIniProg)}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-700">{formatDateDisplay(proyecto.fecFinProg)}</td>
                     {!viewMode && (
                       <td className="px-3 py-2 text-center">
                         <div className="flex items-center justify-center gap-1">
@@ -295,7 +315,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                     <label className="block text-xs font-medium text-gray-700 mb-1">Código</label>
                     <input
                       type="text"
-                      value={formProyecto.codigoProyecto}
+                      value={formProyecto.numeracionProy}
                       disabled
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
                     />
@@ -304,10 +324,10 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                     <label className="block text-xs font-medium text-gray-700 mb-1">Nombre del Proyecto *</label>
                     <input
                       type="text"
-                      value={formProyecto.nombreProyecto}
-                      onChange={(e) => setFormProyecto(prev => ({ ...prev, nombreProyecto: e.target.value }))}
+                      value={formProyecto.nombre}
+                      onChange={(e) => setFormProyecto(prev => ({ ...prev, nombre: e.target.value }))}
                       required
-                      maxLength={150}
+                      maxLength={100}
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     />
                   </div>
@@ -342,13 +362,13 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
 
               {/* Sección 2: Clasificación */}
               <div className="bg-blue-50 p-4 rounded-lg space-y-3">
-                <h4 className="text-sm font-medium text-blue-900">🏷️ Clasificación</h4>
+                <h4 className="text-sm font-medium text-blue-900">Clasificación</h4>
                 <div className="grid grid-cols-3 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">Tipo de Proyecto *</label>
                     <select
-                      value={formProyecto.tipoProyecto}
-                      onChange={(e) => setFormProyecto(prev => ({ ...prev, tipoProyecto: e.target.value }))}
+                      value={formProyecto.tipoProy}
+                      onChange={(e) => setFormProyecto(prev => ({ ...prev, tipoProy: e.target.value }))}
                       required
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     >
@@ -387,7 +407,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
 
               {/* Sección 3: Áreas y Beneficiarios */}
               <div className="bg-green-50 p-4 rounded-lg space-y-3">
-                <h4 className="text-sm font-medium text-green-900">🏢 Áreas y Beneficiarios</h4>
+                <h4 className="text-sm font-medium text-green-900">Áreas y Beneficiarios</h4>
                 <div className="grid grid-cols-3 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">Área del Proyecto *</label>
@@ -430,14 +450,14 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
 
               {/* Sección 4: Alineamiento Estratégico */}
               <div className="bg-purple-50 p-4 rounded-lg space-y-3">
-                <h4 className="text-sm font-medium text-purple-900">🎯 Alineamiento Estratégico</h4>
+                <h4 className="text-sm font-medium text-purple-900">Alineamiento Estratégico</h4>
                 <div className="grid grid-cols-3 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">Objetivo Estratégico *</label>
                     <input
                       type="text"
-                      value={formProyecto.objetivoEstrategico}
-                      onChange={(e) => setFormProyecto(prev => ({ ...prev, objetivoEstrategico: e.target.value }))}
+                      value={formProyecto.objEst}
+                      onChange={(e) => setFormProyecto(prev => ({ ...prev, objEst: e.target.value }))}
                       required
                       maxLength={100}
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
@@ -448,8 +468,8 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                     <label className="block text-xs font-medium text-gray-700 mb-1">Objetivo GD *</label>
                     <input
                       type="text"
-                      value={formProyecto.objetivoGD}
-                      onChange={(e) => setFormProyecto(prev => ({ ...prev, objetivoGD: e.target.value }))}
+                      value={formProyecto.objTranDig}
+                      onChange={(e) => setFormProyecto(prev => ({ ...prev, objTranDig: e.target.value }))}
                       required
                       maxLength={100}
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
@@ -457,15 +477,15 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Alienado PGD *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Alineado PGD *</label>
                     <input
                       type="text"
-                      value={formProyecto.alienadoPgd}
-                      onChange={(e) => setFormProyecto(prev => ({ ...prev, alienadoPgd: e.target.value }))}
+                      value={formProyecto.alineadoPgd}
+                      onChange={(e) => setFormProyecto(prev => ({ ...prev, alineadoPgd: e.target.value }))}
                       required
                       maxLength={100}
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                      placeholder="Alienamiento con PGD"
+                      placeholder="Alineamiento con PGD"
                     />
                   </div>
                 </div>
@@ -485,14 +505,14 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
 
               {/* Sección 5: Fechas y Estado */}
               <div className="bg-yellow-50 p-4 rounded-lg space-y-3">
-                <h4 className="text-sm font-medium text-yellow-900">📅 Cronograma y Estado</h4>
+                <h4 className="text-sm font-medium text-yellow-900">Cronograma y Estado</h4>
                 <div className="grid grid-cols-4 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Inicio Plan. *</label>
                     <input
                       type="date"
-                      value={formProyecto.fechaInicio}
-                      onChange={(e) => setFormProyecto(prev => ({ ...prev, fechaInicio: e.target.value }))}
+                      value={formProyecto.fecIniProg}
+                      onChange={(e) => setFormProyecto(prev => ({ ...prev, fecIniProg: e.target.value }))}
                       required
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     />
@@ -501,13 +521,13 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                     <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Fin Plan. *</label>
                     <input
                       type="date"
-                      value={formProyecto.fechaFin}
-                      onChange={(e) => setFormProyecto(prev => ({ ...prev, fechaFin: e.target.value }))}
-                      min={formProyecto.fechaInicio || ''}
+                      value={formProyecto.fecFinProg}
+                      onChange={(e) => setFormProyecto(prev => ({ ...prev, fecFinProg: e.target.value }))}
+                      min={formProyecto.fecIniProg || ''}
                       required
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     />
-                    {formProyecto.fechaInicio && <p className="text-xs text-gray-500 mt-1">Debe ser mayor o igual a fecha inicio</p>}
+                    {formProyecto.fecIniProg && <p className="text-xs text-gray-500 mt-1">Debe ser mayor o igual a fecha inicio</p>}
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Inicio Real *</label>
@@ -548,46 +568,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       Proyecto Activo
                     </label>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      id="informoAvance"
-                      checked={formProyecto.informoAvance}
-                      onChange={(e) => setFormProyecto(prev => ({ ...prev, informoAvance: e.target.checked }))}
-                      className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
-                    />
-                    <label htmlFor="informoAvance" className="text-sm font-medium text-gray-700">
-                      Informó Avance
-                    </label>
-                  </div>
                 </div>
-              </div>
-
-              {/* Porcentaje de Avance */}
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Porcentaje de Avance: {formProyecto.porcentajeAvance}%
-                </label>
-                <input
-                  type="range"
-                  value={formProyecto.porcentajeAvance}
-                  onChange={(e) => setFormProyecto(prev => ({ ...prev, porcentajeAvance: parseInt(e.target.value) }))}
-                  min="0"
-                  max="100"
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                />
-              </div>
-
-              {/* Observaciones */}
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Observaciones</label>
-                <textarea
-                  value={formProyecto.observaciones}
-                  onChange={(e) => setFormProyecto(prev => ({ ...prev, observaciones: e.target.value }))}
-                  rows={2}
-                  maxLength={255}
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                />
               </div>
             </div>
             <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
