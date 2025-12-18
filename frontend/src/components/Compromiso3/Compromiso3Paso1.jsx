@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Target, Building2, FolderKanban, Monitor, Save, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Target, Building2, FolderKanban, Monitor } from 'lucide-react';
 import ObjetivosEstrategicos from './ObjetivosEstrategicos';
 import ObjetivosGobiernoDigital from './ObjetivosGobiernoDigital';
 import SituacionActualGD from './SituacionActualGD';
@@ -24,8 +24,6 @@ const Compromiso3Paso1 = ({
   const [error, setError] = useState(null);
   
   // Estado de auto-guardado
-  const [saveStatus, setSaveStatus] = useState('idle'); // 'idle' | 'saving' | 'saved' | 'error'
-  const [lastSaved, setLastSaved] = useState(null);
   const saveTimeoutRef = useRef(null);
   const isSavingRef = useRef(false);
   
@@ -393,9 +391,6 @@ const Compromiso3Paso1 = ({
       return;
     }
 
-    // Cambiar estado a "guardando pendiente"
-    setSaveStatus('idle');
-
     // Programar guardado en 2 segundos
     saveTimeoutRef.current = setTimeout(() => {
       autoSave(data);
@@ -417,7 +412,6 @@ const Compromiso3Paso1 = ({
 
     try {
       isSavingRef.current = true;
-      setSaveStatus('saving');
 
       // Asegurar que el objeto tenga comEntidadId
       const dataToSave = {
@@ -442,32 +436,18 @@ const Compromiso3Paso1 = ({
       }
 
       if (response.isSuccess || response.success) {
-        setSaveStatus('saved');
-        setLastSaved(new Date());
-        
         // Si era creación, actualizar el ID
         if (!isUpdate && response.data?.comepgdEntId) {
           setFormData(prev => ({ ...prev, com3EPGDId: response.data.comepgdEntId }));
         }
 
         console.log('✅ Com3 guardado exitosamente');
-        
-        // Volver a 'idle' después de 3 segundos
-        setTimeout(() => {
-          setSaveStatus('idle');
-        }, 3000);
       } else {
         throw new Error(response.message || 'Error al guardar');
       }
     } catch (error) {
       console.error('❌ Error en auto-guardado:', error);
-      setSaveStatus('error');
       showErrorToast('Error al guardar automáticamente. Intente nuevamente.');
-      
-      // Volver a 'idle' después de 5 segundos para permitir reintentos
-      setTimeout(() => {
-        setSaveStatus('idle');
-      }, 5000);
     } finally {
       isSavingRef.current = false;
     }
@@ -549,54 +529,8 @@ const Compromiso3Paso1 = ({
     );
   }
 
-  // Renderizar indicador de guardado
-  const renderSaveIndicator = () => {
-    if (viewMode) return null;
-
-    const statusConfig = {
-      idle: { icon: null, text: '', color: '' },
-      saving: { icon: Loader2, text: 'Guardando...', color: 'text-blue-600' },
-      saved: { icon: CheckCircle2, text: 'Guardado', color: 'text-green-600' },
-      error: { icon: AlertCircle, text: 'Error al guardar', color: 'text-red-600' }
-    };
-
-    const config = statusConfig[saveStatus];
-    if (!config.icon) return null;
-
-    const Icon = config.icon;
-
-    return (
-      <div className={`flex items-center gap-2 text-sm ${config.color}`}>
-        <Icon className={`w-4 h-4 ${saveStatus === 'saving' ? 'animate-spin' : ''}`} />
-        <span>{config.text}</span>
-        {saveStatus === 'saved' && lastSaved && (
-          <span className="text-gray-500 text-xs">
-            {new Date(lastSaved).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}
-          </span>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <h2 className="text-xl font-semibold text-gray-800">
-              Compromiso 3: Elaborar el Plan de Gobierno Digital
-            </h2>
-            <p className="text-gray-600 text-sm mt-1">
-              Complete la información requerida para la elaboración del Plan de Gobierno Digital de la entidad.
-            </p>
-          </div>
-          <div className="ml-4">
-            {renderSaveIndicator()}
-          </div>
-        </div>
-      </div>
-
       {/* Tabs Navigation */}
       <div className="border-b border-gray-200">
         <nav className="flex flex-wrap gap-1 -mb-px" aria-label="Tabs">
