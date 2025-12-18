@@ -102,13 +102,13 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex justify-between items-center">
         <h4 className="font-medium text-gray-800">Inventario de Software</h4>
         {!viewMode && (
           <button
             onClick={handleAddItem}
-            className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             <Plus className="w-4 h-4" />
             Agregar Software
@@ -120,17 +120,17 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
         <table className="w-full border border-gray-200 rounded-lg">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Código</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Versión</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Instalaciones</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Licencias</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Exceso/Def.</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo (S/)</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Código</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Versión</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Instalaciones</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Licencias</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Exceso/Def.</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo (S/)</th>
               {!viewMode && (
-                <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                <th className="px-2 py-1.5 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
               )}
             </tr>
           </thead>
@@ -146,19 +146,19 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
                 const itemId = item.invSoftId || item.tempId;
                 return (
                   <tr key={itemId} className="hover:bg-gray-50">
-                    <td className="px-3 py-2 text-sm text-gray-500">{index + 1}</td>
-                    <td className="px-3 py-2 text-sm text-gray-900">{item.codProducto}</td>
-                    <td className="px-3 py-2 text-sm text-gray-900">{item.nombreProducto}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.version}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.tipoSoftware}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.cantidadInstalaciones}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.cantidadLicencias}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{index + 1}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-900">{item.codProducto}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-900">{item.nombreProducto}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{item.version}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{item.tipoSoftware}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{item.cantidadInstalaciones}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{item.cantidadLicencias}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">
                       <span className={item.excesoDeficiencia > 0 ? 'text-red-600' : item.excesoDeficiencia < 0 ? 'text-orange-600' : 'text-green-600'}>
                         {item.excesoDeficiencia}
                       </span>
                     </td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{parseFloat(item.costoLicencias || 0).toFixed(2)}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{parseFloat(item.costoLicencias || 0).toFixed(2)}</td>
                     {!viewMode && (
                       <td className="px-3 py-2 text-center">
                         <div className="flex items-center justify-center gap-1">
@@ -191,8 +191,8 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
           <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center">
+              <h3 className="text-base font-semibold text-gray-900">
                 {editingItem ? 'Editar Software' : 'Agregar Software'}
               </h3>
               <button
@@ -202,51 +202,51 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
                 <X size={24} />
               </button>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="p-6 space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   Código del Producto *
                 </label>
                 <input
                   type="text"
                   value={formItem.codProducto}
                   onChange={(e) => setFormItem(prev => ({ ...prev, codProducto: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   maxLength="50"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   Nombre del Producto *
                 </label>
                 <input
                   type="text"
                   value={formItem.nombreProducto}
                   onChange={(e) => setFormItem(prev => ({ ...prev, nombreProducto: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   maxLength="150"
                   required
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Versión *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Versión *</label>
                   <input
                     type="text"
                     value={formItem.version}
                     onChange={(e) => setFormItem(prev => ({ ...prev, version: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     maxLength="50"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Software *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Tipo de Software *</label>
                   <select
                     value={formItem.tipoSoftware}
                     onChange={(e) => setFormItem(prev => ({ ...prev, tipoSoftware: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
                     <option value="">Seleccione...</option>
@@ -256,9 +256,9 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
                   </select>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Cantidad de Instalaciones *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Cantidad de Instalaciones *</label>
                   <input
                     type="number"
                     min="0"
@@ -272,12 +272,12 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
                         excesoDeficiencia: exceso
                       }));
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Cantidad de Licencias *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Cantidad de Licencias *</label>
                   <input
                     type="number"
                     min="0"
@@ -291,52 +291,52 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
                         excesoDeficiencia: exceso
                       }));
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Exceso/Deficiencia (Auto-calculado)
                   </label>
                   <input
                     type="number"
                     value={formItem.excesoDeficiencia}
                     disabled
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg bg-gray-100"
                   />
                   <p className="text-xs text-gray-500 mt-1">
                     Positivo = Exceso | Negativo = Deficiencia
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Costo de Licencias (S/) *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Costo de Licencias (S/) *</label>
                   <input
                     type="number"
                     step="0.01"
                     min="0"
                     value={formItem.costoLicencias}
                     onChange={(e) => setFormItem(prev => ({ ...prev, costoLicencias: parseFloat(e.target.value) || 0 }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
               </div>
             </div>
-            <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
+            <div className="flex justify-end gap-3 px-6 py-3 border-t border-gray-200">
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleSaveItem}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 {editingItem ? 'Guardar' : 'Agregar'}
               </button>

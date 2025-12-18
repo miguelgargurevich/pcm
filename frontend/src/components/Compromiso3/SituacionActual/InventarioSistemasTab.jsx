@@ -101,13 +101,13 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex justify-between items-center">
         <h4 className="font-medium text-gray-800">Inventario de Sistemas de Información</h4>
         {!viewMode && (
           <button
             onClick={handleAddItem}
-            className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             <Plus className="w-4 h-4" />
             Agregar Sistema
@@ -119,48 +119,37 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
         <table className="w-full border border-gray-200 rounded-lg">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Siglas</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plataforma</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Año</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Responsable</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Código</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lenguaje</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Base de Datos</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plataforma</th>
               {!viewMode && (
-                <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                <th className="px-2 py-1.5 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
               )}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {localInventario.length === 0 ? (
               <tr>
-                <td colSpan={viewMode ? 8 : 9} className="px-3 py-4 text-center text-gray-500">
+                <td colSpan={viewMode ? 7 : 8} className="px-3 py-4 text-center text-gray-500">
                   No hay sistemas registrados
                 </td>
               </tr>
             ) : (
               localInventario.map((item, index) => {
-                const itemId = item.invSisId || item.tempId;
+                const itemId = item.invSiId || item.tempId;
                 return (
                   <tr key={itemId} className="hover:bg-gray-50">
-                    <td className="px-3 py-2 text-sm text-gray-500">{index + 1}</td>
-                    <td className="px-3 py-2 text-sm text-gray-900">{item.nombreSistema}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.siglas}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.tipoSistema}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.plataforma}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">
-                      <span className={`px-2 py-1 rounded-full text-xs ${
-                        item.estadoSistema === 'En Producción' ? 'bg-green-100 text-green-800' :
-                        item.estadoSistema === 'En Desarrollo' ? 'bg-yellow-100 text-yellow-800' :
-                        item.estadoSistema === 'Descontinuado' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {item.estadoSistema}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.anoImplementacion}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.responsable}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{index + 1}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-900">{item.codigo}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-900">{item.nombreSistema}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{item.tipoSistema}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{item.lenguajeProgramacion}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{item.baseDatos}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{item.plataforma}</td>
                     {!viewMode && (
                       <td className="px-3 py-2 text-center">
                         <div className="flex items-center justify-center gap-1">
@@ -193,57 +182,57 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4">
+            <h3 className="text-base font-semibold mb-4">
               {editingItem ? 'Editar Sistema' : 'Agregar Sistema'}
             </h3>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Código *
                   </label>
                   <input
                     type="text"
                     value={formItem.codigo}
                     onChange={(e) => setFormItem(prev => ({ ...prev, codigo: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Ej: SIS-001"
                     maxLength="20"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Nombre del Sistema *
                   </label>
                   <input
                     type="text"
                     value={formItem.nombreSistema}
                     onChange={(e) => setFormItem(prev => ({ ...prev, nombreSistema: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     maxLength="150"
                     required
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Descripción *</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Descripción *</label>
                 <textarea
                   value={formItem.descripcion}
                   onChange={(e) => setFormItem(prev => ({ ...prev, descripcion: e.target.value }))}
                   rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   maxLength="255"
                   required
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Sistema *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Tipo de Sistema *</label>
                   <select
                     value={formItem.tipoSistema}
                     onChange={(e) => setFormItem(prev => ({ ...prev, tipoSistema: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
                     <option value="">Seleccione...</option>
@@ -253,11 +242,11 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Plataforma *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Plataforma *</label>
                   <select
                     value={formItem.plataforma}
                     onChange={(e) => setFormItem(prev => ({ ...prev, plataforma: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
                     <option value="">Seleccione...</option>
@@ -267,26 +256,26 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                   </select>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Lenguaje de Programación *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Lenguaje de Programación *</label>
                   <input
                     type="text"
                     value={formItem.lenguajeProgramacion}
                     onChange={(e) => setFormItem(prev => ({ ...prev, lenguajeProgramacion: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Ej: Java, Python, .NET"
                     maxLength="50"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Base de Datos *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Base de Datos *</label>
                   <input
                     type="text"
                     value={formItem.baseDatos}
                     onChange={(e) => setFormItem(prev => ({ ...prev, baseDatos: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Ej: PostgreSQL, MySQL, Oracle"
                     maxLength="50"
                     required
@@ -294,18 +283,18 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                 </div>
               </div>
             </div>
-            <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
+            <div className="flex justify-end gap-3 px-6 py-3 border-t border-gray-200">
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleSaveItem}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 {editingItem ? 'Guardar' : 'Agregar'}
               </button>

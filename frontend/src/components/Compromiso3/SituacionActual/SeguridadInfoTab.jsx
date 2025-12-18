@@ -113,7 +113,7 @@ const SeguridadInfoTab = ({
   return (
     <div className="space-y-6">
       {/* Sección de Evaluación de Seguridad */}
-      <div className="bg-gray-50 p-4 rounded-lg">
+      <div className="bg-gray-50 p-3 rounded-lg">
         <div className="flex items-center gap-2 mb-4">
           <Shield className="w-5 h-5 text-blue-600" />
           <h4 className="font-medium text-gray-800">Evaluación de Seguridad de la Información</h4>
@@ -141,7 +141,7 @@ const SeguridadInfoTab = ({
 
         {/* Campo adicional para observaciones de seguridad */}
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-xs font-medium text-gray-700 mb-1">
             Observaciones de Seguridad
           </label>
           <textarea
@@ -149,7 +149,7 @@ const SeguridadInfoTab = ({
             onChange={(e) => handleCheckboxChange('observacionesSeguridad', e.target.value)}
             disabled={viewMode}
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+            className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
             placeholder="Observaciones adicionales sobre la seguridad de la información..."
           />
         </div>
@@ -162,7 +162,7 @@ const SeguridadInfoTab = ({
           {!viewMode && (
             <button
               onClick={handleAddCapacitacion}
-              className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               <Plus className="w-4 h-4" />
               Agregar Capacitación
@@ -174,11 +174,11 @@ const SeguridadInfoTab = ({
           <table className="w-full border border-gray-200 rounded-lg">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Curso de Capacitación</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad de Personas</th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Curso de Capacitación</th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad de Personas</th>
                 {!viewMode && (
-                  <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                  <th className="px-2 py-1.5 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                 )}
               </tr>
             </thead>
@@ -194,9 +194,9 @@ const SeguridadInfoTab = ({
                   const itemId = item.capSegId || item.tempId;
                   return (
                     <tr key={itemId} className="hover:bg-gray-50">
-                      <td className="px-3 py-2 text-sm text-gray-500">{index + 1}</td>
-                      <td className="px-3 py-2 text-sm text-gray-900">{item.curso}</td>
-                      <td className="px-3 py-2 text-sm text-gray-500 text-center font-medium">{item.cantidadPersonas}</td>
+                      <td className="px-2 py-1.5 text-xs text-gray-500">{index + 1}</td>
+                      <td className="px-2 py-1.5 text-xs text-gray-900">{item.curso}</td>
+                      <td className="px-2 py-1.5 text-xs text-gray-500 text-center font-medium">{item.cantidadPersonas}</td>
                       {!viewMode && (
                         <td className="px-3 py-2 text-center">
                           <div className="flex items-center justify-center gap-1">
@@ -230,12 +230,12 @@ const SeguridadInfoTab = ({
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4">
+            <h3 className="text-base font-semibold mb-4">
               {editingItem ? 'Editar Capacitación' : 'Agregar Capacitación'}
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   Curso de Capacitación *
                 </label>
                 <input
@@ -244,12 +244,12 @@ const SeguridadInfoTab = ({
                   onChange={(e) => setFormItem(prev => ({ ...prev, curso: e.target.value }))}
                   required
                   maxLength={100}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Ej: Curso de Ciberseguridad Básica"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   Cantidad de Personas *
                 </label>
                 <input
@@ -258,7 +258,7 @@ const SeguridadInfoTab = ({
                   onChange={(e) => setFormItem(prev => ({ ...prev, cantidadPersonas: e.target.value }))}
                   required
                   min="1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Número de personas capacitadas"
                 />
               </div>
@@ -266,13 +266,13 @@ const SeguridadInfoTab = ({
             <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSaveCapacitacion}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 {editingItem ? 'Guardar' : 'Agregar'}
               </button>

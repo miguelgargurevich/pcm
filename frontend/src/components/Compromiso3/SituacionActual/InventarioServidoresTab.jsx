@@ -145,13 +145,13 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex justify-between items-center">
         <h4 className="font-medium text-gray-800">Inventario de Servidores</h4>
         {!viewMode && (
           <button
             onClick={handleAddItem}
-            className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             <Plus className="w-4 h-4" />
             Agregar Servidor
@@ -163,16 +163,16 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
         <table className="w-full border border-gray-200 rounded-lg">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Capa</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CPU</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">RAM (GB)</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo Mant.</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Capa</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CPU</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">RAM (GB)</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo Mant.</th>
               {!viewMode && (
-                <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                <th className="px-2 py-1.5 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
               )}
             </tr>
           </thead>
@@ -188,13 +188,13 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                 const itemId = item.invServId || item.tempId;
                 return (
                   <tr key={itemId} className="hover:bg-gray-50">
-                    <td className="px-3 py-2 text-sm text-gray-500">{index + 1}</td>
-                    <td className="px-3 py-2 text-sm text-gray-900">{item.nombreEquipo}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.tipoEquipo}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.capa}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.marcaCpu} {item.modeloCpu} @ {item.velocidadGhz}GHz ({item.nucleos} núcleos)</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{item.memoriaGb}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{index + 1}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-900">{item.nombreEquipo}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{item.tipoEquipo}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{item.capa}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{item.marcaCpu} {item.modeloCpu} @ {item.velocidadGhz}GHz ({item.nucleos} núcleos)</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{item.memoriaGb}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">
                       <span className={`px-2 py-1 rounded-full text-xs ${
                         item.estado === 'Operativo' ? 'bg-green-100 text-green-800' :
                         item.estado === 'En mantenimiento' ? 'bg-yellow-100 text-yellow-800' :
@@ -204,7 +204,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                         {item.estado}
                       </span>
                     </td>
-                    <td className="px-3 py-2 text-sm text-gray-500">S/ {parseFloat(item.costoMantenimientoAnual || 0).toFixed(2)}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">S/ {parseFloat(item.costoMantenimientoAnual || 0).toFixed(2)}</td>
                     {!viewMode && (
                       <td className="px-3 py-2 text-center">
                         <div className="flex items-center justify-center gap-1">
@@ -237,32 +237,32 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4">
+            <h3 className="text-base font-semibold mb-4">
               {editingItem ? 'Editar Servidor' : 'Agregar Servidor'}
             </h3>
             <div className="space-y-6">
               {/* Sección: Datos Generales */}
               <div>
                 <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">Datos Generales</h4>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del Equipo *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Nombre del Equipo *</label>
                     <input
                       type="text"
                       value={formItem.nombreEquipo}
                       onChange={(e) => setFormItem(prev => ({ ...prev, nombreEquipo: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       maxLength="100"
                       required
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Equipo *</label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Tipo de Equipo *</label>
                       <select
                         value={formItem.tipoEquipo}
                         onChange={(e) => setFormItem(prev => ({ ...prev, tipoEquipo: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                         required
                       >
                         <option value="">Seleccione...</option>
@@ -272,11 +272,11 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Estado *</label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Estado *</label>
                       <select
                         value={formItem.estado}
                         onChange={(e) => setFormItem(prev => ({ ...prev, estado: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                         required
                       >
                         <option value="">Seleccione...</option>
@@ -286,13 +286,13 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       </select>
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Capa *</label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Capa *</label>
                       <select
                         value={formItem.capa}
                         onChange={(e) => setFormItem(prev => ({ ...prev, capa: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                         required
                       >
                         <option value="">Seleccione...</option>
@@ -302,11 +302,11 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Propiedad *</label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Propiedad *</label>
                       <select
                         value={formItem.propiedad}
                         onChange={(e) => setFormItem(prev => ({ ...prev, propiedad: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                         required
                       >
                         <option value="">Seleccione...</option>
@@ -316,11 +316,11 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Montaje *</label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Montaje *</label>
                       <select
                         value={formItem.montaje}
                         onChange={(e) => setFormItem(prev => ({ ...prev, montaje: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                         required
                       >
                         <option value="">Seleccione...</option>
@@ -336,52 +336,52 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
               {/* Sección: Hardware - CPU */}
               <div>
                 <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">Hardware - Procesador (CPU)</h4>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Marca CPU *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Marca CPU *</label>
                     <input
                       type="text"
                       value={formItem.marcaCpu}
                       onChange={(e) => setFormItem(prev => ({ ...prev, marcaCpu: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Ej: Intel, AMD"
                       maxLength="50"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Modelo CPU *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Modelo CPU *</label>
                     <input
                       type="text"
                       value={formItem.modeloCpu}
                       onChange={(e) => setFormItem(prev => ({ ...prev, modeloCpu: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Ej: Xeon E5-2680 v4"
                       maxLength="50"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Velocidad (GHz) *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Velocidad (GHz) *</label>
                     <input
                       type="number"
                       step="0.01"
                       min="0"
                       value={formItem.velocidadGhz}
                       onChange={(e) => setFormItem(prev => ({ ...prev, velocidadGhz: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Ej: 2.40"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Núcleos *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Núcleos *</label>
                     <input
                       type="number"
                       min="1"
                       value={formItem.nucleos}
                       onChange={(e) => setFormItem(prev => ({ ...prev, nucleos: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Ej: 14"
                       required
                     />
@@ -392,50 +392,50 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
               {/* Sección: Hardware - Memoria */}
               <div>
                 <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">Hardware - Memoria (RAM)</h4>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Memoria Total (GB) *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Memoria Total (GB) *</label>
                     <input
                       type="number"
                       min="0"
                       value={formItem.memoriaGb}
                       onChange={(e) => setFormItem(prev => ({ ...prev, memoriaGb: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Ej: 64"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Cantidad de Módulos *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Cantidad de Módulos *</label>
                     <input
                       type="number"
                       min="1"
                       value={formItem.cantidadMemoria}
                       onChange={(e) => setFormItem(prev => ({ ...prev, cantidadMemoria: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Ej: 4"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Marca Memoria *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Marca Memoria *</label>
                     <input
                       type="text"
                       value={formItem.marcaMemoria}
                       onChange={(e) => setFormItem(prev => ({ ...prev, marcaMemoria: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Ej: Kingston, Samsung"
                       maxLength="50"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Modelo Memoria *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Modelo Memoria *</label>
                     <input
                       type="text"
                       value={formItem.modeloMemoria}
                       onChange={(e) => setFormItem(prev => ({ ...prev, modeloMemoria: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Ej: DDR4-2666 ECC"
                       maxLength="50"
                       required
@@ -448,14 +448,14 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
               <div>
                 <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">Costos</h4>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Costo Mantenimiento Anual (S/) *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Costo Mantenimiento Anual (S/) *</label>
                   <input
                     type="number"
                     step="0.01"
                     min="0"
                     value={formItem.costoMantenimientoAnual}
                     onChange={(e) => setFormItem(prev => ({ ...prev, costoMantenimientoAnual: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="0.00"
                     required
                   />
@@ -464,28 +464,28 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
 
               {/* Observaciones */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Observaciones</label>
                 <textarea
                   value={formItem.observaciones}
                   onChange={(e) => setFormItem(prev => ({ ...prev, observaciones: e.target.value }))}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   maxLength="255"
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
+            <div className="flex justify-end gap-3 px-6 py-3 border-t border-gray-200">
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleSaveItem}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 {editingItem ? 'Guardar' : 'Agregar'}
               </button>

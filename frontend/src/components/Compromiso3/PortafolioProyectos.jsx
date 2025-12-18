@@ -157,9 +157,9 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
 
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-800">Portafolio de Proyectos</h3>
+        <h3 className="text-base font-semibold text-gray-800">Portafolio de Proyectos</h3>
         <div className="flex items-center gap-2">
           {!viewMode && (
             <>
@@ -194,16 +194,16 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
         <table className="w-full border border-gray-200 rounded-lg">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Código</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Área</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avance</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inicio</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fin</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Código</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Área</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avance</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inicio</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fin</th>
               {!viewMode && (
-                <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                <th className="px-2 py-1.5 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
               )}
             </tr>
           </thead>
@@ -220,9 +220,9 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                 return (
                   <tr key={proyectoId} className="hover:bg-gray-50">
                     <td className="px-3 py-2 text-sm font-mono text-purple-600">{proyecto.codigoProyecto}</td>
-                    <td className="px-3 py-2 text-sm text-gray-900">{proyecto.nombreProyecto}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{proyecto.tipoProyecto}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{proyecto.areaProy}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-900">{proyecto.nombreProyecto}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{proyecto.tipoProyecto}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{proyecto.areaProy}</td>
                     <td className="px-3 py-2 text-sm">
                       <span className={`px-2 py-1 rounded-full text-xs ${
                         proyecto.estadoProyecto ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
@@ -230,7 +230,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                         {proyecto.estadoProyecto ? 'Activo' : 'Inactivo'}
                       </span>
                     </td>
-                    <td className="px-3 py-2 text-sm text-gray-500">
+                    <td className="px-2 py-1.5 text-xs text-gray-500">
                       <div className="flex items-center gap-2">
                         <div className="w-20 bg-gray-200 rounded-full h-2">
                           <div 
@@ -241,8 +241,8 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                         <span className="text-xs">{proyecto.porcentajeAvance || 0}%</span>
                       </div>
                     </td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{proyecto.fechaInicio}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{proyecto.fechaFin}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{proyecto.fechaInicio}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{proyecto.fechaFin}</td>
                     {!viewMode && (
                       <td className="px-3 py-2 text-center">
                         <div className="flex items-center justify-center gap-1">
@@ -286,54 +286,54 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                 <X size={24} />
               </button>
             </div>
-            <div className="p-6 space-y-6">
+            <div className="p-4 space-y-6">
               {/* Sección 1: Datos Básicos */}
               <div className="bg-gray-50 p-4 rounded-lg space-y-3">
                 <h4 className="text-sm font-medium text-gray-900">Datos Básicos</h4>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Código</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Código</label>
                     <input
                       type="text"
                       value={formProyecto.codigoProyecto}
                       disabled
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
                     />
                   </div>
                   <div className="col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del Proyecto *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Nombre del Proyecto *</label>
                     <input
                       type="text"
                       value={formProyecto.nombreProyecto}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, nombreProyecto: e.target.value }))}
                       required
                       maxLength={150}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Alcance *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Alcance *</label>
                     <input
                       type="text"
                       value={formProyecto.alcance}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, alcance: e.target.value }))}
                       required
                       maxLength={240}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       placeholder="Descripción del alcance del proyecto"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Justificación *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Justificación *</label>
                     <input
                       type="text"
                       value={formProyecto.justificacion}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, justificacion: e.target.value }))}
                       required
                       maxLength={240}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       placeholder="Justificación del proyecto"
                     />
                   </div>
@@ -343,14 +343,14 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
               {/* Sección 2: Clasificación */}
               <div className="bg-blue-50 p-4 rounded-lg space-y-3">
                 <h4 className="text-sm font-medium text-blue-900">🏷️ Clasificación</h4>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Proyecto *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Tipo de Proyecto *</label>
                     <select
                       value={formProyecto.tipoProyecto}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, tipoProyecto: e.target.value }))}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     >
                       <option value="">Seleccione...</option>
                       {tiposProyecto.map(t => (
@@ -359,26 +359,26 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Etapa del Proyecto *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Etapa del Proyecto *</label>
                     <input
                       type="text"
                       value={formProyecto.etapaProyecto}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, etapaProyecto: e.target.value }))}
                       required
                       maxLength={100}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       placeholder="Ej: Diseño, Ejecución"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Ámbito *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Ámbito *</label>
                     <input
                       type="text"
                       value={formProyecto.ambitoProyecto}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, ambitoProyecto: e.target.value }))}
                       required
                       maxLength={100}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       placeholder="Ej: Local, Nacional"
                     />
                   </div>
@@ -388,40 +388,40 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
               {/* Sección 3: Áreas y Beneficiarios */}
               <div className="bg-green-50 p-4 rounded-lg space-y-3">
                 <h4 className="text-sm font-medium text-green-900">🏢 Áreas y Beneficiarios</h4>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Área del Proyecto *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Área del Proyecto *</label>
                     <input
                       type="text"
                       value={formProyecto.areaProy}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, areaProy: e.target.value }))}
                       required
                       maxLength={50}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       placeholder="Área responsable"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Área que Ejecuta *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Área que Ejecuta *</label>
                     <input
                       type="text"
                       value={formProyecto.areaEjecuta}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, areaEjecuta: e.target.value }))}
                       required
                       maxLength={50}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       placeholder="Área ejecutora"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Tipo Beneficiario *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Tipo Beneficiario *</label>
                     <input
                       type="text"
                       value={formProyecto.tipoBeneficiario}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, tipoBeneficiario: e.target.value }))}
                       required
                       maxLength={100}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       placeholder="Ej: Ciudadanos, Personal"
                     />
                   </div>
@@ -431,53 +431,53 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
               {/* Sección 4: Alineamiento Estratégico */}
               <div className="bg-purple-50 p-4 rounded-lg space-y-3">
                 <h4 className="text-sm font-medium text-purple-900">🎯 Alineamiento Estratégico</h4>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Objetivo Estratégico *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Objetivo Estratégico *</label>
                     <input
                       type="text"
                       value={formProyecto.objetivoEstrategico}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, objetivoEstrategico: e.target.value }))}
                       required
                       maxLength={100}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       placeholder="Ej: OE-01"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Objetivo GD *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Objetivo GD *</label>
                     <input
                       type="text"
                       value={formProyecto.objetivoGD}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, objetivoGD: e.target.value }))}
                       required
                       maxLength={100}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       placeholder="Ej: OGD-01"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Alienado PGD *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Alienado PGD *</label>
                     <input
                       type="text"
                       value={formProyecto.alienadoPgd}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, alienadoPgd: e.target.value }))}
                       required
                       maxLength={100}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       placeholder="Alienamiento con PGD"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Acción Estratégica *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Acción Estratégica *</label>
                   <input
                     type="text"
                     value={formProyecto.accEst}
                     onChange={(e) => setFormProyecto(prev => ({ ...prev, accEst: e.target.value }))}
                     required
                     maxLength={100}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     placeholder="Acción estratégica vinculada"
                   />
                 </div>
@@ -486,43 +486,43 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
               {/* Sección 5: Fechas y Estado */}
               <div className="bg-yellow-50 p-4 rounded-lg space-y-3">
                 <h4 className="text-sm font-medium text-yellow-900">📅 Cronograma y Estado</h4>
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-4 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Fecha Inicio Plan. *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Inicio Plan. *</label>
                     <input
                       type="date"
                       value={formProyecto.fechaInicio}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, fechaInicio: e.target.value }))}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Fecha Fin Plan. *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Fin Plan. *</label>
                     <input
                       type="date"
                       value={formProyecto.fechaFin}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, fechaFin: e.target.value }))}
                       min={formProyecto.fechaInicio || ''}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     />
                     {formProyecto.fechaInicio && <p className="text-xs text-gray-500 mt-1">Debe ser mayor o igual a fecha inicio</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Fecha Inicio Real *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Inicio Real *</label>
                     <input
                       type="date"
                       value={formProyecto.fecIniReal}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, fecIniReal: e.target.value }))}
                       max={new Date().toISOString().split('T')[0]}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     />
                     <p className="text-xs text-gray-500 mt-1">No puede ser una fecha futura</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Fecha Fin Real *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Fin Real *</label>
                     <input
                       type="date"
                       value={formProyecto.fecFinReal}
@@ -530,12 +530,12 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       min={formProyecto.fecIniReal || ''}
                       max={new Date().toISOString().split('T')[0]}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     />
                     {formProyecto.fecIniReal && <p className="text-xs text-gray-500 mt-1">Debe ser mayor o igual a fecha inicio real y no futura</p>}
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-3">
                   <div className="flex items-center gap-3">
                     <input
                       type="checkbox"
@@ -565,7 +565,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
 
               {/* Porcentaje de Avance */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   Porcentaje de Avance: {formProyecto.porcentajeAvance}%
                 </label>
                 <input
@@ -580,13 +580,13 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
 
               {/* Observaciones */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Observaciones</label>
                 <textarea
                   value={formProyecto.observaciones}
                   onChange={(e) => setFormProyecto(prev => ({ ...prev, observaciones: e.target.value }))}
                   rows={2}
                   maxLength={255}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 />
               </div>
             </div>
@@ -594,7 +594,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Cancelar
               </button>

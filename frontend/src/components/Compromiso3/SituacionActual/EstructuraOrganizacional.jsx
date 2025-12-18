@@ -135,13 +135,13 @@ const EstructuraOrganizacional = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Header - Datos Generales Obligatorios */}
-      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-        <h4 className="font-medium text-gray-800 mb-4">Datos Generales (Obligatorios)</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+      <div key="seccion-datos-generales" className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+        <h4 className="font-medium text-gray-800 mb-3 text-sm">Datos Generales (Obligatorios)</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div key="fecha-reporte">
+            <label className="block text-xs font-medium text-gray-700 mb-1">
               Fecha de Reporte *
             </label>
             <input
@@ -150,13 +150,13 @@ const EstructuraOrganizacional = ({
               onChange={(e) => handleHeaderFieldChange('fechaReporte', e.target.value)}
               disabled={viewMode}
               max={new Date().toISOString().split('T')[0]}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
               required
             />
-            <p className="text-xs text-gray-500 mt-1">No puede ser una fecha futura</p>
+            <p className="text-xs text-gray-500 mt-0.5">No puede ser una fecha futura</p>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div key="sede">
+            <label className="block text-xs font-medium text-gray-700 mb-1">
               Sede *
             </label>
             <input
@@ -164,14 +164,14 @@ const EstructuraOrganizacional = ({
               value={localHeader.sede || ''}
               onChange={(e) => handleHeaderFieldChange('sede', e.target.value)}
               disabled={viewMode}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
               placeholder="Sede principal de la entidad"
               maxLength="100"
               required
             />
           </div>
-          <div className="md:col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div key="ubicacion-area" className="md:col-span-1">
+            <label className="block text-xs font-medium text-gray-700 mb-1">
               Ubicación Área TI *
             </label>
             <input
@@ -179,7 +179,7 @@ const EstructuraOrganizacional = ({
               value={localHeader.ubicacionAreaTi || ''}
               onChange={(e) => handleHeaderFieldChange('ubicacionAreaTi', e.target.value)}
               disabled={viewMode}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
               placeholder="Ubicación física del área"
               maxLength="255"
               required
@@ -187,14 +187,14 @@ const EstructuraOrganizacional = ({
           </div>
         </div>
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-xs font-medium text-gray-700 mb-1">
             Observaciones Generales *
           </label>
           <textarea
             value={localHeader.observaciones || ''}
             onChange={(e) => handleHeaderFieldChange('observaciones', e.target.value)}
             disabled={viewMode}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+            className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
             placeholder="Observaciones o comentarios generales sobre el área de TI"
             rows="3"
             maxLength="255"
@@ -204,11 +204,11 @@ const EstructuraOrganizacional = ({
       </div>
 
       {/* Header - Datos del Área de TI */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h4 className="font-medium text-gray-800 mb-4">Datos del Área de TI / Gobierno Digital</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+      <div key="seccion-datos-area-ti" className="bg-gray-50 p-3 rounded-lg">
+        <h4 className="font-medium text-gray-800 mb-2 text-sm">Datos del Área de TI / Gobierno Digital</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div key="dependencia-area">
+            <label className="block text-xs font-medium text-gray-700 mb-1">
               Dependencia del Área TI *
             </label>
             <input
@@ -216,14 +216,14 @@ const EstructuraOrganizacional = ({
               value={localHeader.dependenciaAreaTi || ''}
               onChange={(e) => handleHeaderFieldChange('dependenciaAreaTi', e.target.value)}
               disabled={viewMode}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
               placeholder="Ej: Gerencia General, Secretaría General"
               maxLength="100"
               required
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div key="costo-anual">
+            <label className="block text-xs font-medium text-gray-700 mb-1">
               Costo Anual TI (S/) *
             </label>
             <input
@@ -232,12 +232,12 @@ const EstructuraOrganizacional = ({
               value={localHeader.costoAnualTi || ''}
               onChange={(e) => handleHeaderFieldChange('costoAnualTi', parseFloat(e.target.value))}
               disabled={viewMode}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
               placeholder="0.00"
               required
             />
           </div>
-          <div className="md:col-span-2">
+          <div key="existe-comision" className="md:col-span-2">
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
               <input
                 type="checkbox"
@@ -253,13 +253,13 @@ const EstructuraOrganizacional = ({
       </div>
 
       {/* Grid de Personal */}
-      <div>
+      <div key="seccion-personal-ti">
         <div className="flex justify-between items-center mb-4">
           <h4 className="font-medium text-gray-800">Personal del Área de TI</h4>
           {!viewMode && (
             <button
               onClick={handleAddPersonal}
-              className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               <Plus className="w-4 h-4" />
               Agregar Personal
@@ -271,16 +271,16 @@ const EstructuraOrganizacional = ({
           <table className="w-full border border-gray-200 rounded-lg">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre Completo</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DNI</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cargo</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Especialidad</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teléfono</th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre Completo</th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DNI</th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cargo</th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Especialidad</th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teléfono</th>
                 {!viewMode && (
-                  <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                  <th className="px-2 py-1.5 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                 )}
               </tr>
             </thead>
@@ -296,14 +296,14 @@ const EstructuraOrganizacional = ({
                   const personalId = personal.pTiId || personal.tempId;
                   return (
                     <tr key={personalId} className="hover:bg-gray-50">
-                      <td className="px-3 py-2 text-sm text-gray-500">{index + 1}</td>
-                      <td className="px-3 py-2 text-sm text-gray-900">{personal.nombrePersona}</td>
-                      <td className="px-3 py-2 text-sm text-gray-500">{personal.dni}</td>
-                      <td className="px-3 py-2 text-sm text-gray-500">{personal.cargo}</td>
-                      <td className="px-3 py-2 text-sm text-gray-500">{personal.rol}</td>
-                      <td className="px-3 py-2 text-sm text-gray-500">{personal.especialidad}</td>
-                      <td className="px-3 py-2 text-sm text-gray-500">{personal.emailPersonal}</td>
-                      <td className="px-3 py-2 text-sm text-gray-500">{personal.telefono}</td>
+                      <td className="px-2 py-1.5 text-xs text-gray-500">{index + 1}</td>
+                      <td className="px-2 py-1.5 text-xs text-gray-900">{personal.nombrePersona}</td>
+                      <td className="px-2 py-1.5 text-xs text-gray-500">{personal.dni}</td>
+                      <td className="px-2 py-1.5 text-xs text-gray-500">{personal.cargo}</td>
+                      <td className="px-2 py-1.5 text-xs text-gray-500">{personal.rol}</td>
+                      <td className="px-2 py-1.5 text-xs text-gray-500">{personal.especialidad}</td>
+                      <td className="px-2 py-1.5 text-xs text-gray-500">{personal.emailPersonal}</td>
+                      <td className="px-2 py-1.5 text-xs text-gray-500">{personal.telefono}</td>
                       {!viewMode && (
                         <td className="px-3 py-2 text-center">
                           <div className="flex items-center justify-center gap-1">
@@ -337,8 +337,8 @@ const EstructuraOrganizacional = ({
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
           <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center">
+              <h3 className="text-base font-semibold text-gray-900">
                 {editingPersonal ? 'Editar Personal' : 'Agregar Personal'}
               </h3>
               <button
@@ -348,51 +348,51 @@ const EstructuraOrganizacional = ({
                 <X size={24} />
               </button>
             </div>
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="p-6 space-y-3">
+              <div key="nombre-completo-field">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   Nombre Completo *
                 </label>
                 <input
                   type="text"
                   value={formPersonal.nombrePersona}
                   onChange={(e) => setFormPersonal(prev => ({ ...prev, nombrePersona: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   maxLength="100"
                   required
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">DNI *</label>
+              <div key="grid-dni-cargo" className="grid grid-cols-2 gap-3">
+                <div key="dni-field">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">DNI *</label>
                   <input
                     type="text"
                     value={formPersonal.dni}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, dni: e.target.value }))}
                     maxLength="12"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Cargo *</label>
+                <div key="cargo-field">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Cargo *</label>
                   <input
                     type="text"
                     value={formPersonal.cargo}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, cargo: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     maxLength="100"
                     required
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Rol *</label>
+              <div key="grid-rol-especialidad" className="grid grid-cols-2 gap-3">
+                <div key="rol-field">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Rol *</label>
                   <select
                     value={formPersonal.rol}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, rol: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
                     <option value="">Seleccione...</option>
@@ -401,25 +401,25 @@ const EstructuraOrganizacional = ({
                     ))}
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Especialidad *</label>
+                <div key="especialidad-field">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Especialidad *</label>
                   <input
                     type="text"
                     value={formPersonal.especialidad}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, especialidad: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     maxLength="80"
                     required
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Grado de Instrucción *</label>
+              <div key="grid-grado-certificacion" className="grid grid-cols-2 gap-3">
+                <div key="grado-field">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Grado de Instrucción *</label>
                   <select
                     value={formPersonal.gradoInstruccion}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, gradoInstruccion: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
                     <option value="">Seleccione...</option>
@@ -428,93 +428,93 @@ const EstructuraOrganizacional = ({
                     ))}
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Certificación *</label>
+                <div key="certificacion-field">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Certificación *</label>
                   <input
                     type="text"
                     value={formPersonal.certificacion}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, certificacion: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     maxLength="80"
                     placeholder="Ej: ITIL, PMP, COBIT"
                     required
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Acreditadora *</label>
+              <div key="grid-acreditadora-codigo" className="grid grid-cols-2 gap-3">
+                <div key="acreditadora-field">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Acreditadora *</label>
                   <input
                     type="text"
                     value={formPersonal.acreditadora}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, acreditadora: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     maxLength="80"
                     placeholder="Entidad que otorga la certificación"
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Código Certificación *</label>
+                <div key="codigo-field">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Código Certificación *</label>
                   <input
                     type="text"
                     value={formPersonal.codigoCertificacion}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, codigoCertificacion: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     maxLength="50"
                     required
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Colegiatura *</label>
+              <div key="grid-colegiatura-telefono" className="grid grid-cols-2 gap-3">
+                <div key="colegiatura-field">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Colegiatura *</label>
                   <input
                     type="text"
                     value={formPersonal.colegiatura}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, colegiatura: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     maxLength="20"
                     placeholder="N° de colegiatura"
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono *</label>
+                <div key="telefono-field">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Teléfono *</label>
                   <input
                     type="text"
                     value={formPersonal.telefono}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, telefono: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     maxLength="30"
                     required
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email Personal *</label>
+              <div key="email-personal-field">
+                <label className="block text-xs font-medium text-gray-700 mb-1">Email Personal *</label>
                 <input
                   type="email"
                   value={formPersonal.emailPersonal}
                   onChange={(e) => setFormPersonal(prev => ({ ...prev, emailPersonal: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   maxLength="100"
                   required
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
+            <div className="flex justify-end gap-3 px-6 py-3 border-t border-gray-200">
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleSavePersonal}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 {editingPersonal ? 'Guardar' : 'Agregar'}
               </button>

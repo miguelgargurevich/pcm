@@ -161,9 +161,9 @@ const ObjetivosGobiernoDigital = ({ objetivos = [], onObjetivosChange, viewMode 
   const objetivosGD = localObjetivos.filter(o => o.tipoObj === 'G');
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-800">Objetivos de Gobierno Digital</h3>
+        <h3 className="text-base font-semibold text-gray-800">Objetivos de Gobierno Digital</h3>
         {!viewMode && (
           <button
             onClick={handleAddObjetivo}
@@ -284,15 +284,15 @@ const ObjetivosGobiernoDigital = ({ objetivos = [], onObjetivosChange, viewMode 
                 <X size={24} />
               </button>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="p-4 space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   Descripción del Objetivo *
                 </label>
                 <textarea
                   value={formObjetivo.descripcionObjetivo}
                   onChange={(e) => setFormObjetivo({ descripcionObjetivo: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   rows={3}
                   placeholder="Describa el objetivo de gobierno digital..."
                 />
@@ -302,7 +302,7 @@ const ObjetivosGobiernoDigital = ({ objetivos = [], onObjetivosChange, viewMode 
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Cancelar
               </button>
@@ -325,15 +325,15 @@ const ObjetivosGobiernoDigital = ({ objetivos = [], onObjetivosChange, viewMode 
             <h3 className="text-lg font-semibold mb-4">
               {editingAccion ? 'Editar Acción' : 'Nueva Acción'}
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   Descripción de la Acción *
                 </label>
                 <textarea
                   value={formAccion.descripcionAccion}
                   onChange={(e) => setFormAccion({ descripcionAccion: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   rows={3}
                   placeholder="Describa la acción para este objetivo..."
                 />
@@ -342,7 +342,7 @@ const ObjetivosGobiernoDigital = ({ objetivos = [], onObjetivosChange, viewMode 
             <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => setShowAccionModal(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Cancelar
               </button>

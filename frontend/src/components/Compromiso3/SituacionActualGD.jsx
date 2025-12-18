@@ -120,7 +120,7 @@ const SituacionActualGD = ({ data, onDataChange, viewMode = false }) => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-800">Situación Actual de Gobierno Digital</h3>
+      <h3 className="text-base font-semibold text-gray-800">Situación Actual de Gobierno Digital</h3>
       
       {/* Sub-tabs navigation */}
       <div className="border-b border-gray-200">

@@ -104,13 +104,13 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex justify-between items-center">
         <h4 className="font-medium text-gray-800">Inventario de Equipos de Red</h4>
         {!viewMode && (
           <button
             onClick={handleAddItem}
-            className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             <Plus className="w-4 h-4" />
             Agregar Equipo
@@ -122,15 +122,15 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
         <table className="w-full border border-gray-200 rounded-lg">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo Equipo</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Puertos Op.</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Puertos Inop.</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Puertos</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo Mant. Anual</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo Equipo</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Puertos Op.</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Puertos Inop.</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Puertos</th>
+              <th className="px-2 py-1.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo Mant. Anual</th>
               {!viewMode && (
-                <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                <th className="px-2 py-1.5 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
               )}
             </tr>
           </thead>
@@ -146,17 +146,17 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
                 const itemId = item.invRedId || item.tempId;
                 return (
                   <tr key={itemId} className="hover:bg-gray-50">
-                    <td className="px-3 py-2 text-sm text-gray-500">{index + 1}</td>
-                    <td className="px-3 py-2 text-sm text-gray-900">{item.tipoEquipo}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500 text-center font-medium">{item.cantidad}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500 text-center">
+                    <td className="px-2 py-1.5 text-xs text-gray-500">{index + 1}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-900">{item.tipoEquipo}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500 text-center font-medium">{item.cantidad}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500 text-center">
                       <span className="text-green-600 font-medium">{item.puertosOperativos || 0}</span>
                     </td>
-                    <td className="px-3 py-2 text-sm text-gray-500 text-center">
+                    <td className="px-2 py-1.5 text-xs text-gray-500 text-center">
                       <span className="text-red-600 font-medium">{item.puertosInoperativos || 0}</span>
                     </td>
-                    <td className="px-3 py-2 text-sm text-gray-900 text-center font-semibold">{item.totalPuertos || 0}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">S/ {parseFloat(item.costoMantenimientoAnual || 0).toFixed(2)}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-900 text-center font-semibold">{item.totalPuertos || 0}</td>
+                    <td className="px-2 py-1.5 text-xs text-gray-500">S/ {parseFloat(item.costoMantenimientoAnual || 0).toFixed(2)}</td>
                     {!viewMode && (
                       <td className="px-3 py-2 text-center">
                         <div className="flex items-center justify-center gap-1">
@@ -189,19 +189,19 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4">
+            <h3 className="text-base font-semibold mb-4">
               {editingItem ? 'Editar Equipos de Red' : 'Agregar Equipos de Red'}
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   Tipo de Equipo *
                 </label>
                 <select
                   value={formItem.tipoEquipo}
                   onChange={(e) => setFormItem(prev => ({ ...prev, tipoEquipo: e.target.value }))}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Seleccione...</option>
                   {tiposEquipo.map(t => (
@@ -210,7 +210,7 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   Cantidad de Equipos *
                 </label>
                 <input
@@ -219,16 +219,16 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
                   onChange={(e) => setFormItem(prev => ({ ...prev, cantidad: e.target.value }))}
                   required
                   min="1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Cantidad total de equipos de este tipo"
                 />
               </div>
               
-              <div className="bg-blue-50 p-4 rounded-lg space-y-3">
+              <div className="bg-blue-50 p-3 rounded-lg space-y-3">
                 <h4 className="text-sm font-medium text-blue-900">🔌 Puertos</h4>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       Puertos Operativos *
                     </label>
                     <input
@@ -245,12 +245,12 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
                       }}
                       required
                       min="0"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="0"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       Puertos Inoperativos *
                     </label>
                     <input
@@ -267,20 +267,20 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
                       }}
                       required
                       min="0"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="0"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Total de Puertos (Calculado)
                   </label>
                   <input
                     type="number"
                     value={formItem.totalPuertos}
                     disabled
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 font-semibold"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg bg-gray-100 text-gray-600 font-semibold"
                   />
                   <p className="text-xs text-gray-500 mt-1">
                     Se calcula automáticamente: Operativos + Inoperativos
@@ -289,7 +289,7 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   Costo Mantenimiento Anual (S/.) *
                 </label>
                 <input
@@ -299,35 +299,35 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
                   required
                   step="0.01"
                   min="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="0.00"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Observaciones</label>
                 <textarea
                   value={formItem.observaciones}
                   onChange={(e) => setFormItem(prev => ({ ...prev, observaciones: e.target.value }))}
                   rows={2}
                   maxLength={255}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Información adicional..."
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
+            <div className="flex justify-end gap-3 px-6 py-3 border-t border-gray-200">
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleSaveItem}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 {editingItem ? 'Guardar' : 'Agregar'}
               </button>
