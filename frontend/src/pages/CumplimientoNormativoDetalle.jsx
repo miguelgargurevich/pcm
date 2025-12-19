@@ -1335,14 +1335,20 @@ const CumplimientoNormativoDetalle = () => {
             
             setFormData({
               compromisoId: '11',
-              fechaInicio: data.fechaInicio ? data.fechaInicio.split('T')[0] : '',
-              fechaFin: data.fechaFin ? data.fechaFin.split('T')[0] : '',
-              serviciosDigitalizados: data.serviciosDigitalizados || '',
-              serviciosTotal: data.serviciosTotal || '',
-              porcentajeDigitalizacion: data.porcentajeDigitalizacion || '',
-              archivoPlan: data.archivoPlan || '',
-              descripcion: data.descripcion || '',
-              beneficiariosEstimados: data.beneficiariosEstimados || '',
+              // Campos específicos de GeoPeru
+              urlGeo: data.urlGeo || '',
+              tipoInformacionGeo: data.tipoInformacionGeo || '',
+              totalCapasPublicadas: data.totalCapasPublicadas || '',
+              fechaUltimaActualizacionGeo: data.fechaUltimaActualizacionGeo ? data.fechaUltimaActualizacionGeo.split('T')[0] : '',
+              responsableGeo: data.responsableGeo || '',
+              cargoResponsableGeo: data.cargoResponsableGeo || '',
+              correoResponsableGeo: data.correoResponsableGeo || '',
+              telefonoResponsableGeo: data.telefonoResponsableGeo || '',
+              normaAprobacionGeo: data.normaAprobacionGeo || '',
+              fechaAprobacionGeo: data.fechaAprobacionGeo ? data.fechaAprobacionGeo.split('T')[0] : '',
+              interoperabilidadGeo: data.interoperabilidadGeo || false,
+              observacionGeo: data.observacionGeo || '',
+              rutaPdfGeo: data.rutaPdfGeo || '',
               aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -1352,9 +1358,9 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay archivo de plan guardado, establecer la URL para vista previa (Paso 1)
-            if (data.archivoPlan) {
-              console.log('📄 Cargando archivo plan (Paso 1) desde:', data.archivoPlan);
-              setPdfUrl(data.archivoPlan);
+            if (data.rutaPdfGeo) {
+              console.log('📄 Cargando archivo plan (Paso 1) desde:', data.rutaPdfGeo);
+              setPdfUrl(data.rutaPdfGeo);
             }
             
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
@@ -3538,14 +3544,20 @@ const CumplimientoNormativoDetalle = () => {
           const com11Data = {
             CompromisoId: 11,
             EntidadId: user.entidadId,
-            FechaInicio: formData.fechaInicio || null,
-            FechaFin: formData.fechaFin || null,
-            ServiciosDigitalizados: formData.serviciosDigitalizados ? parseInt(formData.serviciosDigitalizados) : null,
-            ServiciosTotal: formData.serviciosTotal ? parseInt(formData.serviciosTotal) : null,
-            PorcentajeDigitalizacion: formData.porcentajeDigitalizacion ? parseFloat(formData.porcentajeDigitalizacion) : null,
-            ArchivoPlan: documentoUrl || formData.archivoPlan || null,
-            Descripcion: formData.descripcion || null,
-            BeneficiariosEstimados: formData.beneficiariosEstimados ? parseInt(formData.beneficiariosEstimados) : null,
+            // Campos específicos de GeoPeru
+            UrlGeo: formData.urlGeo || null,
+            TipoInformacionGeo: formData.tipoInformacionGeo || null,
+            TotalCapasPublicadas: formData.totalCapasPublicadas ? parseInt(formData.totalCapasPublicadas) : 0,
+            FechaUltimaActualizacionGeo: formData.fechaUltimaActualizacionGeo || null,
+            ResponsableGeo: formData.responsableGeo || null,
+            CargoResponsableGeo: formData.cargoResponsableGeo || null,
+            CorreoResponsableGeo: formData.correoResponsableGeo || null,
+            TelefonoResponsableGeo: formData.telefonoResponsableGeo || null,
+            NormaAprobacionGeo: formData.normaAprobacionGeo || null,
+            FechaAprobacionGeo: formData.fechaAprobacionGeo || null,
+            InteroperabilidadGeo: formData.interoperabilidadGeo || false,
+            ObservacionGeo: formData.observacionGeo || null,
+            RutaPdfGeo: documentoUrl || formData.rutaPdfGeo || null,
             UsuarioRegistra: user.usuarioId,
             EtapaFormulario: 'paso1',
             Estado: 'bandeja'
@@ -3560,8 +3572,8 @@ const CumplimientoNormativoDetalle = () => {
             }
           }
           
-          if (response.isSuccess && response.data?.archivoPlan) {
-            setPdfUrl(response.data.archivoPlan);
+          if (response.isSuccess && response.data?.rutaPdfGeo) {
+            setPdfUrl(response.data.rutaPdfGeo);
             if (blobUrlToRevoke) URL.revokeObjectURL(blobUrlToRevoke);
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
@@ -6387,151 +6399,225 @@ const CumplimientoNormativoDetalle = () => {
                 <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Aportación de Información Geoespacial al Proyecto GeoPerú</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Fecha de Inicio */}
-                  <div className="">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de inicio <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="date"
-                      name="fechaInicio"
-                      value={formData.fechaInicio || ''}
-                      onChange={handleInputChange}
-                      className={`input-field ${errores.fechaInicio ? 'border-red-500' : ''}`}
-                      disabled={viewMode}
-                    />
-                    {errores.fechaInicio && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaInicio}</p>
-                    )}
-                  </div>
-
-                  {/* Fecha de Fin */}
-                  <div className="">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de fin <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="date"
-                      name="fechaFin"
-                      value={formData.fechaFin || ''}
-                      onChange={handleInputChange}
-                      className={`input-field ${errores.fechaFin ? 'border-red-500' : ''}`}
-                      disabled={viewMode}
-                    />
-                    {errores.fechaFin && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaFin}</p>
-                    )}
-                  </div>
-
-                  {/* Servicios Digitalizados */}
-                  <div className="">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Servicios digitalizados <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      name="serviciosDigitalizados"
-                      value={formData.serviciosDigitalizados || ''}
-                      onChange={handleInputChange}
-                      min="0"
-                      className={`input-field ${errores.serviciosDigitalizados ? 'border-red-500' : ''}`}
-                      placeholder="0"
-                      disabled={viewMode}
-                    />
-                    {errores.serviciosDigitalizados && (
-                      <p className="text-red-500 text-xs mt-1">{errores.serviciosDigitalizados}</p>
-                    )}
-                  </div>
-
-                  {/* Total de Servicios */}
-                  <div className="">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Total de servicios <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      name="serviciosTotal"
-                      value={formData.serviciosTotal || ''}
-                      onChange={handleInputChange}
-                      min="0"
-                      className={`input-field ${errores.serviciosTotal ? 'border-red-500' : ''}`}
-                      placeholder="0"
-                      disabled={viewMode}
-                    />
-                    {errores.serviciosTotal && (
-                      <p className="text-red-500 text-xs mt-1">{errores.serviciosTotal}</p>
-                    )}
-                  </div>
-
-                  {/* Porcentaje de Digitalización */}
-                  <div className="">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Porcentaje de digitalización (%)
-                    </label>
-                    <input
-                      type="number"
-                      name="porcentajeDigitalizacion"
-                      value={formData.porcentajeDigitalizacion || ''}
-                      onChange={handleInputChange}
-                      min="0"
-                      max="100"
-                      step="0.01"
-                      className={`input-field ${errores.porcentajeDigitalizacion ? 'border-red-500' : ''}`}
-                      placeholder="0.00"
-                      disabled={viewMode}
-                    />
-                    {errores.porcentajeDigitalizacion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.porcentajeDigitalizacion}</p>
-                    )}
-                  </div>
-
-                  {/* Beneficiarios Estimados */}
-                  <div className="">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Beneficiarios estimados
-                    </label>
-                    <input
-                      type="number"
-                      name="beneficiariosEstimados"
-                      value={formData.beneficiariosEstimados || ''}
-                      onChange={handleInputChange}
-                      min="0"
-                      className={`input-field ${errores.beneficiariosEstimados ? 'border-red-500' : ''}`}
-                      placeholder="0"
-                      disabled={viewMode}
-                    />
-                    {errores.beneficiariosEstimados && (
-                      <p className="text-red-500 text-xs mt-1">{errores.beneficiariosEstimados}</p>
-                    )}
-                  </div>
-
-                  {/* Descripción */}
+                  {/* URL de GeoPeru */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Descripción <span className="text-red-500">*</span>
+                      URL de publicación en GeoPeru <span className="text-red-500">*</span>
                     </label>
-                    <textarea
-                      name="descripcion"
-                      value={formData.descripcion || ''}
+                    <input
+                      type="url"
+                      name="urlGeo"
+                      value={formData.urlGeo || ''}
                       onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
-                      className={`input-field ${errores.descripcion ? 'border-red-500' : ''}`}
-                      placeholder="Describa los detalles de la aportación..."
+                      className={`input-field ${errores.urlGeo ? 'border-red-500' : ''}`}
+                      placeholder="https://www.geoperu.gob.pe/..."
                       disabled={viewMode}
                     />
-                    {errores.descripcion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.descripcion}</p>
+                    {errores.urlGeo && (
+                      <p className="text-red-500 text-xs mt-1">{errores.urlGeo}</p>
                     )}
+                  </div>
+
+                  {/* Tipo de Información Geoespacial */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Tipo de información geoespacial <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="tipoInformacionGeo"
+                      value={formData.tipoInformacionGeo || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.tipoInformacionGeo ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    >
+                      <option value="">Seleccione...</option>
+                      <option value="Cartografía base">Cartografía base</option>
+                      <option value="Infraestructura">Infraestructura</option>
+                      <option value="Límites territoriales">Límites territoriales</option>
+                      <option value="Recursos naturales">Recursos naturales</option>
+                      <option value="Servicios públicos">Servicios públicos</option>
+                      <option value="Catastro">Catastro</option>
+                      <option value="Otro">Otro</option>
+                    </select>
+                    {errores.tipoInformacionGeo && (
+                      <p className="text-red-500 text-xs mt-1">{errores.tipoInformacionGeo}</p>
+                    )}
+                  </div>
+
+                  {/* Total de Capas Publicadas */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Total de capas publicadas <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="totalCapasPublicadas"
+                      value={formData.totalCapasPublicadas || ''}
+                      onChange={handleInputChange}
+                      min="0"
+                      className={`input-field ${errores.totalCapasPublicadas ? 'border-red-500' : ''}`}
+                      placeholder="0"
+                      disabled={viewMode}
+                    />
+                    {errores.totalCapasPublicadas && (
+                      <p className="text-red-500 text-xs mt-1">{errores.totalCapasPublicadas}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha última actualización */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha última actualización
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaUltimaActualizacionGeo"
+                      value={formData.fechaUltimaActualizacionGeo || ''}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Interoperabilidad */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      ¿Cuenta con interoperabilidad?
+                    </label>
+                    <select
+                      name="interoperabilidadGeo"
+                      value={formData.interoperabilidadGeo ? 'true' : 'false'}
+                      onChange={(e) => handleInputChange({ target: { name: 'interoperabilidadGeo', value: e.target.value === 'true' } })}
+                      className="input-field"
+                      disabled={viewMode}
+                    >
+                      <option value="false">No</option>
+                      <option value="true">Sí</option>
+                    </select>
+                  </div>
+
+                  {/* Responsable */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nombre del responsable <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="responsableGeo"
+                      value={formData.responsableGeo || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.responsableGeo ? 'border-red-500' : ''}`}
+                      placeholder="Nombre completo"
+                      disabled={viewMode}
+                    />
+                    {errores.responsableGeo && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsableGeo}</p>
+                    )}
+                  </div>
+
+                  {/* Cargo del Responsable */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cargo del responsable
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoResponsableGeo"
+                      value={formData.cargoResponsableGeo || ''}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="Cargo"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Correo del Responsable */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo del responsable
+                    </label>
+                    <input
+                      type="email"
+                      name="correoResponsableGeo"
+                      value={formData.correoResponsableGeo || ''}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="correo@entidad.gob.pe"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Teléfono del Responsable */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono del responsable
+                    </label>
+                    <input
+                      type="text"
+                      name="telefonoResponsableGeo"
+                      value={formData.telefonoResponsableGeo || ''}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="999-999-999"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Norma de Aprobación */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Norma de aprobación
+                    </label>
+                    <input
+                      type="text"
+                      name="normaAprobacionGeo"
+                      value={formData.normaAprobacionGeo || ''}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="Ej: Resolución Directoral N° 001-2025"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Fecha de Aprobación */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de aprobación
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaAprobacionGeo"
+                      value={formData.fechaAprobacionGeo || ''}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones
+                    </label>
+                    <textarea
+                      name="observacionGeo"
+                      value={formData.observacionGeo || ''}
+                      onChange={handleInputChange}
+                      maxLength="255"
+                      rows="3"
+                      className="input-field"
+                      placeholder="Observaciones adicionales..."
+                      disabled={viewMode}
+                    />
                     <p className="text-xs text-gray-500 mt-1">
-                      {formData.descripcion?.length || 0} / 1000 caracteres
+                      {formData.observacionGeo?.length || 0} / 255 caracteres
                     </p>
                   </div>
 
-                  {/* Archivo del Plan (PDF) */}
+                  {/* Archivo PDF de evidencia */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Archivo del plan (PDF)
+                      Documento de evidencia (PDF)
                     </label>
                     
                     {!pdfUrl ? (
