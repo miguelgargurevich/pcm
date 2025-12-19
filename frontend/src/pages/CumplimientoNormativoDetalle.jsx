@@ -2766,15 +2766,29 @@ const CumplimientoNormativoDetalle = () => {
       if (parseInt(formData.compromisoId) === 2 && pasoActual === 1) {
         console.log('🔄 Compromiso 2 - Guardando miembros del comité en com2_cgtd');
         
+        // Transform miembros array to PascalCase for backend
+        const miembrosTransformados = miembrosComite.map(m => ({
+          MiembroId: m.miembroId,
+          Dni: m.dni,
+          Nombre: m.nombre,
+          ApellidoPaterno: m.apellidoPaterno,
+          ApellidoMaterno: m.apellidoMaterno,
+          Cargo: m.cargo,
+          Email: m.email,
+          Telefono: m.telefono,
+          Rol: m.rol,
+          Activo: true
+        }));
+        
         const com2Data = {
-          compromiso_id: 2,
-          entidad_id: user.entidadId,
-          miembros: miembrosComite,
-          checkPrivacidad: false,
-          checkDdjj: false,
-          usuarioRegistra: user.usuarioId,
-          etapaFormulario: 'paso1',
-          estado: 'bandeja'
+          CompromisoId: 2,
+          EntidadId: user.entidadId,
+          Miembros: miembrosTransformados,
+          CheckPrivacidad: false,
+          CheckDdjj: false,
+          UsuarioRegistra: user.usuarioId,
+          EtapaFormulario: 'paso1',
+          Estado: 'bandeja'
         };
         
         console.log('Datos Com2 (miembros) a enviar:', com2Data);
