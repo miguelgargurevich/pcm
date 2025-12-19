@@ -15,7 +15,7 @@ public class UpdateCom3EPGDCommand : IRequest<Result<Com3EPGDResponse>>
     public bool CheckDdjj { get; set; }
     public string EstadoPcm { get; set; } = string.Empty;
     public string ObservacionesPcm { get; set; } = string.Empty;
-    public Guid UsuarioRegistra { get; set; }
+    public Guid? UsuarioRegistra { get; set; }
     public DateTime? FechaReporte { get; set; }
     public string? Sede { get; set; }
     public string? Observaciones { get; set; }

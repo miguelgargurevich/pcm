@@ -33,7 +33,7 @@ public class Com2CGTDResponse
     public string ObservacionesPcm { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime FecRegistro { get; set; }
-    public Guid UsuarioRegistra { get; set; }
+    public Guid? UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
     public string? UrlDocPcm { get; set; }
     

@@ -37,7 +37,7 @@ public class Com21OficialGobiernoDatosResponse
     public string ObservacionesPCM { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime FecRegistro { get; set; }
-    public Guid UsuarioRegistra { get; set; }
+    public Guid? UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
     public DateTime? FechaElaboracion { get; set; }
     public string? NumeroDocumento { get; set; }

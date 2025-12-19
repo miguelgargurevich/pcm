@@ -36,7 +36,7 @@ public class Com19EncuestaNacionalGobDigitalResponse
     public string ObservacionesPCM { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime FecRegistro { get; set; }
-    public Guid UsuarioRegistra { get; set; }
+    public Guid? UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
     public DateTime? FechaConexion { get; set; }
     public string? TipoConexion { get; set; }

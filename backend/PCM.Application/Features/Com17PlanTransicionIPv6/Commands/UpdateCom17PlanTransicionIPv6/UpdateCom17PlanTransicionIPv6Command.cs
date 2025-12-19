@@ -37,7 +37,7 @@ public class Com17PlanTransicionIPv6Response
     public string ObservacionesPCM { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime FecRegistro { get; set; }
-    public Guid UsuarioRegistra { get; set; }
+    public Guid? UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
     public DateTime? FechaInicioTransicion { get; set; }
     public DateTime? FechaFinTransicion { get; set; }

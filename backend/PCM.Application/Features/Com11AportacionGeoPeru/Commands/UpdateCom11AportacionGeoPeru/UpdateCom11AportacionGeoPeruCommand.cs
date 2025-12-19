@@ -43,7 +43,7 @@ public class Com11AportacionGeoPeruResponse
     public string? ObservacionesPCM { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime FecRegistro { get; set; }
-    public Guid UsuarioRegistra { get; set; }
+    public Guid? UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
     
     // Campos específicos de Aportación a GeoPeru
