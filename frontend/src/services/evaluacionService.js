@@ -1,6 +1,6 @@
 import api from './api';
 
-const BASE_URL = '/api/Evaluacion';
+const BASE_URL = '/Evaluacion';
 
 export const evaluacionService = {
   /**

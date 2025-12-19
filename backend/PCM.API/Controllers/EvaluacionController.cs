@@ -244,37 +244,44 @@ public class EvaluacionController : ControllerBase
     {
         try
         {
+            _logger.LogInformation("Obteniendo detalle compromiso {CompromisoId} para entidad {EntidadId}", compromisoId, entidadId);
+            
             object? data = compromisoId switch
             {
-                1 => await _context.Com1LiderGTD.Include(c => c.Entidad).FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                2 => await _context.Com2CGTD.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                3 => await _context.Com3EPGD.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                4 => await _context.Com4PEI.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                5 => await _context.Com5EstrategiaDigital.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                6 => await _context.Com6MigracionGobPe.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                7 => await _context.Com7ImplementacionMPD.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                8 => await _context.Com8PublicacionTUPA.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                9 => await _context.Com9ModeloGestionDocumental.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                10 => await _context.Com10DatosAbiertos.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                11 => await _context.Com11AportacionGeoPeru.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                12 => await _context.Com12ResponsableSoftwarePublico.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                13 => await _context.Com13InteroperabilidadPIDE.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                14 => await _context.Com14OficialSeguridadDigital.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                15 => await _context.Com15CSIRTInstitucional.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                16 => await _context.Com16SistemaGestionSeguridad.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                17 => await _context.Com17PlanTransicionIPv6.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                18 => await _context.Com18AccesoPortalTransparencia.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                19 => await _context.Com19EncuestaNacionalGobDigital.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                20 => await _context.Com20DigitalizacionServiciosFacilita.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                21 => await _context.Com21OficialGobiernoDatos.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                1 => await _context.Com1LiderGTD.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                2 => await _context.Com2CGTD.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                3 => await _context.Com3EPGD.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                4 => await _context.Com4PEI.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                5 => await _context.Com5EstrategiaDigital.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                6 => await _context.Com6MigracionGobPe.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                7 => await _context.Com7ImplementacionMPD.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                8 => await _context.Com8PublicacionTUPA.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                9 => await _context.Com9ModeloGestionDocumental.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                10 => await _context.Com10DatosAbiertos.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                11 => await _context.Com11AportacionGeoPeru.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                12 => await _context.Com12ResponsableSoftwarePublico.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                13 => await _context.Com13InteroperabilidadPIDE.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                14 => await _context.Com14OficialSeguridadDigital.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                15 => await _context.Com15CSIRTInstitucional.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                16 => await _context.Com16SistemaGestionSeguridad.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                17 => await _context.Com17PlanTransicionIPv6.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                18 => await _context.Com18AccesoPortalTransparencia.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                19 => await _context.Com19EncuestaNacionalGobDigital.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                20 => await _context.Com20DigitalizacionServiciosFacilita.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                21 => await _context.Com21OficialGobiernoDatos.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
                 _ => null
             };
 
+            _logger.LogInformation("Data obtenida: {HasData}", data != null);
+
             // Obtener datos de la entidad
             var entidad = await _context.Entidades
+                .AsNoTracking()
                 .Include(e => e.Sector)
                 .Include(e => e.Clasificacion)
                 .FirstOrDefaultAsync(e => e.EntidadId == entidadId);
+
+            _logger.LogInformation("Entidad obtenida: {HasEntidad}", entidad != null);
 
             return Ok(new 
             { 
@@ -291,8 +298,8 @@ public class EvaluacionController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al obtener detalle del compromiso");
-            return StatusCode(500, new { isSuccess = false, message = "Error interno del servidor" });
+            _logger.LogError(ex, "Error al obtener detalle del compromiso {CompromisoId} para entidad {EntidadId}", compromisoId, entidadId);
+            return StatusCode(500, new { isSuccess = false, message = $"Error interno: {ex.Message}" });
         }
     }
 

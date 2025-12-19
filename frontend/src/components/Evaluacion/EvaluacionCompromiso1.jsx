@@ -16,28 +16,30 @@ const EvaluacionCompromiso1 = ({ data, activeTab }) => {
   }
 
   // Mapear datos de la API al formato esperado
+  // Los nombres de propiedades vienen en camelCase desde la API .NET
   const datosGenerales = {
-    dniLider: data.dniLider || data.dni_lider || '',
-    nombres: data.nombres || '',
-    apellidoPaterno: data.apellidoPaterno || data.apellido_paterno || '',
-    apellidoMaterno: data.apellidoMaterno || data.apellido_materno || '',
-    cargo: data.cargo || '',
-    email: data.email || data.correoElectronico || data.correo_electronico || '',
-    telefono: data.telefono || data.telefonoContacto || data.telefono_contacto || '',
-    fechaDesignacion: data.fechaDesignacion || data.fecha_designacion || data.fechaInicio || data.fecha_inicio || '',
-    numeroResolucion: data.numeroResolucion || data.numero_resolucion || data.numeroDocumento || data.numero_documento || '',
+    dniLider: data.dniLider || '',
+    nombres: data.nombreLider || '',
+    apellidoPaterno: data.apePatLider || '',
+    apellidoMaterno: data.apeMatLider || '',
+    cargo: data.cargoLider || '',
+    email: data.emailLider || '',
+    telefono: data.telefonoLider || '',
+    fechaDesignacion: data.fecIniLider || data.fecRegistro || '',
+    numeroResolucion: data.urlDocPcm || '',
     estado: data.estado || '',
-    estadoPcm: data.estadoPCM || data.estadoPcm || data.estado_pcm || '',
-    etapaFormulario: data.etapaFormulario || data.etapa_formulario || ''
+    estadoPcm: data.estadoPCM || data.estadoPcm || '',
+    etapaFormulario: data.etapaFormulario || '',
+    rolLider: data.rolLider || ''
   };
 
   // Documentos normativos (si existen)
   const documentosNormativos = data.documentos || data.archivos || [];
-  if (data.archivoResolucion || data.archivo_resolucion || data.urlDocumento || data.url_documento) {
+  if (data.rutaPdfNormativa || data.urlDocPcm) {
     documentosNormativos.push({
       id: 1,
       nombre: 'Resolución de Designación',
-      url: data.archivoResolucion || data.archivo_resolucion || data.urlDocumento || data.url_documento,
+      url: data.rutaPdfNormativa || data.urlDocPcm,
       tipo: 'resolucion'
     });
   }

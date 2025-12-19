@@ -25,6 +25,8 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
         // Permitir deserialización case-insensitive (acepta tanto PascalCase como camelCase)
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        // Ignorar ciclos de referencia circular en las entidades con propiedades de navegación
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
 builder.Services.AddEndpointsApiExplorer();
 
