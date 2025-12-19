@@ -1414,13 +1414,17 @@ const CumplimientoNormativoDetalle = () => {
             
             setFormData({
               compromisoId: '12',
-              fechaElaboracion: data.fechaElaboracion ? data.fechaElaboracion.split('T')[0] : '',
-              numeroDocumento: data.numeroDocumento || '',
-              archivoDocumento: data.archivoDocumento || '',
-              descripcion: data.descripcion || '',
-              requisitosSeguridad: data.requisitosSeguridad || '',
-              requisitosPrivacidad: data.requisitosPrivacidad || '',
-              fechaVigencia: data.fechaVigencia ? data.fechaVigencia.split('T')[0] : '',
+              dniRsp: data.dniRsp || '',
+              nombreRsp: data.nombreRsp || '',
+              apePatRsp: data.apePatRsp || '',
+              apeMatRsp: data.apeMatRsp || '',
+              cargoRsp: data.cargoRsp || '',
+              correoRsp: data.correoRsp || '',
+              telefonoRsp: data.telefonoRsp || '',
+              fechaDesignacionRsp: data.fechaDesignacionRsp ? data.fechaDesignacionRsp.split('T')[0] : '',
+              numeroResolucionRsp: data.numeroResolucionRsp || '',
+              observacionRsp: data.observacionRsp || '',
+              rutaPdfRsp: data.rutaPdfRsp || '',
               aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -1430,9 +1434,9 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
-            if (data.archivoDocumento) {
-              console.log('📄 Cargando archivo documento (Paso 1) desde:', data.archivoDocumento);
-              setPdfUrl(data.archivoDocumento);
+            if (data.rutaPdfRsp) {
+              console.log('📄 Cargando archivo documento (Paso 1) desde:', data.rutaPdfRsp);
+              setPdfUrl(data.rutaPdfRsp);
             }
             
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
@@ -1486,14 +1490,20 @@ const CumplimientoNormativoDetalle = () => {
             
             setFormData({
               compromisoId: '13',
-              fechaAprobacion: data.fechaAprobacion ? data.fechaAprobacion.split('T')[0] : '',
-              numeroResolucion: data.numeroResolucion || '',
-              archivoPlan: data.archivoPlan || '',
-              descripcion: data.descripcion || '',
-              riesgosIdentificados: data.riesgosIdentificados || '',
-              estrategiasMitigacion: data.estrategiasMitigacion || '',
-              fechaRevision: data.fechaRevision ? data.fechaRevision.split('T')[0] : '',
-              responsable: data.responsable || '',
+              tipoIntegracionPide: data.tipoIntegracionPide || '',
+              nombreServicioPide: data.nombreServicioPide || '',
+              descripcionServicioPide: data.descripcionServicioPide || '',
+              fechaInicioOperacionPide: data.fechaInicioOperacionPide ? data.fechaInicioOperacionPide.split('T')[0] : '',
+              urlServicioPide: data.urlServicioPide || '',
+              responsablePide: data.responsablePide || '',
+              cargoResponsablePide: data.cargoResponsablePide || '',
+              correoResponsablePide: data.correoResponsablePide || '',
+              telefonoResponsablePide: data.telefonoResponsablePide || '',
+              numeroConvenioPide: data.numeroConvenioPide || '',
+              fechaConvenioPide: data.fechaConvenioPide ? data.fechaConvenioPide.split('T')[0] : '',
+              interoperabilidadPide: data.interoperabilidadPide || false,
+              observacionPide: data.observacionPide || '',
+              rutaPdfPide: data.rutaPdfPide || '',
               aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -1503,9 +1513,9 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
-            if (data.archivoPlan) {
-              console.log('📄 Cargando archivo plan (Paso 1) desde:', data.archivoPlan);
-              setPdfUrl(data.archivoPlan);
+            if (data.rutaPdfPide) {
+              console.log('📄 Cargando archivo PDF PIDE (Paso 1) desde:', data.rutaPdfPide);
+              setPdfUrl(data.rutaPdfPide);
             }
             
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
@@ -1559,13 +1569,18 @@ const CumplimientoNormativoDetalle = () => {
             
             setFormData({
               compromisoId: '14',
-              fechaElaboracion: data.fechaElaboracion ? data.fechaElaboracion.split('T')[0] : '',
-              numeroDocumento: data.numeroDocumento || '',
-              archivoDocumento: data.archivoDocumento || '',
-              descripcion: data.descripcion || '',
-              politicasSeguridad: data.politicasSeguridad || '',
-              certificaciones: data.certificaciones || '',
-              fechaVigencia: data.fechaVigencia ? data.fechaVigencia.split('T')[0] : '',
+              dniOscd: data.dniOscd || '',
+              nombreOscd: data.nombreOscd || '',
+              apePatOscd: data.apePatOscd || '',
+              apeMatOscd: data.apeMatOscd || '',
+              cargoOscd: data.cargoOscd || '',
+              correoOscd: data.correoOscd || '',
+              telefonoOscd: data.telefonoOscd || '',
+              fechaDesignacionOscd: data.fechaDesignacionOscd ? data.fechaDesignacionOscd.split('T')[0] : '',
+              numeroResolucionOscd: data.numeroResolucionOscd || '',
+              comunicadoPcmOscd: data.comunicadoPcmOscd || false,
+              observacionOscd: data.observacionOscd || '',
+              rutaPdfOscd: data.rutaPdfOscd || '',
               aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -1575,9 +1590,9 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
-            if (data.archivoDocumento) {
-              console.log('📄 Cargando archivo documento (Paso 1) desde:', data.archivoDocumento);
-              setPdfUrl(data.archivoDocumento);
+            if (data.rutaPdfOscd) {
+              console.log('📄 Cargando archivo PDF OSCD (Paso 1) desde:', data.rutaPdfOscd);
+              setPdfUrl(data.rutaPdfOscd);
             }
             
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
@@ -1631,12 +1646,17 @@ const CumplimientoNormativoDetalle = () => {
             
             setFormData({
               compromisoId: '15',
-              fechaConformacion: data.fechaConformacion ? data.fechaConformacion.split('T')[0] : '',
-              numeroResolucion: data.numeroResolucion || '',
-              responsable: data.responsable || '',
-              emailContacto: data.emailContacto || '',
-              telefonoContacto: data.telefonoContacto || '',
-              descripcion: data.descripcion || '',
+              nombreCsirt: data.nombreCsirt || '',
+              fechaConformacionCsirt: data.fechaConformacionCsirt ? data.fechaConformacionCsirt.split('T')[0] : '',
+              numeroResolucionCsirt: data.numeroResolucionCsirt || '',
+              responsableCsirt: data.responsableCsirt || '',
+              cargoResponsableCsirt: data.cargoResponsableCsirt || '',
+              correoCsirt: data.correoCsirt || '',
+              telefonoCsirt: data.telefonoCsirt || '',
+              protocoloIncidentesCsirt: data.protocoloIncidentesCsirt || false,
+              comunicadoPcmCsirt: data.comunicadoPcmCsirt || false,
+              observacionCsirt: data.observacionCsirt || '',
+              rutaPdfCsirt: data.rutaPdfCsirt || '',
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
@@ -1645,6 +1665,12 @@ const CumplimientoNormativoDetalle = () => {
             
             setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
             setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            
+            // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
+            if (data.rutaPdfCsirt) {
+              console.log('📄 Cargando archivo PDF CSIRT desde:', data.rutaPdfCsirt);
+              setPdfUrl(data.rutaPdfCsirt);
+            }
             
             // Intentar cargar datos de Paso 2 (cumplimiento_normativo) si existen
             try {
@@ -1690,12 +1716,19 @@ const CumplimientoNormativoDetalle = () => {
             
             setFormData({
               compromisoId: '16',
-              fechaImplementacion: data.fechaImplementacion ? data.fechaImplementacion.split('T')[0] : '',
-              normaAplicable: data.normaAplicable || '',
-              certificacion: data.certificacion || '',
-              fechaCertificacion: data.fechaCertificacion ? data.fechaCertificacion.split('T')[0] : '',
-              descripcion: data.descripcion || '',
-              alcance: data.alcance || '',
+              responsableSgsi: data.responsableSgsi || '',
+              cargoResponsableSgsi: data.cargoResponsableSgsi || '',
+              correoSgsi: data.correoSgsi || '',
+              telefonoSgsi: data.telefonoSgsi || '',
+              estadoImplementacionSgsi: data.estadoImplementacionSgsi || '',
+              versionNormaSgsi: data.versionNormaSgsi || '',
+              alcanceSgsi: data.alcanceSgsi || '',
+              fechaInicioSgsi: data.fechaInicioSgsi ? data.fechaInicioSgsi.split('T')[0] : '',
+              fechaCertificacionSgsi: data.fechaCertificacionSgsi ? data.fechaCertificacionSgsi.split('T')[0] : '',
+              entidadCertificadoraSgsi: data.entidadCertificadoraSgsi || '',
+              rutaPdfPoliticasSgsi: data.rutaPdfPoliticasSgsi || '',
+              rutaPdfCertificadoSgsi: data.rutaPdfCertificadoSgsi || '',
+              observacionSgsi: data.observacionSgsi || '',
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
@@ -1704,6 +1737,17 @@ const CumplimientoNormativoDetalle = () => {
             
             setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
             setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            
+            // Si hay documento de políticas guardado
+            if (data.rutaPdfPoliticasSgsi) {
+              console.log('📄 Cargando PDF políticas SGSI desde:', data.rutaPdfPoliticasSgsi);
+              setPdfUrl(data.rutaPdfPoliticasSgsi);
+            }
+            // Si hay documento de certificación guardado
+            if (data.rutaPdfCertificadoSgsi) {
+              console.log('📄 Cargando PDF certificado SGSI desde:', data.rutaPdfCertificadoSgsi);
+              setPdfUrlPaso2(data.rutaPdfCertificadoSgsi);
+            }
             
             // Intentar cargar datos de Paso 2 (cumplimiento_normativo) si existen
             try {
@@ -1749,12 +1793,18 @@ const CumplimientoNormativoDetalle = () => {
             
             setFormData({
               compromisoId: '17',
-              fechaInicioTransicion: data.fechaInicioTransicion ? data.fechaInicioTransicion.split('T')[0] : '',
-              fechaFinTransicion: data.fechaFinTransicion ? data.fechaFinTransicion.split('T')[0] : '',
-              porcentajeAvance: data.porcentajeAvance || '',
-              sistemasMigrados: data.sistemasMigrados || '',
-              sistemasTotal: data.sistemasTotal || '',
-              descripcion: data.descripcion || '',
+              responsableIpv6: data.responsableIpv6 || '',
+              cargoResponsableIpv6: data.cargoResponsableIpv6 || '',
+              correoIpv6: data.correoIpv6 || '',
+              telefonoIpv6: data.telefonoIpv6 || '',
+              estadoPlanIpv6: data.estadoPlanIpv6 || '',
+              fechaFormulacionIpv6: data.fechaFormulacionIpv6 ? data.fechaFormulacionIpv6.split('T')[0] : '',
+              fechaAprobacionIpv6: data.fechaAprobacionIpv6 ? data.fechaAprobacionIpv6.split('T')[0] : '',
+              fechaInicioIpv6: data.fechaInicioIpv6 ? data.fechaInicioIpv6.split('T')[0] : '',
+              fechaFinIpv6: data.fechaFinIpv6 ? data.fechaFinIpv6.split('T')[0] : '',
+              descripcionPlanIpv6: data.descripcionPlanIpv6 || '',
+              rutaPdfPlanIpv6: data.rutaPdfPlanIpv6 || '',
+              observacionIpv6: data.observacionIpv6 || '',
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
@@ -1765,9 +1815,9 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
-            if (data.rutaPdfPtipv6) {
-              console.log('📄 Cargando PDF IPv6 (Paso 1) desde:', data.rutaPdfPtipv6);
-              setPdfUrl(data.rutaPdfPtipv6);
+            if (data.rutaPdfPlanIpv6) {
+              console.log('📄 Cargando PDF IPv6 (Paso 1) desde:', data.rutaPdfPlanIpv6);
+              setPdfUrl(data.rutaPdfPlanIpv6);
             }
             
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
@@ -1807,19 +1857,25 @@ const CumplimientoNormativoDetalle = () => {
           console.log('📄 Datos recibidos:', data);
           
           if (data) {
-            setCom18RecordId(data.comapteEntId);
+            setCom18RecordId(data.comsapteEntId);
             
             // Cargar criterios evaluados desde cumplimiento_normativo
             const cumplimientoData = await loadCumplimientoNormativo(18);
             
             setFormData({
               compromisoId: '18',
-              urlPlataforma: data.urlPlataforma || '',
-              fechaImplementacion: data.fechaImplementacion ? data.fechaImplementacion.split('T')[0] : '',
-              tramitesDisponibles: data.tramitesDisponibles || '',
-              usuariosRegistrados: data.usuariosRegistrados || '',
-              tramitesProcesados: data.tramitesProcesados || '',
-              descripcion: data.descripcion || '',
+              responsablePte: data.responsablePte || '',
+              cargoResponsablePte: data.cargoResponsablePte || '',
+              correoPte: data.correoPte || '',
+              telefonoPte: data.telefonoPte || '',
+              numeroOficioPte: data.numeroOficioPte || '',
+              fechaSolicitudPte: data.fechaSolicitudPte ? data.fechaSolicitudPte.split('T')[0] : '',
+              fechaAccesoPte: data.fechaAccesoPte ? data.fechaAccesoPte.split('T')[0] : '',
+              estadoAccesoPte: data.estadoAccesoPte || '',
+              enlacePortalPte: data.enlacePortalPte || '',
+              descripcionPte: data.descripcionPte || '',
+              rutaPdfPte: data.rutaPdfPte || '',
+              observacionPte: data.observacionPte || '',
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
@@ -1830,9 +1886,9 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
-            if (data.rutaPdfApte) {
-              console.log('📄 Cargando PDF Portal Transparencia (Paso 1) desde:', data.rutaPdfApte);
-              setPdfUrl(data.rutaPdfApte);
+            if (data.rutaPdfPte) {
+              console.log('📄 Cargando PDF Portal Transparencia (Paso 1) desde:', data.rutaPdfPte);
+              setPdfUrl(data.rutaPdfPte);
             }
             
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
@@ -1872,18 +1928,23 @@ const CumplimientoNormativoDetalle = () => {
           console.log('📄 Datos recibidos:', data);
           
           if (data) {
-            setCom19RecordId(data.comenadEntId);
+            setCom19RecordId(data.comrenadEntId);
             
             // Cargar criterios evaluados desde cumplimiento_normativo
             const cumplimientoData = await loadCumplimientoNormativo(19);
             
             setFormData({
               compromisoId: '19',
-              fechaConexion: data.fechaConexion ? data.fechaConexion.split('T')[0] : '',
-              tipoConexion: data.tipoConexion || '',
-              anchoBanda: data.anchoBanda || '',
-              proveedor: data.proveedor || '',
-              descripcion: data.descripcion || '',
+              anioEnad: data.anioEnad || '',
+              responsableEnad: data.responsableEnad || '',
+              cargoResponsableEnad: data.cargoResponsableEnad || '',
+              correoEnad: data.correoEnad || '',
+              telefonoEnad: data.telefonoEnad || '',
+              fechaEnvioEnad: data.fechaEnvioEnad ? data.fechaEnvioEnad.split('T')[0] : '',
+              estadoRespuestaEnad: data.estadoRespuestaEnad || '',
+              enlaceFormularioEnad: data.enlaceFormularioEnad || '',
+              observacionEnad: data.observacionEnad || '',
+              rutaPdfEnad: data.rutaPdfEnad || '',
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
@@ -1936,17 +1997,23 @@ const CumplimientoNormativoDetalle = () => {
           console.log('📄 Datos recibidos:', data);
           
           if (data) {
-            setCom20RecordId(data.comdsfpEntId);
+            setCom20RecordId(data.comdsfpeEntId);
             
             // Cargar criterios evaluados desde cumplimiento_normativo
             const cumplimientoData = await loadCumplimientoNormativo(20);
             
             setFormData({
               compromisoId: '20',
-              sistemasDocumentados: data.sistemasDocumentados || '',
-              sistemasTotal: data.sistemasTotal || '',
-              porcentajeDocumentacion: data.porcentajeDocumentacion || '',
-              descripcion: data.descripcion || '',
+              responsableFacilita: data.responsableFacilita || '',
+              cargoResponsableFacilita: data.cargoResponsableFacilita || '',
+              correoFacilita: data.correoFacilita || '',
+              telefonoFacilita: data.telefonoFacilita || '',
+              estadoImplementacionFacilita: data.estadoImplementacionFacilita || '',
+              fechaInicioFacilita: data.fechaInicioFacilita ? data.fechaInicioFacilita.split('T')[0] : '',
+              fechaUltimoAvanceFacilita: data.fechaUltimoAvanceFacilita ? data.fechaUltimoAvanceFacilita.split('T')[0] : '',
+              totalServiciosDigitalizados: data.totalServiciosDigitalizados || '',
+              rutaPdfFacilita: data.rutaPdfFacilita || '',
+              observacionFacilita: data.observacionFacilita || '',
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
@@ -1957,9 +2024,9 @@ const CumplimientoNormativoDetalle = () => {
             setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
-            if (data.rutaPdfDsfp) {
-              console.log('📄 Cargando PDF Digitalización (Paso 1) desde:', data.rutaPdfDsfp);
-              setPdfUrl(data.rutaPdfDsfp);
+            if (data.rutaPdfFacilita) {
+              console.log('📄 Cargando PDF Digitalización (Paso 1) desde:', data.rutaPdfFacilita);
+              setPdfUrl(data.rutaPdfFacilita);
             }
             
             // Intentar cargar también datos de Paso 2 (cumplimiento_normativo) si existen
@@ -1999,7 +2066,7 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
 
-      // COMPROMISO 21: OficialGobiernoDatos
+      // COMPROMISO 21: OficialGobiernoDatos (OGD)
       if (compromisoId === 21 && user?.entidadId) {
         console.log('📞 Llamando getByEntidad con:', 21, user.entidadId);
         const response = await com21OficialGobiernoDatosService.getByEntidad(21, user.entidadId);
@@ -2010,19 +2077,24 @@ const CumplimientoNormativoDetalle = () => {
           console.log('📄 Datos recibidos:', data);
           
           if (data) {
-            setCom21RecordId(data.comogdEntId);
+            setCom21RecordId(data.comdogdEntId);
             
             // Cargar criterios evaluados desde cumplimiento_normativo
             const cumplimientoData = await loadCumplimientoNormativo(21);
             
             setFormData({
               compromisoId: '21',
-              fechaElaboracion: data.fechaElaboracion ? data.fechaElaboracion.split('T')[0] : '',
-              numeroDocumento: data.numeroDocumento || '',
-              descripcion: data.descripcion || '',
-              procedimientos: data.procedimientos || '',
-              responsables: data.responsables || '',
-              fechaVigencia: data.fechaVigencia ? data.fechaVigencia.split('T')[0] : '',
+              dniOgd: data.dniOgd || '',
+              nombreOgd: data.nombreOgd || '',
+              apePatOgd: data.apePatOgd || '',
+              apeMatOgd: data.apeMatOgd || '',
+              cargoOgd: data.cargoOgd || '',
+              correoOgd: data.correoOgd || '',
+              telefonoOgd: data.telefonoOgd || '',
+              fechaDesignacionOgd: data.fechaDesignacionOgd ? data.fechaDesignacionOgd.split('T')[0] : '',
+              numeroResolucionOgd: data.numeroResolucionOgd || '',
+              comunicadoPcmOgd: data.comunicadoPcmOgd || false,
+              observacionOgd: data.observacionOgd || '',
               criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
@@ -2283,10 +2355,6 @@ const CumplimientoNormativoDetalle = () => {
         if (!formData.descripcionIncorporacion || formData.descripcionIncorporacion.trim() === '') {
           nuevosErrores.descripcionIncorporacion = 'Describa cómo se incorporó la TD en el PEI';
         }
-        // Validar que haya un documento PDF cargado
-        if (!pdfUrl && !formData.documentoFile) {
-          nuevosErrores.documentoFile = 'Debe cargar el documento PEI en formato PDF';
-        }
       }
       // Validación específica para Compromiso 5 (Estrategia Digital)
       else if (parseInt(formData.compromisoId) === 5) {
@@ -2356,7 +2424,12 @@ const CumplimientoNormativoDetalle = () => {
         if (!formData.responsableMpd || formData.responsableMpd.trim() === '') {
           nuevosErrores.responsableMpd = 'Ingrese el nombre del responsable';
         }
-        if (formData.correoResponsableMpd && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoResponsableMpd)) {
+        if (!formData.cargoResponsableMpd || formData.cargoResponsableMpd.trim() === '') {
+          nuevosErrores.cargoResponsableMpd = 'Ingrese el cargo del responsable';
+        }
+        if (!formData.correoResponsableMpd || formData.correoResponsableMpd.trim() === '') {
+          nuevosErrores.correoResponsableMpd = 'Ingrese el correo del responsable';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoResponsableMpd)) {
           nuevosErrores.correoResponsableMpd = 'Ingrese un correo válido';
         }
       }
@@ -2376,7 +2449,12 @@ const CumplimientoNormativoDetalle = () => {
         if (!formData.responsableTupa || formData.responsableTupa.trim() === '') {
           nuevosErrores.responsableTupa = 'Ingrese el nombre del responsable';
         }
-        if (formData.correoResponsableTupa && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoResponsableTupa)) {
+        if (!formData.cargoResponsableTupa || formData.cargoResponsableTupa.trim() === '') {
+          nuevosErrores.cargoResponsableTupa = 'Ingrese el cargo del responsable';
+        }
+        if (!formData.correoResponsableTupa || formData.correoResponsableTupa.trim() === '') {
+          nuevosErrores.correoResponsableTupa = 'Ingrese el correo del responsable';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoResponsableTupa)) {
           nuevosErrores.correoResponsableTupa = 'Ingrese un correo válido';
         }
       }
@@ -2439,32 +2517,38 @@ const CumplimientoNormativoDetalle = () => {
           nuevosErrores.fechaAprobacionDa = 'Seleccione la fecha de aprobación';
         }
       }
-      // Validación específica para Compromiso 11 (AportacionGeoPeru)
+      // Validación específica para Compromiso 11 (Aportación GeoPeru)
       else if (parseInt(formData.compromisoId) === 11) {
-        if (!formData.fechaInicio) {
-          nuevosErrores.fechaInicio = 'Seleccione la fecha de inicio';
+        if (!formData.urlGeo || formData.urlGeo.trim() === '') {
+          nuevosErrores.urlGeo = 'Ingrese la URL de la información geoespacial';
         }
-        if (!formData.fechaFin) {
-          nuevosErrores.fechaFin = 'Seleccione la fecha de fin';
+        if (!formData.tipoInformacionGeo || formData.tipoInformacionGeo === '') {
+          nuevosErrores.tipoInformacionGeo = 'Seleccione el tipo de información publicada';
         }
-        if (formData.fechaInicio && formData.fechaFin && formData.fechaInicio > formData.fechaFin) {
-          nuevosErrores.fechaFin = 'La fecha fin debe ser posterior a la fecha inicio';
+        if (!formData.totalCapasPublicadas || formData.totalCapasPublicadas === '') {
+          nuevosErrores.totalCapasPublicadas = 'Ingrese el total de capas publicadas';
+        } else if (parseInt(formData.totalCapasPublicadas) < 0) {
+          nuevosErrores.totalCapasPublicadas = 'El número debe ser positivo';
         }
-        if (!formData.serviciosDigitalizados || formData.serviciosDigitalizados === '') {
-          nuevosErrores.serviciosDigitalizados = 'Ingrese el número de servicios digitalizados';
-        } else if (parseInt(formData.serviciosDigitalizados) < 0) {
-          nuevosErrores.serviciosDigitalizados = 'El número debe ser positivo';
+        if (!formData.fechaUltimaActualizacionGeo) {
+          nuevosErrores.fechaUltimaActualizacionGeo = 'Seleccione la fecha de última actualización';
         }
-        if (!formData.serviciosTotal || formData.serviciosTotal === '') {
-          nuevosErrores.serviciosTotal = 'Ingrese el total de servicios';
-        } else if (parseInt(formData.serviciosTotal) < 0) {
-          nuevosErrores.serviciosTotal = 'El número debe ser positivo';
+        if (!formData.responsableGeo || formData.responsableGeo.trim() === '') {
+          nuevosErrores.responsableGeo = 'Ingrese el nombre completo del responsable';
         }
-        if (formData.serviciosDigitalizados && formData.serviciosTotal && parseInt(formData.serviciosDigitalizados) > parseInt(formData.serviciosTotal)) {
-          nuevosErrores.serviciosDigitalizados = 'No puede ser mayor al total de servicios';
+        if (!formData.cargoResponsableGeo || formData.cargoResponsableGeo.trim() === '') {
+          nuevosErrores.cargoResponsableGeo = 'Ingrese el cargo del responsable';
         }
-        if (!formData.descripcion || formData.descripcion.trim() === '') {
-          nuevosErrores.descripcion = 'Ingrese una descripción';
+        if (!formData.correoResponsableGeo || formData.correoResponsableGeo.trim() === '') {
+          nuevosErrores.correoResponsableGeo = 'Ingrese el correo del responsable';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoResponsableGeo)) {
+          nuevosErrores.correoResponsableGeo = 'Ingrese un correo válido';
+        }
+        if (!formData.normaAprobacionGeo || formData.normaAprobacionGeo.trim() === '') {
+          nuevosErrores.normaAprobacionGeo = 'Ingrese el número de norma de aprobación';
+        }
+        if (!formData.fechaAprobacionGeo) {
+          nuevosErrores.fechaAprobacionGeo = 'Seleccione la fecha de aprobación';
         }
       }
       // Validación específica para Compromiso 12 (ResponsableSoftwarePublico)
@@ -3628,13 +3712,17 @@ const CumplimientoNormativoDetalle = () => {
           const com12Data = {
             CompromisoId: 12,
             EntidadId: user.entidadId,
-            FechaElaboracion: formData.fechaElaboracion || null,
-            NumeroDocumento: formData.numeroDocumento || null,
-            ArchivoDocumento: documentoUrl || formData.archivoDocumento || null,
-            Descripcion: formData.descripcion || null,
-            RequisitosSeguridad: formData.requisitosSeguridad || null,
-            RequisitosPrivacidad: formData.requisitosPrivacidad || null,
-            FechaVigencia: formData.fechaVigencia || null,
+            DniRsp: formData.dniRsp || null,
+            NombreRsp: formData.nombreRsp || null,
+            ApePatRsp: formData.apePatRsp || null,
+            ApeMatRsp: formData.apeMatRsp || null,
+            CargoRsp: formData.cargoRsp || null,
+            CorreoRsp: formData.correoRsp || null,
+            TelefonoRsp: formData.telefonoRsp || null,
+            FechaDesignacionRsp: formData.fechaDesignacionRsp || null,
+            NumeroResolucionRsp: formData.numeroResolucionRsp || null,
+            ObservacionRsp: formData.observacionRsp || null,
+            RutaPdfRsp: documentoUrl || formData.rutaPdfRsp || null,
             UsuarioRegistra: user.usuarioId,
             EtapaFormulario: 'paso1',
             Estado: 'bandeja'
@@ -3649,8 +3737,8 @@ const CumplimientoNormativoDetalle = () => {
             }
           }
           
-          if (response.isSuccess && response.data?.archivoDocumento) {
-            setPdfUrl(response.data.archivoDocumento);
+          if (response.isSuccess && response.data?.rutaPdfRsp) {
+            setPdfUrl(response.data.rutaPdfRsp);
             if (blobUrlToRevoke) URL.revokeObjectURL(blobUrlToRevoke);
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
@@ -3705,14 +3793,20 @@ const CumplimientoNormativoDetalle = () => {
           const com13Data = {
             CompromisoId: 13,
             EntidadId: user.entidadId,
-            FechaAprobacion: formData.fechaAprobacion || null,
-            NumeroResolucion: formData.numeroResolucion || null,
-            ArchivoPlan: documentoUrl || formData.archivoPlan || null,
-            Descripcion: formData.descripcion || null,
-            RiesgosIdentificados: formData.riesgosIdentificados || null,
-            EstrategiasMitigacion: formData.estrategiasMitigacion || null,
-            FechaRevision: formData.fechaRevision || null,
-            Responsable: formData.responsable || null,
+            TipoIntegracionPide: formData.tipoIntegracionPide || null,
+            NombreServicioPide: formData.nombreServicioPide || null,
+            DescripcionServicioPide: formData.descripcionServicioPide || null,
+            FechaInicioOperacionPide: formData.fechaInicioOperacionPide || null,
+            UrlServicioPide: formData.urlServicioPide || null,
+            ResponsablePide: formData.responsablePide || null,
+            CargoResponsablePide: formData.cargoResponsablePide || null,
+            CorreoResponsablePide: formData.correoResponsablePide || null,
+            TelefonoResponsablePide: formData.telefonoResponsablePide || null,
+            NumeroConvenioPide: formData.numeroConvenioPide || null,
+            FechaConvenioPide: formData.fechaConvenioPide || null,
+            InteroperabilidadPide: formData.interoperabilidadPide || false,
+            ObservacionPide: formData.observacionPide || null,
+            RutaPdfPide: documentoUrl || formData.rutaPdfPide || null,
             UsuarioRegistra: user.usuarioId,
             EtapaFormulario: 'paso1',
             Estado: 'bandeja'
@@ -3727,8 +3821,8 @@ const CumplimientoNormativoDetalle = () => {
             }
           }
           
-          if (response.isSuccess && response.data?.archivoPlan) {
-            setPdfUrl(response.data.archivoPlan);
+          if (response.isSuccess && response.data?.rutaPdfPide) {
+            setPdfUrl(response.data.rutaPdfPide);
             if (blobUrlToRevoke) URL.revokeObjectURL(blobUrlToRevoke);
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
@@ -3783,13 +3877,18 @@ const CumplimientoNormativoDetalle = () => {
           const com14Data = {
             CompromisoId: 14,
             EntidadId: user.entidadId,
-            FechaElaboracion: formData.fechaElaboracion || null,
-            NumeroDocumento: formData.numeroDocumento || null,
-            ArchivoDocumento: documentoUrl || formData.archivoDocumento || null,
-            Descripcion: formData.descripcion || null,
-            PoliticasSeguridad: formData.politicasSeguridad || null,
-            Certificaciones: formData.certificaciones || null,
-            FechaVigencia: formData.fechaVigencia || null,
+            DniOscd: formData.dniOscd || null,
+            NombreOscd: formData.nombreOscd || null,
+            ApePatOscd: formData.apePatOscd || null,
+            ApeMatOscd: formData.apeMatOscd || null,
+            CargoOscd: formData.cargoOscd || null,
+            CorreoOscd: formData.correoOscd || null,
+            TelefonoOscd: formData.telefonoOscd || null,
+            FechaDesignacionOscd: formData.fechaDesignacionOscd || null,
+            NumeroResolucionOscd: formData.numeroResolucionOscd || null,
+            ComunicadoPcmOscd: formData.comunicadoPcmOscd || false,
+            ObservacionOscd: formData.observacionOscd || null,
+            RutaPdfOscd: documentoUrl || formData.rutaPdfOscd || null,
             UsuarioRegistra: user.usuarioId,
             EtapaFormulario: 'paso1',
             Estado: 'bandeja'
@@ -3804,8 +3903,8 @@ const CumplimientoNormativoDetalle = () => {
             }
           }
           
-          if (response.isSuccess && response.data?.archivoDocumento) {
-            setPdfUrl(response.data.archivoDocumento);
+          if (response.isSuccess && response.data?.rutaPdfOscd) {
+            setPdfUrl(response.data.rutaPdfOscd);
             if (blobUrlToRevoke) URL.revokeObjectURL(blobUrlToRevoke);
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
@@ -3860,13 +3959,17 @@ const CumplimientoNormativoDetalle = () => {
           const com15Data = {
             CompromisoId: 15,
             EntidadId: user.entidadId,
-            FechaConformacion: formData.fechaConformacion || null,
-            NumeroResolucion: formData.numeroResolucion || null,
-            Responsable: formData.responsable || null,
-            EmailContacto: formData.emailContacto || null,
-            TelefonoContacto: formData.telefonoContacto || null,
-            ArchivoProcedimientos: documentoUrl || null,
-            Descripcion: formData.descripcion || null,
+            NombreCsirt: formData.nombreCsirt || null,
+            FechaConformacionCsirt: formData.fechaConformacionCsirt || null,
+            NumeroResolucionCsirt: formData.numeroResolucionCsirt || null,
+            ResponsableCsirt: formData.responsableCsirt || null,
+            CargoResponsableCsirt: formData.cargoResponsableCsirt || null,
+            CorreoCsirt: formData.correoCsirt || null,
+            TelefonoCsirt: formData.telefonoCsirt || null,
+            ProtocoloIncidentesCsirt: formData.protocoloIncidentesCsirt || false,
+            ComunicadoPcmCsirt: formData.comunicadoPcmCsirt || false,
+            ObservacionCsirt: formData.observacionCsirt || null,
+            RutaPdfCsirt: documentoUrl || formData.rutaPdfCsirt || null,
             UsuarioRegistra: user.usuarioId,
             EtapaFormulario: 'paso1',
             Estado: 'bandeja'
@@ -3881,8 +3984,8 @@ const CumplimientoNormativoDetalle = () => {
             }
           }
           
-          if (response.isSuccess && response.data?.archivoProcedimientos) {
-            setPdfUrl(response.data.archivoProcedimientos);
+          if (response.isSuccess && response.data?.rutaPdfCsirt) {
+            setPdfUrl(response.data.rutaPdfCsirt);
             if (blobUrlToRevoke) URL.revokeObjectURL(blobUrlToRevoke);
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
@@ -3937,13 +4040,19 @@ const CumplimientoNormativoDetalle = () => {
           const com16Data = {
             CompromisoId: 16,
             EntidadId: user.entidadId,
-            FechaImplementacion: formData.fechaImplementacion || null,
-            NormaAplicable: formData.normaAplicable || null,
-            Certificacion: formData.certificacion || null,
-            FechaCertificacion: formData.fechaCertificacion || null,
-            ArchivoCertificado: documentoUrl || null,
-            Descripcion: formData.descripcion || null,
-            Alcance: formData.alcance || null,
+            ResponsableSgsi: formData.responsableSgsi || null,
+            CargoResponsableSgsi: formData.cargoResponsableSgsi || null,
+            CorreoSgsi: formData.correoSgsi || null,
+            TelefonoSgsi: formData.telefonoSgsi || null,
+            EstadoImplementacionSgsi: formData.estadoImplementacionSgsi || null,
+            VersionNormaSgsi: formData.versionNormaSgsi || null,
+            AlcanceSgsi: formData.alcanceSgsi || null,
+            FechaInicioSgsi: formData.fechaInicioSgsi || null,
+            FechaCertificacionSgsi: formData.fechaCertificacionSgsi || null,
+            EntidadCertificadoraSgsi: formData.entidadCertificadoraSgsi || null,
+            RutaPdfPoliticasSgsi: documentoUrl || formData.rutaPdfPoliticasSgsi || null,
+            RutaPdfCertificadoSgsi: formData.rutaPdfCertificadoSgsi || null,
+            ObservacionSgsi: formData.observacionSgsi || null,
             UsuarioRegistra: user.usuarioId,
             EtapaFormulario: 'paso1',
             Estado: 'bandeja'
@@ -3954,12 +4063,12 @@ const CumplimientoNormativoDetalle = () => {
           } else {
             response = await com16SistemaGestionSeguridadService.create(com16Data);
             if (response.isSuccess && response.data) {
-              setCom16RecordId(response.data.id);
+              setCom16RecordId(response.data.comsgsiEntId);
             }
           }
           
-          if (response.isSuccess && response.data?.archivoCertificado) {
-            setPdfUrl(response.data.archivoCertificado);
+          if (response.isSuccess && response.data?.rutaPdfPoliticasSgsi) {
+            setPdfUrl(response.data.rutaPdfPoliticasSgsi);
             if (blobUrlToRevoke) URL.revokeObjectURL(blobUrlToRevoke);
           }
         } else if (pasoActual === 2 || pasoActual === 3) {
@@ -4006,7 +4115,7 @@ const CumplimientoNormativoDetalle = () => {
         console.log('Respuesta final Com16:', response);
       }
 
-      // COMPROMISO 17
+      // COMPROMISO 17: Plan de Transición a IPv6
       else if (parseInt(formData.compromisoId) === 17) {
         console.log(`🚀 Preparando datos para Com17 (Paso ${pasoActual})`);
         
@@ -4014,13 +4123,18 @@ const CumplimientoNormativoDetalle = () => {
           const com17Data = {
             CompromisoId: 17,
             EntidadId: user.entidadId,
-            FechaInicioTransicion: formData.fechaInicioTransicion || null,
-            FechaFinTransicion: formData.fechaFinTransicion || null,
-            PorcentajeAvance: formData.porcentajeAvance ? parseFloat(formData.porcentajeAvance) : null,
-            SistemasMigrados: formData.sistemasMigrados ? parseInt(formData.sistemasMigrados) : null,
-            SistemasTotal: formData.sistemasTotal ? parseInt(formData.sistemasTotal) : null,
-            ArchivoPlan: documentoUrl || null,
-            Descripcion: formData.descripcion || null,
+            ResponsableIpv6: formData.responsableIpv6 || null,
+            CargoResponsableIpv6: formData.cargoResponsableIpv6 || null,
+            CorreoIpv6: formData.correoIpv6 || null,
+            TelefonoIpv6: formData.telefonoIpv6 || null,
+            EstadoPlanIpv6: formData.estadoPlanIpv6 || null,
+            FechaFormulacionIpv6: formData.fechaFormulacionIpv6 || null,
+            FechaAprobacionIpv6: formData.fechaAprobacionIpv6 || null,
+            FechaInicioIpv6: formData.fechaInicioIpv6 || null,
+            FechaFinIpv6: formData.fechaFinIpv6 || null,
+            DescripcionPlanIpv6: formData.descripcionPlanIpv6 || null,
+            RutaPdfPlanIpv6: documentoUrl || formData.rutaPdfPlanIpv6 || null,
+            ObservacionIpv6: formData.observacionIpv6 || null,
             UsuarioRegistra: user.usuarioId,
             EtapaFormulario: 'paso1',
             Estado: 'bandeja'
@@ -4083,7 +4197,7 @@ const CumplimientoNormativoDetalle = () => {
         console.log('Respuesta final Com17:', response);
       }
 
-      // COMPROMISO 18
+      // COMPROMISO 18: Portal de Transparencia Estándar (PTE)
       else if (parseInt(formData.compromisoId) === 18) {
         console.log(`🚀 Preparando datos para Com18 (Paso ${pasoActual})`);
         
@@ -4091,13 +4205,18 @@ const CumplimientoNormativoDetalle = () => {
           const com18Data = {
             CompromisoId: 18,
             EntidadId: user.entidadId,
-            UrlPlataforma: formData.urlPlataforma || null,
-            FechaImplementacion: formData.fechaImplementacion || null,
-            TramitesDisponibles: formData.tramitesDisponibles ? parseInt(formData.tramitesDisponibles) : null,
-            UsuariosRegistrados: formData.usuariosRegistrados ? parseInt(formData.usuariosRegistrados) : null,
-            TramitesProcesados: formData.tramitesProcesados ? parseInt(formData.tramitesProcesados) : null,
-            ArchivoEvidencia: documentoUrl || null,
-            Descripcion: formData.descripcion || null,
+            ResponsablePte: formData.responsablePte || null,
+            CargoResponsablePte: formData.cargoResponsablePte || null,
+            CorreoPte: formData.correoPte || null,
+            TelefonoPte: formData.telefonoPte || null,
+            NumeroOficioPte: formData.numeroOficioPte || null,
+            FechaSolicitudPte: formData.fechaSolicitudPte || null,
+            FechaAccesoPte: formData.fechaAccesoPte || null,
+            EstadoAccesoPte: formData.estadoAccesoPte || null,
+            EnlacePortalPte: formData.enlacePortalPte || null,
+            DescripcionPte: formData.descripcionPte || null,
+            RutaPdfPte: documentoUrl || formData.rutaPdfPte || null,
+            ObservacionPte: formData.observacionPte || null,
             UsuarioRegistra: user.usuarioId,
             EtapaFormulario: 'paso1',
             Estado: 'bandeja'
@@ -4160,7 +4279,7 @@ const CumplimientoNormativoDetalle = () => {
         console.log('Respuesta final Com18:', response);
       }
 
-      // COMPROMISO 19
+      // COMPROMISO 19: Encuesta Nacional de Gobierno Digital (ENAD)
       else if (parseInt(formData.compromisoId) === 19) {
         console.log(`🚀 Preparando datos para Com19 (Paso ${pasoActual})`);
         
@@ -4168,12 +4287,16 @@ const CumplimientoNormativoDetalle = () => {
           const com19Data = {
             CompromisoId: 19,
             EntidadId: user.entidadId,
-            FechaConexion: formData.fechaConexion || null,
-            TipoConexion: formData.tipoConexion || null,
-            AnchoBanda: formData.anchoBanda || null,
-            Proveedor: formData.proveedor || null,
-            ArchivoContrato: documentoUrl || null,
-            Descripcion: formData.descripcion || null,
+            AnioEnad: formData.anioEnad ? parseInt(formData.anioEnad) : null,
+            ResponsableEnad: formData.responsableEnad || null,
+            CargoResponsableEnad: formData.cargoResponsableEnad || null,
+            CorreoEnad: formData.correoEnad || null,
+            TelefonoEnad: formData.telefonoEnad || null,
+            FechaEnvioEnad: formData.fechaEnvioEnad || null,
+            EstadoRespuestaEnad: formData.estadoRespuestaEnad || null,
+            EnlaceFormularioEnad: formData.enlaceFormularioEnad || null,
+            ObservacionEnad: formData.observacionEnad || null,
+            RutaPdfEnad: documentoUrl || formData.rutaPdfEnad || null,
             UsuarioRegistra: user.usuarioId,
             EtapaFormulario: 'paso1',
             Estado: 'bandeja'
@@ -4236,7 +4359,7 @@ const CumplimientoNormativoDetalle = () => {
         console.log('Respuesta final Com19:', response);
       }
 
-      // COMPROMISO 20
+      // COMPROMISO 20: Digitalización de Servicios (Facilita Perú)
       else if (parseInt(formData.compromisoId) === 20) {
         console.log(`🚀 Preparando datos para Com20 (Paso ${pasoActual})`);
         
@@ -4244,11 +4367,16 @@ const CumplimientoNormativoDetalle = () => {
           const com20Data = {
             CompromisoId: 20,
             EntidadId: user.entidadId,
-            SistemasDocumentados: formData.sistemasDocumentados ? parseInt(formData.sistemasDocumentados) : null,
-            SistemasTotal: formData.sistemasTotal ? parseInt(formData.sistemasTotal) : null,
-            PorcentajeDocumentacion: formData.porcentajeDocumentacion ? parseFloat(formData.porcentajeDocumentacion) : null,
-            ArchivoRepositorio: documentoUrl || null,
-            Descripcion: formData.descripcion || null,
+            ResponsableFacilita: formData.responsableFacilita || null,
+            CargoResponsableFacilita: formData.cargoResponsableFacilita || null,
+            CorreoFacilita: formData.correoFacilita || null,
+            TelefonoFacilita: formData.telefonoFacilita || null,
+            EstadoImplementacionFacilita: formData.estadoImplementacionFacilita || null,
+            FechaInicioFacilita: formData.fechaInicioFacilita || null,
+            FechaUltimoAvanceFacilita: formData.fechaUltimoAvanceFacilita || null,
+            TotalServiciosDigitalizados: formData.totalServiciosDigitalizados ? parseInt(formData.totalServiciosDigitalizados) : null,
+            RutaPdfFacilita: documentoUrl || formData.rutaPdfFacilita || null,
+            ObservacionFacilita: formData.observacionFacilita || null,
             UsuarioRegistra: user.usuarioId,
             EtapaFormulario: 'paso1',
             Estado: 'bandeja'
@@ -4311,7 +4439,7 @@ const CumplimientoNormativoDetalle = () => {
         console.log('Respuesta final Com20:', response);
       }
 
-      // COMPROMISO 21
+      // COMPROMISO 21: Oficial de Gobierno de Datos (OGD)
       else if (parseInt(formData.compromisoId) === 21) {
         console.log(`🚀 Preparando datos para Com21 (Paso ${pasoActual})`);
         
@@ -4319,13 +4447,18 @@ const CumplimientoNormativoDetalle = () => {
           const com21Data = {
             CompromisoId: 21,
             EntidadId: user.entidadId,
-            FechaElaboracion: formData.fechaElaboracion || null,
-            NumeroDocumento: formData.numeroDocumento || null,
-            ArchivoDocumento: documentoUrl || null,
-            Descripcion: formData.descripcion || null,
-            Procedimientos: formData.procedimientos || null,
-            Responsables: formData.responsables || null,
-            FechaVigencia: formData.fechaVigencia || null,
+            DniOgd: formData.dniOgd || null,
+            NombreOgd: formData.nombreOgd || null,
+            ApePatOgd: formData.apePatOgd || null,
+            ApeMatOgd: formData.apeMatOgd || null,
+            CargoOgd: formData.cargoOgd || null,
+            CorreoOgd: formData.correoOgd || null,
+            TelefonoOgd: formData.telefonoOgd || null,
+            FechaDesignacionOgd: formData.fechaDesignacionOgd || null,
+            NumeroResolucionOgd: formData.numeroResolucionOgd || null,
+            ComunicadoPcmOgd: formData.comunicadoPcmOgd || false,
+            RutaPdfOgd: documentoUrl || null,
+            ObservacionOgd: formData.observacionOgd || null,
             UsuarioRegistra: user.usuarioId,
             EtapaFormulario: 'paso1',
             Estado: 'bandeja'
@@ -4736,7 +4869,7 @@ const CumplimientoNormativoDetalle = () => {
                   {/* Documento PEI (PDF) */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Documento PEI (PDF) <span className="text-red-500">*</span>
+                      Documento PEI (PDF)
                     </label>
                     
                     {!pdfUrl ? (
@@ -4940,7 +5073,7 @@ const CumplimientoNormativoDetalle = () => {
                   {/* Documento PDF */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Documento de la Estrategia Digital (PDF) <span className="text-red-500">*</span>
+                      Documento de la Estrategia Digital (PDF)
                     </label>
                     
                     {!pdfUrl ? (
@@ -5473,7 +5606,7 @@ const CumplimientoNormativoDetalle = () => {
                   {/* Responsable */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Responsable de la MPD <span className="text-red-500">*</span>
+                      Responsable <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -5492,23 +5625,26 @@ const CumplimientoNormativoDetalle = () => {
                   {/* Cargo */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Cargo del responsable
+                      Cargo <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       name="cargoResponsableMpd"
                       value={formData.cargoResponsableMpd}
                       onChange={handleInputChange}
-                      className="input-field"
+                      className={`input-field ${errores.cargoResponsableMpd ? 'border-red-500' : ''}`}
                       placeholder="Cargo"
                       disabled={viewMode}
                     />
+                    {errores.cargoResponsableMpd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsableMpd}</p>
+                    )}
                   </div>
 
                   {/* Correo */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Correo del responsable
+                      Correo <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
@@ -5527,7 +5663,7 @@ const CumplimientoNormativoDetalle = () => {
                   {/* Teléfono */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Teléfono del responsable
+                      Teléfono
                     </label>
                     <input
                       type="tel"
@@ -5686,23 +5822,6 @@ const CumplimientoNormativoDetalle = () => {
                     )}
                   </div>
 
-                  {/* TUPA actualizado */}
-                  <div className="md:col-span-2">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        name="actualizadoTupa"
-                        checked={formData.actualizadoTupa || false}
-                        onChange={handleInputChange}
-                        className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
-                        disabled={viewMode}
-                      />
-                      <span className="text-sm font-medium text-gray-700">
-                        ¿El TUPA está actualizado?
-                      </span>
-                    </label>
-                  </div>
-
                   {/* Separador */}
                   <div className="md:col-span-2 border-t border-gray-200 my-2">
                     <h3 className="text-sm font-medium text-gray-700 mt-4 mb-3">Datos del Responsable</h3>
@@ -5730,23 +5849,26 @@ const CumplimientoNormativoDetalle = () => {
                   {/* Cargo */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Cargo del responsable
+                      Cargo <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       name="cargoResponsableTupa"
                       value={formData.cargoResponsableTupa}
                       onChange={handleInputChange}
-                      className="input-field"
+                      className={`input-field ${errores.cargoResponsableTupa ? 'border-red-500' : ''}`}
                       placeholder="Cargo"
                       disabled={viewMode}
                     />
+                    {errores.cargoResponsableTupa && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsableTupa}</p>
+                    )}
                   </div>
 
                   {/* Correo */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Correo del responsable
+                      Correo <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
@@ -5765,7 +5887,7 @@ const CumplimientoNormativoDetalle = () => {
                   {/* Teléfono */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Teléfono del responsable
+                      Teléfono
                     </label>
                     <input
                       type="tel"
@@ -5776,6 +5898,23 @@ const CumplimientoNormativoDetalle = () => {
                       placeholder="999 999 999"
                       disabled={viewMode}
                     />
+                  </div>
+
+                  {/* TUPA actualizado */}
+                  <div className="md:col-span-2">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        name="actualizadoTupa"
+                        checked={formData.actualizadoTupa || false}
+                        onChange={handleInputChange}
+                        className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        disabled={viewMode}
+                      />
+                      <span className="text-sm font-medium text-gray-700">
+                        ¿El TUPA está actualizado?
+                      </span>
+                    </label>
                   </div>
 
                   {/* Observaciones */}
@@ -6702,142 +6841,212 @@ const CumplimientoNormativoDetalle = () => {
                 </div>
               </>
             ) : parseInt(formData.compromisoId) === 12 ? (
-              // COMPROMISO 12: Responsable de Software Público
+              // COMPROMISO 12: Designación de Responsable de Software Público
               <>
-                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Responsable de Software Público</h2>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Designación de Responsable de Software Público</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Fecha de Elaboración */}
+                  {/* DNI */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de elaboración <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="date"
-                      name="fechaElaboracion"
-                      value={formData.fechaElaboracion || ''}
-                      onChange={handleInputChange}
-                      className={`input-field ${errores.fechaElaboracion ? 'border-red-500' : ''}`}
-                      disabled={viewMode}
-                    />
-                    {errores.fechaElaboracion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaElaboracion}</p>
-                    )}
-                  </div>
-
-                  {/* Número de Documento */}
-                  <div className="">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Número de documento <span className="text-red-500">*</span>
+                      DNI <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="numeroDocumento"
-                      value={formData.numeroDocumento || ''}
+                      name="dniRsp"
+                      value={formData.dniRsp || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.numeroDocumento ? 'border-red-500' : ''}`}
-                      placeholder="Ej: RES-001-2025"
+                      maxLength="8"
+                      className={`input-field ${errores.dniRsp ? 'border-red-500' : ''}`}
+                      placeholder="Ej: 12345678"
                       disabled={viewMode}
                     />
-                    {errores.numeroDocumento && (
-                      <p className="text-red-500 text-xs mt-1">{errores.numeroDocumento}</p>
+                    {errores.dniRsp && (
+                      <p className="text-red-500 text-xs mt-1">{errores.dniRsp}</p>
                     )}
                   </div>
 
-                  {/* Fecha de Vigencia */}
+                  {/* Nombres */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de vigencia
+                      Nombres <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="nombreRsp"
+                      value={formData.nombreRsp || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.nombreRsp ? 'border-red-500' : ''}`}
+                      placeholder="Ingrese nombres"
+                      disabled={viewMode}
+                    />
+                    {errores.nombreRsp && (
+                      <p className="text-red-500 text-xs mt-1">{errores.nombreRsp}</p>
+                    )}
+                  </div>
+
+                  {/* Apellido Paterno */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Apellido Paterno <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="apePatRsp"
+                      value={formData.apePatRsp || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.apePatRsp ? 'border-red-500' : ''}`}
+                      placeholder="Ingrese apellido paterno"
+                      disabled={viewMode}
+                    />
+                    {errores.apePatRsp && (
+                      <p className="text-red-500 text-xs mt-1">{errores.apePatRsp}</p>
+                    )}
+                  </div>
+
+                  {/* Apellido Materno */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Apellido Materno <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="apeMatRsp"
+                      value={formData.apeMatRsp || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.apeMatRsp ? 'border-red-500' : ''}`}
+                      placeholder="Ingrese apellido materno"
+                      disabled={viewMode}
+                    />
+                    {errores.apeMatRsp && (
+                      <p className="text-red-500 text-xs mt-1">{errores.apeMatRsp}</p>
+                    )}
+                  </div>
+
+                  {/* Cargo */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cargo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoRsp"
+                      value={formData.cargoRsp || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.cargoRsp ? 'border-red-500' : ''}`}
+                      placeholder="Ej: Jefe de TI"
+                      disabled={viewMode}
+                    />
+                    {errores.cargoRsp && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoRsp}</p>
+                    )}
+                  </div>
+
+                  {/* Correo institucional */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo institucional <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="correoRsp"
+                      value={formData.correoRsp || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.correoRsp ? 'border-red-500' : ''}`}
+                      placeholder="correo@entidad.gob.pe"
+                      disabled={viewMode}
+                    />
+                    {errores.correoRsp && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoRsp}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono
+                    </label>
+                    <input
+                      type="tel"
+                      name="telefonoRsp"
+                      value={formData.telefonoRsp || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.telefonoRsp ? 'border-red-500' : ''}`}
+                      placeholder="Ej: 01-1234567"
+                      disabled={viewMode}
+                    />
+                    {errores.telefonoRsp && (
+                      <p className="text-red-500 text-xs mt-1">{errores.telefonoRsp}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha de designación */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de designación <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="date"
-                      name="fechaVigencia"
-                      value={formData.fechaVigencia || ''}
+                      name="fechaDesignacionRsp"
+                      value={formData.fechaDesignacionRsp || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.fechaVigencia ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.fechaDesignacionRsp ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     />
-                    {errores.fechaVigencia && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaVigencia}</p>
+                    {errores.fechaDesignacionRsp && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaDesignacionRsp}</p>
+                    )}
+                  </div>
+
+                  {/* Nº de resolución o documento */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nº de resolución o documento <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="numeroResolucionRsp"
+                      value={formData.numeroResolucionRsp || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.numeroResolucionRsp ? 'border-red-500' : ''}`}
+                      placeholder="Ej: RES-001-2025"
+                      disabled={viewMode}
+                    />
+                    {errores.numeroResolucionRsp && (
+                      <p className="text-red-500 text-xs mt-1">{errores.numeroResolucionRsp}</p>
                     )}
                   </div>
 
                   {/* Espacio vacío para alineación */}
                   <div className=""></div>
 
-                  {/* Descripción */}
+                  {/* Observaciones */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Descripción <span className="text-red-500">*</span>
+                      Observaciones
                     </label>
                     <textarea
-                      name="descripcion"
-                      value={formData.descripcion || ''}
+                      name="observacionRsp"
+                      value={formData.observacionRsp || ''}
                       onChange={handleInputChange}
                       maxLength="1000"
                       rows="3"
-                      className={`input-field ${errores.descripcion ? 'border-red-500' : ''}`}
-                      placeholder="Describa las responsabilidades y funciones..."
+                      className={`input-field ${errores.observacionRsp ? 'border-red-500' : ''}`}
+                      placeholder="Ingrese observaciones adicionales..."
                       disabled={viewMode}
                     />
-                    {errores.descripcion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.descripcion}</p>
+                    {errores.observacionRsp && (
+                      <p className="text-red-500 text-xs mt-1">{errores.observacionRsp}</p>
                     )}
                     <p className="text-xs text-gray-500 mt-1">
-                      {formData.descripcion?.length || 0} / 1000 caracteres
+                      {formData.observacionRsp?.length || 0} / 1000 caracteres
                     </p>
                   </div>
 
-                  {/* Requisitos de Seguridad */}
+                  {/* Documento de evidencia (PDF) */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Requisitos de seguridad <span className="text-red-500">*</span>
-                    </label>
-                    <textarea
-                      name="requisitosSeguridad"
-                      value={formData.requisitosSeguridad || ''}
-                      onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
-                      className={`input-field ${errores.requisitosSeguridad ? 'border-red-500' : ''}`}
-                      placeholder="Especifique los requisitos de seguridad..."
-                      disabled={viewMode}
-                    />
-                    {errores.requisitosSeguridad && (
-                      <p className="text-red-500 text-xs mt-1">{errores.requisitosSeguridad}</p>
-                    )}
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formData.requisitosSeguridad?.length || 0} / 1000 caracteres
-                    </p>
-                  </div>
-
-                  {/* Requisitos de Privacidad */}
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Requisitos de privacidad <span className="text-red-500">*</span>
-                    </label>
-                    <textarea
-                      name="requisitosPrivacidad"
-                      value={formData.requisitosPrivacidad || ''}
-                      onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
-                      className={`input-field ${errores.requisitosPrivacidad ? 'border-red-500' : ''}`}
-                      placeholder="Especifique los requisitos de privacidad..."
-                      disabled={viewMode}
-                    />
-                    {errores.requisitosPrivacidad && (
-                      <p className="text-red-500 text-xs mt-1">{errores.requisitosPrivacidad}</p>
-                    )}
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formData.requisitosPrivacidad?.length || 0} / 1000 caracteres
-                    </p>
-                  </div>
-
-                  {/* Archivo del Documento (PDF) */}
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Archivo del documento (PDF)
+                      Documento de evidencia (PDF)
                     </label>
                     
                     {!pdfUrl ? (
@@ -6896,155 +7105,258 @@ const CumplimientoNormativoDetalle = () => {
                       <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
                     )}
                     <p className="text-xs text-gray-500 mt-1">
-                      Suba el archivo del documento en formato PDF (máximo 10 MB)
+                      Suba el archivo del documento de designación en formato PDF (máximo 10 MB)
                     </p>
                   </div>
                 </div>
               </>
             ) : parseInt(formData.compromisoId) === 13 ? (
-              // COMPROMISO 13: Plan de Continuidad de PIDE
+              // COMPROMISO 13: Datos de Interoperabilidad - Servicios PIDE
               <>
-                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Plan de Continuidad de PIDE</h2>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos de Interoperabilidad - Servicios PIDE</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Fecha de aprobación */}
+                  {/* Tipo de integración */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de aprobación <span className="text-red-500">*</span>
+                      Tipo de integración <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      type="date"
-                      name="fechaAprobacion"
-                      value={formData.fechaAprobacion}
+                    <select
+                      name="tipoIntegracionPide"
+                      value={formData.tipoIntegracionPide || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.fechaAprobacion ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.tipoIntegracionPide ? 'border-red-500' : ''}`}
                       disabled={viewMode}
-                    />
-                    {errores.fechaAprobacion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaAprobacion}</p>
+                    >
+                      <option value="">Seleccione tipo</option>
+                      <option value="publicador">Publicador de servicios</option>
+                      <option value="consumidor">Consumidor de servicios</option>
+                      <option value="ambos">Publicador y Consumidor</option>
+                    </select>
+                    {errores.tipoIntegracionPide && (
+                      <p className="text-red-500 text-xs mt-1">{errores.tipoIntegracionPide}</p>
                     )}
                   </div>
 
-                  {/* Número de resolución */}
+                  {/* Nombre del servicio interoperable */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Número de resolución <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="numeroResolucion"
-                      value={formData.numeroResolucion}
-                      onChange={handleInputChange}
-                      className={`input-field ${errores.numeroResolucion ? 'border-red-500' : ''}`}
-                      placeholder="Número de resolución"
-                      disabled={viewMode}
-                    />
-                    {errores.numeroResolucion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.numeroResolucion}</p>
-                    )}
-                  </div>
-
-                  {/* Fecha de revisión */}
-                  <div className="">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de revisión
-                    </label>
-                    <input
-                      type="date"
-                      name="fechaRevision"
-                      value={formData.fechaRevision}
-                      onChange={handleInputChange}
-                      className="input-field"
-                      disabled={viewMode}
-                    />
-                  </div>
-
-                  {/* Responsable */}
-                  <div className="">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Responsable <span className="text-red-500">*</span>
+                      Nombre del servicio interoperable <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="responsable"
-                      value={formData.responsable}
+                      name="nombreServicioPide"
+                      value={formData.nombreServicioPide || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.responsable ? 'border-red-500' : ''}`}
-                      placeholder="Nombre del responsable"
+                      className={`input-field ${errores.nombreServicioPide ? 'border-red-500' : ''}`}
+                      placeholder="Nombre del servicio"
                       disabled={viewMode}
                     />
-                    {errores.responsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.responsable}</p>
+                    {errores.nombreServicioPide && (
+                      <p className="text-red-500 text-xs mt-1">{errores.nombreServicioPide}</p>
                     )}
                   </div>
 
-                  {/* Descripción */}
+                  {/* Descripción del servicio */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Descripción <span className="text-red-500">*</span>
+                      Descripción del servicio
                     </label>
                     <textarea
-                      name="descripcion"
-                      value={formData.descripcion}
+                      name="descripcionServicioPide"
+                      value={formData.descripcionServicioPide || ''}
                       onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
-                      className={`input-field ${errores.descripcion ? 'border-red-500' : ''}`}
-                      placeholder="Descripción del plan..."
+                      maxLength="255"
+                      rows="2"
+                      className="input-field"
+                      placeholder="Describa el servicio interoperable..."
                       disabled={viewMode}
                     />
-                    {errores.descripcion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.descripcion}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.descripcionServicioPide?.length || 0} / 255 caracteres
+                    </p>
+                  </div>
+
+                  {/* Fecha de inicio de operación */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de inicio de operación <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaInicioOperacionPide"
+                      value={formData.fechaInicioOperacionPide || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.fechaInicioOperacionPide ? 'border-red-500' : ''}`}
+                      disabled={viewMode}
+                    />
+                    {errores.fechaInicioOperacionPide && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaInicioOperacionPide}</p>
                     )}
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formData.descripcion?.length || 0} / 1000 caracteres
-                    </p>
                   </div>
 
-                  {/* Riesgos identificados */}
+                  {/* URL del servicio */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      URL del servicio (si aplica)
+                    </label>
+                    <input
+                      type="url"
+                      name="urlServicioPide"
+                      value={formData.urlServicioPide || ''}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="https://..."
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Responsable técnico */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Responsable técnico <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="responsablePide"
+                      value={formData.responsablePide || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.responsablePide ? 'border-red-500' : ''}`}
+                      placeholder="Nombre completo"
+                      disabled={viewMode}
+                    />
+                    {errores.responsablePide && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsablePide}</p>
+                    )}
+                  </div>
+
+                  {/* Cargo */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cargo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoResponsablePide"
+                      value={formData.cargoResponsablePide || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.cargoResponsablePide ? 'border-red-500' : ''}`}
+                      placeholder="Ej: Jefe de TI"
+                      disabled={viewMode}
+                    />
+                    {errores.cargoResponsablePide && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsablePide}</p>
+                    )}
+                  </div>
+
+                  {/* Correo */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="correoResponsablePide"
+                      value={formData.correoResponsablePide || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.correoResponsablePide ? 'border-red-500' : ''}`}
+                      placeholder="correo@entidad.gob.pe"
+                      disabled={viewMode}
+                    />
+                    {errores.correoResponsablePide && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsablePide}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono
+                    </label>
+                    <input
+                      type="tel"
+                      name="telefonoResponsablePide"
+                      value={formData.telefonoResponsablePide || ''}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="Ej: 01-1234567"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Nº de convenio / resolución de acceso */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nº de convenio / resolución de acceso <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="numeroConvenioPide"
+                      value={formData.numeroConvenioPide || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.numeroConvenioPide ? 'border-red-500' : ''}`}
+                      placeholder="Ej: CONV-001-2025"
+                      disabled={viewMode}
+                    />
+                    {errores.numeroConvenioPide && (
+                      <p className="text-red-500 text-xs mt-1">{errores.numeroConvenioPide}</p>
+                    )}
+                  </div>
+
+                  {/* Fecha del convenio */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha del convenio
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaConvenioPide"
+                      value={formData.fechaConvenioPide || ''}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* ¿Servicio interoperable activo? */}
+                  <div className="md:col-span-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="interoperabilidadPide"
+                        checked={formData.interoperabilidadPide || false}
+                        onChange={(e) => setFormData(prev => ({ ...prev, interoperabilidadPide: e.target.checked }))}
+                        className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        disabled={viewMode}
+                      />
+                      <span className="text-sm font-medium text-gray-700">¿Servicio interoperable activo?</span>
+                    </label>
+                  </div>
+
+                  {/* Observaciones */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Riesgos identificados
+                      Observaciones
                     </label>
                     <textarea
-                      name="riesgosIdentificados"
-                      value={formData.riesgosIdentificados}
+                      name="observacionPide"
+                      value={formData.observacionPide || ''}
                       onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
+                      maxLength="255"
+                      rows="2"
                       className="input-field"
-                      placeholder="Descripción de riesgos..."
+                      placeholder="Observaciones adicionales..."
                       disabled={viewMode}
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      {formData.riesgosIdentificados?.length || 0} / 1000 caracteres
+                      {formData.observacionPide?.length || 0} / 255 caracteres
                     </p>
                   </div>
 
-                  {/* Estrategias de mitigación */}
+                  {/* Documento de evidencia (PDF) */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Estrategias de mitigación
-                    </label>
-                    <textarea
-                      name="estrategiasMitigacion"
-                      value={formData.estrategiasMitigacion}
-                      onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
-                      className="input-field"
-                      placeholder="Estrategias..."
-                      disabled={viewMode}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formData.estrategiasMitigacion?.length || 0} / 1000 caracteres
-                    </p>
-                  </div>
-
-                  {/* Archivo del plan (PDF) */}
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Archivo del plan (PDF)
+                      Documento de evidencia (PDF)
                     </label>
                     
                     {!pdfUrl ? (
@@ -7103,136 +7415,227 @@ const CumplimientoNormativoDetalle = () => {
                       <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
                     )}
                     <p className="text-xs text-gray-500 mt-1">
-                      Suba el plan de continuidad en formato PDF (máximo 10 MB)
+                      Suba el documento de evidencia en formato PDF (máximo 10 MB)
                     </p>
                   </div>
                 </div>
               </>
             ) : parseInt(formData.compromisoId) === 14 ? (
-              // COMPROMISO 14: Oficial de Seguridad Digital
+              // COMPROMISO 14: Oficial de Seguridad y Confianza Digital (OSCD)
               <>
-                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Oficial de Seguridad Digital</h2>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos del Oficial de Seguridad y Confianza Digital (OSCD)</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Fecha de elaboración */}
+                  {/* DNI */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de elaboración <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="date"
-                      name="fechaElaboracion"
-                      value={formData.fechaElaboracion}
-                      onChange={handleInputChange}
-                      className={`input-field ${errores.fechaElaboracion ? 'border-red-500' : ''}`}
-                      disabled={viewMode}
-                    />
-                    {errores.fechaElaboracion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaElaboracion}</p>
-                    )}
-                  </div>
-
-                  {/* Número de documento */}
-                  <div className="">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Número de documento <span className="text-red-500">*</span>
+                      DNI <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="numeroDocumento"
-                      value={formData.numeroDocumento}
+                      name="dniOscd"
+                      value={formData.dniOscd || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.numeroDocumento ? 'border-red-500' : ''}`}
-                      placeholder="Número de documento"
+                      maxLength="8"
+                      className={`input-field ${errores.dniOscd ? 'border-red-500' : ''}`}
+                      placeholder="Ej: 12345678"
                       disabled={viewMode}
                     />
-                    {errores.numeroDocumento && (
-                      <p className="text-red-500 text-xs mt-1">{errores.numeroDocumento}</p>
+                    {errores.dniOscd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.dniOscd}</p>
                     )}
                   </div>
 
-                  {/* Fecha de vigencia */}
+                  {/* Nombres */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de vigencia
+                      Nombres <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="nombreOscd"
+                      value={formData.nombreOscd || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.nombreOscd ? 'border-red-500' : ''}`}
+                      placeholder="Ingrese nombres"
+                      disabled={viewMode}
+                    />
+                    {errores.nombreOscd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.nombreOscd}</p>
+                    )}
+                  </div>
+
+                  {/* Apellido Paterno */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Apellido Paterno <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="apePatOscd"
+                      value={formData.apePatOscd || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.apePatOscd ? 'border-red-500' : ''}`}
+                      placeholder="Ingrese apellido paterno"
+                      disabled={viewMode}
+                    />
+                    {errores.apePatOscd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.apePatOscd}</p>
+                    )}
+                  </div>
+
+                  {/* Apellido Materno */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Apellido Materno <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="apeMatOscd"
+                      value={formData.apeMatOscd || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.apeMatOscd ? 'border-red-500' : ''}`}
+                      placeholder="Ingrese apellido materno"
+                      disabled={viewMode}
+                    />
+                    {errores.apeMatOscd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.apeMatOscd}</p>
+                    )}
+                  </div>
+
+                  {/* Cargo */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cargo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoOscd"
+                      value={formData.cargoOscd || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.cargoOscd ? 'border-red-500' : ''}`}
+                      placeholder="Ej: Oficial de Seguridad"
+                      disabled={viewMode}
+                    />
+                    {errores.cargoOscd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoOscd}</p>
+                    )}
+                  </div>
+
+                  {/* Correo institucional */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo institucional <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="correoOscd"
+                      value={formData.correoOscd || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.correoOscd ? 'border-red-500' : ''}`}
+                      placeholder="correo@entidad.gob.pe"
+                      disabled={viewMode}
+                    />
+                    {errores.correoOscd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoOscd}</p>
+                    )}
+                  </div>
+
+                  {/* Teléfono */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono
+                    </label>
+                    <input
+                      type="tel"
+                      name="telefonoOscd"
+                      value={formData.telefonoOscd || ''}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      placeholder="Ej: 01-1234567"
+                      disabled={viewMode}
+                    />
+                  </div>
+
+                  {/* Fecha de designación */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de designación <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="date"
-                      name="fechaVigencia"
-                      value={formData.fechaVigencia}
+                      name="fechaDesignacionOscd"
+                      value={formData.fechaDesignacionOscd || ''}
                       onChange={handleInputChange}
-                      className="input-field"
+                      className={`input-field ${errores.fechaDesignacionOscd ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     />
-                  </div>
-
-                  {/* Descripción */}
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Descripción <span className="text-red-500">*</span>
-                    </label>
-                    <textarea
-                      name="descripcion"
-                      value={formData.descripcion}
-                      onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
-                      className={`input-field ${errores.descripcion ? 'border-red-500' : ''}`}
-                      placeholder="Descripción..."
-                      disabled={viewMode}
-                    />
-                    {errores.descripcion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.descripcion}</p>
+                    {errores.fechaDesignacionOscd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaDesignacionOscd}</p>
                     )}
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formData.descripcion?.length || 0} / 1000 caracteres
-                    </p>
                   </div>
 
-                  {/* Políticas de seguridad */}
+                  {/* Nº de resolución o documento */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nº de resolución o documento <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="numeroResolucionOscd"
+                      value={formData.numeroResolucionOscd || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.numeroResolucionOscd ? 'border-red-500' : ''}`}
+                      placeholder="Ej: RES-001-2025"
+                      disabled={viewMode}
+                    />
+                    {errores.numeroResolucionOscd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.numeroResolucionOscd}</p>
+                    )}
+                  </div>
+
+                  {/* Espacio vacío para alineación */}
+                  <div className=""></div>
+
+                  {/* ¿La designación fue comunicada a PCM? */}
+                  <div className="md:col-span-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="comunicadoPcmOscd"
+                        checked={formData.comunicadoPcmOscd || false}
+                        onChange={(e) => setFormData(prev => ({ ...prev, comunicadoPcmOscd: e.target.checked }))}
+                        className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        disabled={viewMode}
+                      />
+                      <span className="text-sm font-medium text-gray-700">¿La designación fue comunicada a PCM?</span>
+                    </label>
+                  </div>
+
+                  {/* Observaciones */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Políticas de seguridad
+                      Observaciones
                     </label>
                     <textarea
-                      name="politicasSeguridad"
-                      value={formData.politicasSeguridad}
+                      name="observacionOscd"
+                      value={formData.observacionOscd || ''}
                       onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
+                      maxLength="255"
+                      rows="2"
                       className="input-field"
-                      placeholder="Políticas de seguridad..."
+                      placeholder="Observaciones adicionales..."
                       disabled={viewMode}
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      {formData.politicasSeguridad?.length || 0} / 1000 caracteres
+                      {formData.observacionOscd?.length || 0} / 255 caracteres
                     </p>
                   </div>
 
-                  {/* Certificaciones */}
+                  {/* Documento de evidencia (PDF) */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Certificaciones
-                    </label>
-                    <textarea
-                      name="certificaciones"
-                      value={formData.certificaciones}
-                      onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
-                      className="input-field"
-                      placeholder="Certificaciones..."
-                      disabled={viewMode}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formData.certificaciones?.length || 0} / 1000 caracteres
-                    </p>
-                  </div>
-
-                  {/* Archivo de documento (PDF) */}
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Archivo de documento (PDF)
+                      Documento de evidencia (PDF)
                     </label>
                     
                     {!pdfUrl ? (
@@ -7291,17 +7694,36 @@ const CumplimientoNormativoDetalle = () => {
                       <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
                     )}
                     <p className="text-xs text-gray-500 mt-1">
-                      Suba el documento en formato PDF (máximo 10 MB)
+                      Suba el documento de designación en formato PDF (máximo 10 MB)
                     </p>
                   </div>
                 </div>
               </>
             ) : parseInt(formData.compromisoId) === 15 ? (
-              // COMPROMISO 15: CSIRT Institucional
+              // COMPROMISO 15: Datos del CSIRT Institucional
               <>
-                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: CSIRT Institucional</h2>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos del CSIRT Institucional</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Nombre del CSIRT */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nombre del CSIRT <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="nombreCsirt"
+                      value={formData.nombreCsirt || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.nombreCsirt ? 'border-red-500' : ''}`}
+                      placeholder="Ej: CSIRT-MINEDU"
+                      disabled={viewMode}
+                    />
+                    {errores.nombreCsirt && (
+                      <p className="text-red-500 text-xs mt-1">{errores.nombreCsirt}</p>
+                    )}
+                  </div>
+
                   {/* Fecha de conformación */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -7309,71 +7731,90 @@ const CumplimientoNormativoDetalle = () => {
                     </label>
                     <input
                       type="date"
-                      name="fechaConformacion"
-                      value={formData.fechaConformacion}
+                      name="fechaConformacionCsirt"
+                      value={formData.fechaConformacionCsirt || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.fechaConformacion ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.fechaConformacionCsirt ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     />
-                    {errores.fechaConformacion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaConformacion}</p>
+                    {errores.fechaConformacionCsirt && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaConformacionCsirt}</p>
                     )}
                   </div>
 
-                  {/* Número de resolución */}
+                  {/* Nº de resolución / documento de creación */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Número de resolución <span className="text-red-500">*</span>
+                      Nº de resolución / documento de creación <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="numeroResolucion"
-                      value={formData.numeroResolucion}
+                      name="numeroResolucionCsirt"
+                      value={formData.numeroResolucionCsirt || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.numeroResolucion ? 'border-red-500' : ''}`}
-                      placeholder="Número de resolución"
+                      className={`input-field ${errores.numeroResolucionCsirt ? 'border-red-500' : ''}`}
+                      placeholder="Ej: RES-001-2025"
                       disabled={viewMode}
                     />
-                    {errores.numeroResolucion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.numeroResolucion}</p>
+                    {errores.numeroResolucionCsirt && (
+                      <p className="text-red-500 text-xs mt-1">{errores.numeroResolucionCsirt}</p>
                     )}
                   </div>
 
-                  {/* Responsable */}
+                  {/* Responsable / Coordinador */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Responsable <span className="text-red-500">*</span>
+                      Responsable / Coordinador <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="responsable"
-                      value={formData.responsable}
+                      name="responsableCsirt"
+                      value={formData.responsableCsirt || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.responsable ? 'border-red-500' : ''}`}
-                      placeholder="Nombre del responsable"
+                      className={`input-field ${errores.responsableCsirt ? 'border-red-500' : ''}`}
+                      placeholder="Nombre completo"
                       disabled={viewMode}
                     />
-                    {errores.responsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.responsable}</p>
+                    {errores.responsableCsirt && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsableCsirt}</p>
                     )}
                   </div>
 
-                  {/* Correo electrónico */}
+                  {/* Cargo */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Correo electrónico <span className="text-red-500">*</span>
+                      Cargo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="cargoResponsableCsirt"
+                      value={formData.cargoResponsableCsirt || ''}
+                      onChange={handleInputChange}
+                      className={`input-field ${errores.cargoResponsableCsirt ? 'border-red-500' : ''}`}
+                      placeholder="Ej: Coordinador CSIRT"
+                      disabled={viewMode}
+                    />
+                    {errores.cargoResponsableCsirt && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsableCsirt}</p>
+                    )}
+                  </div>
+
+                  {/* Correo institucional */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Correo institucional <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
-                      name="emailContacto"
-                      value={formData.emailContacto}
+                      name="correoCsirt"
+                      value={formData.correoCsirt || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.emailContacto ? 'border-red-500' : ''}`}
-                      placeholder="Correo electrónico"
+                      className={`input-field ${errores.correoCsirt ? 'border-red-500' : ''}`}
+                      placeholder="csirt@entidad.gob.pe"
                       disabled={viewMode}
                     />
-                    {errores.emailContacto && (
-                      <p className="text-red-500 text-xs mt-1">{errores.emailContacto}</p>
+                    {errores.correoCsirt && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoCsirt}</p>
                     )}
                   </div>
 
@@ -7383,55 +7824,66 @@ const CumplimientoNormativoDetalle = () => {
                       Teléfono
                     </label>
                     <input
-                      type="text"
-                      name="telefonoContacto"
-                      value={formData.telefonoContacto}
+                      type="tel"
+                      name="telefonoCsirt"
+                      value={formData.telefonoCsirt || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.telefonoContacto ? 'border-red-500' : ''}`}
-                      placeholder="Teléfono"
+                      className="input-field"
+                      placeholder="Ej: 01-1234567"
                       disabled={viewMode}
                     />
-                    {errores.telefonoContacto && (
-                      <p className="text-red-500 text-xs mt-1">{errores.telefonoContacto}</p>
-                    )}
                   </div>
 
-                  {/* Descripción */}
+                  {/* Espacio vacío para alineación */}
+                  <div className=""></div>
+
+                  {/* ¿Cuenta con protocolo o plan de atención de incidentes? */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Descripción
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="protocoloIncidentesCsirt"
+                        checked={formData.protocoloIncidentesCsirt || false}
+                        onChange={(e) => setFormData(prev => ({ ...prev, protocoloIncidentesCsirt: e.target.checked }))}
+                        className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        disabled={viewMode}
+                      />
+                      <span className="text-sm font-medium text-gray-700">¿Cuenta con protocolo o plan de atención de incidentes?</span>
                     </label>
-                    <textarea
-                      name="descripcion"
-                      value={formData.descripcion}
-                      onChange={handleInputChange}
-                      className={`input-field ${errores.descripcion ? 'border-red-500' : ''}`}
-                      placeholder="Descripción"
-                      rows="3"
-                      disabled={viewMode}
-                    />
-                    {errores.descripcion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.descripcion}</p>
-                    )}
+                  </div>
+
+                  {/* ¿Se comunicó la conformación a la PCM (CSIRT Nacional)? */}
+                  <div className="md:col-span-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="comunicadoPcmCsirt"
+                        checked={formData.comunicadoPcmCsirt || false}
+                        onChange={(e) => setFormData(prev => ({ ...prev, comunicadoPcmCsirt: e.target.checked }))}
+                        className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        disabled={viewMode}
+                      />
+                      <span className="text-sm font-medium text-gray-700">¿Se comunicó la conformación a la PCM (CSIRT Nacional)?</span>
+                    </label>
                   </div>
 
                   {/* Observaciones */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Observaciones 
+                      Observaciones
                     </label>
                     <textarea
-                      name="observaciones"
-                      value={formData.observaciones}
+                      name="observacionCsirt"
+                      value={formData.observacionCsirt || ''}
                       onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
+                      maxLength="255"
+                      rows="2"
                       className="input-field"
-                      placeholder="Observaciones..."
+                      placeholder="Observaciones adicionales..."
                       disabled={viewMode}
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      {formData.observaciones?.length || 0} / 1000 caracteres
+                      {formData.observacionCsirt?.length || 0} / 255 caracteres
                     </p>
                   </div>
 
@@ -7497,7 +7949,7 @@ const CumplimientoNormativoDetalle = () => {
                       <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
                     )}
                     <p className="text-xs text-gray-500 mt-1">
-                      Suba el documento de evidencia en formato PDF (máximo 10 MB)
+                      Suba el documento de conformación en formato PDF (máximo 10 MB)
                     </p>
                   </div>
                 </div>
@@ -7505,22 +7957,21 @@ const CumplimientoNormativoDetalle = () => {
             ) : parseInt(formData.compromisoId) === 16 ? (
               // COMPROMISO 16: Sistema de Gestión de Seguridad de la Información (SGSI)
               <>
-                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Sistema de Gestión de Seguridad de la Información (SGSI)</h2>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos del Sistema de Gestión de Seguridad de la Información</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Nombre del responsable */}
+                  {/* Responsable del SGSI */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nombre del responsable <span className="text-red-500">*</span>
+                      Responsable del SGSI <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       name="responsableSgsi"
-                      value={formData.responsableSgsi}
+                      value={formData.responsableSgsi || ''}
                       onChange={handleInputChange}
-                      
                       className={`input-field ${errores.responsableSgsi ? 'border-red-500' : ''}`}
-                      placeholder="Nombre del responsable"
+                      placeholder="Nombre completo"
                       disabled={viewMode}
                     />
                     {errores.responsableSgsi && (
@@ -7535,56 +7986,51 @@ const CumplimientoNormativoDetalle = () => {
                     </label>
                     <input
                       type="text"
-                      name="cargoResponsable"
-                      value={formData.cargoResponsable}
+                      name="cargoResponsableSgsi"
+                      value={formData.cargoResponsableSgsi || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.cargoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Cargo"
+                      className={`input-field ${errores.cargoResponsableSgsi ? 'border-red-500' : ''}`}
+                      placeholder="Ej: Oficial de Seguridad"
                       disabled={viewMode}
                     />
-                    {errores.cargoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsable}</p>
+                    {errores.cargoResponsableSgsi && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsableSgsi}</p>
                     )}
                   </div>
 
-                  {/* Correo electrónico */}
+                  {/* Correo institucional */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Correo electrónico <span className="text-red-500">*</span>
+                      Correo institucional <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
-                      name="correoResponsable"
-                      value={formData.correoResponsable}
+                      name="correoSgsi"
+                      value={formData.correoSgsi || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.correoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Correo electrónico"
+                      className={`input-field ${errores.correoSgsi ? 'border-red-500' : ''}`}
+                      placeholder="correo@entidad.gob.pe"
                       disabled={viewMode}
                     />
-                    {errores.correoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsable}</p>
+                    {errores.correoSgsi && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoSgsi}</p>
                     )}
                   </div>
 
                   {/* Teléfono */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Teléfono 
+                      Teléfono
                     </label>
                     <input
-                      type="text"
-                      name="telefonoResponsable"
-                      value={formData.telefonoResponsable}
+                      type="tel"
+                      name="telefonoSgsi"
+                      value={formData.telefonoSgsi || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.telefonoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Teléfono"
+                      className="input-field"
+                      placeholder="Ej: 01-1234567"
                       disabled={viewMode}
                     />
-                    {errores.telefonoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.telefonoResponsable}</p>
-                    )}
                   </div>
 
                   {/* Estado de implementación */}
@@ -7593,146 +8039,119 @@ const CumplimientoNormativoDetalle = () => {
                       Estado de implementación <span className="text-red-500">*</span>
                     </label>
                     <select
-                      name="estadoImplementacion"
-                      value={formData.estadoImplementacion}
+                      name="estadoImplementacionSgsi"
+                      value={formData.estadoImplementacionSgsi || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.estadoImplementacion ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.estadoImplementacionSgsi ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     >
-                      <option value="">Seleccione...</option>
-                        <option value="En planificación">En planificación</option>
-                        <option value="En implementación">En implementación</option>
-                        <option value="Implementado">Implementado</option>
-                        <option value="Certificado">Certificado</option>
+                      <option value="">Seleccione estado</option>
+                      <option value="En planificación">En planificación</option>
+                      <option value="En implementación">En implementación</option>
+                      <option value="Implementado">Implementado</option>
+                      <option value="Certificado">Certificado</option>
                     </select>
-                    {errores.estadoImplementacion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.estadoImplementacion}</p>
+                    {errores.estadoImplementacionSgsi && (
+                      <p className="text-red-500 text-xs mt-1">{errores.estadoImplementacionSgsi}</p>
                     )}
                   </div>
 
-                  {/* Versión de la norma ISO */}
+                  {/* Versión de la norma */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Versión de la norma ISO <span className="text-red-500">*</span>
+                      Versión de la norma <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      type="text"
-                      name="versionNorma"
-                      value={formData.versionNorma}
+                    <select
+                      name="versionNormaSgsi"
+                      value={formData.versionNormaSgsi || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.versionNorma ? 'border-red-500' : ''}`}
-                      placeholder="Versión de la norma ISO"
+                      className={`input-field ${errores.versionNormaSgsi ? 'border-red-500' : ''}`}
                       disabled={viewMode}
-                    />
-                    {errores.versionNorma && (
-                      <p className="text-red-500 text-xs mt-1">{errores.versionNorma}</p>
+                    >
+                      <option value="">Seleccione versión</option>
+                      <option value="ISO 27001:2013">ISO 27001:2013</option>
+                      <option value="ISO 27001:2022">ISO 27001:2022</option>
+                      <option value="NTP-ISO/IEC 27001:2014">NTP-ISO/IEC 27001:2014</option>
+                      <option value="NTP-ISO/IEC 27001:2022">NTP-ISO/IEC 27001:2022</option>
+                    </select>
+                    {errores.versionNormaSgsi && (
+                      <p className="text-red-500 text-xs mt-1">{errores.versionNormaSgsi}</p>
                     )}
                   </div>
 
                   {/* Alcance del SGSI */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Alcance del SGSI 
+                      Alcance del SGSI
                     </label>
                     <textarea
                       name="alcanceSgsi"
-                      value={formData.alcanceSgsi}
+                      value={formData.alcanceSgsi || ''}
                       onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
+                      maxLength="255"
+                      rows="2"
                       className="input-field"
-                      placeholder="Alcance del SGSI..."
+                      placeholder="Describa el alcance del SGSI..."
                       disabled={viewMode}
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      {formData.alcanceSgsi?.length || 0} / 1000 caracteres
+                      {formData.alcanceSgsi?.length || 0} / 255 caracteres
                     </p>
                   </div>
 
-                  {/* Fecha de inicio */}
+                  {/* Fecha de inicio de implementación */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de inicio <span className="text-red-500">*</span>
+                      Fecha de inicio de implementación <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="date"
-                      name="fechaInicio"
-                      value={formData.fechaInicio}
+                      name="fechaInicioSgsi"
+                      value={formData.fechaInicioSgsi || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.fechaInicio ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.fechaInicioSgsi ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     />
-                    {errores.fechaInicio && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaInicio}</p>
+                    {errores.fechaInicioSgsi && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaInicioSgsi}</p>
                     )}
                   </div>
 
-
-                  {/* Separador */}
-                  <div className="md:col-span-2 border-t border-gray-200 my-2">
-                    <h3 className="text-sm font-medium text-gray-700 mt-4 mb-3">Certificación</h3>
-                  </div>
-
-                  {/* ¿Certificación obtenida? */}
+                  {/* Fecha de certificación (si aplica) */}
                   <div className="">
-                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                      <input
-                        type="checkbox"
-                        name="certificacionObtenida"
-                        checked={formData.certificacionObtenida || false}
-                        onChange={handleInputChange}
-                        className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
-                        disabled={viewMode}
-                      />
-                      ¿Certificación obtenida?
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de certificación (si aplica)
                     </label>
+                    <input
+                      type="date"
+                      name="fechaCertificacionSgsi"
+                      value={formData.fechaCertificacionSgsi || ''}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      disabled={viewMode}
+                    />
                   </div>
 
                   {/* Entidad certificadora */}
-                  <div className="">
+                  <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Entidad certificadora 
+                      Entidad certificadora
                     </label>
                     <input
                       type="text"
-                      name="entidadCertificadora"
-                      value={formData.entidadCertificadora}
+                      name="entidadCertificadoraSgsi"
+                      value={formData.entidadCertificadoraSgsi || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.entidadCertificadora ? 'border-red-500' : ''}`}
-                      placeholder="Entidad certificadora"
-                      disabled={viewMode}
-                    />
-                    {errores.entidadCertificadora && (
-                      <p className="text-red-500 text-xs mt-1">{errores.entidadCertificadora}</p>
-                    )}
-                  </div>
-
-                  {/* Observaciones */}
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Observaciones 
-                    </label>
-                    <textarea
-                      name="observaciones"
-                      value={formData.observaciones}
-                      onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
                       className="input-field"
-                      placeholder="Observaciones..."
+                      placeholder="Nombre de la entidad certificadora"
                       disabled={viewMode}
                     />
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formData.observaciones?.length || 0} / 1000 caracteres
-                    </p>
                   </div>
 
-                  {/* Documento de evidencia (PDF) */}
+                  {/* Documento de políticas del SGSI (PDF) */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Documento de evidencia (PDF)
+                      Documento de políticas del SGSI (PDF)
                     </label>
                     
                     {!pdfUrl ? (
@@ -7746,11 +8165,11 @@ const CumplimientoNormativoDetalle = () => {
                           accept="application/pdf"
                           onChange={handleFileChange}
                           className="hidden"
-                          id="file-upload-com16"
+                          id="file-upload-com16-politicas"
                           disabled={viewMode}
                         />
                         {!viewMode && (
-                          <label htmlFor="file-upload-com16" className="btn-primary cursor-pointer inline-block">
+                          <label htmlFor="file-upload-com16-politicas" className="btn-primary cursor-pointer inline-block">
                             Seleccionar archivo
                           </label>
                         )}
@@ -7762,7 +8181,7 @@ const CumplimientoNormativoDetalle = () => {
                           <div className="flex items-center gap-2">
                             <FileText className="text-primary" size={24} />
                             <span className="text-sm font-medium text-gray-700">
-                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de evidencia cargado'}
+                              {formData.documentoFile ? formData.documentoFile.name : 'Documento de políticas cargado'}
                             </span>
                           </div>
                           {!viewMode && (
@@ -7787,38 +8206,126 @@ const CumplimientoNormativoDetalle = () => {
                         </button>
                       </div>
                     )}
-                    {errores.documentoFile && (
-                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Suba el documento de políticas del SGSI en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+
+                  {/* Certificación / Auditoría (PDF) */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Certificación / Auditoría (PDF)
+                    </label>
+                    
+                    {!pdfUrlPaso2 ? (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                        <Upload className="mx-auto text-gray-400 mb-2" size={32} />
+                        <p className="text-sm text-gray-600 mb-2">
+                          Suba el certificado o informe de auditoría
+                        </p>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const url = URL.createObjectURL(file);
+                              setPdfUrlPaso2(url);
+                              setFormData(prev => ({ ...prev, certificadoFile: file }));
+                            }
+                          }}
+                          className="hidden"
+                          id="file-upload-com16-certificado"
+                          disabled={viewMode}
+                        />
+                        {!viewMode && (
+                          <label htmlFor="file-upload-com16-certificado" className="btn-secondary cursor-pointer inline-block text-sm">
+                            Seleccionar archivo
+                          </label>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="text-green-600" size={24} />
+                            <span className="text-sm font-medium text-gray-700">
+                              {formData.certificadoFile ? formData.certificadoFile.name : 'Certificado cargado'}
+                            </span>
+                          </div>
+                          {!viewMode && (
+                            <button
+                              onClick={() => {
+                                setPdfUrlPaso2(null);
+                                setFormData(prev => ({ ...prev, certificadoFile: null, rutaPdfCertificadoSgsi: '' }));
+                              }}
+                              className="text-red-500 hover:text-red-700"
+                              title="Eliminar certificado"
+                            >
+                              <X size={20} />
+                            </button>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => {
+                            setDocumentoActualUrl(pdfUrlPaso2);
+                            setShowPdfViewer(true);
+                          }}
+                          className="btn-secondary text-sm flex items-center gap-2"
+                        >
+                          <Eye size={16} />
+                          Vista previa del PDF
+                        </button>
+                      </div>
                     )}
                     <p className="text-xs text-gray-500 mt-1">
-                      Suba el documento de evidencia en formato PDF (máximo 10 MB)
+                      Suba el certificado o informe de auditoría en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones
+                    </label>
+                    <textarea
+                      name="observacionSgsi"
+                      value={formData.observacionSgsi || ''}
+                      onChange={handleInputChange}
+                      maxLength="255"
+                      rows="2"
+                      className="input-field"
+                      placeholder="Observaciones adicionales..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observacionSgsi?.length || 0} / 255 caracteres
                     </p>
                   </div>
                 </div>
               </>
             ) : parseInt(formData.compromisoId) === 17 ? (
-              // COMPROMISO 17: Plan de Continuidad Operativa
+              // COMPROMISO 17: Plan de Transición a IPv6
               <>
-                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Plan de Continuidad Operativa</h2>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos del Plan de Transición a IPv6</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Nombre del responsable */}
+                  {/* Responsable del plan */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nombre del responsable <span className="text-red-500">*</span>
+                      Responsable del plan <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="responsablePlan"
-                      value={formData.responsablePlan}
+                      name="responsableIpv6"
+                      value={formData.responsableIpv6 || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.responsablePlan ? 'border-red-500' : ''}`}
-                      placeholder="Nombre del responsable"
+                      className={`input-field ${errores.responsableIpv6 ? 'border-red-500' : ''}`}
+                      placeholder="Nombre completo"
                       disabled={viewMode}
                     />
-                    {errores.responsablePlan && (
-                      <p className="text-red-500 text-xs mt-1">{errores.responsablePlan}</p>
+                    {errores.responsableIpv6 && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsableIpv6}</p>
                     )}
                   </div>
 
@@ -7829,56 +8336,51 @@ const CumplimientoNormativoDetalle = () => {
                     </label>
                     <input
                       type="text"
-                      name="cargoResponsable"
-                      value={formData.cargoResponsable}
+                      name="cargoResponsableIpv6"
+                      value={formData.cargoResponsableIpv6 || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.cargoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Cargo"
+                      className={`input-field ${errores.cargoResponsableIpv6 ? 'border-red-500' : ''}`}
+                      placeholder="Ej: Coordinador de TI"
                       disabled={viewMode}
                     />
-                    {errores.cargoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsable}</p>
+                    {errores.cargoResponsableIpv6 && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsableIpv6}</p>
                     )}
                   </div>
 
-                  {/* Correo electrónico */}
+                  {/* Correo institucional */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Correo electrónico <span className="text-red-500">*</span>
+                      Correo institucional <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
-                      name="correoResponsable"
-                      value={formData.correoResponsable}
+                      name="correoIpv6"
+                      value={formData.correoIpv6 || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.correoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Correo electrónico"
+                      className={`input-field ${errores.correoIpv6 ? 'border-red-500' : ''}`}
+                      placeholder="correo@entidad.gob.pe"
                       disabled={viewMode}
                     />
-                    {errores.correoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsable}</p>
+                    {errores.correoIpv6 && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoIpv6}</p>
                     )}
                   </div>
 
                   {/* Teléfono */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Teléfono 
+                      Teléfono
                     </label>
                     <input
-                      type="text"
-                      name="telefonoResponsable"
-                      value={formData.telefonoResponsable}
+                      type="tel"
+                      name="telefonoIpv6"
+                      value={formData.telefonoIpv6 || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.telefonoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Teléfono"
+                      className="input-field"
+                      placeholder="Ej: 01-1234567"
                       disabled={viewMode}
                     />
-                    {errores.telefonoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.telefonoResponsable}</p>
-                    )}
                   </div>
 
                   {/* Estado del plan */}
@@ -7887,21 +8389,21 @@ const CumplimientoNormativoDetalle = () => {
                       Estado del plan <span className="text-red-500">*</span>
                     </label>
                     <select
-                      name="estadoPlan"
-                      value={formData.estadoPlan}
+                      name="estadoPlanIpv6"
+                      value={formData.estadoPlanIpv6 || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.estadoPlan ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.estadoPlanIpv6 ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     >
-                      <option value="">Seleccione...</option>
-                        <option value="En formulación">En formulación</option>
-                        <option value="Formulado">Formulado</option>
-                        <option value="Aprobado">Aprobado</option>
-                        <option value="En implementación">En implementación</option>
-                        <option value="Implementado">Implementado</option>
+                      <option value="">Seleccione estado</option>
+                      <option value="En formulación">En formulación</option>
+                      <option value="Formulado">Formulado</option>
+                      <option value="Aprobado">Aprobado</option>
+                      <option value="En ejecución">En ejecución</option>
+                      <option value="Completado">Completado</option>
                     </select>
-                    {errores.estadoPlan && (
-                      <p className="text-red-500 text-xs mt-1">{errores.estadoPlan}</p>
+                    {errores.estadoPlanIpv6 && (
+                      <p className="text-red-500 text-xs mt-1">{errores.estadoPlanIpv6}</p>
                     )}
                   </div>
 
@@ -7912,108 +8414,79 @@ const CumplimientoNormativoDetalle = () => {
                     </label>
                     <input
                       type="date"
-                      name="fechaFormulacion"
-                      value={formData.fechaFormulacion}
+                      name="fechaFormulacionIpv6"
+                      value={formData.fechaFormulacionIpv6 || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.fechaFormulacion ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.fechaFormulacionIpv6 ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     />
-                    {errores.fechaFormulacion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaFormulacion}</p>
+                    {errores.fechaFormulacionIpv6 && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaFormulacionIpv6}</p>
                     )}
                   </div>
 
                   {/* Fecha de aprobación */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de aprobación 
+                      Fecha de aprobación
                     </label>
                     <input
                       type="date"
-                      name="fechaAprobacion"
-                      value={formData.fechaAprobacion}
+                      name="fechaAprobacionIpv6"
+                      value={formData.fechaAprobacionIpv6 || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.fechaAprobacion ? 'border-red-500' : ''}`}
+                      className="input-field"
                       disabled={viewMode}
                     />
-                    {errores.fechaAprobacion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaAprobacion}</p>
-                    )}
                   </div>
 
-                  {/* Fecha de inicio de implementación */}
+                  {/* Fecha de inicio de ejecución */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de inicio de implementación 
+                      Fecha de inicio de ejecución
                     </label>
                     <input
                       type="date"
-                      name="fechaInicio"
-                      value={formData.fechaInicio}
+                      name="fechaInicioIpv6"
+                      value={formData.fechaInicioIpv6 || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.fechaInicio ? 'border-red-500' : ''}`}
+                      className="input-field"
                       disabled={viewMode}
                     />
-                    {errores.fechaInicio && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaInicio}</p>
-                    )}
                   </div>
 
-                  {/* Fecha de fin prevista */}
+                  {/* Fecha estimada de fin */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de fin prevista 
+                      Fecha estimada de fin
                     </label>
                     <input
                       type="date"
-                      name="fechaFin"
-                      value={formData.fechaFin}
+                      name="fechaFinIpv6"
+                      value={formData.fechaFinIpv6 || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.fechaFin ? 'border-red-500' : ''}`}
+                      className="input-field"
                       disabled={viewMode}
                     />
-                    {errores.fechaFin && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaFin}</p>
-                    )}
                   </div>
 
-                  {/* Descripción del plan */}
+                  {/* Descripción general del plan */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Descripción del plan 
+                      Descripción general del plan
                     </label>
                     <textarea
-                      name="descripcionPlan"
-                      value={formData.descripcionPlan}
+                      name="descripcionPlanIpv6"
+                      value={formData.descripcionPlanIpv6 || ''}
                       onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
+                      maxLength="255"
+                      rows="2"
                       className="input-field"
-                      placeholder="Descripción del plan..."
+                      placeholder="Describa el plan de transición a IPv6..."
                       disabled={viewMode}
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      {formData.descripcionPlan?.length || 0} / 1000 caracteres
-                    </p>
-                  </div>
-
-                  {/* Observaciones */}
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Observaciones 
-                    </label>
-                    <textarea
-                      name="observaciones"
-                      value={formData.observaciones}
-                      onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
-                      className="input-field"
-                      placeholder="Observaciones..."
-                      disabled={viewMode}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formData.observaciones?.length || 0} / 1000 caracteres
+                      {formData.descripcionPlanIpv6?.length || 0} / 255 caracteres
                     </p>
                   </div>
 
@@ -8075,11 +8548,28 @@ const CumplimientoNormativoDetalle = () => {
                         </button>
                       </div>
                     )}
-                    {errores.documentoFile && (
-                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
-                    )}
                     <p className="text-xs text-gray-500 mt-1">
-                      Suba el documento de evidencia en formato PDF (máximo 10 MB)
+                      Suba el documento del plan en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones
+                    </label>
+                    <textarea
+                      name="observacionIpv6"
+                      value={formData.observacionIpv6 || ''}
+                      onChange={handleInputChange}
+                      maxLength="255"
+                      rows="2"
+                      className="input-field"
+                      placeholder="Observaciones adicionales..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observacionIpv6?.length || 0} / 255 caracteres
                     </p>
                   </div>
                 </div>
@@ -8087,26 +8577,25 @@ const CumplimientoNormativoDetalle = () => {
             ) : parseInt(formData.compromisoId) === 18 ? (
               // COMPROMISO 18: Acceso al Portal de Transparencia Estándar (PTE)
               <>
-                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Acceso al Portal de Transparencia Estándar (PTE)</h2>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos del Acceso al Portal de Transparencia Estándar (PTE)</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Nombre del responsable */}
+                  {/* Responsable */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nombre del responsable <span className="text-red-500">*</span>
+                      Responsable <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="responsableAcceso"
-                      value={formData.responsableAcceso}
+                      name="responsablePte"
+                      value={formData.responsablePte || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.responsableAcceso ? 'border-red-500' : ''}`}
-                      placeholder="Nombre del responsable"
+                      className={`input-field ${errores.responsablePte ? 'border-red-500' : ''}`}
+                      placeholder="Nombre completo"
                       disabled={viewMode}
                     />
-                    {errores.responsableAcceso && (
-                      <p className="text-red-500 text-xs mt-1">{errores.responsableAcceso}</p>
+                    {errores.responsablePte && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsablePte}</p>
                     )}
                   </div>
 
@@ -8117,75 +8606,69 @@ const CumplimientoNormativoDetalle = () => {
                     </label>
                     <input
                       type="text"
-                      name="cargoResponsable"
-                      value={formData.cargoResponsable}
+                      name="cargoResponsablePte"
+                      value={formData.cargoResponsablePte || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.cargoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Cargo"
+                      className={`input-field ${errores.cargoResponsablePte ? 'border-red-500' : ''}`}
+                      placeholder="Ej: Responsable de Transparencia"
                       disabled={viewMode}
                     />
-                    {errores.cargoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsable}</p>
+                    {errores.cargoResponsablePte && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsablePte}</p>
                     )}
                   </div>
 
-                  {/* Correo electrónico */}
+                  {/* Correo institucional */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Correo electrónico <span className="text-red-500">*</span>
+                      Correo institucional <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
-                      name="correoResponsable"
-                      value={formData.correoResponsable}
+                      name="correoPte"
+                      value={formData.correoPte || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.correoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Correo electrónico"
+                      className={`input-field ${errores.correoPte ? 'border-red-500' : ''}`}
+                      placeholder="correo@entidad.gob.pe"
                       disabled={viewMode}
                     />
-                    {errores.correoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsable}</p>
+                    {errores.correoPte && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoPte}</p>
                     )}
                   </div>
 
                   {/* Teléfono */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Teléfono 
+                      Teléfono
                     </label>
                     <input
-                      type="text"
-                      name="telefonoResponsable"
-                      value={formData.telefonoResponsable}
+                      type="tel"
+                      name="telefonoPte"
+                      value={formData.telefonoPte || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.telefonoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Teléfono"
+                      className="input-field"
+                      placeholder="Ej: 01-1234567"
                       disabled={viewMode}
                     />
-                    {errores.telefonoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.telefonoResponsable}</p>
-                    )}
                   </div>
 
-                  {/* Número de oficio */}
+                  {/* Nº de oficio de solicitud */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Número de oficio <span className="text-red-500">*</span>
+                      Nº de oficio de solicitud <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="numeroOficio"
-                      value={formData.numeroOficio}
+                      name="numeroOficioPte"
+                      value={formData.numeroOficioPte || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.numeroOficio ? 'border-red-500' : ''}`}
-                      placeholder="Número de oficio"
+                      className={`input-field ${errores.numeroOficioPte ? 'border-red-500' : ''}`}
+                      placeholder="Ej: OFICIO-2024-001"
                       disabled={viewMode}
                     />
-                    {errores.numeroOficio && (
-                      <p className="text-red-500 text-xs mt-1">{errores.numeroOficio}</p>
+                    {errores.numeroOficioPte && (
+                      <p className="text-red-500 text-xs mt-1">{errores.numeroOficioPte}</p>
                     )}
                   </div>
 
@@ -8196,33 +8679,30 @@ const CumplimientoNormativoDetalle = () => {
                     </label>
                     <input
                       type="date"
-                      name="fechaSolicitud"
-                      value={formData.fechaSolicitud}
+                      name="fechaSolicitudPte"
+                      value={formData.fechaSolicitudPte || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.fechaSolicitud ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.fechaSolicitudPte ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     />
-                    {errores.fechaSolicitud && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaSolicitud}</p>
+                    {errores.fechaSolicitudPte && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaSolicitudPte}</p>
                     )}
                   </div>
 
-                  {/* Fecha de concesión */}
+                  {/* Fecha de concesión de acceso */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de concesión 
+                      Fecha de concesión de acceso
                     </label>
                     <input
                       type="date"
-                      name="fechaConcesion"
-                      value={formData.fechaConcesion}
+                      name="fechaAccesoPte"
+                      value={formData.fechaAccesoPte || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.fechaConcesion ? 'border-red-500' : ''}`}
+                      className="input-field"
                       disabled={viewMode}
                     />
-                    {errores.fechaConcesion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaConcesion}</p>
-                    )}
                   </div>
 
                   {/* Estado del acceso */}
@@ -8231,79 +8711,56 @@ const CumplimientoNormativoDetalle = () => {
                       Estado del acceso <span className="text-red-500">*</span>
                     </label>
                     <select
-                      name="estadoAcceso"
-                      value={formData.estadoAcceso}
+                      name="estadoAccesoPte"
+                      value={formData.estadoAccesoPte || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.estadoAcceso ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.estadoAccesoPte ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     >
-                      <option value="">Seleccione...</option>
-                        <option value="Solicitado">Solicitado</option>
-                        <option value="En proceso">En proceso</option>
-                        <option value="Concedido">Concedido</option>
-                        <option value="Denegado">Denegado</option>
+                      <option value="">Seleccione estado</option>
+                      <option value="Solicitado">Solicitado</option>
+                      <option value="En trámite">En trámite</option>
+                      <option value="Concedido">Concedido</option>
+                      <option value="Denegado">Denegado</option>
                     </select>
-                    {errores.estadoAcceso && (
-                      <p className="text-red-500 text-xs mt-1">{errores.estadoAcceso}</p>
+                    {errores.estadoAccesoPte && (
+                      <p className="text-red-500 text-xs mt-1">{errores.estadoAccesoPte}</p>
                     )}
                   </div>
 
-                  {/* Enlace al portal */}
+                  {/* Enlace del portal */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Enlace al portal 
+                      Enlace del portal
                     </label>
                     <input
                       type="url"
-                      name="enlacePortal"
-                      value={formData.enlacePortal}
+                      name="enlacePortalPte"
+                      value={formData.enlacePortalPte || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.enlacePortal ? 'border-red-500' : ''}`}
+                      className="input-field"
                       placeholder="https://..."
                       disabled={viewMode}
                     />
-                    {errores.enlacePortal && (
-                      <p className="text-red-500 text-xs mt-1">{errores.enlacePortal}</p>
-                    )}
                   </div>
 
-                  {/* Descripción */}
+                  {/* Descripción / observaciones */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Descripción 
+                      Descripción / observaciones
                     </label>
                     <textarea
-                      name="descripcion"
-                      value={formData.descripcion}
+                      name="observacionPte"
+                      value={formData.observacionPte || ''}
                       onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
+                      maxLength="255"
+                      rows="2"
                       className="input-field"
-                      placeholder="Descripción..."
+                      placeholder="Observaciones adicionales..."
                       disabled={viewMode}
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      {formData.descripcion?.length || 0} / 1000 caracteres
-                    </p>
-                  </div>
-
-                  {/* Observaciones */}
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Observaciones 
-                    </label>
-                    <textarea
-                      name="observaciones"
-                      value={formData.observaciones}
-                      onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
-                      className="input-field"
-                      placeholder="Observaciones..."
-                      disabled={viewMode}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formData.observaciones?.length || 0} / 1000 caracteres
+                      {formData.observacionPte?.length || 0} / 255 caracteres
                     </p>
                   </div>
 
@@ -8365,9 +8822,6 @@ const CumplimientoNormativoDetalle = () => {
                         </button>
                       </div>
                     )}
-                    {errores.documentoFile && (
-                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
-                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el documento de evidencia en formato PDF (máximo 10 MB)
                     </p>
@@ -8375,48 +8829,49 @@ const CumplimientoNormativoDetalle = () => {
                 </div>
               </>
             ) : parseInt(formData.compromisoId) === 19 ? (
-              // COMPROMISO 19: Encuesta Nacional de Gobierno Digital
+              // COMPROMISO 19: Encuesta Nacional de Gobierno Digital (ENAD)
               <>
-                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Encuesta Nacional de Gobierno Digital</h2>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos de la Encuesta Nacional de Gobierno Digital (ENAD)</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Año de la encuesta */}
+                  {/* Año de la ENAD */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Año de la encuesta <span className="text-red-500">*</span>
+                      Año de la ENAD <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      type="number"
-                      name="anioEncuesta"
-                      value={formData.anioEncuesta}
+                    <select
+                      name="anioEnad"
+                      value={formData.anioEnad || ''}
                       onChange={handleInputChange}
-                      min="0"
-                      className={`input-field ${errores.anioEncuesta ? 'border-red-500' : ''}`}
-                      placeholder="0"
+                      className={`input-field ${errores.anioEnad ? 'border-red-500' : ''}`}
                       disabled={viewMode}
-                    />
-                    {errores.anioEncuesta && (
-                      <p className="text-red-500 text-xs mt-1">{errores.anioEncuesta}</p>
+                    >
+                      <option value="">Seleccione año</option>
+                      <option value="2024">2024</option>
+                      <option value="2025">2025</option>
+                      <option value="2026">2026</option>
+                    </select>
+                    {errores.anioEnad && (
+                      <p className="text-red-500 text-xs mt-1">{errores.anioEnad}</p>
                     )}
                   </div>
 
-                  {/* Nombre del responsable */}
+                  {/* Responsable del llenado */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nombre del responsable <span className="text-red-500">*</span>
+                      Responsable del llenado <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="responsableEncuesta"
-                      value={formData.responsableEncuesta}
+                      name="responsableEnad"
+                      value={formData.responsableEnad || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.responsableEncuesta ? 'border-red-500' : ''}`}
-                      placeholder="Nombre del responsable"
+                      className={`input-field ${errores.responsableEnad ? 'border-red-500' : ''}`}
+                      placeholder="Nombre completo"
                       disabled={viewMode}
                     />
-                    {errores.responsableEncuesta && (
-                      <p className="text-red-500 text-xs mt-1">{errores.responsableEncuesta}</p>
+                    {errores.responsableEnad && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsableEnad}</p>
                     )}
                   </div>
 
@@ -8427,135 +8882,127 @@ const CumplimientoNormativoDetalle = () => {
                     </label>
                     <input
                       type="text"
-                      name="cargoResponsable"
-                      value={formData.cargoResponsable}
+                      name="cargoResponsableEnad"
+                      value={formData.cargoResponsableEnad || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.cargoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Cargo"
+                      className={`input-field ${errores.cargoResponsableEnad ? 'border-red-500' : ''}`}
+                      placeholder="Ej: Coordinador de Gobierno Digital"
                       disabled={viewMode}
                     />
-                    {errores.cargoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsable}</p>
+                    {errores.cargoResponsableEnad && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsableEnad}</p>
                     )}
                   </div>
 
-                  {/* Correo electrónico */}
+                  {/* Correo institucional */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Correo electrónico <span className="text-red-500">*</span>
+                      Correo institucional <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
-                      name="correoResponsable"
-                      value={formData.correoResponsable}
+                      name="correoEnad"
+                      value={formData.correoEnad || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.correoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Correo electrónico"
+                      className={`input-field ${errores.correoEnad ? 'border-red-500' : ''}`}
+                      placeholder="correo@entidad.gob.pe"
                       disabled={viewMode}
                     />
-                    {errores.correoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsable}</p>
+                    {errores.correoEnad && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoEnad}</p>
                     )}
                   </div>
 
                   {/* Teléfono */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Teléfono 
+                      Teléfono
                     </label>
                     <input
-                      type="text"
-                      name="telefonoResponsable"
-                      value={formData.telefonoResponsable}
+                      type="tel"
+                      name="telefonoEnad"
+                      value={formData.telefonoEnad || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.telefonoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Teléfono"
+                      className="input-field"
+                      placeholder="Ej: 01-1234567"
                       disabled={viewMode}
                     />
-                    {errores.telefonoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.telefonoResponsable}</p>
-                    )}
                   </div>
 
-                  {/* Fecha de envío */}
+                  {/* Fecha de envío del formulario */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de envío <span className="text-red-500">*</span>
+                      Fecha de envío del formulario <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="date"
-                      name="fechaEnvio"
-                      value={formData.fechaEnvio}
+                      name="fechaEnvioEnad"
+                      value={formData.fechaEnvioEnad || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.fechaEnvio ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.fechaEnvioEnad ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     />
-                    {errores.fechaEnvio && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaEnvio}</p>
+                    {errores.fechaEnvioEnad && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaEnvioEnad}</p>
                     )}
                   </div>
 
-                  {/* Estado de la encuesta */}
+                  {/* Estado */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Estado de la encuesta <span className="text-red-500">*</span>
+                      Estado <span className="text-red-500">*</span>
                     </label>
                     <select
-                      name="estadoEncuesta"
-                      value={formData.estadoEncuesta}
+                      name="estadoRespuestaEnad"
+                      value={formData.estadoRespuestaEnad || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.estadoEncuesta ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.estadoRespuestaEnad ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     >
-                      <option value="">Seleccione...</option>
-                        <option value="No iniciada">No iniciada</option>
-                        <option value="En proceso">En proceso</option>
-                        <option value="Completada">Completada</option>
-                        <option value="Enviada">Enviada</option>
+                      <option value="">Seleccione estado</option>
+                      <option value="No iniciada">No iniciada</option>
+                      <option value="En proceso">En proceso</option>
+                      <option value="Completada">Completada</option>
+                      <option value="Enviada">Enviada</option>
                     </select>
-                    {errores.estadoEncuesta && (
-                      <p className="text-red-500 text-xs mt-1">{errores.estadoEncuesta}</p>
+                    {errores.estadoRespuestaEnad && (
+                      <p className="text-red-500 text-xs mt-1">{errores.estadoRespuestaEnad}</p>
                     )}
                   </div>
 
-                  {/* Enlace a la encuesta */}
+                  {/* Enlace del formulario o portal ENAD */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Enlace a la encuesta 
+                      Enlace del formulario o portal ENAD
                     </label>
                     <input
                       type="url"
-                      name="enlaceEncuesta"
-                      value={formData.enlaceEncuesta}
+                      name="enlaceFormularioEnad"
+                      value={formData.enlaceFormularioEnad || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.enlaceEncuesta ? 'border-red-500' : ''}`}
+                      className="input-field"
                       placeholder="https://..."
                       disabled={viewMode}
                     />
-                    {errores.enlaceEncuesta && (
-                      <p className="text-red-500 text-xs mt-1">{errores.enlaceEncuesta}</p>
-                    )}
                   </div>
 
                   {/* Observaciones */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Observaciones 
+                      Observaciones
                     </label>
                     <textarea
-                      name="observaciones"
-                      value={formData.observaciones}
+                      name="observacionEnad"
+                      value={formData.observacionEnad || ''}
                       onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
+                      maxLength="255"
+                      rows="2"
                       className="input-field"
-                      placeholder="Observaciones..."
+                      placeholder="Observaciones adicionales..."
                       disabled={viewMode}
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      {formData.observaciones?.length || 0} / 1000 caracteres
+                      {formData.observacionEnad?.length || 0} / 255 caracteres
                     </p>
                   </div>
 
@@ -8617,9 +9064,6 @@ const CumplimientoNormativoDetalle = () => {
                         </button>
                       </div>
                     )}
-                    {errores.documentoFile && (
-                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
-                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el documento de evidencia en formato PDF (máximo 10 MB)
                     </p>
@@ -8627,28 +9071,27 @@ const CumplimientoNormativoDetalle = () => {
                 </div>
               </>
             ) : parseInt(formData.compromisoId) === 20 ? (
-              // COMPROMISO 20: Digitalización de Servicios y Trámites
+              // COMPROMISO 20: Digitalización de Servicios (Facilita Perú)
               <>
-                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Digitalización de Servicios y Trámites</h2>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos Generales – Digitalización de Servicios (Facilita Perú)</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Nombre del responsable */}
+                  {/* Responsable */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nombre del responsable <span className="text-red-500">*</span>
+                      Responsable <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="responsableDigitalizacion"
-                      value={formData.responsableDigitalizacion}
+                      name="responsableFacilita"
+                      value={formData.responsableFacilita || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.responsableDigitalizacion ? 'border-red-500' : ''}`}
-                      placeholder="Nombre del responsable"
+                      className={`input-field ${errores.responsableFacilita ? 'border-red-500' : ''}`}
+                      placeholder="Nombre completo"
                       disabled={viewMode}
                     />
-                    {errores.responsableDigitalizacion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.responsableDigitalizacion}</p>
+                    {errores.responsableFacilita && (
+                      <p className="text-red-500 text-xs mt-1">{errores.responsableFacilita}</p>
                     )}
                   </div>
 
@@ -8659,56 +9102,51 @@ const CumplimientoNormativoDetalle = () => {
                     </label>
                     <input
                       type="text"
-                      name="cargoResponsable"
-                      value={formData.cargoResponsable}
+                      name="cargoResponsableFacilita"
+                      value={formData.cargoResponsableFacilita || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.cargoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Cargo"
+                      className={`input-field ${errores.cargoResponsableFacilita ? 'border-red-500' : ''}`}
+                      placeholder="Ej: Coordinador de Digitalización"
                       disabled={viewMode}
                     />
-                    {errores.cargoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsable}</p>
+                    {errores.cargoResponsableFacilita && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsableFacilita}</p>
                     )}
                   </div>
 
-                  {/* Correo electrónico */}
+                  {/* Correo institucional */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Correo electrónico <span className="text-red-500">*</span>
+                      Correo institucional <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
-                      name="correoResponsable"
-                      value={formData.correoResponsable}
+                      name="correoFacilita"
+                      value={formData.correoFacilita || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.correoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Correo electrónico"
+                      className={`input-field ${errores.correoFacilita ? 'border-red-500' : ''}`}
+                      placeholder="correo@entidad.gob.pe"
                       disabled={viewMode}
                     />
-                    {errores.correoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsable}</p>
+                    {errores.correoFacilita && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoFacilita}</p>
                     )}
                   </div>
 
                   {/* Teléfono */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Teléfono 
+                      Teléfono
                     </label>
                     <input
-                      type="text"
-                      name="telefonoResponsable"
-                      value={formData.telefonoResponsable}
+                      type="tel"
+                      name="telefonoFacilita"
+                      value={formData.telefonoFacilita || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.telefonoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="Teléfono"
+                      className="input-field"
+                      placeholder="Ej: 01-1234567"
                       disabled={viewMode}
                     />
-                    {errores.telefonoResponsable && (
-                      <p className="text-red-500 text-xs mt-1">{errores.telefonoResponsable}</p>
-                    )}
                   </div>
 
                   {/* Estado de implementación */}
@@ -8717,97 +9155,71 @@ const CumplimientoNormativoDetalle = () => {
                       Estado de implementación <span className="text-red-500">*</span>
                     </label>
                     <select
-                      name="estadoImplementacion"
-                      value={formData.estadoImplementacion}
+                      name="estadoImplementacionFacilita"
+                      value={formData.estadoImplementacionFacilita || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.estadoImplementacion ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.estadoImplementacionFacilita ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     >
-                      <option value="">Seleccione...</option>
-                        <option value="No iniciado">No iniciado</option>
-                        <option value="En planificación">En planificación</option>
-                        <option value="En implementación">En implementación</option>
-                        <option value="Implementado">Implementado</option>
+                      <option value="">Seleccione estado</option>
+                      <option value="No iniciado">No iniciado</option>
+                      <option value="En planificación">En planificación</option>
+                      <option value="En implementación">En implementación</option>
+                      <option value="Implementado">Implementado</option>
                     </select>
-                    {errores.estadoImplementacion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.estadoImplementacion}</p>
+                    {errores.estadoImplementacionFacilita && (
+                      <p className="text-red-500 text-xs mt-1">{errores.estadoImplementacionFacilita}</p>
                     )}
                   </div>
 
-                  {/* Fecha de inicio */}
+                  {/* Fecha de inicio del proceso */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de inicio <span className="text-red-500">*</span>
+                      Fecha de inicio del proceso <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="date"
-                      name="fechaInicio"
-                      value={formData.fechaInicio}
+                      name="fechaInicioFacilita"
+                      value={formData.fechaInicioFacilita || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.fechaInicio ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.fechaInicioFacilita ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     />
-                    {errores.fechaInicio && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaInicio}</p>
+                    {errores.fechaInicioFacilita && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaInicioFacilita}</p>
                     )}
                   </div>
 
-                  {/* Último avance reportado */}
+                  {/* Fecha del último avance */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Último avance reportado 
+                      Fecha del último avance
                     </label>
                     <input
                       type="date"
-                      name="ultimoAvance"
-                      value={formData.ultimoAvance}
+                      name="fechaUltimoAvanceFacilita"
+                      value={formData.fechaUltimoAvanceFacilita || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.ultimoAvance ? 'border-red-500' : ''}`}
+                      className="input-field"
                       disabled={viewMode}
                     />
-                    {errores.ultimoAvance && (
-                      <p className="text-red-500 text-xs mt-1">{errores.ultimoAvance}</p>
-                    )}
                   </div>
 
                   {/* Total de servicios digitalizados */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Total de servicios digitalizados 
+                      Total de servicios digitalizados
                     </label>
                     <input
                       type="number"
-                      name="totalServicios"
-                      value={formData.totalServicios}
+                      name="totalServiciosDigitalizados"
+                      value={formData.totalServiciosDigitalizados || ''}
                       onChange={handleInputChange}
                       min="0"
-                      className={`input-field ${errores.totalServicios ? 'border-red-500' : ''}`}
+                      className="input-field"
                       placeholder="0"
                       disabled={viewMode}
                     />
-                    {errores.totalServicios && (
-                      <p className="text-red-500 text-xs mt-1">{errores.totalServicios}</p>
-                    )}
-                  </div>
-
-                  {/* Observaciones */}
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Observaciones 
-                    </label>
-                    <textarea
-                      name="observaciones"
-                      value={formData.observaciones}
-                      onChange={handleInputChange}
-                      maxLength="1000"
-                      rows="3"
-                      className="input-field"
-                      placeholder="Observaciones..."
-                      disabled={viewMode}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formData.observaciones?.length || 0} / 1000 caracteres
-                    </p>
                   </div>
 
                   {/* Documento de evidencia (PDF) */}
@@ -8868,11 +9280,28 @@ const CumplimientoNormativoDetalle = () => {
                         </button>
                       </div>
                     )}
-                    {errores.documentoFile && (
-                      <p className="text-red-500 text-xs mt-1">{errores.documentoFile}</p>
-                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       Suba el documento de evidencia en formato PDF (máximo 10 MB)
+                    </p>
+                  </div>
+
+                  {/* Observaciones */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Observaciones
+                    </label>
+                    <textarea
+                      name="observacionFacilita"
+                      value={formData.observacionFacilita || ''}
+                      onChange={handleInputChange}
+                      maxLength="255"
+                      rows="2"
+                      className="input-field"
+                      placeholder="Observaciones adicionales..."
+                      disabled={viewMode}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.observacionFacilita?.length || 0} / 255 caracteres
                     </p>
                   </div>
                 </div>
@@ -8890,16 +9319,16 @@ const CumplimientoNormativoDetalle = () => {
                     </label>
                     <input
                       type="text"
-                      name="dniOficial"
-                      value={formData.dniOficial}
+                      name="dniOgd"
+                      value={formData.dniOgd || ''}
                       onChange={handleInputChange}
                       maxLength="8"
-                      className={`input-field ${errores.dniOficial ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.dniOgd ? 'border-red-500' : ''}`}
                       placeholder="DNI"
                       disabled={viewMode}
                     />
-                    {errores.dniOficial && (
-                      <p className="text-red-500 text-xs mt-1">{errores.dniOficial}</p>
+                    {errores.dniOgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.dniOgd}</p>
                     )}
                   </div>
 
@@ -8910,16 +9339,15 @@ const CumplimientoNormativoDetalle = () => {
                     </label>
                     <input
                       type="text"
-                      name="nombresOficial"
-                      value={formData.nombresOficial}
+                      name="nombreOgd"
+                      value={formData.nombreOgd || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.nombresOficial ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.nombreOgd ? 'border-red-500' : ''}`}
                       placeholder="Nombres"
                       disabled={viewMode}
                     />
-                    {errores.nombresOficial && (
-                      <p className="text-red-500 text-xs mt-1">{errores.nombresOficial}</p>
+                    {errores.nombreOgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.nombreOgd}</p>
                     )}
                   </div>
 
@@ -8930,16 +9358,15 @@ const CumplimientoNormativoDetalle = () => {
                     </label>
                     <input
                       type="text"
-                      name="apellidoPaternoOficial"
-                      value={formData.apellidoPaternoOficial}
+                      name="apePatOgd"
+                      value={formData.apePatOgd || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.apellidoPaternoOficial ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.apePatOgd ? 'border-red-500' : ''}`}
                       placeholder="Apellido paterno"
                       disabled={viewMode}
                     />
-                    {errores.apellidoPaternoOficial && (
-                      <p className="text-red-500 text-xs mt-1">{errores.apellidoPaternoOficial}</p>
+                    {errores.apePatOgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.apePatOgd}</p>
                     )}
                   </div>
 
@@ -8950,16 +9377,15 @@ const CumplimientoNormativoDetalle = () => {
                     </label>
                     <input
                       type="text"
-                      name="apellidoMaternoOficial"
-                      value={formData.apellidoMaternoOficial}
+                      name="apeMatOgd"
+                      value={formData.apeMatOgd || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.apellidoMaternoOficial ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.apeMatOgd ? 'border-red-500' : ''}`}
                       placeholder="Apellido materno"
                       disabled={viewMode}
                     />
-                    {errores.apellidoMaternoOficial && (
-                      <p className="text-red-500 text-xs mt-1">{errores.apellidoMaternoOficial}</p>
+                    {errores.apeMatOgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.apeMatOgd}</p>
                     )}
                   </div>
 
@@ -8970,55 +9396,53 @@ const CumplimientoNormativoDetalle = () => {
                     </label>
                     <input
                       type="text"
-                      name="cargoOficial"
-                      value={formData.cargoOficial}
+                      name="cargoOgd"
+                      value={formData.cargoOgd || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.cargoOficial ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.cargoOgd ? 'border-red-500' : ''}`}
                       placeholder="Cargo"
                       disabled={viewMode}
                     />
-                    {errores.cargoOficial && (
-                      <p className="text-red-500 text-xs mt-1">{errores.cargoOficial}</p>
+                    {errores.cargoOgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoOgd}</p>
                     )}
                   </div>
 
-                  {/* Correo electrónico */}
+                  {/* Correo institucional */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Correo electrónico <span className="text-red-500">*</span>
+                      Correo institucional <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
-                      name="correoOficial"
-                      value={formData.correoOficial}
+                      name="correoOgd"
+                      value={formData.correoOgd || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.correoOficial ? 'border-red-500' : ''}`}
-                      placeholder="Correo electrónico"
+                      className={`input-field ${errores.correoOgd ? 'border-red-500' : ''}`}
+                      placeholder="Correo institucional"
                       disabled={viewMode}
                     />
-                    {errores.correoOficial && (
-                      <p className="text-red-500 text-xs mt-1">{errores.correoOficial}</p>
+                    {errores.correoOgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoOgd}</p>
                     )}
                   </div>
 
                   {/* Teléfono */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Teléfono 
+                      Teléfono
                     </label>
                     <input
                       type="text"
-                      name="telefonoOficial"
-                      value={formData.telefonoOficial}
+                      name="telefonoOgd"
+                      value={formData.telefonoOgd || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.telefonoOficial ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.telefonoOgd ? 'border-red-500' : ''}`}
                       placeholder="Teléfono"
                       disabled={viewMode}
                     />
-                    {errores.telefonoOficial && (
-                      <p className="text-red-500 text-xs mt-1">{errores.telefonoOficial}</p>
+                    {errores.telefonoOgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.telefonoOgd}</p>
                     )}
                   </div>
 
@@ -9029,60 +9453,59 @@ const CumplimientoNormativoDetalle = () => {
                     </label>
                     <input
                       type="date"
-                      name="fechaDesignacion"
-                      value={formData.fechaDesignacion}
+                      name="fechaDesignacionOgd"
+                      value={formData.fechaDesignacionOgd || ''}
                       onChange={handleInputChange}
-                      className={`input-field ${errores.fechaDesignacion ? 'border-red-500' : ''}`}
+                      className={`input-field ${errores.fechaDesignacionOgd ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     />
-                    {errores.fechaDesignacion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.fechaDesignacion}</p>
+                    {errores.fechaDesignacionOgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaDesignacionOgd}</p>
                     )}
                   </div>
 
-                  {/* Resolución de designación */}
+                  {/* Nº de resolución / documento */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Resolución de designación <span className="text-red-500">*</span>
+                      Nº de resolución / documento <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="resolucionDesignacion"
-                      value={formData.resolucionDesignacion}
+                      name="numeroResolucionOgd"
+                      value={formData.numeroResolucionOgd || ''}
                       onChange={handleInputChange}
-                      
-                      className={`input-field ${errores.resolucionDesignacion ? 'border-red-500' : ''}`}
-                      placeholder="Resolución de designación"
+                      className={`input-field ${errores.numeroResolucionOgd ? 'border-red-500' : ''}`}
+                      placeholder="Nº de resolución / documento"
                       disabled={viewMode}
                     />
-                    {errores.resolucionDesignacion && (
-                      <p className="text-red-500 text-xs mt-1">{errores.resolucionDesignacion}</p>
+                    {errores.numeroResolucionOgd && (
+                      <p className="text-red-500 text-xs mt-1">{errores.numeroResolucionOgd}</p>
                     )}
                   </div>
 
-                  {/* ¿Comunicada a la SGTD? */}
+                  {/* ¿Designación comunicada a PCM (SGTD)? */}
                   <div className="">
                     <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
                       <input
                         type="checkbox"
-                        name="comunicadaSgtd"
-                        checked={formData.comunicadaSgtd || false}
+                        name="comunicadoPcmOgd"
+                        checked={formData.comunicadoPcmOgd || false}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
                         disabled={viewMode}
                       />
-                      ¿Comunicada a la SGTD?
+                      ¿Designación comunicada a PCM (SGTD)?
                     </label>
                   </div>
 
                   {/* Observaciones */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Observaciones 
+                      Observaciones
                     </label>
                     <textarea
-                      name="observaciones"
-                      value={formData.observaciones}
+                      name="observacionOgd"
+                      value={formData.observacionOgd || ''}
                       onChange={handleInputChange}
                       maxLength="1000"
                       rows="3"
@@ -9091,7 +9514,7 @@ const CumplimientoNormativoDetalle = () => {
                       disabled={viewMode}
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      {formData.observaciones?.length || 0} / 1000 caracteres
+                      {formData.observacionOgd?.length || 0} / 1000 caracteres
                     </p>
                   </div>
 
