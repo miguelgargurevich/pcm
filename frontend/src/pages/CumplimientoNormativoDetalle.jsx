@@ -6399,10 +6399,10 @@ const CumplimientoNormativoDetalle = () => {
                 <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Aportación de Información Geoespacial al Proyecto GeoPerú</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* URL de GeoPeru */}
+                  {/* URL de la información geoespacial */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      URL de publicación en GeoPeru <span className="text-red-500">*</span>
+                      URL de la información geoespacial <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="url"
@@ -6418,10 +6418,10 @@ const CumplimientoNormativoDetalle = () => {
                     )}
                   </div>
 
-                  {/* Tipo de Información Geoespacial */}
+                  {/* Tipo de información publicada */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Tipo de información geoespacial <span className="text-red-500">*</span>
+                      Tipo de información publicada <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="tipoInformacionGeo"
@@ -6430,7 +6430,7 @@ const CumplimientoNormativoDetalle = () => {
                       className={`input-field ${errores.tipoInformacionGeo ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     >
-                      <option value="">Seleccione...</option>
+                      <option value="">Seleccione tipo</option>
                       <option value="Cartografía base">Cartografía base</option>
                       <option value="Infraestructura">Infraestructura</option>
                       <option value="Límites territoriales">Límites territoriales</option>
@@ -6464,42 +6464,33 @@ const CumplimientoNormativoDetalle = () => {
                     )}
                   </div>
 
-                  {/* Fecha última actualización */}
-                  <div className="">
+                  {/* Fecha de última actualización */}
+                  <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha última actualización
+                      Fecha de última actualización <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="date"
                       name="fechaUltimaActualizacionGeo"
                       value={formData.fechaUltimaActualizacionGeo || ''}
                       onChange={handleInputChange}
-                      className="input-field"
+                      className={`input-field ${errores.fechaUltimaActualizacionGeo ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     />
+                    {errores.fechaUltimaActualizacionGeo && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaUltimaActualizacionGeo}</p>
+                    )}
                   </div>
 
-                  {/* Interoperabilidad */}
-                  <div className="">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      ¿Cuenta con interoperabilidad?
-                    </label>
-                    <select
-                      name="interoperabilidadGeo"
-                      value={formData.interoperabilidadGeo ? 'true' : 'false'}
-                      onChange={(e) => handleInputChange({ target: { name: 'interoperabilidadGeo', value: e.target.value === 'true' } })}
-                      className="input-field"
-                      disabled={viewMode}
-                    >
-                      <option value="false">No</option>
-                      <option value="true">Sí</option>
-                    </select>
+                  {/* Sección: Responsable de la información */}
+                  <div className="md:col-span-2 mt-4">
+                    <h3 className="text-sm font-semibold text-gray-800 mb-3 border-b pb-2">Responsable de la información</h3>
                   </div>
 
-                  {/* Responsable */}
+                  {/* Nombre completo */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nombre del responsable <span className="text-red-500">*</span>
+                      Nombre completo <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -6507,7 +6498,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.responsableGeo || ''}
                       onChange={handleInputChange}
                       className={`input-field ${errores.responsableGeo ? 'border-red-500' : ''}`}
-                      placeholder="Nombre completo"
+                      placeholder="Nombre completo del responsable"
                       disabled={viewMode}
                     />
                     {errores.responsableGeo && (
@@ -6515,42 +6506,48 @@ const CumplimientoNormativoDetalle = () => {
                     )}
                   </div>
 
-                  {/* Cargo del Responsable */}
+                  {/* Cargo */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Cargo del responsable
+                      Cargo <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       name="cargoResponsableGeo"
                       value={formData.cargoResponsableGeo || ''}
                       onChange={handleInputChange}
-                      className="input-field"
-                      placeholder="Cargo"
+                      className={`input-field ${errores.cargoResponsableGeo ? 'border-red-500' : ''}`}
+                      placeholder="Cargo del responsable"
                       disabled={viewMode}
                     />
+                    {errores.cargoResponsableGeo && (
+                      <p className="text-red-500 text-xs mt-1">{errores.cargoResponsableGeo}</p>
+                    )}
                   </div>
 
-                  {/* Correo del Responsable */}
+                  {/* Correo */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Correo del responsable
+                      Correo <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
                       name="correoResponsableGeo"
                       value={formData.correoResponsableGeo || ''}
                       onChange={handleInputChange}
-                      className="input-field"
+                      className={`input-field ${errores.correoResponsableGeo ? 'border-red-500' : ''}`}
                       placeholder="correo@entidad.gob.pe"
                       disabled={viewMode}
                     />
+                    {errores.correoResponsableGeo && (
+                      <p className="text-red-500 text-xs mt-1">{errores.correoResponsableGeo}</p>
+                    )}
                   </div>
 
-                  {/* Teléfono del Responsable */}
+                  {/* Teléfono */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Teléfono del responsable
+                      Teléfono
                     </label>
                     <input
                       type="text"
@@ -6563,35 +6560,58 @@ const CumplimientoNormativoDetalle = () => {
                     />
                   </div>
 
-                  {/* Norma de Aprobación */}
+                  {/* N° de norma de aprobación */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Norma de aprobación
+                      N° de norma de aprobación <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       name="normaAprobacionGeo"
                       value={formData.normaAprobacionGeo || ''}
                       onChange={handleInputChange}
-                      className="input-field"
+                      className={`input-field ${errores.normaAprobacionGeo ? 'border-red-500' : ''}`}
                       placeholder="Ej: Resolución Directoral N° 001-2025"
                       disabled={viewMode}
                     />
+                    {errores.normaAprobacionGeo && (
+                      <p className="text-red-500 text-xs mt-1">{errores.normaAprobacionGeo}</p>
+                    )}
                   </div>
 
-                  {/* Fecha de Aprobación */}
+                  {/* Fecha de aprobación */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de aprobación
+                      Fecha de aprobación <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="date"
                       name="fechaAprobacionGeo"
                       value={formData.fechaAprobacionGeo || ''}
                       onChange={handleInputChange}
-                      className="input-field"
+                      className={`input-field ${errores.fechaAprobacionGeo ? 'border-red-500' : ''}`}
                       disabled={viewMode}
                     />
+                    {errores.fechaAprobacionGeo && (
+                      <p className="text-red-500 text-xs mt-1">{errores.fechaAprobacionGeo}</p>
+                    )}
+                  </div>
+
+                  {/* ¿La información es interoperable? */}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      ¿La información es interoperable?
+                    </label>
+                    <select
+                      name="interoperabilidadGeo"
+                      value={formData.interoperabilidadGeo ? 'true' : 'false'}
+                      onChange={(e) => handleInputChange({ target: { name: 'interoperabilidadGeo', value: e.target.value === 'true' } })}
+                      className="input-field"
+                      disabled={viewMode}
+                    >
+                      <option value="false">No</option>
+                      <option value="true">Sí</option>
+                    </select>
                   </div>
 
                   {/* Observaciones */}
@@ -6614,7 +6634,7 @@ const CumplimientoNormativoDetalle = () => {
                     </p>
                   </div>
 
-                  {/* Archivo PDF de evidencia */}
+                  {/* Documento de evidencia (PDF) */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Documento de evidencia (PDF)
