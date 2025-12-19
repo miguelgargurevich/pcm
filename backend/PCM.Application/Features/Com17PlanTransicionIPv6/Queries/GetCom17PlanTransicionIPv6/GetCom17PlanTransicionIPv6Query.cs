@@ -24,11 +24,18 @@ public class Com17PlanTransicionIPv6Response
     public DateTime FecRegistro { get; set; }
     public Guid UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
-    public DateTime? FechaInicioTransicion { get; set; }
-    public DateTime? FechaFinTransicion { get; set; }
-    public decimal? PorcentajeAvance { get; set; }
-    public int? SistemasMigrados { get; set; }
-    public int? SistemasTotal { get; set; }
-    public string? ArchivoPlan { get; set; }
-    public string? Descripcion { get; set; }
+    // Campos específicos del Plan de Transición a IPv6
+    public string ResponsableIpv6 { get; set; } = string.Empty;
+    public string CargoResponsableIpv6 { get; set; } = string.Empty;
+    public string CorreoIpv6 { get; set; } = string.Empty;
+    public string TelefonoIpv6 { get; set; } = string.Empty;
+    public string EstadoPlanIpv6 { get; set; } = string.Empty;
+    public DateTime? FechaFormulacionIpv6 { get; set; }
+    public DateTime? FechaAprobacionIpv6 { get; set; }
+    public DateTime? FechaInicioIpv6 { get; set; }
+    public DateTime? FechaFinIpv6 { get; set; }
+    public string DescripcionPlanIpv6 { get; set; } = string.Empty;
+    public string RutaPdfPlanIpv6 { get; set; } = string.Empty;
+    public string ObservacionIpv6 { get; set; } = string.Empty;
+    public string? RutaPdfNormativa { get; set; }
 }

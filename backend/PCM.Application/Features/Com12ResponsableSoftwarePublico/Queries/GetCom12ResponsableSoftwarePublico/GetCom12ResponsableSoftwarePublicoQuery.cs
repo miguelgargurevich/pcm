@@ -24,11 +24,17 @@ public class Com12ResponsableSoftwarePublicoResponse
     public DateTime FecRegistro { get; set; }
     public Guid UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
-    public DateTime? FechaElaboracion { get; set; }
-    public string? NumeroDocumento { get; set; }
-    public string? ArchivoDocumento { get; set; }
-    public string? Descripcion { get; set; }
-    public string? RequisitosSeguridad { get; set; }
-    public string? RequisitosPrivacidad { get; set; }
-    public DateTime? FechaVigencia { get; set; }
+    // Campos específicos del Responsable de Software Público
+    public string DniRsp { get; set; } = string.Empty;
+    public string NombreRsp { get; set; } = string.Empty;
+    public string ApePatRsp { get; set; } = string.Empty;
+    public string ApeMatRsp { get; set; } = string.Empty;
+    public string CargoRsp { get; set; } = string.Empty;
+    public string CorreoRsp { get; set; } = string.Empty;
+    public string TelefonoRsp { get; set; } = string.Empty;
+    public DateTime? FechaDesignacionRsp { get; set; }
+    public string NumeroResolucionRsp { get; set; } = string.Empty;
+    public string RutaPdfRsp { get; set; } = string.Empty;
+    public string ObservacionRsp { get; set; } = string.Empty;
+    public string? RutaPdfNormativa { get; set; }
 }

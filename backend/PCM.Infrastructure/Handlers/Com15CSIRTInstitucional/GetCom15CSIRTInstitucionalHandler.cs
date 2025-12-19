@@ -48,13 +48,19 @@ public class GetCom15CSIRTInstitucionalHandler : IRequestHandler<GetCom15CSIRTIn
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
-                FechaConformacion = entity.FechaConformacion,
-                NumeroResolucion = entity.NumeroResolucion,
-                Responsable = entity.Responsable,
-                EmailContacto = entity.EmailContacto,
-                TelefonoContacto = entity.TelefonoContacto,
-                ArchivoProcedimientos = entity.ArchivoProcedimientos,
-                Descripcion = entity.Descripcion,
+                // Campos específicos CSIRT
+                NombreCsirt = entity.NombreCsirt,
+                FechaConformacionCsirt = entity.FechaConformacionCsirt,
+                NumeroResolucionCsirt = entity.NumeroResolucionCsirt,
+                ResponsableCsirt = entity.ResponsableCsirt,
+                CargoResponsableCsirt = entity.CargoResponsableCsirt,
+                CorreoCsirt = entity.CorreoCsirt,
+                TelefonoCsirt = entity.TelefonoCsirt,
+                ProtocoloIncidentesCsirt = entity.ProtocoloIncidentesCsirt,
+                ComunicadoPcmCsirt = entity.ComunicadoPcmCsirt,
+                RutaPdfCsirt = entity.RutaPdfCsirt,
+                ObservacionCsirt = entity.ObservacionCsirt,
+                RutaPdfNormativa = entity.RutaPdfNormativa,
             };
 
             return Result<Com15CSIRTInstitucionalResponse>.Success(response);

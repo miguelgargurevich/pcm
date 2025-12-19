@@ -24,12 +24,19 @@ public class Com11AportacionGeoPeruResponse
     public DateTime FecRegistro { get; set; }
     public Guid UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
-    public DateTime? FechaInicio { get; set; }
-    public DateTime? FechaFin { get; set; }
-    public int? ServiciosDigitalizados { get; set; }
-    public int? ServiciosTotal { get; set; }
-    public decimal? PorcentajeDigitalizacion { get; set; }
-    public string? ArchivoPlan { get; set; }
-    public string? Descripcion { get; set; }
-    public int? BeneficiariosEstimados { get; set; }
+    // Campos específicos de Aportación a GeoPeru
+    public string UrlGeo { get; set; } = string.Empty;
+    public string TipoInformacionGeo { get; set; } = string.Empty;
+    public long TotalCapasPublicadas { get; set; }
+    public DateTime? FechaUltimaActualizacionGeo { get; set; }
+    public string ResponsableGeo { get; set; } = string.Empty;
+    public string CargoResponsableGeo { get; set; } = string.Empty;
+    public string CorreoResponsableGeo { get; set; } = string.Empty;
+    public string TelefonoResponsableGeo { get; set; } = string.Empty;
+    public string NormaAprobacionGeo { get; set; } = string.Empty;
+    public DateTime? FechaAprobacionGeo { get; set; }
+    public bool InteroperabilidadGeo { get; set; }
+    public string ObservacionGeo { get; set; } = string.Empty;
+    public string RutaPdfGeo { get; set; } = string.Empty;
+    public string? RutaPdfNormativa { get; set; }
 }

@@ -24,10 +24,16 @@ public class Com19EncuestaNacionalGobDigitalResponse
     public DateTime FecRegistro { get; set; }
     public Guid UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
-    public DateTime? FechaConexion { get; set; }
-    public string? TipoConexion { get; set; }
-    public string? AnchoBanda { get; set; }
-    public string? Proveedor { get; set; }
-    public string? ArchivoContrato { get; set; }
-    public string? Descripcion { get; set; }
+    // Campos específicos de la Encuesta Nacional de Gobierno Digital
+    public long AnioEnad { get; set; }
+    public string ResponsableEnad { get; set; } = string.Empty;
+    public string CargoResponsableEnad { get; set; } = string.Empty;
+    public string CorreoEnad { get; set; } = string.Empty;
+    public string TelefonoEnad { get; set; } = string.Empty;
+    public DateTime? FechaEnvioEnad { get; set; }
+    public string EstadoRespuestaEnad { get; set; } = string.Empty;
+    public string EnlaceFormularioEnad { get; set; } = string.Empty;
+    public string ObservacionEnad { get; set; } = string.Empty;
+    public string RutaPdfEnad { get; set; } = string.Empty;
+    public string? RutaPdfNormativa { get; set; }
 }

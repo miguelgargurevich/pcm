@@ -48,13 +48,19 @@ public class GetCom12ResponsableSoftwarePublicoHandler : IRequestHandler<GetCom1
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
-                FechaElaboracion = entity.FechaElaboracion,
-                NumeroDocumento = entity.NumeroDocumento,
-                ArchivoDocumento = entity.ArchivoDocumento,
-                Descripcion = entity.Descripcion,
-                RequisitosSeguridad = entity.RequisitosSeguridad,
-                RequisitosPrivacidad = entity.RequisitosPrivacidad,
-                FechaVigencia = entity.FechaVigencia,
+                // Campos específicos RSP
+                DniRsp = entity.DniRsp,
+                NombreRsp = entity.NombreRsp,
+                ApePatRsp = entity.ApePatRsp,
+                ApeMatRsp = entity.ApeMatRsp,
+                CargoRsp = entity.CargoRsp,
+                CorreoRsp = entity.CorreoRsp,
+                TelefonoRsp = entity.TelefonoRsp,
+                FechaDesignacionRsp = entity.FechaDesignacionRsp,
+                NumeroResolucionRsp = entity.NumeroResolucionRsp,
+                RutaPdfRsp = entity.RutaPdfRsp,
+                ObservacionRsp = entity.ObservacionRsp,
+                RutaPdfNormativa = entity.RutaPdfNormativa,
             };
 
             return Result<Com12ResponsableSoftwarePublicoResponse>.Success(response);

@@ -24,12 +24,22 @@ public class Com13InteroperabilidadPIDEResponse
     public DateTime FecRegistro { get; set; }
     public Guid UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
-    public DateTime? FechaAprobacion { get; set; }
-    public string? NumeroResolucion { get; set; }
-    public string? ArchivoPlan { get; set; }
-    public string? Descripcion { get; set; }
-    public string? RiesgosIdentificados { get; set; }
-    public string? EstrategiasMitigacion { get; set; }
-    public DateTime? FechaRevision { get; set; }
-    public string? Responsable { get; set; }
+    // Campos específicos de Interoperabilidad PIDE
+    public string TipoIntegracionPide { get; set; } = string.Empty;
+    public string NombreServicioPide { get; set; } = string.Empty;
+    public string DescripcionServicioPide { get; set; } = string.Empty;
+    public DateTime? FechaInicioOperacionPide { get; set; }
+    public string ResponsablePide { get; set; } = string.Empty;
+    public string CargoResponsablePide { get; set; } = string.Empty;
+    public string CorreoResponsablePide { get; set; } = string.Empty;
+    public string TelefonoResponsablePide { get; set; } = string.Empty;
+    public string NumeroConvenioPide { get; set; } = string.Empty;
+    public DateTime? FechaConvenioPide { get; set; }
+    public bool InteroperabilidadPide { get; set; }
+    public string UrlServicioPide { get; set; } = string.Empty;
+    public string ObservacionPide { get; set; } = string.Empty;
+    public string RutaPdfPide { get; set; } = string.Empty;
+    public string? RutaPdfNormativa { get; set; }
+    public DateTime? FechaIntegracionPide { get; set; }
+    public int? ServiciosPublicadosPide { get; set; }
 }

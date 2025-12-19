@@ -48,13 +48,20 @@ public class GetCom17PlanTransicionIPv6Handler : IRequestHandler<GetCom17PlanTra
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
-                FechaInicioTransicion = entity.FechaInicioTransicion,
-                FechaFinTransicion = entity.FechaFinTransicion,
-                PorcentajeAvance = entity.PorcentajeAvance,
-                SistemasMigrados = entity.SistemasMigrados,
-                SistemasTotal = entity.SistemasTotal,
-                ArchivoPlan = entity.ArchivoPlan,
-                Descripcion = entity.Descripcion,
+                // Campos específicos IPv6
+                ResponsableIpv6 = entity.ResponsableIpv6,
+                CargoResponsableIpv6 = entity.CargoResponsableIpv6,
+                CorreoIpv6 = entity.CorreoIpv6,
+                TelefonoIpv6 = entity.TelefonoIpv6,
+                EstadoPlanIpv6 = entity.EstadoPlanIpv6,
+                FechaFormulacionIpv6 = entity.FechaFormulacionIpv6,
+                FechaAprobacionIpv6 = entity.FechaAprobacionIpv6,
+                FechaInicioIpv6 = entity.FechaInicioIpv6,
+                FechaFinIpv6 = entity.FechaFinIpv6,
+                DescripcionPlanIpv6 = entity.DescripcionPlanIpv6,
+                RutaPdfPlanIpv6 = entity.RutaPdfPlanIpv6,
+                ObservacionIpv6 = entity.ObservacionIpv6,
+                RutaPdfNormativa = entity.RutaPdfNormativa,
             };
 
             return Result<Com17PlanTransicionIPv6Response>.Success(response);

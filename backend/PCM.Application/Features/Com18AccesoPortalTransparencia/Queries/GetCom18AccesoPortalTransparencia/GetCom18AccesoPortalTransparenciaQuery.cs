@@ -24,11 +24,18 @@ public class Com18AccesoPortalTransparenciaResponse
     public DateTime FecRegistro { get; set; }
     public Guid UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
-    public string? UrlPlataforma { get; set; }
-    public DateTime? FechaImplementacion { get; set; }
-    public int? TramitesDisponibles { get; set; }
-    public int? UsuariosRegistrados { get; set; }
-    public int? TramitesProcesados { get; set; }
-    public string? ArchivoEvidencia { get; set; }
-    public string? Descripcion { get; set; }
+    // Campos específicos del Portal de Transparencia Estándar
+    public string ResponsablePte { get; set; } = string.Empty;
+    public string CargoResponsablePte { get; set; } = string.Empty;
+    public string CorreoPte { get; set; } = string.Empty;
+    public string TelefonoPte { get; set; } = string.Empty;
+    public DateTime? FechaSolicitudPte { get; set; }
+    public DateTime? FechaAccesoPte { get; set; }
+    public string NumeroOficioPte { get; set; } = string.Empty;
+    public string EstadoAccesoPte { get; set; } = string.Empty;
+    public string EnlacePortalPte { get; set; } = string.Empty;
+    public string DescripcionPte { get; set; } = string.Empty;
+    public string RutaPdfPte { get; set; } = string.Empty;
+    public string ObservacionPte { get; set; } = string.Empty;
+    public string? RutaPdfNormativa { get; set; }
 }

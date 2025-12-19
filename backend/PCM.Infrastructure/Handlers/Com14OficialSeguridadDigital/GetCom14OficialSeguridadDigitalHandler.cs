@@ -48,13 +48,20 @@ public class GetCom14OficialSeguridadDigitalHandler : IRequestHandler<GetCom14Of
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
-                FechaElaboracion = entity.FechaElaboracion,
-                NumeroDocumento = entity.NumeroDocumento,
-                ArchivoDocumento = entity.ArchivoDocumento,
-                Descripcion = entity.Descripcion,
-                PoliticasSeguridad = entity.PoliticasSeguridad,
-                Certificaciones = entity.Certificaciones,
-                FechaVigencia = entity.FechaVigencia,
+                // Campos específicos OSCD
+                DniOscd = entity.DniOscd,
+                NombreOscd = entity.NombreOscd,
+                ApePatOscd = entity.ApePatOscd,
+                ApeMatOscd = entity.ApeMatOscd,
+                CargoOscd = entity.CargoOscd,
+                CorreoOscd = entity.CorreoOscd,
+                TelefonoOscd = entity.TelefonoOscd,
+                FechaDesignacionOscd = entity.FechaDesignacionOscd,
+                NumeroResolucionOscd = entity.NumeroResolucionOscd,
+                ComunicadoPcmOscd = entity.ComunicadoPcmOscd,
+                RutaPdfOscd = entity.RutaPdfOscd,
+                ObservacionOscd = entity.ObservacionOscd,
+                RutaPdfNormativa = entity.RutaPdfNormativa,
             };
 
             return Result<Com14OficialSeguridadDigitalResponse>.Success(response);

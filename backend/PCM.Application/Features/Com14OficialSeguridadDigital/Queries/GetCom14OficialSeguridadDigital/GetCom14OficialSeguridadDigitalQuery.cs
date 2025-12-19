@@ -24,11 +24,18 @@ public class Com14OficialSeguridadDigitalResponse
     public DateTime FecRegistro { get; set; }
     public Guid UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
-    public DateTime? FechaElaboracion { get; set; }
-    public string? NumeroDocumento { get; set; }
-    public string? ArchivoDocumento { get; set; }
-    public string? Descripcion { get; set; }
-    public string? PoliticasSeguridad { get; set; }
-    public string? Certificaciones { get; set; }
-    public DateTime? FechaVigencia { get; set; }
+    // Campos específicos del Oficial de Seguridad y Confianza Digital
+    public string DniOscd { get; set; } = string.Empty;
+    public string NombreOscd { get; set; } = string.Empty;
+    public string ApePatOscd { get; set; } = string.Empty;
+    public string ApeMatOscd { get; set; } = string.Empty;
+    public string CargoOscd { get; set; } = string.Empty;
+    public string CorreoOscd { get; set; } = string.Empty;
+    public string TelefonoOscd { get; set; } = string.Empty;
+    public DateTime? FechaDesignacionOscd { get; set; }
+    public string NumeroResolucionOscd { get; set; } = string.Empty;
+    public bool ComunicadoPcmOscd { get; set; }
+    public string RutaPdfOscd { get; set; } = string.Empty;
+    public string ObservacionOscd { get; set; } = string.Empty;
+    public string? RutaPdfNormativa { get; set; }
 }

@@ -48,12 +48,18 @@ public class GetCom19EncuestaNacionalGobDigitalHandler : IRequestHandler<GetCom1
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
-                FechaConexion = entity.FechaConexion,
-                TipoConexion = entity.TipoConexion,
-                AnchoBanda = entity.AnchoBanda,
-                Proveedor = entity.Proveedor,
-                ArchivoContrato = entity.ArchivoContrato,
-                Descripcion = entity.Descripcion,
+                // Campos específicos ENAD
+                AnioEnad = entity.AnioEnad,
+                ResponsableEnad = entity.ResponsableEnad,
+                CargoResponsableEnad = entity.CargoResponsableEnad,
+                CorreoEnad = entity.CorreoEnad,
+                TelefonoEnad = entity.TelefonoEnad,
+                FechaEnvioEnad = entity.FechaEnvioEnad,
+                EstadoRespuestaEnad = entity.EstadoRespuestaEnad,
+                EnlaceFormularioEnad = entity.EnlaceFormularioEnad,
+                ObservacionEnad = entity.ObservacionEnad,
+                RutaPdfEnad = entity.RutaPdfEnad,
+                RutaPdfNormativa = entity.RutaPdfNormativa,
             };
 
             return Result<Com19EncuestaNacionalGobDigitalResponse>.Success(response);

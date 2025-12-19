@@ -24,11 +24,17 @@ public class Com15CSIRTInstitucionalResponse
     public DateTime FecRegistro { get; set; }
     public Guid UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
-    public DateTime? FechaConformacion { get; set; }
-    public string? NumeroResolucion { get; set; }
-    public string? Responsable { get; set; }
-    public string? EmailContacto { get; set; }
-    public string? TelefonoContacto { get; set; }
-    public string? ArchivoProcedimientos { get; set; }
-    public string? Descripcion { get; set; }
+    // Campos específicos del CSIRT Institucional
+    public string NombreCsirt { get; set; } = string.Empty;
+    public DateTime? FechaConformacionCsirt { get; set; }
+    public string NumeroResolucionCsirt { get; set; } = string.Empty;
+    public string ResponsableCsirt { get; set; } = string.Empty;
+    public string CargoResponsableCsirt { get; set; } = string.Empty;
+    public string CorreoCsirt { get; set; } = string.Empty;
+    public string TelefonoCsirt { get; set; } = string.Empty;
+    public bool ProtocoloIncidentesCsirt { get; set; }
+    public bool ComunicadoPcmCsirt { get; set; }
+    public string RutaPdfCsirt { get; set; } = string.Empty;
+    public string ObservacionCsirt { get; set; } = string.Empty;
+    public string? RutaPdfNormativa { get; set; }
 }

@@ -48,13 +48,20 @@ public class GetCom18AccesoPortalTransparenciaHandler : IRequestHandler<GetCom18
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
-                UrlPlataforma = entity.UrlPlataforma,
-                FechaImplementacion = entity.FechaImplementacion,
-                TramitesDisponibles = entity.TramitesDisponibles,
-                UsuariosRegistrados = entity.UsuariosRegistrados,
-                TramitesProcesados = entity.TramitesProcesados,
-                ArchivoEvidencia = entity.ArchivoEvidencia,
-                Descripcion = entity.Descripcion,
+                // Campos específicos PTE
+                ResponsablePte = entity.ResponsablePte,
+                CargoResponsablePte = entity.CargoResponsablePte,
+                CorreoPte = entity.CorreoPte,
+                TelefonoPte = entity.TelefonoPte,
+                FechaSolicitudPte = entity.FechaSolicitudPte,
+                FechaAccesoPte = entity.FechaAccesoPte,
+                NumeroOficioPte = entity.NumeroOficioPte,
+                EstadoAccesoPte = entity.EstadoAccesoPte,
+                EnlacePortalPte = entity.EnlacePortalPte,
+                DescripcionPte = entity.DescripcionPte,
+                RutaPdfPte = entity.RutaPdfPte,
+                ObservacionPte = entity.ObservacionPte,
+                RutaPdfNormativa = entity.RutaPdfNormativa,
             };
 
             return Result<Com18AccesoPortalTransparenciaResponse>.Success(response);
