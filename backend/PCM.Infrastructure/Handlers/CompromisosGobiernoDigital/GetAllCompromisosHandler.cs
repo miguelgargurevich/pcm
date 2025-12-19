@@ -113,7 +113,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com1 != null)
                 {
-                    registrosEspecificos[1] = (com1.CreatedAt, com1.EstadoPCM);
+                    registrosEspecificos[1] = (com1.CreatedAt, com1.Estado);
                 }
 
                 // Com2: Comité GTD
@@ -123,7 +123,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com2 != null)
                 {
-                    registrosEspecificos[2] = (com2.CreatedAt, com2.EstadoPcm);
+                    registrosEspecificos[2] = (com2.CreatedAt, com2.Estado);
                 }
 
                 // Com4: PEI
@@ -133,7 +133,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com4 != null)
                 {
-                    registrosEspecificos[4] = (com4.CreatedAt, com4.EstadoPCM);
+                    registrosEspecificos[4] = (com4.CreatedAt, com4.Estado);
                 }
 
                 // Com5: Estrategia Digital
@@ -143,7 +143,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com5 != null)
                 {
-                    registrosEspecificos[5] = (com5.CreatedAt, com5.EstadoPCM);
+                    registrosEspecificos[5] = (com5.CreatedAt, com5.Estado);
                 }
 
                 // Com6: Migración Gob.pe
@@ -153,7 +153,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com6 != null)
                 {
-                    registrosEspecificos[6] = (com6.CreatedAt, com6.EstadoPCM);
+                    registrosEspecificos[6] = (com6.CreatedAt, com6.Estado);
                 }
 
                 // Com7: Implementación MPD
@@ -163,7 +163,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com7 != null)
                 {
-                    registrosEspecificos[7] = (com7.CreatedAt, com7.EstadoPCM);
+                    registrosEspecificos[7] = (com7.CreatedAt, com7.Estado);
                 }
 
                 // Com8: Publicación TUPA
@@ -173,7 +173,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com8 != null)
                 {
-                    registrosEspecificos[8] = (com8.CreatedAt, com8.EstadoPCM);
+                    registrosEspecificos[8] = (com8.CreatedAt, com8.Estado);
                 }
 
                 // Com9: Modelo Gestión Documental
@@ -183,7 +183,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com9 != null)
                 {
-                    registrosEspecificos[9] = (com9.CreatedAt, com9.EstadoPCM);
+                    registrosEspecificos[9] = (com9.CreatedAt, com9.Estado);
                 }
 
                 // Com10: Datos Abiertos
@@ -193,7 +193,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com10 != null)
                 {
-                    registrosEspecificos[10] = (com10.CreatedAt, com10.EstadoPCM);
+                    registrosEspecificos[10] = (com10.CreatedAt, com10.Estado);
                 }
 
                 // Com11: Aportación GeoPeru
@@ -203,7 +203,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com11 != null)
                 {
-                    registrosEspecificos[11] = (com11.CreatedAt, com11.EstadoPCM);
+                    registrosEspecificos[11] = (com11.CreatedAt, com11.Estado);
                 }
 
                 // Com12: Responsable Software Público
@@ -213,7 +213,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com12 != null)
                 {
-                    registrosEspecificos[12] = (com12.CreatedAt, com12.EstadoPCM);
+                    registrosEspecificos[12] = (com12.CreatedAt, com12.Estado);
                 }
 
                 // Com13: Interoperabilidad PIDE
@@ -223,7 +223,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com13 != null)
                 {
-                    registrosEspecificos[13] = (com13.CreatedAt, com13.EstadoPCM);
+                    registrosEspecificos[13] = (com13.CreatedAt, com13.Estado);
                 }
 
                 // Com14: Oficial Seguridad Digital
@@ -233,7 +233,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com14 != null)
                 {
-                    registrosEspecificos[14] = (com14.CreatedAt, com14.EstadoPCM);
+                    registrosEspecificos[14] = (com14.CreatedAt, com14.Estado);
                 }
 
                 // Com15: CSIRT Institucional
@@ -243,7 +243,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com15 != null)
                 {
-                    registrosEspecificos[15] = (com15.CreatedAt, com15.EstadoPCM);
+                    registrosEspecificos[15] = (com15.CreatedAt, com15.Estado);
                 }
 
                 // Com16: Sistema Gestión Seguridad
@@ -253,7 +253,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com16 != null)
                 {
-                    registrosEspecificos[16] = (com16.CreatedAt, com16.EstadoPCM);
+                    registrosEspecificos[16] = (com16.CreatedAt, com16.Estado);
                 }
 
                 // Com17: Plan Transición IPv6
@@ -263,7 +263,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com17 != null)
                 {
-                    registrosEspecificos[17] = (com17.CreatedAt, com17.EstadoPCM);
+                    registrosEspecificos[17] = (com17.CreatedAt, com17.Estado);
                 }
 
                 // Com18: Acceso Portal Transparencia
@@ -273,7 +273,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com18 != null)
                 {
-                    registrosEspecificos[18] = (com18.CreatedAt, com18.EstadoPCM);
+                    registrosEspecificos[18] = (com18.CreatedAt, com18.Estado);
                 }
 
                 // Com19: Encuesta Nacional Gobierno Digital
@@ -283,7 +283,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com19 != null)
                 {
-                    registrosEspecificos[19] = (com19.CreatedAt, com19.EstadoPCM);
+                    registrosEspecificos[19] = (com19.CreatedAt, com19.Estado);
                 }
 
                 // Com20: Digitalización Servicios Facilita
@@ -293,7 +293,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com20 != null)
                 {
-                    registrosEspecificos[20] = (com20.CreatedAt, com20.EstadoPCM);
+                    registrosEspecificos[20] = (com20.CreatedAt, com20.Estado);
                 }
 
                 // Com21: Oficial Gobierno de Datos
@@ -303,7 +303,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     .FirstOrDefaultAsync(cancellationToken);
                 if (com21 != null)
                 {
-                    registrosEspecificos[21] = (com21.CreatedAt, com21.EstadoPCM);
+                    registrosEspecificos[21] = (com21.CreatedAt, com21.Estado);
                 }
             }
 

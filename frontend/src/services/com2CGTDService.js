@@ -10,7 +10,10 @@ const com2CGTDService = {
     try {
       console.log('🔵 GET /Com2CGTD/' + compromisoId + '/entidad/' + entidadId);
       const response = await api.get(`/Com2CGTD/${compromisoId}/entidad/${entidadId}`);
-      console.log('✅ Respuesta getByEntidad:', response.data);
+      console.log('✅ Respuesta getByEntidad completa:', response);
+      console.log('✅ response.data:', response.data);
+      console.log('✅ response.data.miembros:', response.data?.miembros);
+      console.log('✅ response.data.Miembros:', response.data?.Miembros);
       return {
         isSuccess: true,
         data: response.data

@@ -58,6 +58,10 @@ public class UpdateCom2CGTDHandler : IRequestHandler<UpdateCom2CGTDCommand, Resu
                 }
 
                 // Agregar o actualizar miembros
+                int maxNumMiembro = miembrosExistentes.Any() 
+                    ? (int)miembrosExistentes.Max(m => m.NumMiembro) 
+                    : 0;
+
                 foreach (var miembroDto in request.Miembros)
                 {
                     if (miembroDto.MiembroId.HasValue && miembroDto.MiembroId > 0)
@@ -68,15 +72,15 @@ public class UpdateCom2CGTDHandler : IRequestHandler<UpdateCom2CGTDCommand, Resu
                         
                         if (miembroExistente != null)
                         {
-                            miembroExistente.Dni = miembroDto.Dni;
-                            miembroExistente.Nombre = miembroDto.Nombre;
-                            miembroExistente.ApellidoPaterno = miembroDto.ApellidoPaterno;
-                            miembroExistente.ApellidoMaterno = miembroDto.ApellidoMaterno;
-                            miembroExistente.Cargo = miembroDto.Cargo;
-                            miembroExistente.Email = miembroDto.Email;
-                            miembroExistente.Telefono = miembroDto.Telefono;
-                            miembroExistente.Rol = miembroDto.Rol;
-                            miembroExistente.FechaInicio = miembroDto.FechaInicio;
+                            miembroExistente.Dni = miembroDto.Dni ?? string.Empty;
+                            miembroExistente.Nombre = miembroDto.Nombre ?? string.Empty;
+                            miembroExistente.ApellidoPaterno = miembroDto.ApellidoPaterno ?? string.Empty;
+                            miembroExistente.ApellidoMaterno = miembroDto.ApellidoMaterno ?? string.Empty;
+                            miembroExistente.Cargo = miembroDto.Cargo ?? string.Empty;
+                            miembroExistente.Email = miembroDto.Email ?? string.Empty;
+                            miembroExistente.Telefono = miembroDto.Telefono ?? string.Empty;
+                            miembroExistente.Rol = miembroDto.Rol ?? string.Empty;
+                            miembroExistente.FechaInicio = miembroDto.FechaInicio ?? DateTime.UtcNow;
                             miembroExistente.Activo = true;
 
                             miembrosResponse.Add(new ComiteMiembroDto
@@ -97,21 +101,24 @@ public class UpdateCom2CGTDHandler : IRequestHandler<UpdateCom2CGTDCommand, Resu
                     }
                     else
                     {
+                        // Incrementar número de miembro
+                        maxNumMiembro++;
+
                         // Crear nuevo
                         var nuevoMiembro = new ComiteMiembroEntity
                         {
                             ComEntidadId = entity.ComcgtdEntId,
-                            Dni = miembroDto.Dni,
-                            Nombre = miembroDto.Nombre,
-                            ApellidoPaterno = miembroDto.ApellidoPaterno,
-                            ApellidoMaterno = miembroDto.ApellidoMaterno,
-                            Cargo = miembroDto.Cargo,
-                            Email = miembroDto.Email,
-                            Telefono = miembroDto.Telefono,
-                            Rol = miembroDto.Rol,
+                            NumMiembro = maxNumMiembro,
+                            Dni = miembroDto.Dni ?? string.Empty,
+                            Nombre = miembroDto.Nombre ?? string.Empty,
+                            ApellidoPaterno = miembroDto.ApellidoPaterno ?? string.Empty,
+                            ApellidoMaterno = miembroDto.ApellidoMaterno ?? string.Empty,
+                            Cargo = miembroDto.Cargo ?? string.Empty,
+                            Email = miembroDto.Email ?? string.Empty,
+                            Telefono = miembroDto.Telefono ?? string.Empty,
+                            Rol = miembroDto.Rol ?? string.Empty,
                             FechaInicio = miembroDto.FechaInicio ?? DateTime.UtcNow,
-                            Activo = true,
-                            CreatedAt = DateTime.UtcNow
+                            Activo = true
                         };
 
                         _context.ComiteMiembros.Add(nuevoMiembro);

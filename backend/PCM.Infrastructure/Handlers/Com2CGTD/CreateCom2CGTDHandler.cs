@@ -49,22 +49,23 @@ public class CreateCom2CGTDHandler : IRequestHandler<CreateCom2CGTDCommand, Resu
             var miembrosResponse = new List<ComiteMiembroDto>();
             if (request.Miembros != null && request.Miembros.Any())
             {
+                int numMiembro = 1;
                 foreach (var miembroDto in request.Miembros)
                 {
                     var miembro = new ComiteMiembroEntity
                     {
                         ComEntidadId = entity.ComcgtdEntId,
-                        Dni = miembroDto.Dni,
-                        Nombre = miembroDto.Nombre,
-                        ApellidoPaterno = miembroDto.ApellidoPaterno,
-                        ApellidoMaterno = miembroDto.ApellidoMaterno,
-                        Cargo = miembroDto.Cargo,
-                        Email = miembroDto.Email,
-                        Telefono = miembroDto.Telefono,
-                        Rol = miembroDto.Rol,
+                        NumMiembro = numMiembro++,
+                        Dni = miembroDto.Dni ?? string.Empty,
+                        Nombre = miembroDto.Nombre ?? string.Empty,
+                        ApellidoPaterno = miembroDto.ApellidoPaterno ?? string.Empty,
+                        ApellidoMaterno = miembroDto.ApellidoMaterno ?? string.Empty,
+                        Cargo = miembroDto.Cargo ?? string.Empty,
+                        Email = miembroDto.Email ?? string.Empty,
+                        Telefono = miembroDto.Telefono ?? string.Empty,
+                        Rol = miembroDto.Rol ?? string.Empty,
                         FechaInicio = miembroDto.FechaInicio ?? DateTime.UtcNow,
-                        Activo = true,
-                        CreatedAt = DateTime.UtcNow
+                        Activo = true
                     };
 
                     _context.ComiteMiembros.Add(miembro);

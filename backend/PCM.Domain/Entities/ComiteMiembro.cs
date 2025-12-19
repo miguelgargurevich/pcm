@@ -7,17 +7,16 @@ namespace PCM.Domain.Entities;
 public class ComiteMiembro
 {
     public long MiembroId { get; set; }
-    public long? ComEntidadId { get; set; }  // FK a Com2CGTD.ComcgtdEntId
-    public string? Dni { get; set; }
-    public string? Nombre { get; set; }
-    public string? ApellidoPaterno { get; set; }
-    public string? ApellidoMaterno { get; set; }
-    public string? Cargo { get; set; }
-    public string? Email { get; set; }
-    public string? Telefono { get; set; }
-    public string? Rol { get; set; }
-    public DateTime? FechaInicio { get; set; }
-    public DateTime? FechaFin { get; set; }
-    public bool? Activo { get; set; }
-    public DateTime? CreatedAt { get; set; }
+    public long ComEntidadId { get; set; }  // FK a Com2CGTD.ComcgtdEntId
+    public long NumMiembro { get; set; }    // Número de orden del miembro
+    public string Dni { get; set; } = string.Empty;
+    public string Nombre { get; set; } = string.Empty;
+    public string ApellidoPaterno { get; set; } = string.Empty;
+    public string ApellidoMaterno { get; set; } = string.Empty;
+    public string Cargo { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Telefono { get; set; } = string.Empty;
+    public string Rol { get; set; } = string.Empty;
+    public DateTime FechaInicio { get; set; }
+    public bool Activo { get; set; }
 }

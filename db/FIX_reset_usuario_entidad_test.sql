@@ -72,5 +72,5 @@ WHERE email = 'entidad.test@gob.pe';
 -- ============================================
 -- CREDENCIALES PARA LOGIN:
 -- Email: entidad.test@gob.pe
--- Contraseña: Test123!
+-- Contraseña: Admin123!
 -- ============================================

@@ -653,12 +653,28 @@ const CumplimientoNormativoDetalle = () => {
           console.log('📄 Datos Com2 recibidos:', data);
           
           if (data) {
-            setCom2RecordId(data.comcgtdEntId);
+            setCom2RecordId(data.comcgtdEntId || data.ComcgtdEntId);
             
             // Cargar miembros del comité (Paso 1)
-            if (data.miembros && Array.isArray(data.miembros)) {
-              console.log('👥 Miembros cargados:', data.miembros);
-              setMiembrosComite(data.miembros);
+            // El backend devuelve Miembros (PascalCase), transformar a camelCase para el frontend
+            const miembrosData = data.miembros || data.Miembros || [];
+            if (miembrosData && Array.isArray(miembrosData)) {
+              console.log('👥 Miembros cargados (raw):', miembrosData);
+              // Transformar de PascalCase a camelCase
+              const miembrosTransformados = miembrosData.map(m => ({
+                miembroId: m.miembroId || m.MiembroId,
+                dni: m.dni || m.Dni,
+                nombre: m.nombre || m.Nombre,
+                apellidoPaterno: m.apellidoPaterno || m.ApellidoPaterno,
+                apellidoMaterno: m.apellidoMaterno || m.ApellidoMaterno,
+                cargo: m.cargo || m.Cargo,
+                email: m.email || m.Email,
+                telefono: m.telefono || m.Telefono,
+                rol: m.rol || m.Rol,
+                activo: m.activo !== undefined ? m.activo : m.Activo
+              }));
+              console.log('👥 Miembros transformados:', miembrosTransformados);
+              setMiembrosComite(miembrosTransformados);
             }
             
             // Cargar datos de cumplimiento_normativo (sección 2 y 3)
@@ -2801,8 +2817,10 @@ const CumplimientoNormativoDetalle = () => {
           response = await com2CGTDService.create(com2Data);
           console.log('Respuesta create Com2:', response);
           if (response.isSuccess && response.data) {
-            console.log('ID del nuevo registro Com2:', response.data.id);
-            setCom2RecordId(response.data.id);
+            // El backend devuelve comcgtdEntId o ComcgtdEntId
+            const newId = response.data.comcgtdEntId || response.data.ComcgtdEntId || response.data.id;
+            console.log('ID del nuevo registro Com2:', newId);
+            setCom2RecordId(newId);
           }
         }
         
@@ -2921,17 +2939,17 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           console.log('📋 Paso 1 Com4 - documentoUrl final:', documentoUrl);
           const com4Data = {
-            compromiso_id: 4,
-            entidad_id: user.entidadId,
-            anioInicioPei: parseInt(formData.anioInicio) || null,
-            anioFinPei: parseInt(formData.anioFin) || null,
-            fechaAprobacionPei: formData.fechaAprobacion || null,
-            objetivoPei: formData.objetivoEstrategico || null,
-            descripcionPei: formData.descripcionIncorporacion || null,
-            alineadoPgd: formData.alineadoPgd || false,
-            rutaPdfPei: documentoUrl || null,
-            usuarioRegistra: user.userId,
-            etapaFormulario: 'paso1'
+            CompromisoId: 4,
+            EntidadId: user.entidadId,
+            AnioInicioPei: parseInt(formData.anioInicio) || null,
+            AnioFinPei: parseInt(formData.anioFin) || null,
+            FechaAprobacionPei: formData.fechaAprobacion || null,
+            ObjetivoPei: formData.objetivoEstrategico || null,
+            DescripcionPei: formData.descripcionIncorporacion || null,
+            AlineadoPgd: formData.alineadoPgd || false,
+            RutaPdfPei: documentoUrl || null,
+            UsuarioRegistra: user.userId,
+            EtapaFormulario: 'paso1'
           };
           
           console.log('📤 Datos Com4 Paso 1 a enviar:', com4Data);
@@ -2999,20 +3017,20 @@ const CumplimientoNormativoDetalle = () => {
           // IMPORTANTE: Mantener todos los campos del paso 1 para no borrarlos
           if (pasoActual === 3 && com4RecordId) {
             const com4UpdateData = {
-              compromiso_id: 4,
-              entidad_id: user.entidadId,
-              anioInicioPei: parseInt(formData.anioInicio) || null,
-              anioFinPei: parseInt(formData.anioFin) || null,
-              fechaAprobacionPei: formData.fechaAprobacion || null,
-              objetivoPei: formData.objetivoEstrategico || null,
-              descripcionPei: formData.descripcionIncorporacion || null,
-              alineadoPgd: formData.alineadoPgd || false,
-              rutaPdfPei: pdfUrl || null, // IMPORTANTE: Mantener el PDF del Paso 1
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              usuarioRegistra: user.userId,
-              etapaFormulario: 'completado',
-              estado: 'bandeja'
+              CompromisoId: 4,
+              EntidadId: user.entidadId,
+              AnioInicioPei: parseInt(formData.anioInicio) || null,
+              AnioFinPei: parseInt(formData.anioFin) || null,
+              FechaAprobacionPei: formData.fechaAprobacion || null,
+              ObjetivoPei: formData.objetivoEstrategico || null,
+              DescripcionPei: formData.descripcionIncorporacion || null,
+              AlineadoPgd: formData.alineadoPgd || false,
+              RutaPdfPei: pdfUrl || null, // IMPORTANTE: Mantener el PDF del Paso 1
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              UsuarioRegistra: user.userId,
+              EtapaFormulario: 'completado',
+              Estado: 'bandeja'
             };
             console.log('Actualizando com4_tdpei con aceptaciones:', com4UpdateData);
             console.log('🔍 PDF que se mantendrá en com4_tdpei:', com4UpdateData.rutaPdfPei);
@@ -3036,19 +3054,19 @@ const CumplimientoNormativoDetalle = () => {
         // Paso 1: Guardar en com5_estrategia_digital
         if (pasoActual === 1) {
           const com5Data = {
-            compromisoId: 5,
-            entidadId: user.entidadId,
-            nombreEstrategia: formData.nombreEstrategia || null,
-            periodoInicioEstrategia: parseInt(formData.anioInicio) || null,
-            periodoFinEstrategia: parseInt(formData.anioFin) || null,
-            fechaAprobacionEstrategia: formData.fechaAprobacion || null,
-            objetivosEstrategicos: formData.objetivosEstrategicos || null,
-            lineasAccion: formData.lineasAccion || null,
-            alineadoPgdEstrategia: formData.alineadoPgd || false,
-            estadoImplementacionEstrategia: formData.estadoImplementacion || null,
-            rutaPdfEstrategia: documentoUrl || null,
-            usuarioRegistra: user.userId,
-            etapaFormulario: 'paso1'
+            CompromisoId: 5,
+            EntidadId: user.entidadId,
+            NombreEstrategia: formData.nombreEstrategia || null,
+            PeriodoInicioEstrategia: parseInt(formData.anioInicio) || null,
+            PeriodoFinEstrategia: parseInt(formData.anioFin) || null,
+            FechaAprobacionEstrategia: formData.fechaAprobacion || null,
+            ObjetivosEstrategicos: formData.objetivosEstrategicos || null,
+            LineasAccion: formData.lineasAccion || null,
+            AlineadoPgdEstrategia: formData.alineadoPgd || false,
+            EstadoImplementacionEstrategia: formData.estadoImplementacion || null,
+            RutaPdfEstrategia: documentoUrl || null,
+            UsuarioRegistra: user.userId,
+            EtapaFormulario: 'paso1'
           };
           
           console.log('Datos Com5 Paso 1 a enviar:', com5Data);
@@ -3101,10 +3119,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com5RecordId) {
             await com5EstrategiaDigitalService.update(com5RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -3122,19 +3140,19 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com6Data = {
-            compromisoId: 6,
-            entidadId: user.entidadId,
-            urlGobpe: formData.urlPortalGobPe || null,
-            fechaMigracionGobpe: formData.fechaMigracion || null,
-            fechaActualizacionGobpe: formData.fechaUltimaActualizacion || null,
-            responsableGobpe: formData.nombreResponsable || null,
-            correoResponsableGobpe: formData.correoResponsable || null,
-            telefonoResponsableGobpe: formData.telefonoResponsable || null,
-            tipoMigracionGobpe: formData.tipoMigracion || null,
-            observacionGobpe: formData.observacionesMigracion || null,
-            rutaPdfGobpe: documentoUrl || null,
-            usuarioRegistra: user.userId,
-            etapaFormulario: 'paso1'
+            CompromisoId: 6,
+            EntidadId: user.entidadId,
+            UrlGobpe: formData.urlPortalGobPe || null,
+            FechaMigracionGobpe: formData.fechaMigracion || null,
+            FechaActualizacionGobpe: formData.fechaUltimaActualizacion || null,
+            ResponsableGobpe: formData.nombreResponsable || null,
+            CorreoResponsableGobpe: formData.correoResponsable || null,
+            TelefonoResponsableGobpe: formData.telefonoResponsable || null,
+            TipoMigracionGobpe: formData.tipoMigracion || null,
+            ObservacionGobpe: formData.observacionesMigracion || null,
+            RutaPdfGobpe: documentoUrl || null,
+            UsuarioRegistra: user.userId,
+            EtapaFormulario: 'paso1'
           };
           
           if (com6RecordId) {
@@ -3180,10 +3198,10 @@ const CumplimientoNormativoDetalle = () => {
             console.log('🔍 DEBUG Paso 3 Com6 - formData.aceptaPoliticaPrivacidad:', formData.aceptaPoliticaPrivacidad);
             console.log('🔍 DEBUG Paso 3 Com6 - formData.aceptaDeclaracionJurada:', formData.aceptaDeclaracionJurada);
             const updateData = { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             };
             console.log('📤 DEBUG Paso 3 Com6 - Datos a enviar:', updateData);
             await com6MigracionGobPeService.update(com6RecordId, updateData);
@@ -3203,20 +3221,20 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com7Data = {
-            compromisoId: 7,
-            entidadId: user.entidadId,
-            urlMpd: formData.urlMpd || null,
-            fechaImplementacionMpd: formData.fechaImplementacionMpd || null,
-            responsableMpd: formData.responsableMpd || null,
-            cargoResponsableMpd: formData.cargoResponsableMpd || null,
-            correoResponsableMpd: formData.correoResponsableMpd || null,
-            telefonoResponsableMpd: formData.telefonoResponsableMpd || null,
-            tipoMpd: formData.tipoMpd || null,
-            interoperabilidadMpd: formData.interoperabilidadMpd || false,
-            observacionMpd: formData.observacionMpd || null,
-            rutaPdfMpd: documentoUrl || null,
-            usuarioRegistra: user.userId,
-            etapaFormulario: 'paso1'
+            CompromisoId: 7,
+            EntidadId: user.entidadId,
+            UrlMpd: formData.urlMpd || null,
+            FechaImplementacionMpd: formData.fechaImplementacionMpd || null,
+            ResponsableMpd: formData.responsableMpd || null,
+            CargoResponsableMpd: formData.cargoResponsableMpd || null,
+            CorreoResponsableMpd: formData.correoResponsableMpd || null,
+            TelefonoResponsableMpd: formData.telefonoResponsableMpd || null,
+            TipoMpd: formData.tipoMpd || null,
+            InteroperabilidadMpd: formData.interoperabilidadMpd || false,
+            ObservacionMpd: formData.observacionMpd || null,
+            RutaPdfMpd: documentoUrl || null,
+            UsuarioRegistra: user.userId,
+            EtapaFormulario: 'paso1'
           };
           
           if (com7RecordId) {
@@ -3260,10 +3278,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com7RecordId) {
             await com7ImplementacionMPDService.update(com7RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -3281,20 +3299,20 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com8Data = {
-            compromisoId: 8,
-            entidadId: user.entidadId,
-            urlTupa: formData.urlTupa || null,
-            numeroResolucionTupa: formData.numeroResolucionTupa || null,
-            fechaAprobacionTupa: formData.fechaAprobacionTupa || null,
-            responsableTupa: formData.responsableTupa || null,
-            cargoResponsableTupa: formData.cargoResponsableTupa || null,
-            correoResponsableTupa: formData.correoResponsableTupa || null,
-            telefonoResponsableTupa: formData.telefonoResponsableTupa || null,
-            actualizadoTupa: formData.actualizadoTupa || false,
-            observacionTupa: formData.observacionesTupa || null,
-            rutaPdfTupa: documentoUrl || null,
-            usuarioRegistra: user.userId,
-            etapaFormulario: 'paso1'
+            CompromisoId: 8,
+            EntidadId: user.entidadId,
+            UrlTupa: formData.urlTupa || null,
+            NumeroResolucionTupa: formData.numeroResolucionTupa || null,
+            FechaAprobacionTupa: formData.fechaAprobacionTupa || null,
+            ResponsableTupa: formData.responsableTupa || null,
+            CargoResponsableTupa: formData.cargoResponsableTupa || null,
+            CorreoResponsableTupa: formData.correoResponsableTupa || null,
+            TelefonoResponsableTupa: formData.telefonoResponsableTupa || null,
+            ActualizadoTupa: formData.actualizadoTupa || false,
+            ObservacionTupa: formData.observacionesTupa || null,
+            RutaPdfTupa: documentoUrl || null,
+            UsuarioRegistra: user.userId,
+            EtapaFormulario: 'paso1'
           };
           
           if (com8RecordId) {
@@ -3338,10 +3356,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com8RecordId) {
             await com8PublicacionTUPAService.update(com8RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -3359,21 +3377,21 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com9Data = {
-            compromisoId: 9,
-            entidadId: user.entidadId,
-            fechaAprobacionMgd: formData.fechaAprobacionMgd || null,
-            numeroResolucionMgd: formData.numeroResolucionMgd || null,
-            responsableMgd: formData.responsableMgd || null,
-            cargoResponsableMgd: formData.cargoResponsableMgd || null,
-            correoResponsableMgd: formData.correoResponsableMgd || null,
-            telefonoResponsableMgd: formData.telefonoResponsableMgd || null,
-            sistemaPlataformaMgd: formData.sistemaPlataformaMgd || null,
-            tipoImplantacionMgd: formData.tipoImplantacionMgd || null,
-            interoperaSistemasMgd: formData.interoperaSistemasMgd || false,
-            observacionMgd: formData.observacionesMgd || null,
-            rutaPdfMgd: documentoUrl || null,
-            usuarioRegistra: user.usuarioId,
-            etapaFormulario: 'paso1'
+            CompromisoId: 9,
+            EntidadId: user.entidadId,
+            FechaAprobacionMgd: formData.fechaAprobacionMgd || null,
+            NumeroResolucionMgd: formData.numeroResolucionMgd || null,
+            ResponsableMgd: formData.responsableMgd || null,
+            CargoResponsableMgd: formData.cargoResponsableMgd || null,
+            CorreoResponsableMgd: formData.correoResponsableMgd || null,
+            TelefonoResponsableMgd: formData.telefonoResponsableMgd || null,
+            SistemaPlataformaMgd: formData.sistemaPlataformaMgd || null,
+            TipoImplantacionMgd: formData.tipoImplantacionMgd || null,
+            InteroperaSistemasMgd: formData.interoperaSistemasMgd || false,
+            ObservacionMgd: formData.observacionesMgd || null,
+            RutaPdfMgd: documentoUrl || null,
+            UsuarioRegistra: user.usuarioId,
+            EtapaFormulario: 'paso1'
           };
           
           if (com9RecordId) {
@@ -3417,10 +3435,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com9RecordId) {
             await com9ModeloGestionDocumentalService.update(com9RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -3438,21 +3456,21 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com10Data = {
-            compromisoId: 10,
-            entidadId: user.entidadId,
-            urlDatosAbiertos: formData.urlDatosAbiertos || null,
-            totalDatasets: formData.totalDatasets ? parseInt(formData.totalDatasets) : null,
-            fechaUltimaActualizacionDa: formData.fechaUltimaActualizacionDa || null,
-            responsableDa: formData.responsableDa || null,
-            cargoResponsableDa: formData.cargoDa || null,
-            correoResponsableDa: formData.correoDa || null,
-            telefonoResponsableDa: formData.telefonoDa || null,
-            numeroNormaResolucionDa: formData.numeroNormaResolucionDa || null,
-            fechaAprobacionDa: formData.fechaAprobacionDa || null,
-            observacionDa: formData.observacionesDa || null,
-            rutaPdfDa: documentoUrl || null,
-            usuarioRegistra: user.usuarioId,
-            etapaFormulario: 'paso1'
+            CompromisoId: 10,
+            EntidadId: user.entidadId,
+            UrlDatosAbiertos: formData.urlDatosAbiertos || null,
+            TotalDatasets: formData.totalDatasets ? parseInt(formData.totalDatasets) : null,
+            FechaUltimaActualizacionDa: formData.fechaUltimaActualizacionDa || null,
+            ResponsableDa: formData.responsableDa || null,
+            CargoResponsableDa: formData.cargoDa || null,
+            CorreoResponsableDa: formData.correoDa || null,
+            TelefonoResponsableDa: formData.telefonoDa || null,
+            NumeroNormaResolucionDa: formData.numeroNormaResolucionDa || null,
+            FechaAprobacionDa: formData.fechaAprobacionDa || null,
+            ObservacionDa: formData.observacionesDa || null,
+            RutaPdfDa: documentoUrl || null,
+            UsuarioRegistra: user.usuarioId,
+            EtapaFormulario: 'paso1'
           };
           
           if (com10RecordId) {
@@ -3496,10 +3514,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com10RecordId) {
             await com10DatosAbiertosService.update(com10RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -3518,19 +3536,19 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com11Data = {
-            compromisoId: 11,
-            entidadId: user.entidadId,
-            fechaInicio: formData.fechaInicio || null,
-            fechaFin: formData.fechaFin || null,
-            serviciosDigitalizados: formData.serviciosDigitalizados ? parseInt(formData.serviciosDigitalizados) : null,
-            serviciosTotal: formData.serviciosTotal ? parseInt(formData.serviciosTotal) : null,
-            porcentajeDigitalizacion: formData.porcentajeDigitalizacion ? parseFloat(formData.porcentajeDigitalizacion) : null,
-            archivoPlan: documentoUrl || formData.archivoPlan || null,
-            descripcion: formData.descripcion || null,
-            beneficiariosEstimados: formData.beneficiariosEstimados ? parseInt(formData.beneficiariosEstimados) : null,
-            usuarioRegistra: user.usuarioId,
-            etapaFormulario: 'paso1',
-            estado: 'bandeja'
+            CompromisoId: 11,
+            EntidadId: user.entidadId,
+            FechaInicio: formData.fechaInicio || null,
+            FechaFin: formData.fechaFin || null,
+            ServiciosDigitalizados: formData.serviciosDigitalizados ? parseInt(formData.serviciosDigitalizados) : null,
+            ServiciosTotal: formData.serviciosTotal ? parseInt(formData.serviciosTotal) : null,
+            PorcentajeDigitalizacion: formData.porcentajeDigitalizacion ? parseFloat(formData.porcentajeDigitalizacion) : null,
+            ArchivoPlan: documentoUrl || formData.archivoPlan || null,
+            Descripcion: formData.descripcion || null,
+            BeneficiariosEstimados: formData.beneficiariosEstimados ? parseInt(formData.beneficiariosEstimados) : null,
+            UsuarioRegistra: user.usuarioId,
+            EtapaFormulario: 'paso1',
+            Estado: 'bandeja'
           };
           
           if (com11RecordId) {
@@ -3574,10 +3592,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com11RecordId) {
             await com11AportacionGeoPeruService.update(com11RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -3596,18 +3614,18 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com12Data = {
-            compromisoId: 12,
-            entidadId: user.entidadId,
-            fechaElaboracion: formData.fechaElaboracion || null,
-            numeroDocumento: formData.numeroDocumento || null,
-            archivoDocumento: documentoUrl || formData.archivoDocumento || null,
-            descripcion: formData.descripcion || null,
-            requisitosSeguridad: formData.requisitosSeguridad || null,
-            requisitosPrivacidad: formData.requisitosPrivacidad || null,
-            fechaVigencia: formData.fechaVigencia || null,
-            usuarioRegistra: user.usuarioId,
-            etapaFormulario: 'paso1',
-            estado: 'bandeja'
+            CompromisoId: 12,
+            EntidadId: user.entidadId,
+            FechaElaboracion: formData.fechaElaboracion || null,
+            NumeroDocumento: formData.numeroDocumento || null,
+            ArchivoDocumento: documentoUrl || formData.archivoDocumento || null,
+            Descripcion: formData.descripcion || null,
+            RequisitosSeguridad: formData.requisitosSeguridad || null,
+            RequisitosPrivacidad: formData.requisitosPrivacidad || null,
+            FechaVigencia: formData.fechaVigencia || null,
+            UsuarioRegistra: user.usuarioId,
+            EtapaFormulario: 'paso1',
+            Estado: 'bandeja'
           };
           
           if (com12RecordId) {
@@ -3651,10 +3669,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com12RecordId) {
             await com12ResponsableSoftwarePublicoService.update(com12RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -3673,19 +3691,19 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com13Data = {
-            compromisoId: 13,
-            entidadId: user.entidadId,
-            fechaAprobacion: formData.fechaAprobacion || null,
-            numeroResolucion: formData.numeroResolucion || null,
-            archivoPlan: documentoUrl || formData.archivoPlan || null,
-            descripcion: formData.descripcion || null,
-            riesgosIdentificados: formData.riesgosIdentificados || null,
-            estrategiasMitigacion: formData.estrategiasMitigacion || null,
-            fechaRevision: formData.fechaRevision || null,
-            responsable: formData.responsable || null,
-            usuarioRegistra: user.usuarioId,
-            etapaFormulario: 'paso1',
-            estado: 'bandeja'
+            CompromisoId: 13,
+            EntidadId: user.entidadId,
+            FechaAprobacion: formData.fechaAprobacion || null,
+            NumeroResolucion: formData.numeroResolucion || null,
+            ArchivoPlan: documentoUrl || formData.archivoPlan || null,
+            Descripcion: formData.descripcion || null,
+            RiesgosIdentificados: formData.riesgosIdentificados || null,
+            EstrategiasMitigacion: formData.estrategiasMitigacion || null,
+            FechaRevision: formData.fechaRevision || null,
+            Responsable: formData.responsable || null,
+            UsuarioRegistra: user.usuarioId,
+            EtapaFormulario: 'paso1',
+            Estado: 'bandeja'
           };
           
           if (com13RecordId) {
@@ -3729,10 +3747,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com13RecordId) {
             await com13InteroperabilidadPIDEService.update(com13RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -3751,18 +3769,18 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com14Data = {
-            compromisoId: 14,
-            entidadId: user.entidadId,
-            fechaElaboracion: formData.fechaElaboracion || null,
-            numeroDocumento: formData.numeroDocumento || null,
-            archivoDocumento: documentoUrl || formData.archivoDocumento || null,
-            descripcion: formData.descripcion || null,
-            politicasSeguridad: formData.politicasSeguridad || null,
-            certificaciones: formData.certificaciones || null,
-            fechaVigencia: formData.fechaVigencia || null,
-            usuarioRegistra: user.usuarioId,
-            etapaFormulario: 'paso1',
-            estado: 'bandeja'
+            CompromisoId: 14,
+            EntidadId: user.entidadId,
+            FechaElaboracion: formData.fechaElaboracion || null,
+            NumeroDocumento: formData.numeroDocumento || null,
+            ArchivoDocumento: documentoUrl || formData.archivoDocumento || null,
+            Descripcion: formData.descripcion || null,
+            PoliticasSeguridad: formData.politicasSeguridad || null,
+            Certificaciones: formData.certificaciones || null,
+            FechaVigencia: formData.fechaVigencia || null,
+            UsuarioRegistra: user.usuarioId,
+            EtapaFormulario: 'paso1',
+            Estado: 'bandeja'
           };
           
           if (com14RecordId) {
@@ -3806,10 +3824,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com14RecordId) {
             await com14OficialSeguridadDigitalService.update(com14RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -3828,18 +3846,18 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com15Data = {
-            compromisoId: 15,
-            entidadId: user.entidadId,
-            fechaConformacion: formData.fechaConformacion || null,
-            numeroResolucion: formData.numeroResolucion || null,
-            responsable: formData.responsable || null,
-            emailContacto: formData.emailContacto || null,
-            telefonoContacto: formData.telefonoContacto || null,
-            archivoProcedimientos: documentoUrl || null,
-            descripcion: formData.descripcion || null,
-            usuarioRegistra: user.usuarioId,
-            etapaFormulario: 'paso1',
-            estado: 'bandeja'
+            CompromisoId: 15,
+            EntidadId: user.entidadId,
+            FechaConformacion: formData.fechaConformacion || null,
+            NumeroResolucion: formData.numeroResolucion || null,
+            Responsable: formData.responsable || null,
+            EmailContacto: formData.emailContacto || null,
+            TelefonoContacto: formData.telefonoContacto || null,
+            ArchivoProcedimientos: documentoUrl || null,
+            Descripcion: formData.descripcion || null,
+            UsuarioRegistra: user.usuarioId,
+            EtapaFormulario: 'paso1',
+            Estado: 'bandeja'
           };
           
           if (com15RecordId) {
@@ -3883,10 +3901,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com15RecordId) {
             await com15CSIRTInstitucionalService.update(com15RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -3905,18 +3923,18 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com16Data = {
-            compromisoId: 16,
-            entidadId: user.entidadId,
-            fechaImplementacion: formData.fechaImplementacion || null,
-            normaAplicable: formData.normaAplicable || null,
-            certificacion: formData.certificacion || null,
-            fechaCertificacion: formData.fechaCertificacion || null,
-            archivoCertificado: documentoUrl || null,
-            descripcion: formData.descripcion || null,
-            alcance: formData.alcance || null,
-            usuarioRegistra: user.usuarioId,
-            etapaFormulario: 'paso1',
-            estado: 'bandeja'
+            CompromisoId: 16,
+            EntidadId: user.entidadId,
+            FechaImplementacion: formData.fechaImplementacion || null,
+            NormaAplicable: formData.normaAplicable || null,
+            Certificacion: formData.certificacion || null,
+            FechaCertificacion: formData.fechaCertificacion || null,
+            ArchivoCertificado: documentoUrl || null,
+            Descripcion: formData.descripcion || null,
+            Alcance: formData.alcance || null,
+            UsuarioRegistra: user.usuarioId,
+            EtapaFormulario: 'paso1',
+            Estado: 'bandeja'
           };
           
           if (com16RecordId) {
@@ -3960,10 +3978,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com16RecordId) {
             await com16SistemaGestionSeguridadService.update(com16RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -3982,18 +4000,18 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com17Data = {
-            compromisoId: 17,
-            entidadId: user.entidadId,
-            fechaInicioTransicion: formData.fechaInicioTransicion || null,
-            fechaFinTransicion: formData.fechaFinTransicion || null,
-            porcentajeAvance: formData.porcentajeAvance ? parseFloat(formData.porcentajeAvance) : null,
-            sistemasMigrados: formData.sistemasMigrados ? parseInt(formData.sistemasMigrados) : null,
-            sistemasTotal: formData.sistemasTotal ? parseInt(formData.sistemasTotal) : null,
-            archivoPlan: documentoUrl || null,
-            descripcion: formData.descripcion || null,
-            usuarioRegistra: user.usuarioId,
-            etapaFormulario: 'paso1',
-            estado: 'bandeja'
+            CompromisoId: 17,
+            EntidadId: user.entidadId,
+            FechaInicioTransicion: formData.fechaInicioTransicion || null,
+            FechaFinTransicion: formData.fechaFinTransicion || null,
+            PorcentajeAvance: formData.porcentajeAvance ? parseFloat(formData.porcentajeAvance) : null,
+            SistemasMigrados: formData.sistemasMigrados ? parseInt(formData.sistemasMigrados) : null,
+            SistemasTotal: formData.sistemasTotal ? parseInt(formData.sistemasTotal) : null,
+            ArchivoPlan: documentoUrl || null,
+            Descripcion: formData.descripcion || null,
+            UsuarioRegistra: user.usuarioId,
+            EtapaFormulario: 'paso1',
+            Estado: 'bandeja'
           };
           
           if (com17RecordId) {
@@ -4037,10 +4055,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com17RecordId) {
             await com17PlanTransicionIPv6Service.update(com17RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -4059,18 +4077,18 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com18Data = {
-            compromisoId: 18,
-            entidadId: user.entidadId,
-            urlPlataforma: formData.urlPlataforma || null,
-            fechaImplementacion: formData.fechaImplementacion || null,
-            tramitesDisponibles: formData.tramitesDisponibles ? parseInt(formData.tramitesDisponibles) : null,
-            usuariosRegistrados: formData.usuariosRegistrados ? parseInt(formData.usuariosRegistrados) : null,
-            tramitesProcesados: formData.tramitesProcesados ? parseInt(formData.tramitesProcesados) : null,
-            archivoEvidencia: documentoUrl || null,
-            descripcion: formData.descripcion || null,
-            usuarioRegistra: user.usuarioId,
-            etapaFormulario: 'paso1',
-            estado: 'bandeja'
+            CompromisoId: 18,
+            EntidadId: user.entidadId,
+            UrlPlataforma: formData.urlPlataforma || null,
+            FechaImplementacion: formData.fechaImplementacion || null,
+            TramitesDisponibles: formData.tramitesDisponibles ? parseInt(formData.tramitesDisponibles) : null,
+            UsuariosRegistrados: formData.usuariosRegistrados ? parseInt(formData.usuariosRegistrados) : null,
+            TramitesProcesados: formData.tramitesProcesados ? parseInt(formData.tramitesProcesados) : null,
+            ArchivoEvidencia: documentoUrl || null,
+            Descripcion: formData.descripcion || null,
+            UsuarioRegistra: user.usuarioId,
+            EtapaFormulario: 'paso1',
+            Estado: 'bandeja'
           };
           
           if (com18RecordId) {
@@ -4114,10 +4132,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com18RecordId) {
             await com18AccesoPortalTransparenciaService.update(com18RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -4136,17 +4154,17 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com19Data = {
-            compromisoId: 19,
-            entidadId: user.entidadId,
-            fechaConexion: formData.fechaConexion || null,
-            tipoConexion: formData.tipoConexion || null,
-            anchoBanda: formData.anchoBanda || null,
-            proveedor: formData.proveedor || null,
-            archivoContrato: documentoUrl || null,
-            descripcion: formData.descripcion || null,
-            usuarioRegistra: user.usuarioId,
-            etapaFormulario: 'paso1',
-            estado: 'bandeja'
+            CompromisoId: 19,
+            EntidadId: user.entidadId,
+            FechaConexion: formData.fechaConexion || null,
+            TipoConexion: formData.tipoConexion || null,
+            AnchoBanda: formData.anchoBanda || null,
+            Proveedor: formData.proveedor || null,
+            ArchivoContrato: documentoUrl || null,
+            Descripcion: formData.descripcion || null,
+            UsuarioRegistra: user.usuarioId,
+            EtapaFormulario: 'paso1',
+            Estado: 'bandeja'
           };
           
           if (com19RecordId) {
@@ -4190,10 +4208,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com19RecordId) {
             await com19EncuestaNacionalGobDigitalService.update(com19RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -4212,16 +4230,16 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com20Data = {
-            compromisoId: 20,
-            entidadId: user.entidadId,
-            sistemasDocumentados: formData.sistemasDocumentados ? parseInt(formData.sistemasDocumentados) : null,
-            sistemasTotal: formData.sistemasTotal ? parseInt(formData.sistemasTotal) : null,
-            porcentajeDocumentacion: formData.porcentajeDocumentacion ? parseFloat(formData.porcentajeDocumentacion) : null,
-            archivoRepositorio: documentoUrl || null,
-            descripcion: formData.descripcion || null,
-            usuarioRegistra: user.usuarioId,
-            etapaFormulario: 'paso1',
-            estado: 'bandeja'
+            CompromisoId: 20,
+            EntidadId: user.entidadId,
+            SistemasDocumentados: formData.sistemasDocumentados ? parseInt(formData.sistemasDocumentados) : null,
+            SistemasTotal: formData.sistemasTotal ? parseInt(formData.sistemasTotal) : null,
+            PorcentajeDocumentacion: formData.porcentajeDocumentacion ? parseFloat(formData.porcentajeDocumentacion) : null,
+            ArchivoRepositorio: documentoUrl || null,
+            Descripcion: formData.descripcion || null,
+            UsuarioRegistra: user.usuarioId,
+            EtapaFormulario: 'paso1',
+            Estado: 'bandeja'
           };
           
           if (com20RecordId) {
@@ -4265,10 +4283,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com20RecordId) {
             await com20DigitalizacionServiciosFacilitaService.update(com20RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           
@@ -4287,18 +4305,18 @@ const CumplimientoNormativoDetalle = () => {
         
         if (pasoActual === 1) {
           const com21Data = {
-            compromisoId: 21,
-            entidadId: user.entidadId,
-            fechaElaboracion: formData.fechaElaboracion || null,
-            numeroDocumento: formData.numeroDocumento || null,
-            archivoDocumento: documentoUrl || null,
-            descripcion: formData.descripcion || null,
-            procedimientos: formData.procedimientos || null,
-            responsables: formData.responsables || null,
-            fechaVigencia: formData.fechaVigencia || null,
-            usuarioRegistra: user.usuarioId,
-            etapaFormulario: 'paso1',
-            estado: 'bandeja'
+            CompromisoId: 21,
+            EntidadId: user.entidadId,
+            FechaElaboracion: formData.fechaElaboracion || null,
+            NumeroDocumento: formData.numeroDocumento || null,
+            ArchivoDocumento: documentoUrl || null,
+            Descripcion: formData.descripcion || null,
+            Procedimientos: formData.procedimientos || null,
+            Responsables: formData.responsables || null,
+            FechaVigencia: formData.fechaVigencia || null,
+            UsuarioRegistra: user.usuarioId,
+            EtapaFormulario: 'paso1',
+            Estado: 'bandeja'
           };
           
           if (com21RecordId) {
@@ -4342,10 +4360,10 @@ const CumplimientoNormativoDetalle = () => {
           
           if (pasoActual === 3 && com21RecordId) {
             await com21OficialGobiernoDatosService.update(com21RecordId, { 
-              etapaFormulario: 'completado',
-              checkPrivacidad: formData.aceptaPoliticaPrivacidad || false,
-              checkDdjj: formData.aceptaDeclaracionJurada || false,
-              estado: 'bandeja'
+              EtapaFormulario: 'completado',
+              CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
+              CheckDdjj: formData.aceptaDeclaracionJurada || false,
+              Estado: 'bandeja'
             });
           }
           

@@ -37,7 +37,7 @@ public class GetCom2CGTDByEntidadHandler : IRequestHandler<GetCom2CGTDByEntidadQ
             // Obtener miembros del comité
             var miembros = await _context.ComiteMiembros
                 .Where(m => m.ComEntidadId == entity.ComcgtdEntId && m.Activo == true)
-                .OrderBy(m => m.CreatedAt)
+                .OrderBy(m => m.MiembroId)
                 .ToListAsync(cancellationToken);
 
             var miembrosDto = miembros.Select(m => new ComiteMiembroDto

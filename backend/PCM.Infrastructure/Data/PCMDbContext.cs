@@ -597,20 +597,19 @@ public class PCMDbContext : DbContext
         {
             entity.ToTable("comite_miembros");
             entity.HasKey(e => e.MiembroId);
-            entity.Property(e => e.MiembroId).HasColumnName("miembro_id");
-            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id");
-            entity.Property(e => e.Dni).HasColumnName("dni").HasMaxLength(12);
-            entity.Property(e => e.Nombre).HasColumnName("nombre").HasMaxLength(100);
-            entity.Property(e => e.ApellidoPaterno).HasColumnName("apellido_paterno").HasMaxLength(60);
-            entity.Property(e => e.ApellidoMaterno).HasColumnName("apellido_materno").HasMaxLength(60);
-            entity.Property(e => e.Cargo).HasColumnName("cargo").HasMaxLength(100);
-            entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(100);
-            entity.Property(e => e.Telefono).HasColumnName("telefono").HasMaxLength(30);
-            entity.Property(e => e.Rol).HasColumnName("rol").HasMaxLength(50);
-            entity.Property(e => e.FechaInicio).HasColumnName("fecha_inicio");
-            entity.Property(e => e.FechaFin).HasColumnName("fecha_fin");
-            entity.Property(e => e.Activo).HasColumnName("activo");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.MiembroId).HasColumnName("comite_miembros_id").ValueGeneratedOnAdd();
+            entity.Property(e => e.ComEntidadId).HasColumnName("com_entidad_id").IsRequired();
+            entity.Property(e => e.NumMiembro).HasColumnName("num_miembro").IsRequired();
+            entity.Property(e => e.Dni).HasColumnName("dni_miembro").HasMaxLength(12).IsRequired();
+            entity.Property(e => e.Nombre).HasColumnName("nombre_miembro").HasMaxLength(60).IsRequired();
+            entity.Property(e => e.ApellidoPaterno).HasColumnName("ape_pat_miembro").HasMaxLength(60).IsRequired();
+            entity.Property(e => e.ApellidoMaterno).HasColumnName("ape_mat_miembro").HasMaxLength(60).IsRequired();
+            entity.Property(e => e.Cargo).HasColumnName("cargo_miembro").HasMaxLength(80).IsRequired();
+            entity.Property(e => e.Email).HasColumnName("email_miembro").HasMaxLength(60).IsRequired();
+            entity.Property(e => e.Telefono).HasColumnName("telef_miembro").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.Rol).HasColumnName("rol_en_comite").HasMaxLength(40).IsRequired();
+            entity.Property(e => e.FechaInicio).HasColumnName("fecha_designacion").IsRequired();
+            entity.Property(e => e.Activo).HasColumnName("activo").IsRequired();
         });
 
         // Configuración de Com4PEI - Supabase: com4_tdpei
