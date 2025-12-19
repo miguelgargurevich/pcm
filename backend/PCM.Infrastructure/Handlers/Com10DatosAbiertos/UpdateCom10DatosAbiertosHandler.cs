@@ -54,7 +54,10 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                 registro.RutaPdfDa = request.RutaPdfDa ?? registro.RutaPdfDa;
                 registro.CheckPrivacidad = request.CheckPrivacidad;
                 registro.CheckDdjj = request.CheckDdjj;
-                registro.UsuarioRegistra = request.UsuarioRegistra;
+                if (request.UsuarioRegistra.HasValue && request.UsuarioRegistra.Value != Guid.Empty)
+                {
+                    registro.UsuarioRegistra = request.UsuarioRegistra.Value;
+                }
                 registro.EtapaFormulario = request.EtapaFormulario ?? registro.EtapaFormulario;
                 registro.UpdatedAt = DateTime.UtcNow;
 

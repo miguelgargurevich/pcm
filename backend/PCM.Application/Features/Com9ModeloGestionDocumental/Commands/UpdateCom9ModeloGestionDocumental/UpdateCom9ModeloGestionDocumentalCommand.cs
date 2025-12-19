@@ -20,7 +20,7 @@ namespace PCM.Application.Features.Com9ModeloGestionDocumental.Commands.UpdateCo
         public string? RutaPdfMgd { get; set; }
         public bool CheckPrivacidad { get; set; }
         public bool CheckDdjj { get; set; }
-        public Guid UsuarioRegistra { get; set; }
+        public Guid? UsuarioRegistra { get; set; }
         public string? EtapaFormulario { get; set; }
     }
 }
