@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PCM.Domain.Entities;
 
@@ -108,26 +109,34 @@ public class Com14OficialSeguridadDigital
 
     // Propiedades de compatibilidad para handlers existentes
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaElaboracion { get => FechaDesignacionOscd; set => FechaDesignacionOscd = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? NumeroDocumento { get => NumeroResolucionOscd; set => NumeroResolucionOscd = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? ArchivoDocumento { get => RutaPdfOscd; set => RutaPdfOscd = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Descripcion { get => ObservacionOscd; set => ObservacionOscd = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? PoliticasSeguridad { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Certificaciones { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaVigencia { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public string? NombreCompleto { get => $"{NombreOscd} {ApePatOscd} {ApeMatOscd}"; set { } }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PCM.Domain.Entities;
 
@@ -103,45 +104,59 @@ public class Com15CSIRTInstitucional
 
     // Propiedades de compatibilidad para handlers existentes
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaElaboracion { get => FechaConformacionCsirt; set => FechaConformacionCsirt = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? NumeroDocumento { get => NumeroResolucionCsirt; set => NumeroResolucionCsirt = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? ArchivoDocumento { get => RutaPdfCsirt; set => RutaPdfCsirt = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Descripcion { get => ObservacionCsirt; set => ObservacionCsirt = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? TipoCSIRT { get => NombreCsirt; set => NombreCsirt = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public int? IncidentesAtendidos { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public int? TiempoPromedioRespuesta { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public string? NombreCompleto { get => ResponsableCsirt; set => ResponsableCsirt = value ?? ""; }
 
     // Alias adicionales para handlers
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaConformacion { get => FechaConformacionCsirt; set => FechaConformacionCsirt = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? NumeroResolucion { get => NumeroResolucionCsirt; set => NumeroResolucionCsirt = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Responsable { get => ResponsableCsirt; set => ResponsableCsirt = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? EmailContacto { get => CorreoCsirt; set => CorreoCsirt = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? TelefonoContacto { get => TelefonoCsirt; set => TelefonoCsirt = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? ArchivoProcedimientos { get => RutaPdfCsirt; set => RutaPdfCsirt = value ?? ""; }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PCM.Domain.Entities;
 
@@ -134,48 +135,63 @@ public class Com13InteroperabilidadPIDE
 
     // Propiedades de compatibilidad para handlers existentes
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaConexion { get => FechaIntegracionPide; set => FechaIntegracionPide = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public int? ServiciosPublicados { get => ServiciosPublicadosPide.HasValue ? (int?)ServiciosPublicadosPide.Value : null; set => ServiciosPublicadosPide = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public int? ServiciosConsumidos { get => ServiciosConsumidosPide.HasValue ? (int?)ServiciosConsumidosPide.Value : null; set => ServiciosConsumidosPide = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public int? TransaccionesTotales { get => TotalTransaccionesPide.HasValue ? (int?)TotalTransaccionesPide.Value : null; set => TotalTransaccionesPide = value.HasValue ? (long?)value.Value : null; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? ArchivoAcuerdo { get => RutaPdfPide; set => RutaPdfPide = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Descripcion { get => ObservacionPide; set => ObservacionPide = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? UrlPlataforma { get => EnlacePortalPide; set => EnlacePortalPide = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public bool? ConectadoPIDE { get => IntegradoPide; set => IntegradoPide = value; }
 
     // Alias adicionales para handlers
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaAprobacion { get => FechaConvenioPide; set => FechaConvenioPide = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? NumeroResolucion { get => NumeroConvenioPide; set => NumeroConvenioPide = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? ArchivoPlan { get => RutaPdfPide; set => RutaPdfPide = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? RiesgosIdentificados { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public string? EstrategiasMitigacion { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaRevision { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Responsable { get => ResponsablePide; set => ResponsablePide = value ?? ""; }
 }

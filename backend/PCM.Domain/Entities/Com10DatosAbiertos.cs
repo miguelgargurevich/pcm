@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PCM.Domain.Entities;
 
@@ -102,5 +103,6 @@ public class Com10DatosAbiertos
     public string? RutaPdfNormativa { get; set; }
 
     [NotMapped]
+    [JsonIgnore]
     public DateTime? UpdatedAt { get; set; }
 }

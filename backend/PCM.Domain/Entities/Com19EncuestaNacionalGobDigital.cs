@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PCM.Domain.Entities;
 
@@ -100,20 +101,26 @@ public class Com19EncuestaNacionalGobDigital
 
     // Propiedades de compatibilidad para handlers existentes
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaConexion { get => FechaEnvioEnad; set => FechaEnvioEnad = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? TipoConexion { get => EstadoRespuestaEnad; set => EstadoRespuestaEnad = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? AnchoBanda { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Proveedor { get => ResponsableEnad; set => ResponsableEnad = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? ArchivoContrato { get => RutaPdfEnad; set => RutaPdfEnad = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Descripcion { get => ObservacionEnad; set => ObservacionEnad = value ?? ""; }
 }

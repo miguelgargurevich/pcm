@@ -548,6 +548,84 @@ const CumplimientoNormativoDetalle = () => {
         }
       }
       
+      // COMPROMISO 2: Comité GTD (Usar tabla com2_cgtd para Paso 1)
+      if (compromisoId === 2 && user?.entidadId) {
+        console.log('📞 Llamando Com2CGTD.getByEntidad con:', 2, user.entidadId);
+        const response = await com2CGTDService.getByEntidad(2, user.entidadId);
+        console.log('📦 Respuesta de Com2 getByEntidad:', response);
+        
+        if (response.isSuccess || response.success) {
+          const data = response.data;
+          console.log('📄 Datos Com2 recibidos:', data);
+          
+          if (data) {
+            setCom2RecordId(data.comcgtdEntId || data.ComcgtdEntId);
+            
+            // Cargar miembros del comité (Paso 1)
+            // El backend devuelve Miembros (PascalCase), transformar a camelCase para el frontend
+            const miembrosData = data.miembros || data.Miembros || [];
+            if (miembrosData && Array.isArray(miembrosData)) {
+              console.log('👥 Miembros cargados (raw):', miembrosData);
+              // Transformar de PascalCase a camelCase
+              const miembrosTransformados = miembrosData.map(m => ({
+                miembroId: m.miembroId || m.MiembroId,
+                dni: m.dni || m.Dni,
+                nombre: m.nombre || m.Nombre,
+                apellidoPaterno: m.apellidoPaterno || m.ApellidoPaterno,
+                apellidoMaterno: m.apellidoMaterno || m.ApellidoMaterno,
+                cargo: m.cargo || m.Cargo,
+                email: m.email || m.Email,
+                telefono: m.telefono || m.Telefono,
+                rol: m.rol || m.Rol,
+                activo: m.activo !== undefined ? m.activo : m.Activo
+              }));
+              console.log('👥 Miembros transformados:', miembrosTransformados);
+              setMiembrosComite(miembrosTransformados);
+            }
+            
+            // Cargar datos de cumplimiento_normativo (sección 2 y 3)
+            const cumplimientoData = await loadCumplimientoNormativo(2);
+            console.log('✅ Datos cumplimiento retornados:', cumplimientoData);
+            
+            // Establecer formData completo (IDÉNTICO a Com1)
+            setFormData({
+              compromisoId: '2',
+              nroDni: '',
+              nombres: '',
+              apellidoPaterno: '',
+              apellidoMaterno: '',
+              correoElectronico: '',
+              telefono: '',
+              rol: '',
+              cargo: '',
+              fechaInicio: '',
+              documentoFile: null,
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
+              // Integrar validaciones y aceptaciones desde cumplimiento_normativo
+              validacionResolucionAutoridad: cumplimientoData?.validacionResolucionAutoridad || false,
+              validacionLiderFuncionario: cumplimientoData?.validacionLiderFuncionario || false,
+              validacionDesignacionArticulo: cumplimientoData?.validacionDesignacionArticulo || false,
+              validacionFuncionesDefinidas: cumplimientoData?.validacionFuncionesDefinidas || false,
+              aceptaPoliticaPrivacidad: cumplimientoData?.AceptaPoliticaPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || false,
+              aceptaDeclaracionJurada: cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || false,
+              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
+            });
+            
+            // Si hay documento guardado en com2_cgtd, establecer la URL para Paso 1
+            if (data.urlDocPcm) {
+              console.log('📄 Cargando PDF del Comité GTD desde:', data.urlDocPcm);
+              setPdfUrl(data.urlDocPcm);
+            }
+          } else {
+            // No existe registro, inicializar
+            setFormData(prev => ({ ...prev, compromisoId: '2' }));
+            setMiembrosComite([]);
+          }
+          setLoading(false);
+          return;
+        }
+      }
+
       // COMPROMISO 3: Plan de Gobierno Digital (Usar tabla com3_epgd)
       if (compromisoId === 3 && user?.entidadId) {
         console.log('📞 Llamando Com3EPGD.getByEntidad con:', user.entidadId);
@@ -640,84 +718,6 @@ const CumplimientoNormativoDetalle = () => {
         }
         setLoading(false);
         return;
-      }
-      
-      // COMPROMISO 2: Comité GTD (Usar tabla com2_cgtd para Paso 1)
-      if (compromisoId === 2 && user?.entidadId) {
-        console.log('📞 Llamando Com2CGTD.getByEntidad con:', 2, user.entidadId);
-        const response = await com2CGTDService.getByEntidad(2, user.entidadId);
-        console.log('📦 Respuesta de Com2 getByEntidad:', response);
-        
-        if (response.isSuccess || response.success) {
-          const data = response.data;
-          console.log('📄 Datos Com2 recibidos:', data);
-          
-          if (data) {
-            setCom2RecordId(data.comcgtdEntId || data.ComcgtdEntId);
-            
-            // Cargar miembros del comité (Paso 1)
-            // El backend devuelve Miembros (PascalCase), transformar a camelCase para el frontend
-            const miembrosData = data.miembros || data.Miembros || [];
-            if (miembrosData && Array.isArray(miembrosData)) {
-              console.log('👥 Miembros cargados (raw):', miembrosData);
-              // Transformar de PascalCase a camelCase
-              const miembrosTransformados = miembrosData.map(m => ({
-                miembroId: m.miembroId || m.MiembroId,
-                dni: m.dni || m.Dni,
-                nombre: m.nombre || m.Nombre,
-                apellidoPaterno: m.apellidoPaterno || m.ApellidoPaterno,
-                apellidoMaterno: m.apellidoMaterno || m.ApellidoMaterno,
-                cargo: m.cargo || m.Cargo,
-                email: m.email || m.Email,
-                telefono: m.telefono || m.Telefono,
-                rol: m.rol || m.Rol,
-                activo: m.activo !== undefined ? m.activo : m.Activo
-              }));
-              console.log('👥 Miembros transformados:', miembrosTransformados);
-              setMiembrosComite(miembrosTransformados);
-            }
-            
-            // Cargar datos de cumplimiento_normativo (sección 2 y 3)
-            const cumplimientoData = await loadCumplimientoNormativo(2);
-            console.log('✅ Datos cumplimiento retornados:', cumplimientoData);
-            
-            // Establecer formData completo (IDÉNTICO a Com1)
-            setFormData({
-              compromisoId: '2',
-              nroDni: '',
-              nombres: '',
-              apellidoPaterno: '',
-              apellidoMaterno: '',
-              correoElectronico: '',
-              telefono: '',
-              rol: '',
-              cargo: '',
-              fechaInicio: '',
-              documentoFile: null,
-              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
-              // Integrar validaciones y aceptaciones desde cumplimiento_normativo
-              validacionResolucionAutoridad: cumplimientoData?.validacionResolucionAutoridad || false,
-              validacionLiderFuncionario: cumplimientoData?.validacionLiderFuncionario || false,
-              validacionDesignacionArticulo: cumplimientoData?.validacionDesignacionArticulo || false,
-              validacionFuncionesDefinidas: cumplimientoData?.validacionFuncionesDefinidas || false,
-              aceptaPoliticaPrivacidad: cumplimientoData?.AceptaPoliticaPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || false,
-              aceptaDeclaracionJurada: cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || false,
-              estado: data.estado === 'bandeja' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
-            });
-            
-            // Si hay documento guardado en com2_cgtd, establecer la URL para Paso 1
-            if (data.urlDocPcm) {
-              console.log('📄 Cargando PDF del Comité GTD desde:', data.urlDocPcm);
-              setPdfUrl(data.urlDocPcm);
-            }
-          } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '2' }));
-            setMiembrosComite([]);
-          }
-          setLoading(false);
-          return;
-        }
       }
       
       // COMPROMISO 4: Incorporar TD en el PEI

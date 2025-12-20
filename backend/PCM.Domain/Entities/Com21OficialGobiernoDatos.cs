@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PCM.Domain.Entities;
 
@@ -108,33 +109,43 @@ public class Com21OficialGobiernoDatos
 
     // Propiedades de compatibilidad para handlers existentes
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaElaboracion { get => FechaDesignacionOgd; set => FechaDesignacionOgd = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? NumeroDocumento { get => NumeroResolucionOgd; set => NumeroResolucionOgd = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? ArchivoDocumento { get => RutaPdfOgd; set => RutaPdfOgd = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Descripcion { get => ObservacionOgd; set => ObservacionOgd = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? NombreCompleto { get => $"{NombreOgd} {ApePatOgd} {ApeMatOgd}"; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public string? CorreoElectronico { get => CorreoOgd; set => CorreoOgd = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Telefono { get => TelefonoOgd; set => TelefonoOgd = value ?? ""; }
 
     // Alias adicionales para handlers
     [NotMapped]
+    [JsonIgnore]
     public string? Procedimientos { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Responsables { get => NombreOgd; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaVigencia { get => null; set { } }
 }

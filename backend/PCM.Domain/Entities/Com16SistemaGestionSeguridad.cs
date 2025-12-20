@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PCM.Domain.Entities;
 
@@ -128,36 +129,47 @@ public class Com16SistemaGestionSeguridad
 
     // Propiedades de compatibilidad para handlers existentes
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaImplementacion { get => FechaImplementacionSgsi; set => FechaImplementacionSgsi = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? NumeroDocumento { get => NormaAplicadaSgsi; set => NormaAplicadaSgsi = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? ArchivoEvidencia { get => RutaPdfSgsi; set => RutaPdfSgsi = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Descripcion { get => ObservacionSgsi; set => ObservacionSgsi = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? AlcanceSGSI { get => AlcanceSgsi; set => AlcanceSgsi = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? NivelMadurez { get => NivelImplementacionSgsi; set => NivelImplementacionSgsi = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaCertificacion { get => FechaCertificacionSgsi; set => FechaCertificacionSgsi = value; }
 
     // Alias adicionales para handlers
     [NotMapped]
+    [JsonIgnore]
     public string? NormaAplicable { get => VersionNormaSgsi; set => VersionNormaSgsi = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Certificacion { get => EntidadCertificadoraSgsi; set => EntidadCertificadoraSgsi = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? ArchivoCertificado { get => RutaPdfCertificadoSgsi; set => RutaPdfCertificadoSgsi = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Alcance { get => AlcanceSgsi; set => AlcanceSgsi = value ?? ""; }
 }

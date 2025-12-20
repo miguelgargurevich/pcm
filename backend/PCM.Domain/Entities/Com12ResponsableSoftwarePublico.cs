@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PCM.Domain.Entities;
 
@@ -105,33 +106,43 @@ public class Com12ResponsableSoftwarePublico
 
     // Propiedades de compatibilidad para handlers existentes
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaElaboracion { get => FechaDesignacionRsp; set => FechaDesignacionRsp = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? NumeroDocumento { get => NumeroResolucionRsp; set => NumeroResolucionRsp = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? ArchivoDocumento { get => RutaPdfRsp; set => RutaPdfRsp = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Descripcion { get => ObservacionRsp; set => ObservacionRsp = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? NombreCompleto { get => $"{NombreRsp} {ApePatRsp} {ApeMatRsp}"; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public string? CorreoElectronico { get => CorreoRsp; set => CorreoRsp = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Telefono { get => TelefonoRsp; set => TelefonoRsp = value ?? ""; }
 
     // Alias adicionales para handlers
     [NotMapped]
+    [JsonIgnore]
     public string? RequisitosSeguridad { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public string? RequisitosPrivacidad { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaVigencia { get => null; set { } }
 }

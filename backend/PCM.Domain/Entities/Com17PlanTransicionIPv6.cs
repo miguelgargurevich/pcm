@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PCM.Domain.Entities;
 
@@ -106,23 +107,30 @@ public class Com17PlanTransicionIPv6
 
     // Propiedades de compatibilidad para handlers existentes
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaInicioTransicion { get => FechaInicioIpv6; set => FechaInicioIpv6 = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaFinTransicion { get => FechaFinIpv6; set => FechaFinIpv6 = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public decimal? PorcentajeAvance { get; set; }
     
     [NotMapped]
+    [JsonIgnore]
     public int? SistemasMigrados { get; set; }
     
     [NotMapped]
+    [JsonIgnore]
     public int? SistemasTotal { get; set; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? ArchivoPlan { get => RutaPdfPlanIpv6; set => RutaPdfPlanIpv6 = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Descripcion { get => ObservacionIpv6; set => ObservacionIpv6 = value ?? ""; }
 }

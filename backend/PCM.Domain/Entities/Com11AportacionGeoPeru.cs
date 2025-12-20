@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PCM.Domain.Entities;
 
@@ -110,48 +111,63 @@ public class Com11AportacionGeoPeru
 
     // Propiedades de compatibilidad para handlers existentes
     [NotMapped]
+    [JsonIgnore]
     public string? UrlPlataforma { get => UrlGeo; set => UrlGeo = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaImplementacion { get => FechaUltimaActualizacionGeo; set => FechaUltimaActualizacionGeo = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public int? CapasPublicadas { get => (int?)TotalCapasPublicadas; set => TotalCapasPublicadas = value ?? 0; }
     
     [NotMapped]
+    [JsonIgnore]
     public int? CapasTotal { get => (int?)TotalCapasPublicadas; set => TotalCapasPublicadas = value ?? 0; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? ArchivoEvidencia { get => RutaPdfGeo; set => RutaPdfGeo = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Descripcion { get => ObservacionGeo; set => ObservacionGeo = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public int? DatosPublicados { get => (int?)TotalCapasPublicadas; set => TotalCapasPublicadas = value ?? 0; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? TipoDatos { get => TipoInformacionGeo; set => TipoInformacionGeo = value ?? ""; }
 
     // Alias adicionales para handlers
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaInicio { get => FechaUltimaActualizacionGeo; set => FechaUltimaActualizacionGeo = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaFin { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public int? ServiciosDigitalizados { get => (int?)TotalCapasPublicadas; set => TotalCapasPublicadas = value ?? 0; }
     
     [NotMapped]
+    [JsonIgnore]
     public int? ServiciosTotal { get => (int?)TotalCapasPublicadas; set => TotalCapasPublicadas = value ?? 0; }
     
     [NotMapped]
+    [JsonIgnore]
     public decimal? PorcentajeDigitalizacion { get => 100; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public string? ArchivoPlan { get => RutaPdfGeo; set => RutaPdfGeo = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public int? BeneficiariosEstimados { get => null; set { } }
 }

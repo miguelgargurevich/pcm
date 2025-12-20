@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PCM.Domain.Entities;
 
@@ -108,23 +109,30 @@ public class Com18AccesoPortalTransparencia
 
     // Propiedades de compatibilidad para handlers existentes
     [NotMapped]
+    [JsonIgnore]
     public string? UrlPlataforma { get => EnlacePortalPte; set => EnlacePortalPte = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public DateTime? FechaImplementacion { get => FechaAccesoPte; set => FechaAccesoPte = value; }
     
     [NotMapped]
+    [JsonIgnore]
     public int? TramitesDisponibles { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public int? UsuariosRegistrados { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public int? TramitesProcesados { get => null; set { } }
     
     [NotMapped]
+    [JsonIgnore]
     public string? ArchivoEvidencia { get => RutaPdfPte; set => RutaPdfPte = value ?? ""; }
     
     [NotMapped]
+    [JsonIgnore]
     public string? Descripcion { get => DescripcionPte ?? ObservacionPte; set => ObservacionPte = value ?? ""; }
 }
