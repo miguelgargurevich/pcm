@@ -16,12 +16,24 @@ const com11AportacionGeoPeruService = {
         `${API_URL}/Com11AportacionGeoPeru/${compromisoId}/entidad/${entidadId}`,
         getAuthHeader()
       );
-      console.log('Com11AportacionGeoPeru encontrado:', response.data);
+      console.log('Com11AportacionGeoPeru respuesta completa:', response.data);
+      // El backend devuelve { isSuccess, data }, así que retornamos response.data directamente
+      // o extraemos response.data.data si viene anidado
+      const backendResponse = response.data;
+      if (backendResponse && backendResponse.isSuccess !== undefined) {
+        // El backend ya devuelve { isSuccess, data }
+        return backendResponse;
+      }
       return { isSuccess: true, data: response.data };
     } catch (error) {
       if (error.response?.status === 404) {
         console.log('No se encontró Com11AportacionGeoPeru, retornando null');
         return { isSuccess: true, data: null };
+      }
+      // Si es un error del backend con mensaje
+      if (error.response?.data) {
+        console.log('Error del backend:', error.response.data);
+        return error.response.data;
       }
       console.error('Error al obtener Com11AportacionGeoPeru:', error);
       return { 

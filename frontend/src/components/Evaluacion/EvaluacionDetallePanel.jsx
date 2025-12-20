@@ -2,6 +2,26 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ArrowLeft, FileText, Eye, CheckCircle, XCircle, AlertTriangle, Loader2 } from 'lucide-react';
 import EvaluacionCompromiso1 from './EvaluacionCompromiso1';
+import EvaluacionCompromiso2 from './EvaluacionCompromiso2';
+import EvaluacionCompromiso3 from './EvaluacionCompromiso3';
+import EvaluacionCompromiso4 from './EvaluacionCompromiso4';
+import EvaluacionCompromiso5 from './EvaluacionCompromiso5';
+import EvaluacionCompromiso6 from './EvaluacionCompromiso6';
+import EvaluacionCompromiso7 from './EvaluacionCompromiso7';
+import EvaluacionCompromiso8 from './EvaluacionCompromiso8';
+import EvaluacionCompromiso9 from './EvaluacionCompromiso9';
+import EvaluacionCompromiso10 from './EvaluacionCompromiso10';
+import EvaluacionCompromiso11 from './EvaluacionCompromiso11';
+import EvaluacionCompromiso12 from './EvaluacionCompromiso12';
+import EvaluacionCompromiso13 from './EvaluacionCompromiso13';
+import EvaluacionCompromiso14 from './EvaluacionCompromiso14';
+import EvaluacionCompromiso15 from './EvaluacionCompromiso15';
+import EvaluacionCompromiso16 from './EvaluacionCompromiso16';
+import EvaluacionCompromiso17 from './EvaluacionCompromiso17';
+import EvaluacionCompromiso18 from './EvaluacionCompromiso18';
+import EvaluacionCompromiso19 from './EvaluacionCompromiso19';
+import EvaluacionCompromiso20 from './EvaluacionCompromiso20';
+import EvaluacionCompromiso21 from './EvaluacionCompromiso21';
 import evaluacionService from '../../services/evaluacionService';
 
 // Nombres de los compromisos
@@ -106,22 +126,51 @@ const EvaluacionDetallePanel = ({
     switch (compromisoId) {
       case 1:
         return <EvaluacionCompromiso1 data={compromisoData} activeTab={activeTab} />;
-      // Aquí se agregarán más componentes para cada compromiso
-      // case 2: return <EvaluacionCompromiso2 data={compromisoData} activeTab={activeTab} />;
-      // case 3: return <EvaluacionCompromiso3 data={compromisoData} activeTab={activeTab} />;
+      case 2:
+        return <EvaluacionCompromiso2 data={compromisoData} activeTab={activeTab} />;
+      case 3:
+        return <EvaluacionCompromiso3 data={compromisoData} activeTab={activeTab} />;
+      case 4:
+        return <EvaluacionCompromiso4 data={compromisoData} activeTab={activeTab} />;
+      case 5:
+        return <EvaluacionCompromiso5 data={compromisoData} activeTab={activeTab} />;
+      case 6:
+        return <EvaluacionCompromiso6 data={compromisoData} activeTab={activeTab} />;
+      case 7:
+        return <EvaluacionCompromiso7 data={compromisoData} activeTab={activeTab} />;
+      case 8:
+        return <EvaluacionCompromiso8 data={compromisoData} activeTab={activeTab} />;
+      case 9:
+        return <EvaluacionCompromiso9 data={compromisoData} activeTab={activeTab} />;
+      case 10:
+        return <EvaluacionCompromiso10 data={compromisoData} activeTab={activeTab} />;
+      case 11:
+        return <EvaluacionCompromiso11 data={compromisoData} activeTab={activeTab} />;
+      case 12:
+        return <EvaluacionCompromiso12 data={compromisoData} activeTab={activeTab} />;
+      case 13:
+        return <EvaluacionCompromiso13 data={compromisoData} activeTab={activeTab} />;
+      case 14:
+        return <EvaluacionCompromiso14 data={compromisoData} activeTab={activeTab} />;
+      case 15:
+        return <EvaluacionCompromiso15 data={compromisoData} activeTab={activeTab} />;
+      case 16:
+        return <EvaluacionCompromiso16 data={compromisoData} activeTab={activeTab} />;
+      case 17:
+        return <EvaluacionCompromiso17 data={compromisoData} activeTab={activeTab} />;
+      case 18:
+        return <EvaluacionCompromiso18 data={compromisoData} activeTab={activeTab} />;
+      case 19:
+        return <EvaluacionCompromiso19 data={compromisoData} activeTab={activeTab} />;
+      case 20:
+        return <EvaluacionCompromiso20 data={compromisoData} activeTab={activeTab} />;
+      case 21:
+        return <EvaluacionCompromiso21 data={compromisoData} activeTab={activeTab} />;
       default:
         return (
           <div className="text-center py-8 text-gray-500">
             <FileText size={48} className="mx-auto mb-4 text-gray-300" />
-            <p>Componente de evaluación para Compromiso {compromisoId} en desarrollo</p>
-            {compromisoData && (
-              <div className="mt-4 text-left bg-gray-100 rounded-lg p-4">
-                <p className="text-sm font-medium mb-2">Datos recibidos:</p>
-                <pre className="text-xs overflow-auto max-h-40">
-                  {JSON.stringify(compromisoData, null, 2)}
-                </pre>
-              </div>
-            )}
+            <p>Componente de evaluación para Compromiso {compromisoId} no encontrado</p>
           </div>
         );
     }

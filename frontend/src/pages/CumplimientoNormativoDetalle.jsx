@@ -5239,7 +5239,7 @@ const CumplimientoNormativoDetalle = () => {
                           </tr>
                         ) : (
                           miembrosComite.map((miembro, index) => (
-                            <tr key={miembro.miembroId || index} className="hover:bg-gray-50">
+                            <tr key={`miembro-${miembro.miembroId || miembro.dni || index}`} className="hover:bg-gray-50">
                               <td className="px-3 py-2 text-sm text-gray-900">{miembro.dni}</td>
                               <td className="px-3 py-2 text-sm text-gray-900">{miembro.nombre}</td>
                               <td className="px-3 py-2 text-sm text-gray-900">
@@ -10244,8 +10244,12 @@ const CumplimientoNormativoDetalle = () => {
                     setMiembrosComite(nuevos);
                     showSuccessToast('Miembro actualizado exitosamente');
                   } else {
-                    // Agregar nuevo
-                    setMiembrosComite([...miembrosComite, miembroActual]);
+                    // Agregar nuevo - asignar ID temporal único para evitar keys duplicadas
+                    const nuevoMiembro = {
+                      ...miembroActual,
+                      miembroId: miembroActual.miembroId || `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+                    };
+                    setMiembrosComite([...miembrosComite, nuevoMiembro]);
                     showSuccessToast('Miembro agregado exitosamente');
                   }
                   

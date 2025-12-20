@@ -1,6 +1,9 @@
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PCM.Application.Features.Com2CGTD.Queries.GetCom2CGTDByEntidad;
+using PCM.Application.Features.Com3EPGD.Queries.GetCom3EPGDByEntidad;
 using PCM.Infrastructure.Data;
 
 namespace PCM.API.Controllers;
@@ -15,11 +18,13 @@ public class EvaluacionController : ControllerBase
 {
     private readonly PCMDbContext _context;
     private readonly ILogger<EvaluacionController> _logger;
+    private readonly IMediator _mediator;
 
-    public EvaluacionController(PCMDbContext context, ILogger<EvaluacionController> logger)
+    public EvaluacionController(PCMDbContext context, ILogger<EvaluacionController> logger, IMediator mediator)
     {
         _context = context;
         _logger = logger;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -246,31 +251,66 @@ public class EvaluacionController : ControllerBase
         {
             _logger.LogInformation("Obteniendo detalle compromiso {CompromisoId} para entidad {EntidadId}", compromisoId, entidadId);
             
-            object? data = compromisoId switch
+            object? data = null;
+            
+            // Usar MediatR para compromisos que tienen datos relacionados
+            switch (compromisoId)
             {
-                1 => await _context.Com1LiderGTD.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                2 => await _context.Com2CGTD.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                3 => await _context.Com3EPGD.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                4 => await _context.Com4PEI.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                5 => await _context.Com5EstrategiaDigital.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                6 => await _context.Com6MigracionGobPe.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                7 => await _context.Com7ImplementacionMPD.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                8 => await _context.Com8PublicacionTUPA.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                9 => await _context.Com9ModeloGestionDocumental.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                10 => await _context.Com10DatosAbiertos.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                11 => await _context.Com11AportacionGeoPeru.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                12 => await _context.Com12ResponsableSoftwarePublico.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                13 => await _context.Com13InteroperabilidadPIDE.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                14 => await _context.Com14OficialSeguridadDigital.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                15 => await _context.Com15CSIRTInstitucional.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                16 => await _context.Com16SistemaGestionSeguridad.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                17 => await _context.Com17PlanTransicionIPv6.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                18 => await _context.Com18AccesoPortalTransparencia.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                19 => await _context.Com19EncuestaNacionalGobDigital.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                20 => await _context.Com20DigitalizacionServiciosFacilita.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                21 => await _context.Com21OficialGobiernoDatos.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
-                _ => null
-            };
+                case 2:
+                    // Compromiso 2: Comité GTD con Miembros
+                    var com2Query = new GetCom2CGTDByEntidadQuery
+                    {
+                        CompromisoId = compromisoId,
+                        EntidadId = entidadId
+                    };
+                    var com2Result = await _mediator.Send(com2Query);
+                    if (com2Result.IsSuccess && com2Result.Data != null)
+                    {
+                        data = com2Result.Data;
+                    }
+                    break;
+                    
+                case 3:
+                    // Compromiso 3: Plan de Gobierno Digital con todas sus relaciones
+                    var com3Query = new GetCom3EPGDByEntidadQuery
+                    {
+                        CompromisoId = compromisoId,
+                        EntidadId = entidadId
+                    };
+                    var com3Result = await _mediator.Send(com3Query);
+                    if (com3Result.IsSuccess && com3Result.Data != null)
+                    {
+                        data = com3Result.Data;
+                    }
+                    break;
+                    
+                default:
+                    // Para el resto de compromisos, usar query directo
+                    data = compromisoId switch
+                    {
+                        1 => await _context.Com1LiderGTD.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        4 => await _context.Com4PEI.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        5 => await _context.Com5EstrategiaDigital.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        6 => await _context.Com6MigracionGobPe.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        7 => await _context.Com7ImplementacionMPD.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        8 => await _context.Com8PublicacionTUPA.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        9 => await _context.Com9ModeloGestionDocumental.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        10 => await _context.Com10DatosAbiertos.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        11 => await _context.Com11AportacionGeoPeru.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        12 => await _context.Com12ResponsableSoftwarePublico.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        13 => await _context.Com13InteroperabilidadPIDE.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        14 => await _context.Com14OficialSeguridadDigital.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        15 => await _context.Com15CSIRTInstitucional.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        16 => await _context.Com16SistemaGestionSeguridad.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        17 => await _context.Com17PlanTransicionIPv6.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        18 => await _context.Com18AccesoPortalTransparencia.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        19 => await _context.Com19EncuestaNacionalGobDigital.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        20 => await _context.Com20DigitalizacionServiciosFacilita.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        21 => await _context.Com21OficialGobiernoDatos.AsNoTracking().FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo),
+                        _ => null
+                    };
+                    break;
+            }
 
             _logger.LogInformation("Data obtenida: {HasData}", data != null);
 
