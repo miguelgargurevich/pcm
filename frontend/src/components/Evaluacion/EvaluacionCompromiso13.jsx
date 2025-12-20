@@ -48,13 +48,13 @@ const EvaluacionCompromiso13 = ({ data, activeTab }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
+              <label className="block text-sm font-medium text-gray-500 mb-1 items-center gap-1">
                 <Share2 size={14} /> Tipo de Integración PIDE
               </label>
               <div className="bg-orange-50 rounded-lg p-3 text-orange-900 font-medium">{d.tipoIntegracion || '-'}</div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
+              <label className="block text-sm font-medium text-gray-500 mb-1 items-center gap-1">
                 <Server size={14} /> Nombre del Servicio
               </label>
               <div className="bg-gray-50 rounded-lg p-3 text-gray-900">{d.nombreServicio || '-'}</div>

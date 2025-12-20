@@ -65,7 +65,7 @@ const EvaluacionCompromiso7 = ({ data, activeTab }) => {
               <div className="bg-gray-50 rounded-lg p-3 text-gray-900">{d.tipoMpd || '-'}</div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
+              <label className="block text-sm font-medium text-gray-500 mb-1 items-center gap-1">
                 <Calendar size={14} /> Fecha de Implementación
               </label>
               <div className="bg-gray-50 rounded-lg p-3 text-gray-900">

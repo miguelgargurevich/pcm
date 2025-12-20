@@ -49,13 +49,13 @@ const EvaluacionCompromiso9 = ({ data, activeTab }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
+              <label className="block text-sm font-medium text-gray-500 mb-1 items-center gap-1">
                 <Hash size={14} /> Número de Resolución
               </label>
               <div className="bg-gray-50 rounded-lg p-3 text-gray-900">{d.numeroResolucion || '-'}</div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
+              <label className="block text-sm font-medium text-gray-500 mb-1 items-center gap-1">
                 <Calendar size={14} /> Fecha de Aprobación
               </label>
               <div className="bg-gray-50 rounded-lg p-3 text-gray-900">
@@ -63,7 +63,7 @@ const EvaluacionCompromiso9 = ({ data, activeTab }) => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
+              <label className="block text-sm font-medium text-gray-500 mb-1 items-center gap-1">
                 <CheckCircle size={14} /> Documento Normativo
               </label>
               <div className={`rounded-lg p-3 font-medium ${d.tieneDocumentoNormativo ? 'bg-green-50 text-green-800' : 'bg-yellow-50 text-yellow-800'}`}>

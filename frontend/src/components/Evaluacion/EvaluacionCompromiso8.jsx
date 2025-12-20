@@ -61,13 +61,13 @@ const EvaluacionCompromiso8 = ({ data, activeTab }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
+              <label className="block text-sm font-medium text-gray-500 mb-1 items-center gap-1">
                 <Hash size={14} /> Número de Resolución
               </label>
               <div className="bg-gray-50 rounded-lg p-3 text-gray-900">{d.numeroResolucion || '-'}</div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
+              <label className="block text-sm font-medium text-gray-500 mb-1 items-center gap-1">
                 <Calendar size={14} /> Fecha de Aprobación
               </label>
               <div className="bg-gray-50 rounded-lg p-3 text-gray-900">

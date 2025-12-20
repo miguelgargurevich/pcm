@@ -61,13 +61,13 @@ const EvaluacionCompromiso11 = ({ data, activeTab }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
+              <label className="block text-sm font-medium text-gray-500 mb-1 items-center gap-1">
                 <MapPin size={14} /> Tipo de Información Georreferenciada
               </label>
               <div className="bg-gray-50 rounded-lg p-3 text-gray-900">{d.tipoInformacion || '-'}</div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
+              <label className="block text-sm font-medium text-gray-500 mb-1 items-center gap-1">
                 <Layers size={14} /> Total de Capas Publicadas
               </label>
               <div className="bg-green-50 rounded-lg p-3 text-green-900 font-bold text-2xl">{d.totalCapas}</div>
