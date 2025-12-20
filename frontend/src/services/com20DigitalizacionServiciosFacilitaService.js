@@ -17,7 +17,8 @@ const com20DigitalizacionServiciosFacilitaService = {
         getAuthHeader()
       );
       console.log('Com20DigitalizacionServiciosFacilita encontrado:', response.data);
-      return { isSuccess: true, data: response.data };
+      // La API devuelve { isSuccess, data, message }, extraer data directamente
+      return { isSuccess: true, data: response.data?.data || response.data };
     } catch (error) {
       if (error.response?.status === 404) {
         console.log('No se encontró Com20DigitalizacionServiciosFacilita, retornando null');

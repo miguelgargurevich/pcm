@@ -17,7 +17,8 @@ const com15CSIRTInstitucionalService = {
         getAuthHeader()
       );
       console.log('Com15CSIRTInstitucional encontrado:', response.data);
-      return { isSuccess: true, data: response.data };
+      // La API devuelve { isSuccess, data, message }, extraer data directamente
+      return { isSuccess: true, data: response.data?.data || response.data };
     } catch (error) {
       if (error.response?.status === 404) {
         console.log('No se encontró Com15CSIRTInstitucional, retornando null');

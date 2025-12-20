@@ -17,7 +17,8 @@ const com17PlanTransicionIPv6Service = {
         getAuthHeader()
       );
       console.log('Com17PlanTransicionIPv6 encontrado:', response.data);
-      return { isSuccess: true, data: response.data };
+      // La API devuelve { isSuccess, data, message }, extraer data directamente
+      return { isSuccess: true, data: response.data?.data || response.data };
     } catch (error) {
       if (error.response?.status === 404) {
         console.log('No se encontró Com17PlanTransicionIPv6, retornando null');
