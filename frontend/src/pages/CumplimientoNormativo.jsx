@@ -291,11 +291,11 @@ const CumplimientoNormativo = () => {
                         <div className="flex justify-center gap-2">
                           <button
                             onClick={() => {
-                              // Si existe cumplimiento, ver; si no, crear nuevo
+                              // Si existe cumplimiento, ver; si no, ver en modo solo lectura
                               if (cumplimiento) {
                                 handleVer(cumplimiento.cumplimientoId, compromiso.compromisoId);
                               } else {
-                                navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`);
+                                navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}&mode=view`);
                               }
                             }}
                             className="text-primary hover:text-primary-dark inline-flex items-center gap-1 p-2 rounded-md hover:bg-gray-100"
