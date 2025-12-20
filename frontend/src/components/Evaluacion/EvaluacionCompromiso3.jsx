@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Target, Users, Monitor, Server, Shield, FolderKanban, ChevronRight } from 'lucide-react';
+import { Target, Users, Server, Shield, FolderKanban, ChevronRight } from 'lucide-react';
 
 /**
  * Componente para mostrar los datos del Compromiso 3: Elaboración del Plan de Gobierno Digital
@@ -36,10 +36,10 @@ const EvaluacionCompromiso3 = ({ data, activeTab }) => {
 
   // Sub-tabs de la pestaña General
   const subTabs = [
-    { id: 'objetivos-pei', label: 'Objetivos Estratégicos (PEI)', icon: Target },
-    { id: 'objetivos-gd', label: 'Objetivos de Gobierno Digital', icon: Target },
-    { id: 'situacion-actual', label: 'Situación Actual', icon: Monitor },
-    { id: 'proyectos', label: 'Portafolio de Proyectos', icon: FolderKanban }
+    { id: 'objetivos-pei', label: 'Objetivos Estratégicos (PEI)' },
+    { id: 'objetivos-gd', label: 'Objetivos de Gobierno Digital' },
+    { id: 'situacion-actual', label: 'Situación Actual' },
+    { id: 'proyectos', label: 'Portafolio de Proyectos' }
   ];
 
   // Sub-tabs de Situación Actual
@@ -65,8 +65,7 @@ const EvaluacionCompromiso3 = ({ data, activeTab }) => {
 
     return (
       <div className="space-y-3">
-        <h4 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-          <Target size={16} className="text-blue-600" />
+        <h4 className="text-sm font-semibold text-gray-700">
           {tipo === 'PEI' ? 'Objetivos Estratégicos (PEI)' : 'Objetivos de Gobierno Digital'}
         </h4>
         {objetivos.map((obj, index) => (
@@ -491,23 +490,19 @@ const EvaluacionCompromiso3 = ({ data, activeTab }) => {
           {/* Sub-tabs del Compromiso 3 */}
           <div className="border-b border-gray-200">
             <nav className="flex flex-wrap gap-2" aria-label="Sub-tabs">
-              {subTabs.map(tab => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveSubTab(tab.id)}
-                    className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-t-lg transition-colors ${
-                      activeSubTab === tab.id
-                        ? 'bg-primary text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    <Icon size={14} />
-                    {tab.label}
-                  </button>
-                );
-              })}
+              {subTabs.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveSubTab(tab.id)}
+                  className={`px-3 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+                    activeSubTab === tab.id
+                      ? 'bg-primary text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </nav>
           </div>
 
@@ -516,29 +511,38 @@ const EvaluacionCompromiso3 = ({ data, activeTab }) => {
             {activeSubTab === 'objetivos-pei' && renderObjetivos(objetivosPEI, 'PEI')}
             {activeSubTab === 'objetivos-gd' && renderObjetivos(objetivosGD, 'GD')}
             {activeSubTab === 'situacion-actual' && (
-              <div className="space-y-4">
-                {/* Tabs de Situación Actual */}
-                <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-lg">
-                  {situacionTabs.map(tab => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveSituacionTab(tab.id)}
-                      className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${
-                        activeSituacionTab === tab.id
-                          ? 'bg-white text-primary shadow-sm'
-                          : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                    >
-                      {tab.label}
-                      {tab.count > 0 && (
-                        <span className="ml-1 px-1.5 py-0.5 text-xs bg-blue-100 text-blue-700 rounded-full">
-                          {tab.count}
-                        </span>
-                      )}
-                    </button>
-                  ))}
+              <div className="flex gap-4">
+                {/* Tabs verticales de Situación Actual - Lado izquierdo */}
+                <div className="flex-shrink-0 w-48">
+                  <div className="flex flex-col gap-1 bg-gray-100 p-2 rounded-lg">
+                    {situacionTabs.map(tab => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveSituacionTab(tab.id)}
+                        className={`flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors text-left ${
+                          activeSituacionTab === tab.id
+                            ? 'bg-white text-primary shadow-sm border-l-4 border-primary'
+                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                        }`}
+                      >
+                        <span>{tab.label}</span>
+                        {tab.count > 0 && (
+                          <span className={`ml-2 px-1.5 py-0.5 text-xs rounded-full ${
+                            activeSituacionTab === tab.id
+                              ? 'bg-primary/10 text-primary'
+                              : 'bg-blue-100 text-blue-700'
+                          }`}>
+                            {tab.count}
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                {renderSituacionActualContent()}
+                {/* Contenido - Lado derecho */}
+                <div className="flex-1 min-w-0">
+                  {renderSituacionActualContent()}
+                </div>
               </div>
             )}
             {activeSubTab === 'proyectos' && renderProyectos()}
