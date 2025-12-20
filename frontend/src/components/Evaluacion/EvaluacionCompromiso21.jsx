@@ -13,13 +13,22 @@ const EvaluacionCompromiso21 = ({ data, activeTab }) => {
     );
   }
 
+  // Construir nombre completo
+  const nombre = data.nombreOgd || data.NombreOgd || '';
+  const apePat = data.apePatOgd || data.ApePatOgd || '';
+  const apeMat = data.apeMatOgd || data.ApeMatOgd || '';
+  const nombreCompleto = [nombre, apePat, apeMat].filter(Boolean).join(' ');
+
   const d = {
     dni: data.dniOgd || data.DniOgd || '',
-    nombre: data.nombreOgd || data.NombreOgd || '',
+    nombre: nombreCompleto || '-',
     cargo: data.cargoOgd || data.CargoOgd || '',
     correo: data.correoOgd || data.CorreoOgd || '',
     telefono: data.telefonoOgd || data.TelefonoOgd || '',
     observacion: data.observacionOgd || data.ObservacionOgd || '',
+    fechaDesignacion: data.fechaDesignacionOgd || data.FechaDesignacionOgd || '',
+    numeroResolucion: data.numeroResolucionOgd || data.NumeroResolucionOgd || '',
+    comunicadoPcm: data.comunicadoPcmOgd ?? false,
     estado: data.estado || data.Estado || '',
     estadoPcm: data.estadoPCM || data.estadoPcm || '',
     etapaFormulario: data.etapaFormulario || data.EtapaFormulario || '',
