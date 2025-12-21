@@ -279,10 +279,10 @@ const HistorialCumplimiento = () => {
         apiService.get('/entidades')
       ]);
 
-      if (compRes.data?.isSuccess) {
+      if (compRes.data?.isSuccess || compRes.data?.success) {
         setCompromisos(compRes.data.data || []);
       }
-      if (entRes.data?.isSuccess) {
+      if (entRes.data?.isSuccess || entRes.data?.success) {
         setEntidades(entRes.data.data || []);
       }
 
@@ -306,9 +306,9 @@ const HistorialCumplimiento = () => {
       if (filtros.fechaDesde) params.append('fechaDesde', filtros.fechaDesde);
       if (filtros.fechaHasta) params.append('fechaHasta', filtros.fechaHasta);
 
-      const response = await apiService.get(`/CumplimientoHistorial/filtrado?${params.toString()}`);
+      const response = await apiService.get(`/CumplimientoHistorial?${params.toString()}`);
       
-      if (response.data?.isSuccess) {
+      if (response.data?.success) {
         setHistorial(response.data.data?.items || []);
         setPagination(prev => ({
           ...prev,
