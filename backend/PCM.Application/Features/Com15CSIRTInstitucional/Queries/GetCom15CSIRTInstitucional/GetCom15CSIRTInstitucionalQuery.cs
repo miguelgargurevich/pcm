@@ -37,4 +37,5 @@ public class Com15CSIRTInstitucionalResponse
     public string RutaPdfCsirt { get; set; } = string.Empty;
     public string ObservacionCsirt { get; set; } = string.Empty;
     public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
 }

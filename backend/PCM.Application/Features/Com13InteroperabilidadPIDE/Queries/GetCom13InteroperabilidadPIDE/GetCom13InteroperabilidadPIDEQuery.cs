@@ -40,6 +40,7 @@ public class Com13InteroperabilidadPIDEResponse
     public string ObservacionPide { get; set; } = string.Empty;
     public string RutaPdfPide { get; set; } = string.Empty;
     public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
     public DateTime? FechaIntegracionPide { get; set; }
     public int? ServiciosPublicadosPide { get; set; }
 }

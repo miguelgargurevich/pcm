@@ -62,7 +62,9 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                     EtapaFormulario = registro.EtapaFormulario,
                     Estado = registro.Estado,
                     CreatedAt = registro.CreatedAt,
-                    UpdatedAt = registro.UpdatedAt
+                    UpdatedAt = registro.UpdatedAt,
+                    RutaPdfNormativa = registro.RutaPdfNormativa,
+                    CriteriosEvaluados = registro.CriteriosEvaluados
                 };
 
                 return Result<Com10DatosAbiertosResponse>.Success(response);

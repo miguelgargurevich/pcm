@@ -88,4 +88,7 @@ public class Com6MigracionGobPe
     [Column("rutaPDF_normativa")]
     [MaxLength(500)]
     public string? RutaPdfNormativa { get; set; }
+
+    [Column("criterios_evaluados")]
+    public string? CriteriosEvaluados { get; set; }
 }

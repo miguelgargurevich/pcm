@@ -60,6 +60,7 @@ public class GetCom19EncuestaNacionalGobDigitalHandler : IRequestHandler<GetCom1
                 ObservacionEnad = entity.ObservacionEnad,
                 RutaPdfEnad = entity.RutaPdfEnad,
                 RutaPdfNormativa = entity.RutaPdfNormativa,
+                CriteriosEvaluados = entity.CriteriosEvaluados,
             };
 
             return Result<Com19EncuestaNacionalGobDigitalResponse>.Success(response);

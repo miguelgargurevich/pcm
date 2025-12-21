@@ -55,6 +55,8 @@ public class Com8PublicacionTUPAResponse
     public bool CheckDdjj { get; set; }
     public string? EstadoPCM { get; set; }
     public string? ObservacionesPCM { get; set; }
+    public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
     public Guid? UsuarioRegistra { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

@@ -38,4 +38,5 @@ public class Com18AccesoPortalTransparenciaResponse
     public string RutaPdfPte { get; set; } = string.Empty;
     public string ObservacionPte { get; set; } = string.Empty;
     public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
 }

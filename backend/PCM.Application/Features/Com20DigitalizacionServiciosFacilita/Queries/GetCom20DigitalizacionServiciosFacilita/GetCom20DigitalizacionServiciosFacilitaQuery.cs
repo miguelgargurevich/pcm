@@ -37,4 +37,5 @@ public class Com20DigitalizacionServiciosFacilitaResponse
     public string RutaPdfFacilita { get; set; } = string.Empty;
     public string ObservacionFacilita { get; set; } = string.Empty;
     public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
 }

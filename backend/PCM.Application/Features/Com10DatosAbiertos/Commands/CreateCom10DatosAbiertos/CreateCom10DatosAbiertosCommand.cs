@@ -48,5 +48,7 @@ namespace PCM.Application.Features.Com10DatosAbiertos.Commands.CreateCom10DatosA
         public string? Estado { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public string? RutaPdfNormativa { get; set; }
+        public string? CriteriosEvaluados { get; set; }
     }
 }

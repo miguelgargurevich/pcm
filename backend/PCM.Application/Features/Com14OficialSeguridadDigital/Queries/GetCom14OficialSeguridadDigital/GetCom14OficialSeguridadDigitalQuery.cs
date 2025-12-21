@@ -38,4 +38,5 @@ public class Com14OficialSeguridadDigitalResponse
     public string RutaPdfOscd { get; set; } = string.Empty;
     public string ObservacionOscd { get; set; } = string.Empty;
     public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
 }

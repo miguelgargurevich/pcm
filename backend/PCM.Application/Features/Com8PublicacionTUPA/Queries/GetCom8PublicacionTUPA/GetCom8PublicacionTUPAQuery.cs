@@ -26,6 +26,7 @@ public class Com8PublicacionTUPAResponse
     public bool ActualizadoTupa { get; set; }
     public string? ObservacionTupa { get; set; }
     public string? RutaPdfTupa { get; set; }
+    public string? RutaPdfNormativa { get; set; }
     public string? CriteriosEvaluados { get; set; }
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }

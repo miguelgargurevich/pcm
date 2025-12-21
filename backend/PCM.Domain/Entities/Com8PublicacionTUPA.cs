@@ -93,6 +93,9 @@ public class Com8PublicacionTUPA
     [MaxLength(500)]
     public string? RutaPdfNormativa { get; set; }
 
+    [Column("criterios_evaluados")]
+    public string? CriteriosEvaluados { get; set; }
+
     // Propiedad no mapeada para compatibilidad con handlers
     [NotMapped]
     public DateTime? UpdatedAt { get; set; }

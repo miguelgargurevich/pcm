@@ -44,4 +44,6 @@ public class Com5EstrategiaDigitalResponse
     public bool Activo { get; set; }
     public string? EstadoPCM { get; set; }
     public string? ObservacionesPCM { get; set; }
+    public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
 }

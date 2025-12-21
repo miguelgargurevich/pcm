@@ -65,6 +65,8 @@ public class Com4PEIResponse
     public bool CheckDdjj { get; set; }
     public string? EstadoPCM { get; set; }
     public string? ObservacionesPCM { get; set; }
+    public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime FecRegistro { get; set; }
     public bool Activo { get; set; }

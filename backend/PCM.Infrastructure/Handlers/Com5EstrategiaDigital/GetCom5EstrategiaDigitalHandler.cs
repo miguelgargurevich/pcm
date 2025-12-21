@@ -61,7 +61,9 @@ public class GetCom5EstrategiaDigitalHandler
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
                 EstadoPCM = entity.EstadoPCM,
-                ObservacionesPCM = entity.ObservacionesPCM
+                ObservacionesPCM = entity.ObservacionesPCM,
+                RutaPdfNormativa = entity.RutaPdfNormativa,
+                CriteriosEvaluados = entity.CriteriosEvaluados
             };
 
             _logger.LogInformation("Registro Com5 encontrado: {ComdedEntId}", entity.ComdedEntId);

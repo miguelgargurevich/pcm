@@ -37,4 +37,5 @@ public class Com12ResponsableSoftwarePublicoResponse
     public string RutaPdfRsp { get; set; } = string.Empty;
     public string ObservacionRsp { get; set; } = string.Empty;
     public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
 }

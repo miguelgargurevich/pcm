@@ -39,4 +39,5 @@ public class Com11AportacionGeoPeruResponse
     public string ObservacionGeo { get; set; } = string.Empty;
     public string RutaPdfGeo { get; set; } = string.Empty;
     public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
 }

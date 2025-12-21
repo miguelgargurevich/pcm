@@ -59,6 +59,7 @@ public class GetCom20DigitalizacionServiciosFacilitaHandler : IRequestHandler<Ge
                 RutaPdfFacilita = entity.RutaPdfFacilita,
                 ObservacionFacilita = entity.ObservacionFacilita,
                 RutaPdfNormativa = entity.RutaPdfNormativa,
+                CriteriosEvaluados = entity.CriteriosEvaluados,
             };
 
             return Result<Com20DigitalizacionServiciosFacilitaResponse>.Success(response);

@@ -23,6 +23,7 @@ import com18AccesoPortalTransparenciaService from '../services/com18AccesoPortal
 import com19EncuestaNacionalGobDigitalService from '../services/com19EncuestaNacionalGobDigitalService';
 import com20DigitalizacionServiciosFacilitaService from '../services/com20DigitalizacionServiciosFacilitaService';
 import com21OficialGobiernoDatosService from '../services/com21OficialGobiernoDatosService';
+import evaluacionCriteriosService from '../services/evaluacionCriteriosService';
 import { compromisosService } from '../services/compromisosService';
 import { getCatalogoOptions, getConfigValue } from '../services/catalogoService';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
@@ -385,8 +386,48 @@ const CumplimientoNormativoDetalle = () => {
     }
   }, [formData.aceptaPoliticaPrivacidad, formData.aceptaDeclaracionJurada, haVistoPolitica, haVistoDeclaracion]);
 
+  // =========================================================================
+  // useEffect para cargar criterios desde evaluacion_respuestas_entidad
+  // Se ejecuta cuando se carga un compromiso y el usuario tiene entidadId
+  // =========================================================================
+  useEffect(() => {
+    const cargarCriteriosDesdeDB = async () => {
+      // Solo cargar si tenemos compromisoId, entidadId y ya no estamos cargando
+      if (!formData.compromisoId || !user?.entidadId || loading) {
+        return;
+      }
+      
+      const compromisoIdNum = parseInt(formData.compromisoId);
+      if (isNaN(compromisoIdNum) || compromisoIdNum < 1 || compromisoIdNum > 21) {
+        return;
+      }
+      
+      console.log('📥 useEffect: Cargando criterios desde DB para compromiso', compromisoIdNum);
+      
+      try {
+        const criteriosDB = await loadCriteriosFromDB(user.entidadId, compromisoIdNum);
+        
+        if (criteriosDB && criteriosDB.length > 0) {
+          console.log('✅ Criterios cargados desde DB:', criteriosDB);
+          setFormData(prev => ({
+            ...prev,
+            criteriosEvaluados: criteriosDB
+          }));
+        } else {
+          console.log('ℹ️ No hay criterios guardados en DB para este compromiso');
+        }
+      } catch (error) {
+        console.error('❌ Error al cargar criterios desde DB:', error);
+      }
+    };
+    
+    cargarCriteriosDesdeDB();
+  }, [formData.compromisoId, user?.entidadId, loading]);
+  // =========================================================================
+
   // Función auxiliar para cargar datos de Paso 2 y 3 desde las tablas comX
   // Los datos ahora vienen de RutaPdfNormativa, CheckPrivacidad, CheckDdjj en cada tabla comX
+  // Los criterios se cargan desde evaluacion_respuestas_entidad
   const loadPaso2y3FromComData = (comData) => {
     if (!comData) return null;
     
@@ -405,8 +446,56 @@ const CumplimientoNormativoDetalle = () => {
     return {
       aceptaPoliticaPrivacidad: checkPrivacidad,
       aceptaDeclaracionJurada: checkDdjj,
-      rutaPdfNormativa
+      rutaPdfNormativa,
+      criteriosEvaluados: [] // Los criterios se cargan aparte desde loadCriteriosFromDB
     };
+  };
+
+  // Función para cargar criterios desde la tabla evaluacion_respuestas_entidad
+  const loadCriteriosFromDB = async (entidadId, compromisoId) => {
+    try {
+      console.log(`📥 Cargando criterios desde DB para entidad ${entidadId}, compromiso ${compromisoId}`);
+      const response = await evaluacionCriteriosService.getCriterios(entidadId, compromisoId);
+      
+      if (response.success && response.data?.criterios) {
+        // Convertir al formato del formData: solo los criterios que cumplen
+        const criteriosEvaluados = response.data.criterios
+          .filter(c => c.cumple)
+          .map(c => ({
+            criterioId: c.criterioEvaluacionId,
+            cumple: c.cumple
+          }));
+        
+        console.log('✅ Criterios cargados desde DB:', criteriosEvaluados);
+        return criteriosEvaluados;
+      }
+      
+      return [];
+    } catch (error) {
+      console.error('Error al cargar criterios desde DB:', error);
+      return [];
+    }
+  };
+
+  // Función para guardar criterios en la tabla evaluacion_respuestas_entidad
+  const saveCriteriosToDB = async (entidadId, compromisoId, criteriosEvaluados) => {
+    try {
+      console.log(`📤 Guardando criterios en DB para entidad ${entidadId}, compromiso ${compromisoId}`);
+      console.log('📋 Criterios a guardar:', criteriosEvaluados);
+      
+      const response = await evaluacionCriteriosService.saveCriterios(entidadId, compromisoId, criteriosEvaluados);
+      
+      if (response.success) {
+        console.log('✅ Criterios guardados exitosamente en DB');
+        return true;
+      } else {
+        console.error('❌ Error al guardar criterios:', response.message);
+        return false;
+      }
+    } catch (error) {
+      console.error('Error al guardar criterios en DB:', error);
+      return false;
+    }
   };
 
   const loadCumplimiento = async () => {
@@ -478,6 +567,12 @@ const CumplimientoNormativoDetalle = () => {
             if (data.urlDocPcm) {
               console.log('📄 Cargando PDF del Líder GTD desde:', data.urlDocPcm);
               setPdfUrl(data.urlDocPcm);
+            }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
             }
           } else {
             // No existe registro, inicializar
@@ -556,6 +651,12 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF del Comité GTD desde:', data.urlDocPcm);
               setPdfUrl(data.urlDocPcm);
             }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
+            }
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '2' }));
@@ -578,8 +679,10 @@ const CumplimientoNormativoDetalle = () => {
             console.log('📄 Datos Com3 EPGD recibidos:', data);
             
             if (data) {
-              // Guardar el ID del registro
-              setCom3RecordId(data.com3EPGDId);
+              // Guardar el ID del registro (el backend devuelve comepgdEntId)
+              const recordId = data.comepgdEntId || data.com3EPGDId;
+              console.log('🔑 Com3 Record ID encontrado:', recordId);
+              setCom3RecordId(recordId);
               
               // Guardar los datos completos para el componente
               setCom3Data({
@@ -733,6 +836,12 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Estrategia (Paso 1) desde:', data.rutaPdfEstrategia);
               setPdfUrl(data.rutaPdfEstrategia);
             }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
+            }
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '5' }));
@@ -804,6 +913,12 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de GOB.PE (Paso 1) desde:', data.rutaPdfGobPe);
               setPdfUrl(data.rutaPdfGobPe);
             }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
+            }
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '6' }));
@@ -855,6 +970,12 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de MPD (Paso 1) desde:', data.rutaPdfMpd);
               setPdfUrl(data.rutaPdfMpd);
             }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
+            }
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '7' }));
@@ -905,6 +1026,12 @@ const CumplimientoNormativoDetalle = () => {
             if (data.rutaPdfTupa) {
               console.log('📄 Cargando PDF de TUPA (Paso 1) desde:', data.rutaPdfTupa);
               setPdfUrl(data.rutaPdfTupa);
+            }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
             }
           } else {
             // No existe registro, inicializar
@@ -958,6 +1085,12 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de MGD (Paso 1) desde:', data.rutaPdfMgd);
               setPdfUrl(data.rutaPdfMgd);
             }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
+            }
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '9' }));
@@ -1009,6 +1142,12 @@ const CumplimientoNormativoDetalle = () => {
             if (data.rutaPdfDa) {
               console.log('📄 Cargando PDF de Datos Abiertos (Paso 1) desde:', data.rutaPdfDa);
               setPdfUrl(data.rutaPdfDa);
+            }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
             }
           } else {
             // No existe registro, inicializar
@@ -1064,6 +1203,12 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando archivo plan (Paso 1) desde:', data.rutaPdfGeo);
               setPdfUrl(data.rutaPdfGeo);
             }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
+            }
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '11' }));
@@ -1114,6 +1259,12 @@ const CumplimientoNormativoDetalle = () => {
             if (data.rutaPdfRsp) {
               console.log('📄 Cargando archivo documento (Paso 1) desde:', data.rutaPdfRsp);
               setPdfUrl(data.rutaPdfRsp);
+            }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
             }
           } else {
             // No existe registro, inicializar
@@ -1169,6 +1320,12 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando archivo PDF PIDE (Paso 1) desde:', data.rutaPdfPide);
               setPdfUrl(data.rutaPdfPide);
             }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
+            }
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '13' }));
@@ -1221,6 +1378,12 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando archivo PDF OSCD (Paso 1) desde:', data.rutaPdfOscd);
               setPdfUrl(data.rutaPdfOscd);
             }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
+            }
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '14' }));
@@ -1272,6 +1435,12 @@ const CumplimientoNormativoDetalle = () => {
             if (data.rutaPdfCsirt) {
               console.log('📄 Cargando archivo PDF CSIRT desde:', data.rutaPdfCsirt);
               setPdfUrl(data.rutaPdfCsirt);
+            }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
             }
           } else {
             // No existe registro, inicializar
@@ -1385,6 +1554,12 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF IPv6 (Paso 1) desde:', data.rutaPdfPlanIpv6);
               setPdfUrl(data.rutaPdfPlanIpv6);
             }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
+            }
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '17' }));
@@ -1438,6 +1613,12 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF Portal Transparencia (Paso 1) desde:', data.rutaPdfPte);
               setPdfUrl(data.rutaPdfPte);
             }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
+            }
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '18' }));
@@ -1488,6 +1669,12 @@ const CumplimientoNormativoDetalle = () => {
             if (data.rutaPdfEnad) {
               console.log('📄 Cargando PDF Encuesta (Paso 1) desde:', data.rutaPdfEnad);
               setPdfUrl(data.rutaPdfEnad);
+            }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
             }
           } else {
             // No existe registro, inicializar
@@ -1540,6 +1727,12 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF Digitalización (Paso 1) desde:', data.rutaPdfFacilita);
               setPdfUrl(data.rutaPdfFacilita);
             }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
+            }
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '20' }));
@@ -1591,6 +1784,12 @@ const CumplimientoNormativoDetalle = () => {
             if (data.rutaPdfOgd) {
               console.log('📄 Cargando PDF Oficial Gobierno Datos (Paso 1) desde:', data.rutaPdfOgd);
               setPdfUrl(data.rutaPdfOgd);
+            }
+            
+            // Si hay documento de Paso 2 (Normativa), establecer la URL
+            if (data.rutaPdfNormativa) {
+              console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
+              setPdfUrlPaso2(data.rutaPdfNormativa);
             }
           } else {
             // No existe registro, inicializar
@@ -2368,6 +2567,7 @@ const CumplimientoNormativoDetalle = () => {
           response = { isSuccess: true, success: true, data: {} };
         }
         // Paso 2 y 3: Guardar directamente en com3_epgd
+        // NOTA: Los criterios ahora se guardan en evaluacion_respuestas_entidad, no aquí
         else if (pasoActual >= 2) {
           const com3UpdateData = {
             ...(pasoActual === 2 && documentoUrl && { RutaPdfNormativa: documentoUrl }),
@@ -3576,6 +3776,32 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       if (response && (response.isSuccess || response.IsSuccess || response.success)) {
+        // =========================================================================
+        // GUARDAR CRITERIOS EVALUADOS EN LA NUEVA TABLA (PASO 2)
+        // =========================================================================
+        if (pasoActual === 2 && formData.criteriosEvaluados?.length > 0) {
+          console.log('📝 Guardando criterios evaluados en la tabla evaluacion_respuestas_entidad...');
+          console.log('📝 Criterios a guardar:', formData.criteriosEvaluados);
+          
+          try {
+            const criteriosGuardados = await saveCriteriosToDB(
+              user.entidadId, 
+              parseInt(formData.compromisoId), 
+              formData.criteriosEvaluados
+            );
+            
+            if (criteriosGuardados) {
+              console.log('✅ Criterios guardados exitosamente en la DB');
+            } else {
+              console.warn('⚠️ No se pudieron guardar los criterios en la DB');
+            }
+          } catch (criterioError) {
+            console.error('❌ Error al guardar criterios:', criterioError);
+            // No falla el guardado principal, solo logueamos el error
+          }
+        }
+        // =========================================================================
+        
         showSuccessToast('Progreso guardado exitosamente');
         return true;
       } else {

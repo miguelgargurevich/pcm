@@ -90,4 +90,7 @@ public class Com5EstrategiaDigital
     [Column("rutaPDF_normativa")]
     [StringLength(500)]
     public string? RutaPdfNormativa { get; set; }
+
+    [Column("criterios_evaluados")]
+    public string? CriteriosEvaluados { get; set; }
 }

@@ -14,6 +14,7 @@ public class UpdateCom3EPGDCommand : IRequest<Result<Com3EPGDResponse>>
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }
     public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
     public string EstadoPcm { get; set; } = string.Empty;
     public string ObservacionesPcm { get; set; } = string.Empty;
     public Guid? UsuarioRegistra { get; set; }

@@ -96,4 +96,7 @@ public class Com20DigitalizacionServiciosFacilita
     [Column("rutaPDF_normativa")]
     [MaxLength(500)]
     public string? RutaPdfNormativa { get; set; }
+
+    [Column("criterios_evaluados")]
+    public string? CriteriosEvaluados { get; set; }
 }

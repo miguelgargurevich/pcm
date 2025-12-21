@@ -23,12 +23,12 @@ const Sidebar = ({ isOpen, onClose }) => {
   const { permisos, loading } = usePermissions();
 
   const allMenuItems = [
-    { icon: Users, label: 'Gestionar Usuarios', path: '/dashboard/usuarios' },
-    { icon: Building2, label: 'Gestionar Entidades', path: '/dashboard/entidades' },
-    { icon: FileText, label: 'Gestionar Marco Normativo', path: '/dashboard/marco-normativo' },
-    { icon: CheckSquare, label: 'Gestionar Compromisos G.D.', path: '/dashboard/compromisos' },
-    { icon: ClipboardCheck, label: 'Cumplimiento Normativo', path: '/dashboard/cumplimiento' },
-    { icon: TrendingUp, label: 'Seguimiento PGD - PP', path: '/dashboard/seguimiento' },
+    { icon: Users, label: 'Módulo de Gestión de Usuarios', path: '/dashboard/usuarios' },
+    { icon: Building2, label: 'Módulo de Gestión de Entidades', path: '/dashboard/entidades' },
+    { icon: FileText, label: 'Módulo del Marco Regulatorio', path: '/dashboard/marco-normativo' },
+    { icon: CheckSquare, label: 'Gestionar Compromisos GD', path: '/dashboard/compromisos' },
+    { icon: ClipboardCheck, label: 'Módulo de Cumplimiento Normativo', path: '/dashboard/cumplimiento' },
+    { icon: TrendingUp, label: 'Seguimiento PGD-PP', path: '/dashboard/seguimiento' },
     { icon: BarChart3, label: 'Evaluación & Cumplimiento', path: '/dashboard/evaluacion' },
     { icon: Search, label: 'Consultas & Reportes', path: '/dashboard/reportes' },
   ];
@@ -104,7 +104,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                     }}
                   >
                     <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-md bg-white/10 group-hover:bg-white/20 transition-colors">
-                      <Icon size={18} className="text-cyan-100 group-hover:text-white" />
+                      <Icon size={18} className="text-gray-100 group-hover:text-white" />
                     </div>
                     <span className="text-sm font-medium flex-1">{item.label}</span>
                   </Link>

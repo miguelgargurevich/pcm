@@ -59,7 +59,9 @@ public class GetCom6MigracionGobPeHandler : IRequestHandler<GetCom6MigracionGobP
                 ObservacionesPCM = entity.ObservacionesPCM,
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
-                Activo = entity.Activo
+                Activo = entity.Activo,
+                RutaPdfNormativa = entity.RutaPdfNormativa,
+                CriteriosEvaluados = entity.CriteriosEvaluados
             };
 
             _logger.LogInformation("Registro Com6MigracionGobPe encontrado con ID {CommpgobpeEntId}", entity.CommpgobpeEntId);

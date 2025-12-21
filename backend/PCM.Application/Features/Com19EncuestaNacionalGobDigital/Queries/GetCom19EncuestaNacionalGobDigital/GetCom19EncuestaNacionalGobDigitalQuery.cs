@@ -36,4 +36,5 @@ public class Com19EncuestaNacionalGobDigitalResponse
     public string ObservacionEnad { get; set; } = string.Empty;
     public string RutaPdfEnad { get; set; } = string.Empty;
     public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
 }

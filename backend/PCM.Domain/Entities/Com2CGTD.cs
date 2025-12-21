@@ -22,4 +22,5 @@ public class Com2CGTD
     // Campos adicionales para persistencia
     public string? UrlDocPcm { get; set; }
     public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
 }

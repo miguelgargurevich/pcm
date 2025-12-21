@@ -46,4 +46,5 @@ public class Com21OficialGobiernoDatosResponse
     public string RutaPdfOgd { get; set; } = string.Empty;
     public string ObservacionOgd { get; set; } = string.Empty;
     public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
 }

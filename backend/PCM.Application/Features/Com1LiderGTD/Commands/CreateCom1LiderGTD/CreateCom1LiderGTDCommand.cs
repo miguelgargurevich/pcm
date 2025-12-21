@@ -54,6 +54,10 @@ public class Com1LiderGTDResponse
     public DateTime? FecIniLider { get; set; }
     public string? UrlDocPcm { get; set; }
     
+    // Paso 2: Documento y Criterios
+    public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
+    
     // Auditoría
     public DateTime CreatedAt { get; set; }
     public DateTime? FecRegistro { get; set; }

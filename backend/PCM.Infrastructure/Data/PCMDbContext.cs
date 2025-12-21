@@ -29,6 +29,7 @@ public class PCMDbContext : DbContext
     public DbSet<CompromisoGobiernoDigital> CompromisosGobiernoDigital { get; set; }
     public DbSet<CompromisoNormativa> CompromisosNormativas { get; set; }
     public DbSet<CriterioEvaluacion> CriteriosEvaluacion { get; set; }
+    public DbSet<EvaluacionRespuestaEntidad> EvaluacionRespuestasEntidad { get; set; }
     public DbSet<AlcanceCompromiso> AlcancesCompromisos { get; set; }
     public DbSet<CumplimientoNormativo> CumplimientosNormativos { get; set; }
     public DbSet<Com1LiderGTD> Com1LiderGTD { get; set; }
@@ -551,6 +552,7 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.FecIniLider).HasColumnName("fec_ini_lider").IsRequired();
             entity.Property(e => e.UrlDocPcm).HasColumnName("url_doc_pcm");
             entity.Property(e => e.RutaPdfNormativa).HasColumnName("rutaPDF_normativa");
+            entity.Property(e => e.CriteriosEvaluados).HasColumnName("criterios_evaluados");
 
             // Relaciones
             entity.HasOne(e => e.Compromiso)
@@ -584,6 +586,7 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.Activo).HasColumnName("activo").IsRequired();
             entity.Property(e => e.UrlDocPcm).HasColumnName("url_doc_pcm");
             entity.Property(e => e.RutaPdfNormativa).HasColumnName("rutaPDF_normativa").HasMaxLength(500);
+            entity.Property(e => e.CriteriosEvaluados).HasColumnName("criterios_evaluados");
         });
 
         // Configuración de ComiteMiembro
@@ -694,6 +697,7 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.CostoAnualTi).HasColumnName("costo_anual_ti").HasColumnType("numeric(12,2)").IsRequired();
             entity.Property(e => e.ExisteComisionGdTi).HasColumnName("existe_comision_gd_ti").IsRequired();
             entity.Property(e => e.RutaPdfNormativa).HasColumnName("rutaPDF_normativa").HasMaxLength(500);
+            entity.Property(e => e.CriteriosEvaluados).HasColumnName("criterios_evaluados");
         });
 
         // Configuración de PersonalTI - NO tiene activo ni created_at en BD

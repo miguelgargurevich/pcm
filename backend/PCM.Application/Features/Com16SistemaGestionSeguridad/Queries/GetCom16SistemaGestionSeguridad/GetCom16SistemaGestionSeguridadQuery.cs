@@ -43,4 +43,5 @@ public class Com16SistemaGestionSeguridadResponse
     public string NormaAplicadaSgsi { get; set; } = string.Empty;
     public string RutaPdfSgsi { get; set; } = string.Empty;
     public string NivelImplementacionSgsi { get; set; } = string.Empty;
+    public string? CriteriosEvaluados { get; set; }
 }

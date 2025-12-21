@@ -26,6 +26,7 @@ public class Com7ImplementacionMPDResponse
     public bool InteroperabilidadMpd { get; set; }
     public string? ObservacionMpd { get; set; }
     public string? RutaPdfMpd { get; set; }
+    public string? RutaPdfNormativa { get; set; }
     public string? CriteriosEvaluados { get; set; }
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }

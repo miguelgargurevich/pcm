@@ -38,4 +38,5 @@ public class Com17PlanTransicionIPv6Response
     public string RutaPdfPlanIpv6 { get; set; } = string.Empty;
     public string ObservacionIpv6 { get; set; } = string.Empty;
     public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
 }

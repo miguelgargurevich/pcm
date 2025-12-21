@@ -62,6 +62,10 @@ public class Com3EPGDResponse
     public decimal? CostoAnualTi { get; set; }
     public bool ExisteComisionGdTi { get; set; }
     
+    // Campos de Paso 2 (Documento y Criterios)
+    public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
+    
     // Listas de datos relacionados
     public List<PersonalTIDto>? PersonalTI { get; set; }
     public List<InventarioSoftwareDto>? InventariosSoftware { get; set; }

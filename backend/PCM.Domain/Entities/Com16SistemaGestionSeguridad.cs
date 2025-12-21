@@ -111,6 +111,9 @@ public class Com16SistemaGestionSeguridad
     [MaxLength(500)]
     public string? RutaPdfNormativa { get; set; }
 
+    [Column("criterios_evaluados")]
+    public string? CriteriosEvaluados { get; set; }
+
     // Campos adicionales necesarios para los alias de compatibilidad
     [Column("fecha_implementacion_sgsi")]
     public DateTime? FechaImplementacionSgsi { get; set; }

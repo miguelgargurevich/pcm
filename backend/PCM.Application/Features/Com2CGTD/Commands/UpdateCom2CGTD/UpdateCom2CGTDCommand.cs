@@ -37,6 +37,8 @@ public class Com2CGTDResponse
     public Guid? UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
     public string? UrlDocPcm { get; set; }
+    public string? RutaPdfNormativa { get; set; }
+    public string? CriteriosEvaluados { get; set; }
     
     public List<ComiteMiembroDto>? Miembros { get; set; }
 }

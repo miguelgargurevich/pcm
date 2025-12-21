@@ -70,6 +70,7 @@ public class GetCom21OficialGobiernoDatosHandler : IRequestHandler<GetCom21Ofici
                 RutaPdfOgd = entity.RutaPdfOgd,
                 ObservacionOgd = entity.ObservacionOgd,
                 RutaPdfNormativa = entity.RutaPdfNormativa,
+                CriteriosEvaluados = entity.CriteriosEvaluados,
             };
 
             return Result<Com21OficialGobiernoDatosResponse>.Success(response);

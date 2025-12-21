@@ -31,4 +31,5 @@ public class Com3EPGD
     public decimal CostoAnualTi { get; set; } // NOT NULL en BD
     public bool ExisteComisionGdTi { get; set; }
     public string? RutaPdfNormativa { get; set; } // NULLABLE en BD: rutaPDF_normativa
+    public string? CriteriosEvaluados { get; set; } // NULLABLE en BD: criterios_evaluados - JSON con array de criterios
 }

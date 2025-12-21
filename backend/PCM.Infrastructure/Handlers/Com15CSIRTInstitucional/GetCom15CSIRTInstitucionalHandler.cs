@@ -61,6 +61,7 @@ public class GetCom15CSIRTInstitucionalHandler : IRequestHandler<GetCom15CSIRTIn
                 RutaPdfCsirt = entity.RutaPdfCsirt,
                 ObservacionCsirt = entity.ObservacionCsirt,
                 RutaPdfNormativa = entity.RutaPdfNormativa,
+                CriteriosEvaluados = entity.CriteriosEvaluados,
             };
 
             return Result<Com15CSIRTInstitucionalResponse>.Success(response);

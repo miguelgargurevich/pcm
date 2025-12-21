@@ -92,6 +92,12 @@ const Compromiso3Paso1 = ({
             },
             proyectos: data.proyectos || []
           });
+          
+          // IMPORTANTE: Notificar al padre con el ID cargado
+          if (onDataChange && data.comepgdEntId) {
+            console.log('📤 Notificando al padre com3EPGDId existente:', data.comepgdEntId);
+            onDataChange({ com3EPGDId: data.comepgdEntId });
+          }
         }
       } catch (err) {
         console.error('Error al cargar datos del Compromiso 3:', err);
@@ -106,6 +112,7 @@ const Compromiso3Paso1 = ({
     } else if (entidadId) {
       loadData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entidadId, initialData]);
 
   const loadDataFromAPI = async () => {
