@@ -2442,14 +2442,18 @@ const CumplimientoNormativoDetalle = () => {
     }
   };
 
-  const guardarProgreso = async () => {
+  const guardarProgreso = async (esFinal = false) => {
     try {
       setSaving(true);
+      
+      // Si es guardado final, usar paso 3 para asegurar estado "enviado"
+      const pasoParaGuardar = esFinal ? 3 : pasoActual;
       
       console.log('=== GUARDAR PROGRESO ===');
       console.log('Compromiso ID:', formData.compromisoId);
       console.log('User:', user);
       console.log('Paso actual:', pasoActual);
+      console.log('Paso para guardar:', pasoParaGuardar, 'esFinal:', esFinal);
       console.log('formData.documentoFile:', formData.documentoFile);
       console.log('pdfUrl:', pdfUrl);
 
@@ -2460,8 +2464,8 @@ const CumplimientoNormativoDetalle = () => {
       // Determinar qué URL de PDF usar según el paso actual
       // Paso 1: usar pdfUrl (documento específico del compromiso)
       // Paso 2: usar pdfUrlPaso2 (documento de cumplimiento normativo)
-      const currentPdfUrl = pasoActual === 2 ? pdfUrlPaso2 : pdfUrl;
-      console.log(`📄 Usando PDF del paso ${pasoActual}:`, currentPdfUrl);
+      const currentPdfUrl = pasoParaGuardar === 2 ? pdfUrlPaso2 : pdfUrl;
+      console.log(`📄 Usando PDF del paso ${pasoParaGuardar}:`, currentPdfUrl);
       
       // Verificar si hay un archivo nuevo (blob URL local) que necesita ser subido
       console.log('🔍 Verificando archivo - documentoFile:', !!formData.documentoFile, 'currentPdfUrl:', currentPdfUrl);
@@ -3150,9 +3154,9 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 11
       else if (parseInt(formData.compromisoId) === 11) {
-        console.log(`🚀 Preparando datos para Com11 (Paso ${pasoActual})`);
+        console.log(`🚀 Preparando datos para Com11 (Paso ${pasoParaGuardar})`);
         
-        if (pasoActual === 1) {
+        if (pasoParaGuardar === 1) {
           const com11Data = {
             CompromisoId: 11,
             EntidadId: user.entidadId,
@@ -3188,22 +3192,22 @@ const CumplimientoNormativoDetalle = () => {
             setPdfUrl(response.data.rutaPdfGeo);
             if (blobUrlToRevoke) URL.revokeObjectURL(blobUrlToRevoke);
           }
-        } else if (pasoActual === 2 || pasoActual === 3) {
+        } else if (pasoParaGuardar === 2 || pasoParaGuardar === 3) {
           const com11UpdateData = {
-            ...(pasoActual === 2 && documentoUrl && { RutaPdfNormativa: documentoUrl }),
-            ...(pasoActual === 3 && {
+            ...(pasoParaGuardar === 2 && documentoUrl && { RutaPdfNormativa: documentoUrl }),
+            ...(pasoParaGuardar === 3 && {
               CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
               CheckDdjj: formData.aceptaDeclaracionJurada || false,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: pasoActual === 3 ? 'enviado' : 'en_proceso'
+            EtapaFormulario: pasoParaGuardar === 3 ? 'completado' : 'paso2',
+            Estado: pasoParaGuardar === 3 ? 'enviado' : 'en_proceso'
           };
           
-          console.log(`📤 Datos Com11 Paso ${pasoActual} a enviar:`, com11UpdateData);
+          console.log(`📤 Datos Com11 Paso ${pasoParaGuardar} a enviar:`, com11UpdateData);
           
           if (com11RecordId) {
             response = await com11AportacionGeoPeruService.update(com11RecordId, com11UpdateData);
-            if (pasoActual === 2 && documentoUrl) {
+            if (pasoParaGuardar === 2 && documentoUrl) {
               setPdfUrlPaso2(documentoUrl);
               if (blobUrlToRevoke) URL.revokeObjectURL(blobUrlToRevoke);
             }
@@ -3877,7 +3881,7 @@ const CumplimientoNormativoDetalle = () => {
         // =========================================================================
         // GUARDAR CRITERIOS EVALUADOS EN LA NUEVA TABLA (PASO 2)
         // =========================================================================
-        if (pasoActual === 2 && formData.criteriosEvaluados?.length > 0) {
+        if (pasoParaGuardar === 2 && formData.criteriosEvaluados?.length > 0) {
           console.log('📝 Guardando criterios evaluados en la tabla evaluacion_respuestas_entidad...');
           console.log('📝 Criterios a guardar:', formData.criteriosEvaluados);
           
@@ -4032,7 +4036,7 @@ const CumplimientoNormativoDetalle = () => {
       confirmButtonClass: 'px-3 py-1 text-sm bg-primary text-white rounded hover:bg-primary-dark transition-colors',
       onConfirm: async () => {
         // Guardar con estado final
-        const guardado = await guardarProgreso();
+        const guardado = await guardarProgreso(true); // esFinal = true
         
         if (guardado) {
           // Enviar correo de confirmación
