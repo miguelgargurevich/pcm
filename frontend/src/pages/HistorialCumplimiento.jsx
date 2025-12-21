@@ -275,7 +275,7 @@ const HistorialCumplimiento = () => {
     try {
       // Cargar compromisos y entidades para los filtros
       const [compRes, entRes] = await Promise.all([
-        apiService.get('/compromisos-gobierno-digital'),
+        apiService.get('/CompromisoGobiernoDigital'),
         apiService.get('/entidades')
       ]);
 
@@ -306,7 +306,7 @@ const HistorialCumplimiento = () => {
       if (filtros.fechaDesde) params.append('fechaDesde', filtros.fechaDesde);
       if (filtros.fechaHasta) params.append('fechaHasta', filtros.fechaHasta);
 
-      const response = await apiService.get(`/cumplimiento-historial/filtrado?${params.toString()}`);
+      const response = await apiService.get(`/CumplimientoHistorial/filtrado?${params.toString()}`);
       
       if (response.data?.isSuccess) {
         setHistorial(response.data.data?.items || []);

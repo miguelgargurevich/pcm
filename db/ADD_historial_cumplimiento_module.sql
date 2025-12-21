@@ -30,7 +30,7 @@ BEGIN
     WHERE codigo = 'historial_cumplimiento';
 
     -- 3. Asignar acceso TOTAL a todos los perfiles existentes
-    INSERT INTO permisos_perfiles (perfil_id, permiso_modulo_id, tipo_acceso, puede_crear, puede_editar, puede_eliminar, puede_ver, activo)
+    INSERT INTO perfiles_permisos (perfil_id, permiso_modulo_id, tipo_acceso, puede_crear, puede_editar, puede_eliminar, puede_consultar, activo)
     SELECT 
         p.perfil_id,
         v_modulo_id,
@@ -44,7 +44,7 @@ BEGIN
     WHERE p.activo = true
     ON CONFLICT (perfil_id, permiso_modulo_id) DO UPDATE SET
         tipo_acceso = 'T',
-        puede_ver = true,
+        puede_consultar = true,
         activo = true;
 
     RAISE NOTICE 'Módulo historial_cumplimiento agregado con ID: % y asignado a todos los perfiles', v_modulo_id;
@@ -57,6 +57,6 @@ SELECT
     pm.ruta,
     COUNT(pp.perfil_id) as perfiles_con_acceso
 FROM permisos_modulos pm
-LEFT JOIN permisos_perfiles pp ON pm.permiso_modulo_id = pp.permiso_modulo_id AND pp.activo = true
+LEFT JOIN perfiles_permisos pp ON pm.permiso_modulo_id = pp.permiso_modulo_id AND pp.activo = true
 WHERE pm.codigo = 'historial_cumplimiento'
 GROUP BY pm.codigo, pm.nombre, pm.ruta;
