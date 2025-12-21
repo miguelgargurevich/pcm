@@ -1243,6 +1243,7 @@ const CumplimientoNormativoDetalle = () => {
               interoperabilidadGeo: data.interoperabilidadGeo || false,
               observacionGeo: data.observacionGeo || '',
               rutaPdfGeo: data.rutaPdfGeo || '',
+              criteriosEvaluados: cumplimientoData?.criteriosEvaluados || [],
               aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'pendiente' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
@@ -9221,7 +9222,7 @@ const CumplimientoNormativoDetalle = () => {
                   {compromisoSeleccionado.criteriosEvaluacion
                     .filter(criterio => criterio.activo)
                     .map((criterio, index) => {
-                      const criterioEvaluado = formData.criteriosEvaluados.find(c => Number(c.criterioId) === Number(criterio.criterioEvaluacionId));
+                      const criterioEvaluado = (formData.criteriosEvaluados || []).find(c => Number(c.criterioId) === Number(criterio.criterioEvaluacionId));
                       console.log(`🔍 Criterio ${criterio.criterioEvaluacionId}:`, { criterioEvaluado, criterioEvaluacionId: criterio.criterioEvaluacionId, formDataCriterios: formData.criteriosEvaluados });
                       return (
                         <div key={criterio.criterioEvaluacionId}>
@@ -9232,7 +9233,7 @@ const CumplimientoNormativoDetalle = () => {
                               onChange={(e) => {
                                 console.log(`📝 Checkbox onChange - criterioId: ${criterio.criterioEvaluacionId}, checked: ${e.target.checked}`);
                                 console.log('📝 Estado actual antes:', formData.criteriosEvaluados);
-                                const criteriosActualizados = formData.criteriosEvaluados.filter(c => Number(c.criterioId) !== Number(criterio.criterioEvaluacionId));
+                                const criteriosActualizados = (formData.criteriosEvaluados || []).filter(c => Number(c.criterioId) !== Number(criterio.criterioEvaluacionId));
                                 if (e.target.checked) {
                                   criteriosActualizados.push({ criterioId: Number(criterio.criterioEvaluacionId), cumple: true });
                                 }
