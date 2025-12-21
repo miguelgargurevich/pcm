@@ -5,7 +5,7 @@ import CriteriosEvaluacionList from './CriteriosEvaluacionList';
  * Componente para mostrar los datos del Compromiso 2: Constitución del Comité de Gobierno y TD
  * Se usa en la vista de evaluación para mostrar los datos en el panel izquierdo
  */
-const EvaluacionCompromiso2 = ({ data, activeTab, criterios = [] }) => {
+const EvaluacionCompromiso2 = ({ data, activeTab, criterios = [], onVerDocumento }) => {
   // Si no hay datos, mostrar mensaje
   if (!data) {
     return (
@@ -70,36 +70,36 @@ const EvaluacionCompromiso2 = ({ data, activeTab, criterios = [] }) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {activeTab === 'general' && (
         <div className="space-y-6">
           {/* Estado del Formulario */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
               <label className="block text-sm font-medium text-gray-500 mb-1">Estado del Formulario</label>
-              <div className="bg-blue-50 rounded-lg p-3 text-blue-900 font-medium">
+              <div className="bg-blue-50 rounded-md p-3 text-sm text-blue-900 font-medium">
                 {datosGenerales.estado || 'Sin estado'}
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500 mb-1">Etapa</label>
-              <div className="bg-purple-50 rounded-lg p-3 text-purple-900 font-medium">
+              <div className="bg-purple-50 rounded-md p-3 text-sm text-purple-900 font-medium">
                 {datosGenerales.etapaFormulario || 'Sin etapa'}
               </div>
             </div>
           </div>
 
           {/* Datos del Comité */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-medium text-gray-500 mb-1">Número de Resolución</label>
-              <div className="bg-gray-50 rounded-lg p-3 text-gray-900">
+              <div className="bg-gray-50 rounded-md p-3 text-sm text-gray-900">
                 {datosGenerales.numeroResolucion || '-'}
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500 mb-1">Fecha de Constitución</label>
-              <div className="bg-gray-50 rounded-lg p-3 text-gray-900">
+              <div className="bg-gray-50 rounded-md p-3 text-sm text-gray-900">
                 {datosGenerales.fechaConstitucion ? new Date(datosGenerales.fechaConstitucion).toLocaleDateString('es-PE') : '-'}
               </div>
             </div>
@@ -112,24 +112,24 @@ const EvaluacionCompromiso2 = ({ data, activeTab, criterios = [] }) => {
               <table className="min-w-full divide-y divide-gray-200 border rounded-lg overflow-hidden">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DNI</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombres</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cargo</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Correo</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">DNI</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Nombres</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Cargo</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Rol</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Correo</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {miembrosComite.length > 0 ? (
                     miembrosComite.map((miembro, index) => (
                       <tr key={`miembro-${miembro.miembroId || miembro.dni || index}`} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">{miembro.dni}</td>
-                        <td className="px-4 py-3 text-sm text-gray-900">
+                        <td className="px-4 py-2 text-sm text-gray-900 whitespace-nowrap">{miembro.dni}</td>
+                        <td className="px-4 py-2 text-sm text-gray-900">
                           {`${miembro.nombre} ${miembro.apellidoPaterno} ${miembro.apellidoMaterno}`.trim()}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-900">{miembro.cargo || '-'}</td>
-                        <td className="px-4 py-3 text-sm text-gray-900">
-                          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        <td className="px-4 py-2 text-sm text-gray-900">{miembro.cargo || '-'}</td>
+                        <td className="px-4 py-2 text-sm text-gray-900">
+                          <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-full ${
                             miembro.rol?.toLowerCase() === 'presidente' 
                               ? 'bg-blue-100 text-blue-800'
                               : miembro.rol?.toLowerCase()?.includes('secretario')
@@ -139,7 +139,7 @@ const EvaluacionCompromiso2 = ({ data, activeTab, criterios = [] }) => {
                             {formatRol(miembro.rol)}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-900">{miembro.email || '-'}</td>
+                        <td className="px-4 py-2 text-sm text-gray-900">{miembro.email || '-'}</td>
                       </tr>
                     ))
                   ) : (
@@ -153,7 +153,7 @@ const EvaluacionCompromiso2 = ({ data, activeTab, criterios = [] }) => {
               </table>
             </div>
             {miembrosComite.length > 0 && (
-              <p className="mt-2 text-xs text-gray-500">
+              <p className="mt-2 text-[10px] text-gray-500">
                 Total de miembros: {miembrosComite.length}
               </p>
             )}
@@ -164,28 +164,29 @@ const EvaluacionCompromiso2 = ({ data, activeTab, criterios = [] }) => {
       {activeTab === 'normativa' && (
         <CriteriosEvaluacionList 
           criterios={criterios} 
-          documentos={documentosNormativos} 
+          documentos={documentosNormativos}
+          onVerDocumento={onVerDocumento}
         />
       )}
 
       {activeTab === 'veracidad' && (
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600 mb-4">
+        <div className="space-y-3">
+          <p className="text-sm text-gray-600 mb-3">
             Validación de la información proporcionada por la entidad.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Política de Privacidad */}
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
+            <div className="p-3 bg-gray-50 rounded-md">
+              <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium text-gray-700">Política de Privacidad</span>
-                <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-full ${
                   datosVeracidad.checkPrivacidad ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                 }`}>
                   {datosVeracidad.checkPrivacidad ? 'Aceptada' : 'Pendiente'}
                 </span>
               </div>
-              <p className="text-xs text-gray-500">
+              <p className="text-[10px] text-gray-500">
                 {datosVeracidad.checkPrivacidad 
                   ? 'La entidad aceptó la política de privacidad' 
                   : 'Pendiente de aceptación'}
@@ -193,16 +194,16 @@ const EvaluacionCompromiso2 = ({ data, activeTab, criterios = [] }) => {
             </div>
 
             {/* Declaración Jurada */}
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
+            <div className="p-3 bg-gray-50 rounded-md">
+              <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium text-gray-700">Declaración Jurada</span>
-                <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-full ${
                   datosVeracidad.checkDdjj ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                 }`}>
                   {datosVeracidad.checkDdjj ? 'Aceptada' : 'Pendiente'}
                 </span>
               </div>
-              <p className="text-xs text-gray-500">
+              <p className="text-[10px] text-gray-500">
                 {datosVeracidad.checkDdjj 
                   ? 'La entidad firmó la declaración jurada' 
                   : 'Pendiente de firma'}
@@ -216,7 +217,7 @@ const EvaluacionCompromiso2 = ({ data, activeTab, criterios = [] }) => {
               <strong>Miembros del comité:</strong> {miembrosComite.length} registrado(s)
             </p>
             {miembrosComite.length > 0 && (
-              <ul className="mt-2 text-xs text-blue-600">
+              <ul className="mt-2 text-sm text-blue-600">
                 {miembrosComite.map((m, i) => (
                   <li key={i}>• {formatRol(m.rol)}: {m.nombre} {m.apellidoPaterno} - DNI: {m.dni}</li>
                 ))}
@@ -236,7 +237,8 @@ EvaluacionCompromiso2.propTypes = {
     criterioEvaluacionId: PropTypes.number,
     descripcion: PropTypes.string,
     cumple: PropTypes.bool
-  }))
+  })),
+  onVerDocumento: PropTypes.func
 };
 
 export default EvaluacionCompromiso2;

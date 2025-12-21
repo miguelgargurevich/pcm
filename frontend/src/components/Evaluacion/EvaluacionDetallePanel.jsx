@@ -77,11 +77,18 @@ const EvaluacionDetallePanel = ({
 }) => {
   const [activeTab, setActiveTab] = useState('general');
   const [observaciones, setObservaciones] = useState('');
-  const [pdfUrl, _setPdfUrl] = useState(null);
+  const [pdfUrl, setPdfUrl] = useState(null);
   const [compromisoData, setCompromisoData] = useState(null);
   const [entidadData, setEntidadData] = useState(null);
   const [criteriosEvaluacion, setCriteriosEvaluacion] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Función para mostrar documento en el visor
+  const handleVerDocumento = (url) => {
+    if (url) {
+      setPdfUrl(url);
+    }
+  };
 
   // Cargar datos del compromiso
   useEffect(() => {
@@ -130,47 +137,47 @@ const EvaluacionDetallePanel = ({
 
     switch (compromisoId) {
       case 1:
-        return <EvaluacionCompromiso1 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso1 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 2:
-        return <EvaluacionCompromiso2 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso2 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 3:
-        return <EvaluacionCompromiso3 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso3 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 4:
-        return <EvaluacionCompromiso4 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso4 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 5:
-        return <EvaluacionCompromiso5 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso5 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 6:
-        return <EvaluacionCompromiso6 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso6 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 7:
-        return <EvaluacionCompromiso7 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso7 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 8:
-        return <EvaluacionCompromiso8 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso8 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 9:
-        return <EvaluacionCompromiso9 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso9 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 10:
-        return <EvaluacionCompromiso10 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso10 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 11:
-        return <EvaluacionCompromiso11 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso11 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 12:
-        return <EvaluacionCompromiso12 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso12 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 13:
-        return <EvaluacionCompromiso13 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso13 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 14:
-        return <EvaluacionCompromiso14 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso14 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 15:
-        return <EvaluacionCompromiso15 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso15 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 16:
-        return <EvaluacionCompromiso16 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso16 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 17:
-        return <EvaluacionCompromiso17 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso17 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 18:
-        return <EvaluacionCompromiso18 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso18 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 19:
-        return <EvaluacionCompromiso19 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso19 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 20:
-        return <EvaluacionCompromiso20 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso20 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       case 21:
-        return <EvaluacionCompromiso21 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
+        return <EvaluacionCompromiso21 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} onVerDocumento={handleVerDocumento} />;
       default:
         return (
           <div className="text-center py-8 text-gray-500">

@@ -6,7 +6,7 @@ import CriteriosEvaluacionList from './CriteriosEvaluacionList';
  * Componente para mostrar los datos del Compromiso 4: Incorporación de TD en el PEI
  * Se usa en la vista de evaluación para mostrar los datos en el panel izquierdo
  */
-const EvaluacionCompromiso4 = ({ data, activeTab, criterios = [] }) => {
+const EvaluacionCompromiso4 = ({ data, activeTab, criterios = [], onVerDocumento }) => {
   if (!data) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -59,36 +59,36 @@ const EvaluacionCompromiso4 = ({ data, activeTab, criterios = [] }) => {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {activeTab === 'general' && (
         <div className="space-y-6">
           {/* Estado del Formulario */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
               <label className="block text-sm font-medium text-gray-500 mb-1">Estado del Formulario</label>
-              <div className="bg-blue-50 rounded-lg p-3 text-blue-900 font-medium">
+              <div className="bg-blue-50 rounded-md p-3 text-sm text-blue-900 font-medium">
                 {datosGenerales.estado || 'Sin estado'}
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500 mb-1">Etapa</label>
-              <div className="bg-purple-50 rounded-lg p-3 text-purple-900 font-medium">
+              <div className="bg-purple-50 rounded-md p-3 text-sm text-purple-900 font-medium">
                 {datosGenerales.etapaFormulario || 'Sin etapa'}
               </div>
             </div>
           </div>
 
           {/* Datos del PEI */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
               <label className="block text-sm font-medium text-gray-500 mb-1">Período de Vigencia</label>
-              <div className="bg-gray-50 rounded-lg p-3 text-gray-900 font-medium">
+              <div className="bg-gray-50 rounded-md p-3 text-sm text-gray-900 font-medium">
                 {periodoVigencia}
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500 mb-1">Fecha de Aprobación</label>
-              <div className="bg-gray-50 rounded-lg p-3 text-gray-900">
+              <div className="bg-gray-50 rounded-md p-3 text-sm text-gray-900">
                 {datosGenerales.fechaAprobacionPei 
                   ? new Date(datosGenerales.fechaAprobacionPei).toLocaleDateString('es-PE')
                   : '-'}
@@ -96,7 +96,7 @@ const EvaluacionCompromiso4 = ({ data, activeTab, criterios = [] }) => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500 mb-1">Número de Resolución</label>
-              <div className="bg-gray-50 rounded-lg p-3 text-gray-900">
+              <div className="bg-gray-50 rounded-md p-3 text-sm text-gray-900">
                 {/* El número de resolución podría estar en el nombre del PDF o en otro campo */}
                 {datosGenerales.rutaPdfNormativa ? 'Ver documento' : '-'}
               </div>
@@ -151,28 +151,29 @@ const EvaluacionCompromiso4 = ({ data, activeTab, criterios = [] }) => {
       {activeTab === 'normativa' && (
         <CriteriosEvaluacionList 
           criterios={criterios} 
-          documentos={documentos} 
+          documentos={documentos}
+          onVerDocumento={onVerDocumento}
         />
       )}
 
       {activeTab === 'veracidad' && (
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600 mb-4">
+        <div className="space-y-3">
+          <p className="text-sm text-gray-600 mb-3">
             Validación de la información proporcionada por la entidad.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Política de Privacidad */}
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
+            <div className="p-3 bg-gray-50 rounded-md">
+              <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium text-gray-700">Política de Privacidad</span>
-                <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-full ${
                   datosGenerales.checkPrivacidad ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                 }`}>
                   {datosGenerales.checkPrivacidad ? 'Aceptada' : 'Pendiente'}
                 </span>
               </div>
-              <p className="text-xs text-gray-500">
+              <p className="text-[10px] text-gray-500">
                 {datosGenerales.checkPrivacidad 
                   ? 'La entidad aceptó la política de privacidad' 
                   : 'Pendiente de aceptación'}
@@ -180,16 +181,16 @@ const EvaluacionCompromiso4 = ({ data, activeTab, criterios = [] }) => {
             </div>
 
             {/* Declaración Jurada */}
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
+            <div className="p-3 bg-gray-50 rounded-md">
+              <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium text-gray-700">Declaración Jurada</span>
-                <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-full ${
                   datosGenerales.checkDdjj ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                 }`}>
                   {datosGenerales.checkDdjj ? 'Aceptada' : 'Pendiente'}
                 </span>
               </div>
-              <p className="text-xs text-gray-500">
+              <p className="text-[10px] text-gray-500">
                 {datosGenerales.checkDdjj 
                   ? 'La entidad firmó la declaración jurada' 
                   : 'Pendiente de firma'}
@@ -256,7 +257,8 @@ EvaluacionCompromiso4.propTypes = {
     criterioEvaluacionId: PropTypes.number,
     descripcion: PropTypes.string,
     cumple: PropTypes.bool
-  }))
+  })),
+  onVerDocumento: PropTypes.func
 };
 
 export default EvaluacionCompromiso4;
