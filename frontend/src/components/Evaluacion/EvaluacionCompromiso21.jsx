@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
-import { FileText, User, Mail, Phone, CreditCard, Briefcase, Database } from 'lucide-react';
+import { User, Mail, Phone, CreditCard, Briefcase, Database } from 'lucide-react';
+import CriteriosEvaluacionList from './CriteriosEvaluacionList';
 
 /**
  * Compromiso 21: Oficial de Gobierno de Datos
  */
-const EvaluacionCompromiso21 = ({ data, activeTab }) => {
+const EvaluacionCompromiso21 = ({ data, activeTab, criterios = [] }) => {
   if (!data) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -88,10 +89,10 @@ const EvaluacionCompromiso21 = ({ data, activeTab }) => {
       )}
 
       {activeTab === 'normativa' && (
-        <div className="text-center py-8 text-gray-500">
-          <FileText size={48} className="mx-auto mb-4 text-gray-300" />
-          <p>No hay documentos normativos para este compromiso</p>
-        </div>
+        <CriteriosEvaluacionList 
+          criterios={criterios} 
+          documentos={[]} 
+        />
       )}
 
       {activeTab === 'veracidad' && (
@@ -120,5 +121,13 @@ const EvaluacionCompromiso21 = ({ data, activeTab }) => {
   );
 };
 
-EvaluacionCompromiso21.propTypes = { data: PropTypes.object, activeTab: PropTypes.string.isRequired };
+EvaluacionCompromiso21.propTypes = { 
+  data: PropTypes.object, 
+  activeTab: PropTypes.string.isRequired,
+  criterios: PropTypes.arrayOf(PropTypes.shape({
+    criterioEvaluacionId: PropTypes.number,
+    descripcion: PropTypes.string,
+    cumple: PropTypes.bool
+  }))
+};
 export default EvaluacionCompromiso21;

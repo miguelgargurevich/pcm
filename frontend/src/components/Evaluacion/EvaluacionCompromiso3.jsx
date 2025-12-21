@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Target, Users, Server, Shield, FolderKanban, ChevronRight } from 'lucide-react';
+import CriteriosEvaluacionList from './CriteriosEvaluacionList';
 
 /**
  * Componente para mostrar los datos del Compromiso 3: Elaboración del Plan de Gobierno Digital
  * Es el más complejo porque tiene múltiples tabs internos para mostrar todos los datos relacionados
  */
-const EvaluacionCompromiso3 = ({ data, activeTab }) => {
+const EvaluacionCompromiso3 = ({ data, activeTab, criterios = [] }) => {
   // Sub-tabs para la pestaña General
   const [activeSubTab, setActiveSubTab] = useState('objetivos-pei');
   // Sub-tabs para Situación Actual
@@ -545,14 +546,10 @@ const EvaluacionCompromiso3 = ({ data, activeTab }) => {
       )}
 
       {activeTab === 'normativa' && (
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600 mb-4">
-            Documentos normativos relacionados con el Plan de Gobierno Digital.
-          </p>
-          <div className="text-center py-8 text-gray-500">
-            <p>No hay documentos normativos cargados para este compromiso</p>
-          </div>
-        </div>
+        <CriteriosEvaluacionList 
+          criterios={criterios} 
+          documentos={[]} 
+        />
       )}
 
       {activeTab === 'veracidad' && (
@@ -613,7 +610,12 @@ const EvaluacionCompromiso3 = ({ data, activeTab }) => {
 
 EvaluacionCompromiso3.propTypes = {
   data: PropTypes.object,
-  activeTab: PropTypes.string.isRequired
+  activeTab: PropTypes.string.isRequired,
+  criterios: PropTypes.arrayOf(PropTypes.shape({
+    criterioEvaluacionId: PropTypes.number,
+    descripcion: PropTypes.string,
+    cumple: PropTypes.bool
+  }))
 };
 
 export default EvaluacionCompromiso3;

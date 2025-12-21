@@ -375,6 +375,37 @@ public class EvaluacionController : ControllerBase
 
             _logger.LogInformation("Entidad obtenida: {HasEntidad}", entidad != null);
 
+            // Obtener criterios de evaluación del compromiso
+            var criteriosEvaluacion = await _context.CriteriosEvaluacion
+                .AsNoTracking()
+                .Where(c => c.CompromisoId == compromisoId && c.Activo)
+                .OrderBy(c => c.CriterioEvaluacionId)
+                .Select(c => new 
+                {
+                    c.CriterioEvaluacionId,
+                    c.Descripcion,
+                    c.Activo
+                })
+                .ToListAsync();
+
+            // Obtener respuestas de la entidad para estos criterios
+            var criterioIds = criteriosEvaluacion.Select(c => c.CriterioEvaluacionId).ToList();
+            var respuestasEntidad = await _context.EvaluacionRespuestasEntidad
+                .AsNoTracking()
+                .Where(r => r.EntidadId == entidadId && criterioIds.Contains(r.CriterioEvaluacionId))
+                .ToListAsync();
+
+            // Combinar criterios con respuestas
+            var criteriosConRespuestas = criteriosEvaluacion.Select(c => new
+            {
+                c.CriterioEvaluacionId,
+                c.Descripcion,
+                c.Activo,
+                Cumple = respuestasEntidad.FirstOrDefault(r => r.CriterioEvaluacionId == c.CriterioEvaluacionId)?.Cumple ?? false
+            }).ToList();
+
+            _logger.LogInformation("Criterios de evaluación: {Count}", criteriosConRespuestas.Count);
+
             return Ok(new 
             { 
                 isSuccess = true, 
@@ -385,7 +416,8 @@ public class EvaluacionController : ControllerBase
                     entidad.Nombre,
                     sector = entidad.Sector?.Nombre,
                     clasificacion = entidad.Clasificacion?.Nombre
-                } : null
+                } : null,
+                criteriosEvaluacion = criteriosConRespuestas
             });
         }
         catch (Exception ex)

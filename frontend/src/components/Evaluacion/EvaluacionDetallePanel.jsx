@@ -80,6 +80,7 @@ const EvaluacionDetallePanel = ({
   const [pdfUrl, _setPdfUrl] = useState(null);
   const [compromisoData, setCompromisoData] = useState(null);
   const [entidadData, setEntidadData] = useState(null);
+  const [criteriosEvaluacion, setCriteriosEvaluacion] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Cargar datos del compromiso
@@ -91,6 +92,10 @@ const EvaluacionDetallePanel = ({
         if (response.isSuccess) {
           setCompromisoData(response.data);
           setEntidadData(response.entidad);
+          // Cargar criterios de evaluación
+          if (response.criteriosEvaluacion) {
+            setCriteriosEvaluacion(response.criteriosEvaluacion);
+          }
           // Si hay observaciones previas, cargarlas
           if (response.data?.observacionesPCM || response.data?.observacionesPcm) {
             setObservaciones(response.data.observacionesPCM || response.data.observacionesPcm || '');
@@ -125,47 +130,47 @@ const EvaluacionDetallePanel = ({
 
     switch (compromisoId) {
       case 1:
-        return <EvaluacionCompromiso1 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso1 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 2:
-        return <EvaluacionCompromiso2 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso2 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 3:
-        return <EvaluacionCompromiso3 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso3 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 4:
-        return <EvaluacionCompromiso4 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso4 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 5:
-        return <EvaluacionCompromiso5 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso5 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 6:
-        return <EvaluacionCompromiso6 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso6 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 7:
-        return <EvaluacionCompromiso7 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso7 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 8:
-        return <EvaluacionCompromiso8 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso8 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 9:
-        return <EvaluacionCompromiso9 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso9 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 10:
-        return <EvaluacionCompromiso10 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso10 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 11:
-        return <EvaluacionCompromiso11 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso11 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 12:
-        return <EvaluacionCompromiso12 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso12 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 13:
-        return <EvaluacionCompromiso13 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso13 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 14:
-        return <EvaluacionCompromiso14 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso14 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 15:
-        return <EvaluacionCompromiso15 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso15 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 16:
-        return <EvaluacionCompromiso16 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso16 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 17:
-        return <EvaluacionCompromiso17 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso17 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 18:
-        return <EvaluacionCompromiso18 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso18 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 19:
-        return <EvaluacionCompromiso19 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso19 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 20:
-        return <EvaluacionCompromiso20 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso20 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       case 21:
-        return <EvaluacionCompromiso21 data={compromisoData} activeTab={activeTab} />;
+        return <EvaluacionCompromiso21 data={compromisoData} activeTab={activeTab} criterios={criteriosEvaluacion} />;
       default:
         return (
           <div className="text-center py-8 text-gray-500">

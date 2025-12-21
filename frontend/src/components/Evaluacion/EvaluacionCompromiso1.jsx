@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
+import { CheckCircle, XCircle } from 'lucide-react';
 
 /**
  * Componente para mostrar los datos del Compromiso 1: Designación del Líder Digital
  * Se usa en la vista de evaluación para mostrar los datos en el panel izquierdo
  */
-const EvaluacionCompromiso1 = ({ data, activeTab }) => {
+const EvaluacionCompromiso1 = ({ data, activeTab, criterios = [] }) => {
   // Si no hay datos, mostrar mensaje
   if (!data) {
     return (
@@ -146,38 +147,70 @@ const EvaluacionCompromiso1 = ({ data, activeTab }) => {
       )}
 
       {activeTab === 'normativa' && (
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600 mb-4">
-            Documentos normativos relacionados con la designación del Líder Digital. Haga clic en un documento para previsualizarlo.
-          </p>
-          
-          {documentosNormativos.length > 0 ? (
-            <div className="space-y-2">
-              {documentosNormativos.map((doc) => (
-                <div
-                  key={doc.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                      <svg className="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{doc.nombre}</p>
-                      <p className="text-xs text-gray-500">PDF - {doc.tipo}</p>
-                    </div>
+        <div className="space-y-6">
+          {/* Lista de Verificación - Criterios de Evaluación */}
+          <div>
+            <h3 className="text-sm font-semibold text-gray-800 mb-3">Lista de Verificación</h3>
+            {criterios && criterios.length > 0 ? (
+              <div className="space-y-2">
+                {criterios.map((criterio) => (
+                  <div
+                    key={criterio.criterioEvaluacionId}
+                    className={`flex items-start gap-3 p-3 rounded-lg border ${
+                      criterio.cumple 
+                        ? 'bg-green-50 border-green-200' 
+                        : 'bg-gray-50 border-gray-200'
+                    }`}
+                  >
+                    {criterio.cumple ? (
+                      <CheckCircle size={20} className="text-green-600 flex-shrink-0 mt-0.5" />
+                    ) : (
+                      <XCircle size={20} className="text-gray-400 flex-shrink-0 mt-0.5" />
+                    )}
+                    <span className={`text-sm ${criterio.cumple ? 'text-green-800' : 'text-gray-700'}`}>
+                      {criterio.descripcion}
+                    </span>
                   </div>
-                  <span className="text-primary text-sm font-medium">Ver PDF</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              <p>No hay documentos normativos cargados</p>
-            </div>
-          )}
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-4 text-gray-500 bg-gray-50 rounded-lg">
+                <p className="text-sm">No hay criterios de evaluación definidos para este compromiso</p>
+              </div>
+            )}
+          </div>
+
+          {/* Archivos Adjuntos */}
+          <div>
+            <h3 className="text-sm font-semibold text-gray-800 mb-3">Archivos Adjuntos</h3>
+            {documentosNormativos.length > 0 ? (
+              <div className="space-y-2">
+                {documentosNormativos.map((doc) => (
+                  <div
+                    key={doc.id}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                        <svg className="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{doc.nombre}</p>
+                        <p className="text-xs text-gray-500">Documento PDF</p>
+                      </div>
+                    </div>
+                    <span className="text-primary text-sm font-medium">Ver</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-4 text-gray-500 bg-gray-50 rounded-lg">
+                <p className="text-sm">No hay documentos adjuntos</p>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -246,7 +279,12 @@ const EvaluacionCompromiso1 = ({ data, activeTab }) => {
 
 EvaluacionCompromiso1.propTypes = {
   data: PropTypes.object,
-  activeTab: PropTypes.string.isRequired
+  activeTab: PropTypes.string.isRequired,
+  criterios: PropTypes.arrayOf(PropTypes.shape({
+    criterioEvaluacionId: PropTypes.number,
+    descripcion: PropTypes.string,
+    cumple: PropTypes.bool
+  }))
 };
 
 export default EvaluacionCompromiso1;

@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import { FileText, CheckCircle, XCircle } from 'lucide-react';
+import CriteriosEvaluacionList from './CriteriosEvaluacionList';
 
 /**
  * Componente para mostrar los datos del Compromiso 4: Incorporación de TD en el PEI
  * Se usa en la vista de evaluación para mostrar los datos en el panel izquierdo
  */
-const EvaluacionCompromiso4 = ({ data, activeTab }) => {
+const EvaluacionCompromiso4 = ({ data, activeTab, criterios = [] }) => {
   if (!data) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -148,39 +149,10 @@ const EvaluacionCompromiso4 = ({ data, activeTab }) => {
       )}
 
       {activeTab === 'normativa' && (
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600 mb-4">
-            Documentos normativos relacionados con el Plan Estratégico Institucional.
-            Haga clic en un documento para previsualizarlo.
-          </p>
-          
-          {documentos.length > 0 ? (
-            <div className="space-y-2">
-              {documentos.map((doc) => (
-                <div
-                  key={doc.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                      <FileText className="w-6 h-6 text-red-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{doc.nombre}</p>
-                      <p className="text-xs text-gray-500">PDF - {doc.tipo}</p>
-                    </div>
-                  </div>
-                  <span className="text-primary text-sm font-medium">Ver PDF</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              <FileText size={48} className="mx-auto mb-4 text-gray-300" />
-              <p>No hay documentos normativos cargados</p>
-            </div>
-          )}
-        </div>
+        <CriteriosEvaluacionList 
+          criterios={criterios} 
+          documentos={documentos} 
+        />
       )}
 
       {activeTab === 'veracidad' && (
@@ -279,7 +251,12 @@ const EvaluacionCompromiso4 = ({ data, activeTab }) => {
 
 EvaluacionCompromiso4.propTypes = {
   data: PropTypes.object,
-  activeTab: PropTypes.string.isRequired
+  activeTab: PropTypes.string.isRequired,
+  criterios: PropTypes.arrayOf(PropTypes.shape({
+    criterioEvaluacionId: PropTypes.number,
+    descripcion: PropTypes.string,
+    cumple: PropTypes.bool
+  }))
 };
 
 export default EvaluacionCompromiso4;

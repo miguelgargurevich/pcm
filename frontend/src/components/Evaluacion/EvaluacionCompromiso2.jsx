@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
+import CriteriosEvaluacionList from './CriteriosEvaluacionList';
 
 /**
  * Componente para mostrar los datos del Compromiso 2: Constitución del Comité de Gobierno y TD
  * Se usa en la vista de evaluación para mostrar los datos en el panel izquierdo
  */
-const EvaluacionCompromiso2 = ({ data, activeTab }) => {
+const EvaluacionCompromiso2 = ({ data, activeTab, criterios = [] }) => {
   // Si no hay datos, mostrar mensaje
   if (!data) {
     return (
@@ -161,40 +162,10 @@ const EvaluacionCompromiso2 = ({ data, activeTab }) => {
       )}
 
       {activeTab === 'normativa' && (
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600 mb-4">
-            Documentos normativos relacionados con la constitución del Comité de Gobierno y Transformación Digital. 
-            Haga clic en un documento para previsualizarlo.
-          </p>
-          
-          {documentosNormativos.length > 0 ? (
-            <div className="space-y-2">
-              {documentosNormativos.map((doc, index) => (
-                <div
-                  key={`doc-${doc.id || index}`}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                      <svg className="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{doc.nombre}</p>
-                      <p className="text-xs text-gray-500">PDF - {doc.tipo}</p>
-                    </div>
-                  </div>
-                  <span className="text-primary text-sm font-medium">Ver PDF</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              <p>No hay documentos normativos cargados</p>
-            </div>
-          )}
-        </div>
+        <CriteriosEvaluacionList 
+          criterios={criterios} 
+          documentos={documentosNormativos} 
+        />
       )}
 
       {activeTab === 'veracidad' && (
@@ -260,7 +231,12 @@ const EvaluacionCompromiso2 = ({ data, activeTab }) => {
 
 EvaluacionCompromiso2.propTypes = {
   data: PropTypes.object,
-  activeTab: PropTypes.string.isRequired
+  activeTab: PropTypes.string.isRequired,
+  criterios: PropTypes.arrayOf(PropTypes.shape({
+    criterioEvaluacionId: PropTypes.number,
+    descripcion: PropTypes.string,
+    cumple: PropTypes.bool
+  }))
 };
 
 export default EvaluacionCompromiso2;

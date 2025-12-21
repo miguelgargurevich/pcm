@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import { FileText, User, Mail, Phone, CreditCard, Briefcase } from 'lucide-react';
+import CriteriosEvaluacionList from './CriteriosEvaluacionList';
 
 /**
  * Compromiso 12: Responsable de Software Público
  */
-const EvaluacionCompromiso12 = ({ data, activeTab }) => {
+const EvaluacionCompromiso12 = ({ data, activeTab, criterios = [] }) => {
   if (!data) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -87,10 +88,10 @@ const EvaluacionCompromiso12 = ({ data, activeTab }) => {
       )}
 
       {activeTab === 'normativa' && (
-        <div className="text-center py-8 text-gray-500">
-          <FileText size={48} className="mx-auto mb-4 text-gray-300" />
-          <p>No hay documentos normativos para este compromiso</p>
-        </div>
+        <CriteriosEvaluacionList 
+          criterios={criterios} 
+          documentos={[]} 
+        />
       )}
 
       {activeTab === 'veracidad' && (
@@ -119,5 +120,13 @@ const EvaluacionCompromiso12 = ({ data, activeTab }) => {
   );
 };
 
-EvaluacionCompromiso12.propTypes = { data: PropTypes.object, activeTab: PropTypes.string.isRequired };
+EvaluacionCompromiso12.propTypes = {
+  data: PropTypes.object,
+  activeTab: PropTypes.string.isRequired,
+  criterios: PropTypes.arrayOf(PropTypes.shape({
+    criterioEvaluacionId: PropTypes.number,
+    descripcion: PropTypes.string,
+    cumple: PropTypes.bool
+  }))
+};
 export default EvaluacionCompromiso12;
