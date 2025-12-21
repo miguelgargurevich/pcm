@@ -15,6 +15,7 @@ import {
   Menu,
   X,
   Shield,
+  History,
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -30,6 +31,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     { icon: ClipboardCheck, label: 'Módulo de Cumplimiento Normativo', path: '/dashboard/cumplimiento' },
     { icon: TrendingUp, label: 'Seguimiento PGD-PP', path: '/dashboard/seguimiento' },
     { icon: BarChart3, label: 'Evaluación & Cumplimiento', path: '/dashboard/evaluacion' },
+    { icon: History, label: 'Historial de Cambios', path: '/dashboard/historial' },
     { icon: Search, label: 'Consultas & Reportes', path: '/dashboard/reportes' },
   ];
 
