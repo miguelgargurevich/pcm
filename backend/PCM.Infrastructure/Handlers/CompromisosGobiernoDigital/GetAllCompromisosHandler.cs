@@ -28,6 +28,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
             // NOTA: Entidad.ClasificacionId apunta a subclasificacion_id en la BD
             // Necesitamos obtener el clasificacion_id padre de la subclasificación
             long? userClasificacionId = null;
+            long? userSubclasificacionId = null; // Para consultar exigibilidad
             Guid? userEntidadId = null;
             if (request.UserId.HasValue)
             {
@@ -42,6 +43,7 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     // Entidad.Clasificacion es la Subclasificacion
                     // Subclasificacion.ClasificacionId es el ID de la clasificación padre
                     userClasificacionId = usuario.Entidad?.Clasificacion?.ClasificacionId;
+                    userSubclasificacionId = usuario.Entidad?.ClasificacionId; // subclasificacion_id real
                     userEntidadId = usuario.Entidad?.EntidadId;
                 }
             }
@@ -317,7 +319,20 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                 }
             }
 
-            var response = compromisos.Select(c => MapToResponseDto(c, cumplimientosPorCompromiso, registrosEspecificos)).ToList();
+            // Obtener exigibilidades para la subclasificación del usuario
+            var exigibilidadesPorCompromiso = new Dictionary<long, string>();
+            if (userSubclasificacionId.HasValue)
+            {
+                var exigibilidades = await _context.Exigibilidades
+                    .Where(e => e.SubclasificacionId == userSubclasificacionId.Value && e.Activo)
+                    .ToListAsync(cancellationToken);
+                
+                exigibilidadesPorCompromiso = exigibilidades.ToDictionary(
+                    e => e.CompromisoId, 
+                    e => e.NivelExigibilidad);
+            }
+
+            var response = compromisos.Select(c => MapToResponseDto(c, cumplimientosPorCompromiso, registrosEspecificos, exigibilidadesPorCompromiso)).ToList();
 
             _logger.LogInformation("Retrieved {Count} compromisos", response.Count);
             return Result<List<CompromisoResponseDto>>.Success(response);
@@ -332,13 +347,17 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
     private CompromisoResponseDto MapToResponseDto(
         CompromisoGobiernoDigital compromiso, 
         Dictionary<long, PCM.Domain.Entities.CumplimientoNormativo> cumplimientosPorCompromiso,
-        Dictionary<long, (DateTime fecha, string? estado)> registrosEspecificos)
+        Dictionary<long, (DateTime fecha, string? estado)> registrosEspecificos,
+        Dictionary<long, string> exigibilidadesPorCompromiso)
     {
         // Obtener cumplimiento de este compromiso si existe
         cumplimientosPorCompromiso.TryGetValue(compromiso.CompromisoId, out var cumplimiento);
         
         // Obtener registro específico si existe (tabla específica paso 1)
         registrosEspecificos.TryGetValue(compromiso.CompromisoId, out var registroEspecifico);
+        
+        // Obtener exigibilidad para este compromiso
+        exigibilidadesPorCompromiso.TryGetValue(compromiso.CompromisoId, out var nivelExigibilidad);
         
         // Priorizar datos de registro específico si existe, sino usar cumplimiento genérico
         DateTime? fechaRegistro = registroEspecifico.fecha != default ? registroEspecifico.fecha : cumplimiento?.CreatedAt;
@@ -354,15 +373,28 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                 "no_exigible" => 3,  // NO EXIGIBLE
                 "en_proceso" => 4,  // EN PROCESO
                 "enviado" => 5,  // ENVIADO
+                "bandeja" => 5,  // ENVIADO (bandeja = enviado a revisión)
                 "en_revision" => 6,  // EN REVISIÓN
                 "observado" => 7,  // OBSERVADO
                 "aceptado" => 8,  // ACEPTADO
+                "aprobado" => 8,  // ACEPTADO (aprobado = aceptado)
                 _ => cumplimiento?.EstadoId
             };
         }
         else if (cumplimiento != null)
         {
             estadoCumplimiento = cumplimiento.EstadoId;
+        }
+        // Si no hay registro ni cumplimiento, calcular desde exigibilidad
+        else if (!string.IsNullOrEmpty(nivelExigibilidad))
+        {
+            estadoCumplimiento = nivelExigibilidad switch
+            {
+                "OBLIGATORIO" => 1,  // PENDIENTE
+                "OPCIONAL" => 2,     // SIN REPORTAR
+                "NO_EXIGIBLE" => 3,  // NO EXIGIBLE
+                _ => null
+            };
         }
         
         return new CompromisoResponseDto

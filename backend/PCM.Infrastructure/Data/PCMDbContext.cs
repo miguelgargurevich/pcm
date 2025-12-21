@@ -65,6 +65,7 @@ public class PCMDbContext : DbContext
     public DbSet<Com20DigitalizacionServiciosFacilita> Com20DigitalizacionServiciosFacilita { get; set; }
     public DbSet<Com21OficialGobiernoDatos> Com21OficialGobiernoDatos { get; set; }
     public DbSet<LogAuditoria> LogAuditoria { get; set; }
+    public DbSet<Exigibilidad> Exigibilidades { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
