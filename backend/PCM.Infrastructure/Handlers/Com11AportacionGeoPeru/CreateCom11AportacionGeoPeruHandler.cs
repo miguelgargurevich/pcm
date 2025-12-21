@@ -39,18 +39,25 @@ public class CreateCom11AportacionGeoPeruHandler : IRequestHandler<CreateCom11Ap
                 CreatedAt = DateTime.UtcNow,
                 FecRegistro = DateTime.UtcNow,
                 Activo = true,
-                FechaInicio = request.FechaInicio.HasValue 
-                    ? DateTime.SpecifyKind(request.FechaInicio.Value, DateTimeKind.Utc) 
+                // Campos específicos de GeoPeru
+                UrlGeo = request.UrlGeo ?? "",
+                TipoInformacionGeo = request.TipoInformacionGeo ?? "",
+                TotalCapasPublicadas = request.TotalCapasPublicadas,
+                FechaUltimaActualizacionGeo = request.FechaUltimaActualizacionGeo.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaUltimaActualizacionGeo.Value, DateTimeKind.Utc) 
                     : null,
-                FechaFin = request.FechaFin.HasValue 
-                    ? DateTime.SpecifyKind(request.FechaFin.Value, DateTimeKind.Utc) 
+                ResponsableGeo = request.ResponsableGeo ?? "",
+                CargoResponsableGeo = request.CargoResponsableGeo ?? "",
+                CorreoResponsableGeo = request.CorreoResponsableGeo ?? "",
+                TelefonoResponsableGeo = request.TelefonoResponsableGeo ?? "",
+                NormaAprobacionGeo = request.NormaAprobacionGeo ?? "",
+                FechaAprobacionGeo = request.FechaAprobacionGeo.HasValue 
+                    ? DateTime.SpecifyKind(request.FechaAprobacionGeo.Value, DateTimeKind.Utc) 
                     : null,
-                ServiciosDigitalizados = request.ServiciosDigitalizados,
-                ServiciosTotal = request.ServiciosTotal,
-                PorcentajeDigitalizacion = request.PorcentajeDigitalizacion,
-                ArchivoPlan = request.ArchivoPlan,
-                Descripcion = request.Descripcion,
-                BeneficiariosEstimados = request.BeneficiariosEstimados,
+                InteroperabilidadGeo = request.InteroperabilidadGeo,
+                ObservacionGeo = request.ObservacionGeo ?? "",
+                RutaPdfGeo = request.RutaPdfGeo ?? "",
+                RutaPdfNormativa = request.RutaPdfNormativa
             };
 
             _context.Com11AportacionGeoPeru.Add(entity);
@@ -71,14 +78,21 @@ public class CreateCom11AportacionGeoPeruHandler : IRequestHandler<CreateCom11Ap
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
-                FechaInicio = entity.FechaInicio,
-                FechaFin = entity.FechaFin,
-                ServiciosDigitalizados = entity.ServiciosDigitalizados,
-                ServiciosTotal = entity.ServiciosTotal,
-                PorcentajeDigitalizacion = entity.PorcentajeDigitalizacion,
-                ArchivoPlan = entity.ArchivoPlan,
-                Descripcion = entity.Descripcion,
-                BeneficiariosEstimados = entity.BeneficiariosEstimados,
+                // Campos específicos de GeoPeru
+                UrlGeo = entity.UrlGeo,
+                TipoInformacionGeo = entity.TipoInformacionGeo,
+                TotalCapasPublicadas = entity.TotalCapasPublicadas,
+                FechaUltimaActualizacionGeo = entity.FechaUltimaActualizacionGeo,
+                ResponsableGeo = entity.ResponsableGeo,
+                CargoResponsableGeo = entity.CargoResponsableGeo,
+                CorreoResponsableGeo = entity.CorreoResponsableGeo,
+                TelefonoResponsableGeo = entity.TelefonoResponsableGeo,
+                NormaAprobacionGeo = entity.NormaAprobacionGeo,
+                FechaAprobacionGeo = entity.FechaAprobacionGeo,
+                InteroperabilidadGeo = entity.InteroperabilidadGeo,
+                ObservacionGeo = entity.ObservacionGeo,
+                RutaPdfGeo = entity.RutaPdfGeo,
+                RutaPdfNormativa = entity.RutaPdfNormativa
             };
 
             return Result<Com11AportacionGeoPeruResponse>.Success(response);

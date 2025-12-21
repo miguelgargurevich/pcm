@@ -13,15 +13,21 @@ public class CreateCom11AportacionGeoPeruCommand : IRequest<Result<Com11Aportaci
     public bool CheckDdjj { get; set; }
     public Guid? UsuarioRegistra { get; set; }
 
-    // Campos específicos
-    public DateTime? FechaInicio { get; set; }
-    public DateTime? FechaFin { get; set; }
-    public int? ServiciosDigitalizados { get; set; }
-    public int? ServiciosTotal { get; set; }
-    public decimal? PorcentajeDigitalizacion { get; set; }
-    public string? ArchivoPlan { get; set; }
-    public string? Descripcion { get; set; }
-    public int? BeneficiariosEstimados { get; set; }
+    // Campos específicos de GeoPeru
+    public string? UrlGeo { get; set; }
+    public string? TipoInformacionGeo { get; set; }
+    public int TotalCapasPublicadas { get; set; }
+    public DateTime? FechaUltimaActualizacionGeo { get; set; }
+    public string? ResponsableGeo { get; set; }
+    public string? CargoResponsableGeo { get; set; }
+    public string? CorreoResponsableGeo { get; set; }
+    public string? TelefonoResponsableGeo { get; set; }
+    public string? NormaAprobacionGeo { get; set; }
+    public DateTime? FechaAprobacionGeo { get; set; }
+    public bool InteroperabilidadGeo { get; set; }
+    public string? ObservacionGeo { get; set; }
+    public string? RutaPdfGeo { get; set; }
+    public string? RutaPdfNormativa { get; set; }
 }
 
 public class Com11AportacionGeoPeruResponse
@@ -40,13 +46,19 @@ public class Com11AportacionGeoPeruResponse
     public Guid UsuarioRegistra { get; set; }
     public bool Activo { get; set; }
 
-    // Campos específicos
-    public DateTime? FechaInicio { get; set; }
-    public DateTime? FechaFin { get; set; }
-    public int? ServiciosDigitalizados { get; set; }
-    public int? ServiciosTotal { get; set; }
-    public decimal? PorcentajeDigitalizacion { get; set; }
-    public string? ArchivoPlan { get; set; }
-    public string? Descripcion { get; set; }
-    public int? BeneficiariosEstimados { get; set; }
+    // Campos específicos de GeoPeru
+    public string? UrlGeo { get; set; }
+    public string? TipoInformacionGeo { get; set; }
+    public long TotalCapasPublicadas { get; set; }
+    public DateTime? FechaUltimaActualizacionGeo { get; set; }
+    public string? ResponsableGeo { get; set; }
+    public string? CargoResponsableGeo { get; set; }
+    public string? CorreoResponsableGeo { get; set; }
+    public string? TelefonoResponsableGeo { get; set; }
+    public string? NormaAprobacionGeo { get; set; }
+    public DateTime? FechaAprobacionGeo { get; set; }
+    public bool InteroperabilidadGeo { get; set; }
+    public string? ObservacionGeo { get; set; }
+    public string? RutaPdfGeo { get; set; }
+    public string? RutaPdfNormativa { get; set; }
 }
