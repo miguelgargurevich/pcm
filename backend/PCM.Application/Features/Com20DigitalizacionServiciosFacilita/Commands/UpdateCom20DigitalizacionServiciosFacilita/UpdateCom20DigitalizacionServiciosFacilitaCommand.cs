@@ -1,5 +1,6 @@
 using MediatR;
 using PCM.Application.Common;
+using System.Text.Json.Serialization;
 
 namespace PCM.Application.Features.Com20DigitalizacionServiciosFacilita.Commands.UpdateCom20DigitalizacionServiciosFacilita;
 
@@ -10,6 +11,8 @@ public class UpdateCom20DigitalizacionServiciosFacilitaCommand : IRequest<Result
     public Guid? EntidadId { get; set; }
     public string? EtapaFormulario { get; set; }
     public string? Estado { get; set; }
+    [JsonPropertyName("rutaPdfNormativa")]
+    public string? RutaPdfNormativa { get; set; }
     public bool? CheckPrivacidad { get; set; }
     public bool? CheckDdjj { get; set; }
     public Guid? UsuarioRegistra { get; set; }

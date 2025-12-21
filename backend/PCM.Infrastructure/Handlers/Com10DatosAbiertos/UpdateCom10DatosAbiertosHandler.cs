@@ -52,6 +52,7 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                     : registro.FechaAprobacionDa;
                 registro.ObservacionDa = request.ObservacionDa ?? registro.ObservacionDa;
                 registro.RutaPdfDa = request.RutaPdfDa ?? registro.RutaPdfDa;
+                if (request.RutaPdfNormativa != null) registro.RutaPdfNormativa = request.RutaPdfNormativa;
                 registro.CheckPrivacidad = request.CheckPrivacidad;
                 registro.CheckDdjj = request.CheckDdjj;
                 if (request.UsuarioRegistra.HasValue && request.UsuarioRegistra.Value != Guid.Empty)

@@ -29,7 +29,6 @@ const EvaluacionCompromiso12 = ({ data, activeTab }) => {
     fechaDesignacion: data.fechaDesignacionRsp || data.FechaDesignacionRsp || '',
     numeroResolucion: data.numeroResolucionRsp || data.NumeroResolucionRsp || '',
     estado: data.estado || data.Estado || '',
-    estadoPcm: data.estadoPCM || data.estadoPcm || '',
     etapaFormulario: data.etapaFormulario || data.EtapaFormulario || '',
     checkPrivacidad: data.checkPrivacidad ?? false,
     checkDdjj: data.checkDdjj ?? false
@@ -47,10 +46,6 @@ const EvaluacionCompromiso12 = ({ data, activeTab }) => {
             <div>
               <label className="block text-sm font-medium text-gray-500 mb-1">Etapa</label>
               <div className="bg-purple-50 rounded-lg p-3 text-purple-900 font-medium">{d.etapaFormulario || 'Sin etapa'}</div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">Estado PCM</label>
-              <div className="bg-green-50 rounded-lg p-3 text-green-900 font-medium">{d.estadoPcm || 'Sin evaluar'}</div>
             </div>
           </div>
 

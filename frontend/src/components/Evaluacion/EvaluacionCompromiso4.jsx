@@ -26,7 +26,6 @@ const EvaluacionCompromiso4 = ({ data, activeTab }) => {
     rutaPdfPei: data.rutaPdfPei || data.RutaPdfPei || null,
     rutaPdfNormativa: data.rutaPdfNormativa || data.RutaPdfNormativa || null,
     estado: data.estado || data.Estado || '',
-    estadoPcm: data.estadoPCM || data.estadoPcm || data.EstadoPCM || data.EstadoPcm || '',
     etapaFormulario: data.etapaFormulario || data.EtapaFormulario || '',
     checkPrivacidad: data.checkPrivacidad ?? data.CheckPrivacidad ?? false,
     checkDdjj: data.checkDdjj ?? data.CheckDdjj ?? false
@@ -74,12 +73,6 @@ const EvaluacionCompromiso4 = ({ data, activeTab }) => {
               <label className="block text-sm font-medium text-gray-500 mb-1">Etapa</label>
               <div className="bg-purple-50 rounded-lg p-3 text-purple-900 font-medium">
                 {datosGenerales.etapaFormulario || 'Sin etapa'}
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">Estado PCM</label>
-              <div className="bg-green-50 rounded-lg p-3 text-green-900 font-medium">
-                {datosGenerales.estadoPcm || 'Sin evaluar'}
               </div>
             </div>
           </div>

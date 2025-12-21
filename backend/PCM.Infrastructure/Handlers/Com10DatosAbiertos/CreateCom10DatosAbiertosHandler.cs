@@ -50,7 +50,7 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                     CheckDdjj = request.CheckDdjj,
                     UsuarioRegistra = request.UsuarioRegistra,
                     EtapaFormulario = request.EtapaFormulario ?? "",
-                    Estado = "bandeja",
+                    Estado = "pendiente",
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };

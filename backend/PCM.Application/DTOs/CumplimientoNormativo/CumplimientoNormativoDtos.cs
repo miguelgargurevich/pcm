@@ -26,22 +26,6 @@ public class CreateCumplimientoRequest
     
     [JsonPropertyName("observacion_pcm")]
     public string? ObservacionPcm { get; set; }
-    
-    // Campos adicionales para formulario
-    [JsonPropertyName("criterios_evaluados")]
-    public string? CriteriosEvaluados { get; set; }
-    
-    [JsonPropertyName("documento_url")]
-    public string? DocumentoUrl { get; set; }
-    
-    [JsonPropertyName("acepta_politica_privacidad")]
-    public bool AceptaPoliticaPrivacidad { get; set; }
-    
-    [JsonPropertyName("acepta_declaracion_jurada")]
-    public bool AceptaDeclaracionJurada { get; set; }
-    
-    [JsonPropertyName("etapa_formulario")]
-    public string? EtapaFormulario { get; set; }
 }
 
 public class UpdateCumplimientoRequest
@@ -60,22 +44,6 @@ public class UpdateCumplimientoRequest
     
     [JsonPropertyName("observacion_pcm")]
     public string? ObservacionPcm { get; set; }
-    
-    // Campos adicionales para formulario
-    [JsonPropertyName("criterios_evaluados")]
-    public string? CriteriosEvaluados { get; set; }
-    
-    [JsonPropertyName("documento_url")]
-    public string? DocumentoUrl { get; set; }
-    
-    [JsonPropertyName("acepta_politica_privacidad")]
-    public bool AceptaPoliticaPrivacidad { get; set; }
-    
-    [JsonPropertyName("acepta_declaracion_jurada")]
-    public bool AceptaDeclaracionJurada { get; set; }
-    
-    [JsonPropertyName("etapa_formulario")]
-    public string? EtapaFormulario { get; set; }
 }
 
 // ============================================
@@ -91,13 +59,6 @@ public class CumplimientoResponseDto
     public Guid? OperadorId { get; set; }
     public DateTime? FechaAsignacion { get; set; }
     public string? ObservacionPcm { get; set; }
-    
-    // Campos adicionales para formulario
-    public string? CriteriosEvaluados { get; set; }
-    public string? DocumentoUrl { get; set; }
-    public bool AceptaPoliticaPrivacidad { get; set; }
-    public bool AceptaDeclaracionJurada { get; set; }
-    public string? EtapaFormulario { get; set; }
     
     // Datos del Compromiso (para mostrar en listado)
     public string? NombreCompromiso { get; set; }
@@ -125,13 +86,6 @@ public class CumplimientoListItemDto
     public Guid? OperadorId { get; set; }
     public DateTime? FechaAsignacion { get; set; }
     public string? ObservacionPcm { get; set; }
-    
-    // Campos adicionales
-    public string? CriteriosEvaluados { get; set; }
-    public string? DocumentoUrl { get; set; }
-    public bool AceptaPoliticaPrivacidad { get; set; }
-    public bool AceptaDeclaracionJurada { get; set; }
-    public string? EtapaFormulario { get; set; }
     
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

@@ -15,6 +15,7 @@ public class UpdateCom2CGTDCommand : IRequest<Result<Com2CGTDResponse>>
     
     // Campos adicionales para persistencia
     public string? UrlDocUrl { get; set; }
+    public string? RutaPdfNormativa { get; set; }
     
     // Lista de miembros del comité
     public List<ComiteMiembroDto>? Miembros { get; set; }

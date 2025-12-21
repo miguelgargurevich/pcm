@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace PCM.Application.Features.Com5EstrategiaDigital.Commands;
 
 public class UpdateCom5EstrategiaDigitalCommand
@@ -14,9 +16,11 @@ public class UpdateCom5EstrategiaDigitalCommand
     public bool AlineadoPgdEstrategia { get; set; }
     public string? EstadoImplementacionEstrategia { get; set; }
     public string? RutaPdfEstrategia { get; set; }
+    [JsonPropertyName("rutaPdfNormativa")]
+    public string? RutaPdfNormativa { get; set; }
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }
     public Guid UsuarioRegistra { get; set; }
     public string EtapaFormulario { get; set; } = "paso1";
-    public string Estado { get; set; } = "bandeja";
+    public string Estado { get; set; } = "pendiente";
 }

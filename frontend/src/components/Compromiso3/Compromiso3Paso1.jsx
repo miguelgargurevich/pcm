@@ -14,7 +14,6 @@ import { showErrorToast } from '../../utils/toast';
  */
 const Compromiso3Paso1 = ({ 
   entidadId, 
-  cumplimientoNormativoId, 
   onDataChange, 
   viewMode = false,
   initialData = null 
@@ -346,7 +345,6 @@ const Compromiso3Paso1 = ({
       const apiData = {
         com3EPGDId: data.com3EPGDId,
         entidadId,
-        cumplimientoNormativoId,
         compromisoId: 3,
         etapaFormulario: 'paso1',
         estado: 'bandeja',

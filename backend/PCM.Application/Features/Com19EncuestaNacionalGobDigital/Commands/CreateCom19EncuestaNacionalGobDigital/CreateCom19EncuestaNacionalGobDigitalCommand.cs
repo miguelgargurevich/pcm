@@ -8,7 +8,7 @@ public class CreateCom19EncuestaNacionalGobDigitalCommand : IRequest<Result<Com1
     public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
     public string EtapaFormulario { get; set; } = "paso1";
-    public string Estado { get; set; } = "bandeja";
+    public string Estado { get; set; } = "pendiente";
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }
     public Guid? UsuarioRegistra { get; set; }

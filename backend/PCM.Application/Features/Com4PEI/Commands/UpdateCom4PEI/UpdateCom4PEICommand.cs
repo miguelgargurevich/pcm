@@ -12,7 +12,7 @@ public class UpdateCom4PEICommand : IRequest<Result<Com4PEIResponse>>
     public string EtapaFormulario { get; set; } = "paso1";
     
     [JsonPropertyName("estado")]
-    public string Estado { get; set; } = "bandeja";
+    public string Estado { get; set; } = "pendiente";
     
     // Campos del PEI - Supabase schema
     [JsonPropertyName("anioInicioPei")]
@@ -35,6 +35,9 @@ public class UpdateCom4PEICommand : IRequest<Result<Com4PEIResponse>>
     
     [JsonPropertyName("rutaPdfPei")]
     public string? RutaPdfPei { get; set; }
+    
+    [JsonPropertyName("rutaPdfNormativa")]
+    public string? RutaPdfNormativa { get; set; }
     
     // Aceptaciones
     [JsonPropertyName("checkPrivacidad")]

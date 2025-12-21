@@ -37,6 +37,7 @@ public class UpdateCom21OficialGobiernoDatosHandler : IRequestHandler<UpdateCom2
             if (request.EntidadId.HasValue) entity.EntidadId = request.EntidadId.Value;
             if (!string.IsNullOrEmpty(request.EtapaFormulario)) entity.EtapaFormulario = request.EtapaFormulario;
             if (!string.IsNullOrEmpty(request.Estado)) entity.Estado = request.Estado;
+            if (!string.IsNullOrEmpty(request.RutaPdfNormativa)) entity.RutaPdfNormativa = request.RutaPdfNormativa;
             if (request.CheckPrivacidad.HasValue) entity.CheckPrivacidad = request.CheckPrivacidad.Value;
             if (request.CheckDdjj.HasValue) entity.CheckDdjj = request.CheckDdjj.Value;
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;

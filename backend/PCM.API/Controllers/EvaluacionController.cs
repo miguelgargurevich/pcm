@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCM.Application.Features.Com2CGTD.Queries.GetCom2CGTDByEntidad;
 using PCM.Application.Features.Com3EPGD.Queries.GetCom3EPGDByEntidad;
+using PCM.Domain.Entities;
 using PCM.Infrastructure.Data;
 
 namespace PCM.API.Controllers;
@@ -104,18 +105,9 @@ public class EvaluacionController : ControllerBase
                 // Para cada compromiso, determinar el estado
                 for (int i = 1; i <= 21; i++)
                 {
-                    // Verificar si el compromiso es exigible para esta clasificación
-                    var esExigible = alcances.Any(a => 
-                        a.CompromisoId == i && 
-                        a.ClasificacionId == ent.ClasificacionId);
-                    
-                    if (!esExigible)
-                    {
-                        compromisos.Add("no exigible");
-                        continue;
-                    }
-
                     // Obtener el estado del compromiso para esta entidad
+                    // Nota: Por ahora mostramos el estado real sin filtrar por alcances
+                    // ya que la configuración de alcances puede no estar completa
                     string estadoCompromiso = ObtenerEstadoCompromiso(
                         i, ent.EntidadId,
                         com1Data, com2Data, com3Data, com4Data, com5Data,
@@ -215,28 +207,88 @@ public class EvaluacionController : ControllerBase
     }
 
     /// <summary>
-    /// Actualiza el estado PCM de un compromiso
+    /// Actualiza el estado de un compromiso y registra en cumplimiento_normativo
     /// </summary>
     [HttpPut("compromiso/{compromisoId}/entidad/{entidadId}/estado")]
-    public async Task<IActionResult> UpdateEstadoPCM(
+    public async Task<IActionResult> UpdateEstado(
         int compromisoId, 
         Guid entidadId, 
-        [FromBody] UpdateEstadoPCMRequest request)
+        [FromBody] UpdateEstadoRequest request)
     {
         try
         {
-            var updated = await ActualizarEstadoPCM(compromisoId, entidadId, request.EstadoPCM, request.Observaciones);
+            // Obtener el ID del operador logueado desde el JWT
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            Guid? operadorId = null;
+            if (!string.IsNullOrEmpty(userIdClaim) && Guid.TryParse(userIdClaim, out var parsedUserId))
+            {
+                operadorId = parsedUserId;
+            }
+
+            _logger.LogInformation("Actualizando estado para compromiso {CompromisoId}, entidad {EntidadId}, estado: {Estado}, operador: {OperadorId}", 
+                compromisoId, entidadId, request.Estado, operadorId);
+
+            // 1. Actualizar estado en la tabla comX
+            var updated = await ActualizarEstado(compromisoId, entidadId, request.Estado, request.Observaciones);
             
             if (!updated)
             {
                 return NotFound(new { isSuccess = false, message = "No se encontró el compromiso para esta entidad" });
             }
 
+            // 2. Registrar en cumplimiento_normativo
+            // Mapear estado string a estado_id
+            int estadoId = request.Estado?.ToLower() switch
+            {
+                "aceptado" or "aprobado" => 8, // ACEPTADO
+                "observado" => 7, // OBSERVADO
+                "en_revision" or "en revisión" => 6, // EN REVISIÓN
+                "enviado" => 5, // ENVIADO
+                "en_proceso" or "en proceso" => 4, // EN PROCESO
+                "no_exigible" or "no exigible" => 3, // NO EXIGIBLE
+                "sin_reportar" or "sin reportar" => 2, // SIN REPORTAR
+                _ => 1 // PENDIENTE
+            };
+
+            // Buscar si ya existe un registro en cumplimiento_normativo
+            var cumplimientoExistente = await _context.CumplimientosNormativos
+                .FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.CompromisoId == compromisoId);
+
+            if (cumplimientoExistente != null)
+            {
+                // Actualizar registro existente
+                cumplimientoExistente.EstadoId = estadoId;
+                cumplimientoExistente.OperadorId = operadorId;
+                cumplimientoExistente.ObservacionPcm = request.Observaciones ?? "";
+                cumplimientoExistente.UpdatedAt = DateTime.UtcNow;
+            }
+            else
+            {
+                // Crear nuevo registro
+                var nuevoCumplimiento = new Domain.Entities.CumplimientoNormativo
+                {
+                    EntidadId = entidadId,
+                    CompromisoId = compromisoId,
+                    EstadoId = estadoId,
+                    OperadorId = operadorId,
+                    FechaAsignacion = DateTime.UtcNow,
+                    ObservacionPcm = request.Observaciones ?? "",
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+                _context.CumplimientosNormativos.Add(nuevoCumplimiento);
+            }
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Estado actualizado y registrado en cumplimiento_normativo para compromiso {CompromisoId}, entidad {EntidadId}", 
+                compromisoId, entidadId);
+
             return Ok(new { isSuccess = true, message = "Estado actualizado correctamente" });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al actualizar estado PCM");
+            _logger.LogError(ex, "Error al actualizar estado");
             return StatusCode(500, new { isSuccess = false, message = "Error interno del servidor" });
         }
     }
@@ -348,29 +400,28 @@ public class EvaluacionController : ControllerBase
     private string ObtenerEstadoCompromiso(
         int compromisoId, 
         Guid entidadId,
-        List<Domain.Entities.Com1LiderGTD> com1Data,
-        List<Domain.Entities.Com2CGTD> com2Data,
-        List<Domain.Entities.Com3EPGD> com3Data,
-        List<Domain.Entities.Com4PEI> com4Data,
-        List<Domain.Entities.Com5EstrategiaDigital> com5Data,
-        List<Domain.Entities.Com6MigracionGobPe> com6Data,
-        List<Domain.Entities.Com7ImplementacionMPD> com7Data,
-        List<Domain.Entities.Com8PublicacionTUPA> com8Data,
-        List<Domain.Entities.Com9ModeloGestionDocumental> com9Data,
-        List<Domain.Entities.Com10DatosAbiertos> com10Data,
-        List<Domain.Entities.Com11AportacionGeoPeru> com11Data,
-        List<Domain.Entities.Com12ResponsableSoftwarePublico> com12Data,
-        List<Domain.Entities.Com13InteroperabilidadPIDE> com13Data,
-        List<Domain.Entities.Com14OficialSeguridadDigital> com14Data,
-        List<Domain.Entities.Com15CSIRTInstitucional> com15Data,
-        List<Domain.Entities.Com16SistemaGestionSeguridad> com16Data,
-        List<Domain.Entities.Com17PlanTransicionIPv6> com17Data,
-        List<Domain.Entities.Com18AccesoPortalTransparencia> com18Data,
-        List<Domain.Entities.Com19EncuestaNacionalGobDigital> com19Data,
-        List<Domain.Entities.Com20DigitalizacionServiciosFacilita> com20Data,
-        List<Domain.Entities.Com21OficialGobiernoDatos> com21Data)
+        List<Com1LiderGTD> com1Data,
+        List<Com2CGTD> com2Data,
+        List<Com3EPGD> com3Data,
+        List<Com4PEI> com4Data,
+        List<Com5EstrategiaDigital> com5Data,
+        List<Com6MigracionGobPe> com6Data,
+        List<Com7ImplementacionMPD> com7Data,
+        List<Com8PublicacionTUPA> com8Data,
+        List<Com9ModeloGestionDocumental> com9Data,
+        List<Com10DatosAbiertos> com10Data,
+        List<Com11AportacionGeoPeru> com11Data,
+        List<Com12ResponsableSoftwarePublico> com12Data,
+        List<Com13InteroperabilidadPIDE> com13Data,
+        List<Com14OficialSeguridadDigital> com14Data,
+        List<Com15CSIRTInstitucional> com15Data,
+        List<Com16SistemaGestionSeguridad> com16Data,
+        List<Com17PlanTransicionIPv6> com17Data,
+        List<Com18AccesoPortalTransparencia> com18Data,
+        List<Com19EncuestaNacionalGobDigital> com19Data,
+        List<Com20DigitalizacionServiciosFacilita> com20Data,
+        List<Com21OficialGobiernoDatos> com21Data)
     {
-        string? estadoPcm = null;
         string? estado = null;
         string? etapa = null;
 
@@ -378,87 +429,87 @@ public class EvaluacionController : ControllerBase
         {
             case 1:
                 var c1 = com1Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c1 != null) { estadoPcm = c1.EstadoPCM; estado = c1.Estado; etapa = c1.EtapaFormulario; }
+                if (c1 != null) { estado = c1.Estado; etapa = c1.EtapaFormulario; }
                 break;
             case 2:
                 var c2 = com2Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c2 != null) { estadoPcm = c2.EstadoPcm; estado = c2.Estado; etapa = c2.EtapaFormulario; }
+                if (c2 != null) { estado = c2.Estado; etapa = c2.EtapaFormulario; }
                 break;
             case 3:
                 var c3 = com3Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c3 != null) { estadoPcm = c3.EstadoPcm; estado = c3.Estado; etapa = c3.EtapaFormulario; }
+                if (c3 != null) { estado = c3.Estado; etapa = c3.EtapaFormulario; }
                 break;
             case 4:
                 var c4 = com4Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c4 != null) { estadoPcm = c4.EstadoPCM; estado = c4.Estado; etapa = c4.EtapaFormulario; }
+                if (c4 != null) { estado = c4.Estado; etapa = c4.EtapaFormulario; }
                 break;
             case 5:
                 var c5 = com5Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c5 != null) { estadoPcm = c5.EstadoPCM; estado = c5.Estado; etapa = c5.EtapaFormulario; }
+                if (c5 != null) { estado = c5.Estado; etapa = c5.EtapaFormulario; }
                 break;
             case 6:
                 var c6 = com6Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c6 != null) { estadoPcm = c6.EstadoPCM; estado = c6.Estado; etapa = c6.EtapaFormulario; }
+                if (c6 != null) { estado = c6.Estado; etapa = c6.EtapaFormulario; }
                 break;
             case 7:
                 var c7 = com7Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c7 != null) { estadoPcm = c7.EstadoPCM; estado = c7.Estado; etapa = c7.EtapaFormulario; }
+                if (c7 != null) { estado = c7.Estado; etapa = c7.EtapaFormulario; }
                 break;
             case 8:
                 var c8 = com8Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c8 != null) { estadoPcm = c8.EstadoPCM; estado = c8.Estado; etapa = c8.EtapaFormulario; }
+                if (c8 != null) { estado = c8.Estado; etapa = c8.EtapaFormulario; }
                 break;
             case 9:
                 var c9 = com9Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c9 != null) { estadoPcm = c9.EstadoPCM; estado = c9.Estado; etapa = c9.EtapaFormulario; }
+                if (c9 != null) { estado = c9.Estado; etapa = c9.EtapaFormulario; }
                 break;
             case 10:
                 var c10 = com10Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c10 != null) { estadoPcm = c10.EstadoPCM; estado = c10.Estado; etapa = c10.EtapaFormulario; }
+                if (c10 != null) { estado = c10.Estado; etapa = c10.EtapaFormulario; }
                 break;
             case 11:
                 var c11 = com11Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c11 != null) { estadoPcm = c11.EstadoPCM; estado = c11.Estado; etapa = c11.EtapaFormulario; }
+                if (c11 != null) { estado = c11.Estado; etapa = c11.EtapaFormulario; }
                 break;
             case 12:
                 var c12 = com12Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c12 != null) { estadoPcm = c12.EstadoPCM; estado = c12.Estado; etapa = c12.EtapaFormulario; }
+                if (c12 != null) { estado = c12.Estado; etapa = c12.EtapaFormulario; }
                 break;
             case 13:
                 var c13 = com13Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c13 != null) { estadoPcm = c13.EstadoPCM; estado = c13.Estado; etapa = c13.EtapaFormulario; }
+                if (c13 != null) { estado = c13.Estado; etapa = c13.EtapaFormulario; }
                 break;
             case 14:
                 var c14 = com14Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c14 != null) { estadoPcm = c14.EstadoPCM; estado = c14.Estado; etapa = c14.EtapaFormulario; }
+                if (c14 != null) { estado = c14.Estado; etapa = c14.EtapaFormulario; }
                 break;
             case 15:
                 var c15 = com15Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c15 != null) { estadoPcm = c15.EstadoPCM; estado = c15.Estado; etapa = c15.EtapaFormulario; }
+                if (c15 != null) { estado = c15.Estado; etapa = c15.EtapaFormulario; }
                 break;
             case 16:
                 var c16 = com16Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c16 != null) { estadoPcm = c16.EstadoPCM; estado = c16.Estado; etapa = c16.EtapaFormulario; }
+                if (c16 != null) { estado = c16.Estado; etapa = c16.EtapaFormulario; }
                 break;
             case 17:
                 var c17 = com17Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c17 != null) { estadoPcm = c17.EstadoPCM; estado = c17.Estado; etapa = c17.EtapaFormulario; }
+                if (c17 != null) { estado = c17.Estado; etapa = c17.EtapaFormulario; }
                 break;
             case 18:
                 var c18 = com18Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c18 != null) { estadoPcm = c18.EstadoPCM; estado = c18.Estado; etapa = c18.EtapaFormulario; }
+                if (c18 != null) { estado = c18.Estado; etapa = c18.EtapaFormulario; }
                 break;
             case 19:
                 var c19 = com19Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c19 != null) { estadoPcm = c19.EstadoPCM; estado = c19.Estado; etapa = c19.EtapaFormulario; }
+                if (c19 != null) { estado = c19.Estado; etapa = c19.EtapaFormulario; }
                 break;
             case 20:
                 var c20 = com20Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c20 != null) { estadoPcm = c20.EstadoPCM; estado = c20.Estado; etapa = c20.EtapaFormulario; }
+                if (c20 != null) { estado = c20.Estado; etapa = c20.EtapaFormulario; }
                 break;
             case 21:
                 var c21 = com21Data.FirstOrDefault(c => c.EntidadId == entidadId);
-                if (c21 != null) { estadoPcm = c21.EstadoPCM; estado = c21.Estado; etapa = c21.EtapaFormulario; }
+                if (c21 != null) { estado = c21.Estado; etapa = c21.EtapaFormulario; }
                 break;
         }
 
@@ -468,12 +519,16 @@ public class EvaluacionController : ControllerBase
             return "sin reportar";
         }
 
-        // Mapear estado PCM a los estados de la UI
-        return estadoPcm?.ToLower() switch
+        // Mapear el campo estado a los estados de la UI
+        return estado?.ToLower() switch
         {
             "aceptado" or "validado" or "aprobado" => "aceptado",
             "observado" => "observado",
-            "en_revision" or "revision" => "en revisión",
+            "en_revision" or "revision" or "en revisión" => "en revisión",
+            "enviado" => "enviado",
+            "en_proceso" or "en proceso" => "en proceso",
+            "sin_reportar" or "sin reportar" => "sin reportar",
+            "no_exigible" or "no exigible" => "no exigible",
             _ => MapearEstadoEntidad(estado, etapa)
         };
     }
@@ -481,7 +536,7 @@ public class EvaluacionController : ControllerBase
     private string MapearEstadoEntidad(string? estado, string? etapa)
     {
         // Mapear basado en el estado del formulario
-        if (estado?.ToLower() == "bandeja" && etapa?.ToLower() == "completado")
+        if (estado?.ToLower() == "pendiente" && etapa?.ToLower() == "completado")
         {
             return "enviado";
         }
@@ -504,113 +559,113 @@ public class EvaluacionController : ControllerBase
         return "pendiente";
     }
 
-    private async Task<bool> ActualizarEstadoPCM(int compromisoId, Guid entidadId, string estadoPcm, string? observaciones)
+    private async Task<bool> ActualizarEstado(int compromisoId, Guid entidadId, string nuevoEstado, string? observaciones)
     {
         switch (compromisoId)
         {
             case 1:
                 var c1 = await _context.Com1LiderGTD.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c1 != null) { c1.EstadoPCM = estadoPcm; c1.ObservacionesPCM = observaciones ?? ""; }
+                if (c1 != null) { c1.Estado = nuevoEstado; c1.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 2:
                 var c2 = await _context.Com2CGTD.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c2 != null) { c2.EstadoPcm = estadoPcm; c2.ObservacionesPcm = observaciones ?? ""; }
+                if (c2 != null) { c2.Estado = nuevoEstado; c2.ObservacionesPcm = observaciones ?? ""; }
                 else return false;
                 break;
             case 3:
                 var c3 = await _context.Com3EPGD.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c3 != null) { c3.EstadoPcm = estadoPcm; c3.ObservacionesPcm = observaciones ?? ""; }
+                if (c3 != null) { c3.Estado = nuevoEstado; c3.ObservacionesPcm = observaciones ?? ""; }
                 else return false;
                 break;
             case 4:
                 var c4 = await _context.Com4PEI.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c4 != null) { c4.EstadoPCM = estadoPcm; c4.ObservacionesPCM = observaciones ?? ""; }
+                if (c4 != null) { c4.Estado = nuevoEstado; c4.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 5:
                 var c5 = await _context.Com5EstrategiaDigital.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c5 != null) { c5.EstadoPCM = estadoPcm; c5.ObservacionesPCM = observaciones ?? ""; }
+                if (c5 != null) { c5.Estado = nuevoEstado; c5.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 6:
                 var c6 = await _context.Com6MigracionGobPe.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c6 != null) { c6.EstadoPCM = estadoPcm; c6.ObservacionesPCM = observaciones ?? ""; }
+                if (c6 != null) { c6.Estado = nuevoEstado; c6.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 7:
                 var c7 = await _context.Com7ImplementacionMPD.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c7 != null) { c7.EstadoPCM = estadoPcm; c7.ObservacionesPCM = observaciones ?? ""; }
+                if (c7 != null) { c7.Estado = nuevoEstado; c7.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 8:
                 var c8 = await _context.Com8PublicacionTUPA.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c8 != null) { c8.EstadoPCM = estadoPcm; c8.ObservacionesPCM = observaciones ?? ""; }
+                if (c8 != null) { c8.Estado = nuevoEstado; c8.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 9:
                 var c9 = await _context.Com9ModeloGestionDocumental.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c9 != null) { c9.EstadoPCM = estadoPcm; c9.ObservacionesPCM = observaciones ?? ""; }
+                if (c9 != null) { c9.Estado = nuevoEstado; c9.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 10:
                 var c10 = await _context.Com10DatosAbiertos.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c10 != null) { c10.EstadoPCM = estadoPcm; c10.ObservacionesPCM = observaciones ?? ""; }
+                if (c10 != null) { c10.Estado = nuevoEstado; c10.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 11:
                 var c11 = await _context.Com11AportacionGeoPeru.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c11 != null) { c11.EstadoPCM = estadoPcm; c11.ObservacionesPCM = observaciones ?? ""; }
+                if (c11 != null) { c11.Estado = nuevoEstado; c11.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 12:
                 var c12 = await _context.Com12ResponsableSoftwarePublico.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c12 != null) { c12.EstadoPCM = estadoPcm; c12.ObservacionesPCM = observaciones ?? ""; }
+                if (c12 != null) { c12.Estado = nuevoEstado; c12.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 13:
                 var c13 = await _context.Com13InteroperabilidadPIDE.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c13 != null) { c13.EstadoPCM = estadoPcm; c13.ObservacionesPCM = observaciones ?? ""; }
+                if (c13 != null) { c13.Estado = nuevoEstado; c13.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 14:
                 var c14 = await _context.Com14OficialSeguridadDigital.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c14 != null) { c14.EstadoPCM = estadoPcm; c14.ObservacionesPCM = observaciones ?? ""; }
+                if (c14 != null) { c14.Estado = nuevoEstado; c14.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 15:
                 var c15 = await _context.Com15CSIRTInstitucional.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c15 != null) { c15.EstadoPCM = estadoPcm; c15.ObservacionesPCM = observaciones ?? ""; }
+                if (c15 != null) { c15.Estado = nuevoEstado; c15.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 16:
                 var c16 = await _context.Com16SistemaGestionSeguridad.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c16 != null) { c16.EstadoPCM = estadoPcm; c16.ObservacionesPCM = observaciones ?? ""; }
+                if (c16 != null) { c16.Estado = nuevoEstado; c16.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 17:
                 var c17 = await _context.Com17PlanTransicionIPv6.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c17 != null) { c17.EstadoPCM = estadoPcm; c17.ObservacionesPCM = observaciones ?? ""; }
+                if (c17 != null) { c17.Estado = nuevoEstado; c17.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 18:
                 var c18 = await _context.Com18AccesoPortalTransparencia.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c18 != null) { c18.EstadoPCM = estadoPcm; c18.ObservacionesPCM = observaciones ?? ""; }
+                if (c18 != null) { c18.Estado = nuevoEstado; c18.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 19:
                 var c19 = await _context.Com19EncuestaNacionalGobDigital.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c19 != null) { c19.EstadoPCM = estadoPcm; c19.ObservacionesPCM = observaciones ?? ""; }
+                if (c19 != null) { c19.Estado = nuevoEstado; c19.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 20:
                 var c20 = await _context.Com20DigitalizacionServiciosFacilita.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c20 != null) { c20.EstadoPCM = estadoPcm; c20.ObservacionesPCM = observaciones ?? ""; }
+                if (c20 != null) { c20.Estado = nuevoEstado; c20.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             case 21:
                 var c21 = await _context.Com21OficialGobiernoDatos.FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.Activo);
-                if (c21 != null) { c21.EstadoPCM = estadoPcm; c21.ObservacionesPCM = observaciones ?? ""; }
+                if (c21 != null) { c21.Estado = nuevoEstado; c21.ObservacionesPCM = observaciones ?? ""; }
                 else return false;
                 break;
             default:
@@ -624,8 +679,8 @@ public class EvaluacionController : ControllerBase
     #endregion
 }
 
-public class UpdateEstadoPCMRequest
+public class UpdateEstadoRequest
 {
-    public string EstadoPCM { get; set; } = string.Empty;
+    public string Estado { get; set; } = string.Empty;
     public string? Observaciones { get; set; }
 }

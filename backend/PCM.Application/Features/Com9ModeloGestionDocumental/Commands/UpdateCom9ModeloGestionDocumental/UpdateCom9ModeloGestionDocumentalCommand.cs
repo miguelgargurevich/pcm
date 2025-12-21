@@ -1,6 +1,7 @@
 using MediatR;
 using PCM.Application.Common;
 using System;
+using System.Text.Json.Serialization;
 
 namespace PCM.Application.Features.Com9ModeloGestionDocumental.Commands.UpdateCom9ModeloGestionDocumental
 {
@@ -18,6 +19,8 @@ namespace PCM.Application.Features.Com9ModeloGestionDocumental.Commands.UpdateCo
         public bool InteroperaSistemasMgd { get; set; }
         public string? ObservacionMgd { get; set; }
         public string? RutaPdfMgd { get; set; }
+        [JsonPropertyName("rutaPdfNormativa")]
+        public string? RutaPdfNormativa { get; set; }
         public bool CheckPrivacidad { get; set; }
         public bool CheckDdjj { get; set; }
         public Guid? UsuarioRegistra { get; set; }

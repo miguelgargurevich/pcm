@@ -11,7 +11,7 @@ public class Com1LiderGTD
     public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
     public string EtapaFormulario { get; set; } = string.Empty; // paso1, paso2, paso3, completado
-    public string Estado { get; set; } = string.Empty; // bandeja, sin_reportar, publicado
+    public string Estado { get; set; } = string.Empty; // pendiente, sin_reportar, no_exigible, en_proceso, enviado, en_revision, observado, aceptado
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }
     public string EstadoPCM { get; set; } = string.Empty; // en_revision, validado, observado

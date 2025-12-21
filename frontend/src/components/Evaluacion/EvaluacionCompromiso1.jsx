@@ -28,7 +28,6 @@ const EvaluacionCompromiso1 = ({ data, activeTab }) => {
     fechaDesignacion: data.fecIniLider || data.fecRegistro || '',
     numeroResolucion: data.urlDocPcm || '',
     estado: data.estado || '',
-    estadoPcm: data.estadoPCM || data.estadoPcm || '',
     etapaFormulario: data.etapaFormulario || '',
     rolLider: data.rolLider || ''
   };
@@ -68,12 +67,6 @@ const EvaluacionCompromiso1 = ({ data, activeTab }) => {
               <label className="block text-sm font-medium text-gray-500 mb-1">Etapa</label>
               <div className="bg-purple-50 rounded-lg p-3 text-purple-900 font-medium">
                 {datosGenerales.etapaFormulario || 'Sin etapa'}
-              </div>
-            </div>
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-500 mb-1">Estado PCM</label>
-              <div className="bg-green-50 rounded-lg p-3 text-green-900 font-medium">
-                {datosGenerales.estadoPcm || 'Sin evaluar'}
               </div>
             </div>
           </div>

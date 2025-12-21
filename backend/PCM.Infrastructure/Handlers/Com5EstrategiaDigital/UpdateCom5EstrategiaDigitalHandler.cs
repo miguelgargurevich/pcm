@@ -49,6 +49,7 @@ public class UpdateCom5EstrategiaDigitalHandler
             entity.AlineadoPgdEstrategia = command.AlineadoPgdEstrategia;
             if (command.EstadoImplementacionEstrategia != null) entity.EstadoImplementacionEstrategia = command.EstadoImplementacionEstrategia;
             if (command.RutaPdfEstrategia != null) entity.RutaPdfEstrategia = command.RutaPdfEstrategia;
+            if (command.RutaPdfNormativa != null) entity.RutaPdfNormativa = command.RutaPdfNormativa;
             entity.CheckPrivacidad = command.CheckPrivacidad;
             entity.CheckDdjj = command.CheckDdjj;
             if (command.UsuarioRegistra != Guid.Empty) entity.UsuarioRegistra = command.UsuarioRegistra;

@@ -49,12 +49,12 @@ export const evaluacionService = {
   },
 
   /**
-   * Actualiza el estado PCM de un compromiso
+   * Actualiza el estado de un compromiso
    */
-  updateEstadoPCM: async (compromisoId, entidadId, estadoPCM, observaciones = null) => {
+  updateEstado: async (compromisoId, entidadId, estado, observaciones = null) => {
     const response = await api.put(
       `${BASE_URL}/compromiso/${compromisoId}/entidad/${entidadId}/estado`,
-      { estadoPCM, observaciones }
+      { estado, observaciones }
     );
     return response.data;
   }

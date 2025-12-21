@@ -51,11 +51,6 @@ public class CreateCumplimientoHandler : IRequestHandler<CreateCumplimientoComma
                 OperadorId = request.OperadorId,
                 FechaAsignacion = request.FechaAsignacion,
                 ObservacionPcm = request.ObservacionPcm,
-                CriteriosEvaluados = request.CriteriosEvaluados,
-                DocumentoUrl = request.DocumentoUrl,
-                AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad,
-                AceptaDeclaracionJurada = request.AceptaDeclaracionJurada,
-                EtapaFormulario = request.EtapaFormulario,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -91,11 +86,6 @@ public class CreateCumplimientoHandler : IRequestHandler<CreateCumplimientoComma
             OperadorId = cumplimiento.OperadorId,
             FechaAsignacion = cumplimiento.FechaAsignacion,
             ObservacionPcm = cumplimiento.ObservacionPcm,
-            CriteriosEvaluados = cumplimiento.CriteriosEvaluados,
-            DocumentoUrl = cumplimiento.DocumentoUrl,
-            AceptaPoliticaPrivacidad = cumplimiento.AceptaPoliticaPrivacidad,
-            AceptaDeclaracionJurada = cumplimiento.AceptaDeclaracionJurada,
-            EtapaFormulario = cumplimiento.EtapaFormulario,
             NombreCompromiso = cumplimiento.Compromiso?.NombreCompromiso,
             NombreEntidad = cumplimiento.Entidad?.Nombre,
             EstadoNombre = GetEstadoNombre(cumplimiento.EstadoId),

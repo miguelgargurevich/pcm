@@ -8,7 +8,7 @@ public class CreateCom6MigracionGobPeCommand : IRequest<Result<Com6MigracionGobP
     public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
     public string EtapaFormulario { get; set; } = "paso1";
-    public string Estado { get; set; } = "bandeja";
+    public string Estado { get; set; } = "pendiente";
     
     // Campos de Migración GOB.PE
     public string? UrlGobPe { get; set; }

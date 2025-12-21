@@ -1,6 +1,7 @@
 using MediatR;
 using PCM.Application.Common;
 using System;
+using System.Text.Json.Serialization;
 
 namespace PCM.Application.Features.Com10DatosAbiertos.Commands.UpdateCom10DatosAbiertos
 {
@@ -18,6 +19,8 @@ namespace PCM.Application.Features.Com10DatosAbiertos.Commands.UpdateCom10DatosA
         public DateTime? FechaAprobacionDa { get; set; }
         public string? ObservacionDa { get; set; }
         public string? RutaPdfDa { get; set; }
+        [JsonPropertyName("rutaPdfNormativa")]
+        public string? RutaPdfNormativa { get; set; }
         public bool CheckPrivacidad { get; set; }
         public bool CheckDdjj { get; set; }
         public Guid? UsuarioRegistra { get; set; }

@@ -8,7 +8,7 @@ public class CreateCom7ImplementacionMPDCommand : IRequest<Result<Com7Implementa
     public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
     public string EtapaFormulario { get; set; } = "paso1";
-    public string Estado { get; set; } = "bandeja";
+    public string Estado { get; set; } = "pendiente";
     
     // Campos específicos de Implementación de Mesa de Partes Digital
     public string? UrlMpd { get; set; }

@@ -47,6 +47,7 @@ public class UpdateCom6MigracionGobPeHandler : IRequestHandler<UpdateCom6Migraci
             if (request.TipoMigracionGobPe != null) entity.TipoMigracionGobPe = request.TipoMigracionGobPe;
             if (request.ObservacionGobPe != null) entity.ObservacionGobPe = request.ObservacionGobPe;
             if (request.RutaPdfGobPe != null) entity.RutaPdfGobPe = request.RutaPdfGobPe;
+            if (request.RutaPdfNormativa != null) entity.RutaPdfNormativa = request.RutaPdfNormativa;
             if (request.CheckPrivacidad.HasValue) entity.CheckPrivacidad = request.CheckPrivacidad.Value;
             if (request.CheckDdjj.HasValue) entity.CheckDdjj = request.CheckDdjj.Value;
 

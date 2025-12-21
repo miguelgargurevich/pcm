@@ -60,11 +60,6 @@ public class GetAllCumplimientosHandler : IRequestHandler<GetAllCumplimientosQue
                 OperadorId = c.OperadorId,
                 FechaAsignacion = c.FechaAsignacion,
                 ObservacionPcm = c.ObservacionPcm,
-                CriteriosEvaluados = c.CriteriosEvaluados,
-                DocumentoUrl = c.DocumentoUrl,
-                AceptaPoliticaPrivacidad = c.AceptaPoliticaPrivacidad,
-                AceptaDeclaracionJurada = c.AceptaDeclaracionJurada,
-                EtapaFormulario = c.EtapaFormulario,
                 CreatedAt = c.CreatedAt,
                 UpdatedAt = c.UpdatedAt
             }).ToList();

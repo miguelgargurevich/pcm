@@ -22,7 +22,7 @@ public class Com7ImplementacionMPD
 
     [Column("estado")]
     [MaxLength(15)]
-    public string Estado { get; set; } = "bandeja";
+    public string Estado { get; set; } = "pendiente";
 
     [Column("check_privacidad")]
     public bool CheckPrivacidad { get; set; }

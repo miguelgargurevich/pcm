@@ -60,6 +60,8 @@ public class UpdateCom8PublicacionTUPAHandler : IRequestHandler<UpdateCom8Public
                 entity.ObservacionTupa = request.ObservacionTupa;
             if (request.RutaPdfTupa != null)
                 entity.RutaPdfTupa = request.RutaPdfTupa;
+            if (request.RutaPdfNormativa != null)
+                entity.RutaPdfNormativa = request.RutaPdfNormativa;
             if (request.CheckPrivacidad.HasValue)
                 entity.CheckPrivacidad = request.CheckPrivacidad.Value;
             if (request.CheckDdjj.HasValue)

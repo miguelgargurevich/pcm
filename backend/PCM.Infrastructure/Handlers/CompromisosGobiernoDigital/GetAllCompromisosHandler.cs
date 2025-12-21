@@ -339,9 +339,14 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
         {
             estadoCumplimiento = registroEspecifico.estado switch
             {
-                "bandeja" => 1,
-                "sin_reportar" => 2,
-                "publicado" => 3,
+                "pendiente" => 1,  // PENDIENTE
+                "sin_reportar" => 2,  // SIN REPORTAR
+                "no_exigible" => 3,  // NO EXIGIBLE
+                "en_proceso" => 4,  // EN PROCESO
+                "enviado" => 5,  // ENVIADO
+                "en_revision" => 6,  // EN REVISIÓN
+                "observado" => 7,  // OBSERVADO
+                "aceptado" => 8,  // ACEPTADO
                 _ => cumplimiento?.EstadoId
             };
         }

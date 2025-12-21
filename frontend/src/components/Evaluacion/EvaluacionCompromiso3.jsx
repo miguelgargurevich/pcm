@@ -479,12 +479,6 @@ const EvaluacionCompromiso3 = ({ data, activeTab }) => {
                 {data.etapaFormulario || 'Sin etapa'}
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">Estado PCM</label>
-              <div className="bg-green-50 rounded-lg p-3 text-green-900 font-medium">
-                {data.estadoPcm || 'Sin evaluar'}
-              </div>
-            </div>
           </div>
 
           {/* Sub-tabs del Compromiso 3 */}

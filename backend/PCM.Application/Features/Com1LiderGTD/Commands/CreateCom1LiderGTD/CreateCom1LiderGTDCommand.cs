@@ -8,7 +8,7 @@ public class CreateCom1LiderGTDCommand : IRequest<Result<Com1LiderGTDResponse>>
     public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }
     public string EtapaFormulario { get; set; } = "paso1"; // paso1, paso2, paso3, completado
-    public string Estado { get; set; } = "bandeja"; // bandeja, sin_reportar, publicado
+    public string Estado { get; set; } = "pendiente"; // pendiente, sin_reportar, no_exigible, en_proceso, enviado, en_revision, observado, aceptado
     
     // Campos del Líder de GTD
     public string? DniLider { get; set; }

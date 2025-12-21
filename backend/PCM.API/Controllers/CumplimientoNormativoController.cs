@@ -109,12 +109,7 @@ public class CumplimientoNormativoController : ControllerBase
                 EstadoId = request.EstadoId,
                 OperadorId = request.OperadorId,
                 FechaAsignacion = request.FechaAsignacion,
-                ObservacionPcm = request.ObservacionPcm,
-                CriteriosEvaluados = request.CriteriosEvaluados,
-                DocumentoUrl = request.DocumentoUrl,
-                AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad,
-                AceptaDeclaracionJurada = request.AceptaDeclaracionJurada,
-                EtapaFormulario = request.EtapaFormulario
+                ObservacionPcm = request.ObservacionPcm
             };
 
             var result = await _mediator.Send(command);
@@ -144,8 +139,8 @@ public class CumplimientoNormativoController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Actualizando cumplimiento {Id} - EtapaFormulario: {Etapa}, AceptaPrivacidad: {Privacidad}, AceptaDDJJ: {DDJJ}", 
-                id, request.EtapaFormulario, request.AceptaPoliticaPrivacidad, request.AceptaDeclaracionJurada);
+            _logger.LogInformation("Actualizando cumplimiento {Id} - EstadoId: {EstadoId}", 
+                id, request.EstadoId);
             
             var command = new UpdateCumplimientoCommand
             {
@@ -153,12 +148,7 @@ public class CumplimientoNormativoController : ControllerBase
                 EstadoId = request.EstadoId,
                 OperadorId = request.OperadorId,
                 FechaAsignacion = request.FechaAsignacion,
-                ObservacionPcm = request.ObservacionPcm,
-                CriteriosEvaluados = request.CriteriosEvaluados,
-                DocumentoUrl = request.DocumentoUrl,
-                AceptaPoliticaPrivacidad = request.AceptaPoliticaPrivacidad,
-                AceptaDeclaracionJurada = request.AceptaDeclaracionJurada,
-                EtapaFormulario = request.EtapaFormulario
+                ObservacionPcm = request.ObservacionPcm
             };
 
             var result = await _mediator.Send(command);

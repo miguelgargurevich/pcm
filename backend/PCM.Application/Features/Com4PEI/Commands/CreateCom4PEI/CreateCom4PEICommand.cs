@@ -16,7 +16,7 @@ public class CreateCom4PEICommand : IRequest<Result<Com4PEIResponse>>
     public string EtapaFormulario { get; set; } = "paso1";
     
     [JsonPropertyName("estado")]
-    public string Estado { get; set; } = "bandeja";
+    public string Estado { get; set; } = "pendiente";
     
     // Campos del PEI - Supabase schema
     [JsonPropertyName("anioInicioPei")]

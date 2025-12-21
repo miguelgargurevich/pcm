@@ -23,6 +23,7 @@ public class UpdateCom1LiderGTDCommand : IRequest<Result<Com1LiderGTDResponse>>
     
     // Documento
     public string? UrlDocUrl { get; set; }
+    public string? RutaPdfNormativa { get; set; }
     
     // Aceptaciones
     public bool? CheckPrivacidad { get; set; }

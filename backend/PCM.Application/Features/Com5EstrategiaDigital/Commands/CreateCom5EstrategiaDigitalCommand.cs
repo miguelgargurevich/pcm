@@ -17,7 +17,7 @@ public class CreateCom5EstrategiaDigitalCommand
     public bool CheckDdjj { get; set; }
     public Guid UsuarioRegistra { get; set; }
     public string EtapaFormulario { get; set; } = "paso1";
-    public string Estado { get; set; } = "bandeja";
+    public string Estado { get; set; } = "pendiente";
 }
 
 public class Com5EstrategiaDigitalResponse
@@ -37,7 +37,7 @@ public class Com5EstrategiaDigitalResponse
     public bool CheckPrivacidad { get; set; }
     public bool CheckDdjj { get; set; }
     public Guid UsuarioRegistra { get; set; }
-    public string Estado { get; set; } = "bandeja";
+    public string Estado { get; set; } = "pendiente";
     public string EtapaFormulario { get; set; } = "paso1";
     public DateTime CreatedAt { get; set; }
     public DateTime FecRegistro { get; set; }

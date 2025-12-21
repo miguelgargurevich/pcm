@@ -176,7 +176,7 @@ const EvaluacionCumplimiento = () => {
   const handleEvaluar = async (nuevoEstado, observaciones) => {
     if (entidadSeleccionada && compromisoSeleccionado) {
       try {
-        const response = await evaluacionService.updateEstadoPCM(
+        const response = await evaluacionService.updateEstado(
           compromisoSeleccionado,
           entidadSeleccionada.id,
           nuevoEstado,

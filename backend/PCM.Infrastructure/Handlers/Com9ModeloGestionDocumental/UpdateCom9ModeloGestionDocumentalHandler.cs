@@ -50,6 +50,7 @@ namespace PCM.Infrastructure.Handlers.Com9ModeloGestionDocumental
                 registro.InteroperaSistemasMgd = request.InteroperaSistemasMgd;
                 registro.ObservacionMgd = request.ObservacionMgd ?? registro.ObservacionMgd;
                 registro.RutaPdfMgd = request.RutaPdfMgd ?? registro.RutaPdfMgd;
+                if (request.RutaPdfNormativa != null) registro.RutaPdfNormativa = request.RutaPdfNormativa;
                 registro.CheckPrivacidad = request.CheckPrivacidad;
                 registro.CheckDdjj = request.CheckDdjj;
                 if (request.UsuarioRegistra.HasValue && request.UsuarioRegistra.Value != Guid.Empty)

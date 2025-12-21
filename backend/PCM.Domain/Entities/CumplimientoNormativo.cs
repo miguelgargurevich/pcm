@@ -5,28 +5,19 @@ namespace PCM.Domain.Entities;
 
 /// <summary>
 /// Entidad para gestionar el cumplimiento normativo de compromisos de gobierno digital por entidad.
-/// Estructura adaptada a Supabase.
+/// Registra las evaluaciones realizadas por operadores PCM (OBSERVADO/ACEPTADO).
 /// </summary>
 public class CumplimientoNormativo
 {
     public long CumplimientoId { get; set; }
     public Guid EntidadId { get; set; }
     public long CompromisoId { get; set; }
-    public int EstadoId { get; set; } = 1; // 1=pendiente, 2=en_proceso, 3=completado
-    public Guid? OperadorId { get; set; }
+    public int EstadoId { get; set; } = 1; // FK a estado_cumplimiento (7=OBSERVADO, 8=ACEPTADO)
+    public Guid? OperadorId { get; set; } // ID del operador PCM que realizó la evaluación
     public DateTime? FechaAsignacion { get; set; }
-    public string? ObservacionPcm { get; set; }
+    public string? ObservacionPcm { get; set; } // Observaciones del evaluador
     public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
-    
-    // ============================================
-    // CAMPOS ADICIONALES PARA FORMULARIO
-    // ============================================
-    public string? CriteriosEvaluados { get; set; } // JSON: [{"criterioId": 1, "cumple": true}]
-    public string? DocumentoUrl { get; set; }
-    public bool AceptaPoliticaPrivacidad { get; set; }
-    public bool AceptaDeclaracionJurada { get; set; }
-    public string? EtapaFormulario { get; set; } // paso1, paso2, paso3, completado
     
     // ============================================
     // RELACIONES DE NAVEGACIÓN

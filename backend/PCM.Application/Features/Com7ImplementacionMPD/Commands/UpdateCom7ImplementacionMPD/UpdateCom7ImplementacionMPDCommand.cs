@@ -1,5 +1,6 @@
 using MediatR;
 using PCM.Application.Common;
+using System.Text.Json.Serialization;
 
 namespace PCM.Application.Features.Com7ImplementacionMPD.Commands.UpdateCom7ImplementacionMPD;
 
@@ -22,6 +23,8 @@ public class UpdateCom7ImplementacionMPDCommand : IRequest<Result<Com7Implementa
     public bool? InteroperabilidadMpd { get; set; }
     public string? ObservacionMpd { get; set; }
     public string? RutaPdfMpd { get; set; }
+    [JsonPropertyName("rutaPdfNormativa")]
+    public string? RutaPdfNormativa { get; set; }
     
     // Aceptaciones
     public bool? CheckPrivacidad { get; set; }

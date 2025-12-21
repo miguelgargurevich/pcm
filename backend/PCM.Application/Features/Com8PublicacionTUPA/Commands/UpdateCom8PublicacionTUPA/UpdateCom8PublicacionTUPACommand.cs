@@ -1,5 +1,6 @@
 using MediatR;
 using PCM.Application.Common;
+using System.Text.Json.Serialization;
 
 namespace PCM.Application.Features.Com8PublicacionTUPA.Commands.UpdateCom8PublicacionTUPA;
 
@@ -22,6 +23,8 @@ public class UpdateCom8PublicacionTUPACommand : IRequest<Result<Com8PublicacionT
     public bool? ActualizadoTupa { get; set; }
     public string? ObservacionTupa { get; set; }
     public string? RutaPdfTupa { get; set; }
+    [JsonPropertyName("rutaPdfNormativa")]
+    public string? RutaPdfNormativa { get; set; }
     
     // Aceptaciones
     public bool? CheckPrivacidad { get; set; }

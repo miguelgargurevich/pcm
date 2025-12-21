@@ -490,7 +490,7 @@ public class PCMDbContext : DbContext
             entity.HasIndex(e => new { e.CompromisoId, e.ClasificacionId }).IsUnique();
         });
 
-        // Configuración de CumplimientoNormativo (adaptado a estructura Supabase)
+        // Configuración de CumplimientoNormativo (registro de evaluaciones PCM)
         modelBuilder.Entity<CumplimientoNormativo>(entity =>
         {
             entity.ToTable("cumplimiento_normativo");
@@ -504,13 +504,6 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.ObservacionPcm).HasColumnName("observacion_pcm").HasColumnType("text");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("now()");
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").HasDefaultValueSql("now()");
-            
-            // Campos adicionales para formulario
-            entity.Property(e => e.CriteriosEvaluados).HasColumnName("criterios_evaluados").HasColumnType("jsonb");
-            entity.Property(e => e.DocumentoUrl).HasColumnName("documento_url").HasColumnType("text");
-            entity.Property(e => e.AceptaPoliticaPrivacidad).HasColumnName("acepta_politica_privacidad").HasDefaultValue(false);
-            entity.Property(e => e.AceptaDeclaracionJurada).HasColumnName("acepta_declaracion_jurada").HasDefaultValue(false);
-            entity.Property(e => e.EtapaFormulario).HasColumnName("etapa_formulario").HasMaxLength(50);
 
             // Relaciones
             entity.HasOne(e => e.Compromiso)
@@ -557,7 +550,7 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.CargoLider).HasColumnName("cargo_lider").HasMaxLength(20).IsRequired();
             entity.Property(e => e.FecIniLider).HasColumnName("fec_ini_lider").IsRequired();
             entity.Property(e => e.UrlDocPcm).HasColumnName("url_doc_pcm");
-            entity.Property(e => e.RutaPdfNormativa).HasColumnName("ruta_pdf_normativa");
+            entity.Property(e => e.RutaPdfNormativa).HasColumnName("rutaPDF_normativa");
 
             // Relaciones
             entity.HasOne(e => e.Compromiso)
@@ -590,6 +583,7 @@ public class PCMDbContext : DbContext
             entity.Property(e => e.UsuarioRegistra).HasColumnName("usuario_registra").IsRequired();
             entity.Property(e => e.Activo).HasColumnName("activo").IsRequired();
             entity.Property(e => e.UrlDocPcm).HasColumnName("url_doc_pcm");
+            entity.Property(e => e.RutaPdfNormativa).HasColumnName("rutaPDF_normativa").HasMaxLength(500);
         });
 
         // Configuración de ComiteMiembro

@@ -60,6 +60,8 @@ public class UpdateCom7ImplementacionMPDHandler : IRequestHandler<UpdateCom7Impl
                 entity.ObservacionMpd = request.ObservacionMpd;
             if (request.RutaPdfMpd != null)
                 entity.RutaPdfMpd = request.RutaPdfMpd;
+            if (request.RutaPdfNormativa != null)
+                entity.RutaPdfNormativa = request.RutaPdfNormativa;
             if (request.CheckPrivacidad.HasValue)
                 entity.CheckPrivacidad = request.CheckPrivacidad.Value;
             if (request.CheckDdjj.HasValue)

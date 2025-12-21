@@ -47,7 +47,7 @@ public class CompromisoResponseDto
     
     // Datos de cumplimiento normativo de la entidad del usuario
     public DateTime? FechaRegistroCumplimiento { get; set; } // Fecha de creación del registro en cumplimiento_normativo
-    public int? EstadoCumplimiento { get; set; } // Estado del cumplimiento: 1=bandeja, 2=sin_reportar, 3=publicado
+    public int? EstadoCumplimiento { get; set; } // Estado del cumplimiento: 1=pendiente, 2=sin_reportar, 3=no_exigible, 4=en_proceso, 5=enviado, 6=en_revision, 7=observado, 8=aceptado
 }
 
 public class CompromisoNormativaDto

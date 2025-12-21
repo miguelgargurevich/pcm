@@ -71,6 +71,8 @@ public class UpdateCom1LiderGTDHandler : IRequestHandler<UpdateCom1LiderGTDComma
             if (request.UrlDocUrl != null)
                 entity.UrlDocPcm = request.UrlDocUrl;
             
+            if (request.RutaPdfNormativa != null)
+                entity.RutaPdfNormativa = request.RutaPdfNormativa;
 
             if (request.CheckPrivacidad.HasValue)
                 entity.CheckPrivacidad = request.CheckPrivacidad.Value;

@@ -39,6 +39,8 @@ public class UpdateCom2CGTDHandler : IRequestHandler<UpdateCom2CGTDCommand, Resu
             entity.EstadoPcm = request.EstadoPcm;
             entity.ObservacionesPcm = request.ObservacionesPcm;
             entity.UrlDocPcm = request.UrlDocUrl;
+            if (request.RutaPdfNormativa != null)
+                entity.RutaPdfNormativa = request.RutaPdfNormativa;
 
             await _context.SaveChangesAsync(cancellationToken);
 
