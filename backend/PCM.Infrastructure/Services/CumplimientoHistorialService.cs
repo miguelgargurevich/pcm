@@ -645,4 +645,96 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
             EntidadNombre = entidadNombre
         };
     }
+
+    public async Task<long> RegistrarCambioDesdeFormularioAsync(
+        long compromisoId,
+        Guid entidadId,
+        string? estadoAnterior,
+        string estadoNuevo,
+        Guid usuarioId,
+        string? observacion = null,
+        string tipoAccion = "ENVIO",
+        string? ipOrigen = null)
+    {
+        try
+        {
+            // Convertir estados de texto a IDs
+            int? estadoAnteriorId = ConvertirEstadoTextoAId(estadoAnterior);
+            int estadoNuevoId = ConvertirEstadoTextoAId(estadoNuevo) ?? 4; // Default EN PROCESO
+
+            // Solo registrar si hay cambio real de estado
+            if (estadoAnteriorId == estadoNuevoId)
+            {
+                _logger.LogDebug("No se registra historial, estado no cambió: {Estado}", estadoNuevo);
+                return 0;
+            }
+
+            // Buscar cumplimiento existente
+            var cumplimiento = await _context.CumplimientosNormativos
+                .FirstOrDefaultAsync(c => c.CompromisoId == compromisoId && c.EntidadId == entidadId);
+
+            long cumplimientoId;
+
+            if (cumplimiento != null)
+            {
+                cumplimientoId = cumplimiento.CumplimientoId;
+                // Actualizar estado en cumplimiento_normativo
+                cumplimiento.EstadoId = estadoNuevoId;
+                cumplimiento.UpdatedAt = DateTime.UtcNow;
+            }
+            else
+            {
+                // Crear nuevo registro de cumplimiento
+                var nuevoCumplimiento = new CumplimientoNormativo
+                {
+                    CompromisoId = compromisoId,
+                    EntidadId = entidadId,
+                    EstadoId = estadoNuevoId,
+                    FechaAsignacion = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+                _context.CumplimientosNormativos.Add(nuevoCumplimiento);
+                await _context.SaveChangesAsync();
+                cumplimientoId = nuevoCumplimiento.CumplimientoId;
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Registrar en historial
+            return await RegistrarCambioConSnapshotAsync(
+                cumplimientoId: cumplimientoId,
+                compromisoId: compromisoId,
+                entidadId: entidadId,
+                estadoAnteriorId: estadoAnteriorId,
+                estadoNuevoId: estadoNuevoId,
+                usuarioId: usuarioId,
+                observacion: observacion,
+                tipoAccion: tipoAccion,
+                ipOrigen: ipOrigen);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error al registrar historial desde formulario para compromiso {CompromisoId}", compromisoId);
+            return 0; // No fallar la operación principal
+        }
+    }
+
+    private int? ConvertirEstadoTextoAId(string? estado)
+    {
+        if (string.IsNullOrEmpty(estado)) return null;
+        
+        return estado.ToLower().Trim() switch
+        {
+            "aceptado" or "aprobado" or "publicado" => 8, // ACEPTADO
+            "observado" => 7, // OBSERVADO
+            "en_revision" or "en revisión" or "en revision" => 6, // EN REVISIÓN
+            "enviado" => 5, // ENVIADO
+            "en_proceso" or "en proceso" or "borrador" => 4, // EN PROCESO
+            "no_exigible" or "no exigible" => 3, // NO EXIGIBLE
+            "sin_reportar" or "sin reportar" => 2, // SIN REPORTAR
+            "pendiente" => 1, // PENDIENTE
+            _ => null
+        };
+    }
 }

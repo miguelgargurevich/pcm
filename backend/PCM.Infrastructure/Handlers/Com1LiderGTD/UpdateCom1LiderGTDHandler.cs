@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using PCM.Application.Features.Com1LiderGTD.Commands.UpdateCom1LiderGTD;
 using PCM.Application.Features.Com1LiderGTD.Commands.CreateCom1LiderGTD;
 using PCM.Application.Common;
+using PCM.Application.Interfaces;
 using PCM.Infrastructure.Data;
 
 namespace PCM.Infrastructure.Handlers.Com1LiderGTD;
@@ -12,11 +13,16 @@ public class UpdateCom1LiderGTDHandler : IRequestHandler<UpdateCom1LiderGTDComma
 {
     private readonly PCMDbContext _context;
     private readonly ILogger<UpdateCom1LiderGTDHandler> _logger;
+    private readonly ICumplimientoHistorialService _historialService;
 
-    public UpdateCom1LiderGTDHandler(PCMDbContext context, ILogger<UpdateCom1LiderGTDHandler> logger)
+    public UpdateCom1LiderGTDHandler(
+        PCMDbContext context, 
+        ILogger<UpdateCom1LiderGTDHandler> logger,
+        ICumplimientoHistorialService historialService)
     {
         _context = context;
         _logger = logger;
+        _historialService = historialService;
     }
 
     public async Task<Result<Com1LiderGTDResponse>> Handle(UpdateCom1LiderGTDCommand request, CancellationToken cancellationToken)
@@ -33,6 +39,9 @@ public class UpdateCom1LiderGTDHandler : IRequestHandler<UpdateCom1LiderGTDComma
                 _logger.LogWarning("Com1LiderGTD con ID {Id} no encontrado", request.ComlgtdEntId);
                 return Result<Com1LiderGTDResponse>.Failure("Registro no encontrado");
             }
+
+            // Guardar estado anterior para historial
+            string? estadoAnterior = entity.Estado;
 
             // Actualizar solo los campos que vienen en el request
             if (!string.IsNullOrEmpty(request.EtapaFormulario))
@@ -87,6 +96,29 @@ public class UpdateCom1LiderGTDHandler : IRequestHandler<UpdateCom1LiderGTDComma
                 entity.ObservacionesPCM = request.ObservacionesPCM;
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Registrar en historial si el estado cambió
+            if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
+            {
+                string tipoAccion = request.Estado.ToLower() switch
+                {
+                    "enviado" or "publicado" => "ENVIO",
+                    "en_proceso" or "borrador" => "BORRADOR",
+                    _ => "CAMBIO_ESTADO"
+                };
+
+                await _historialService.RegistrarCambioDesdeFormularioAsync(
+                    compromisoId: entity.CompromisoId,
+                    entidadId: entity.EntidadId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: request.Estado,
+                    usuarioId: Guid.Empty,
+                    observacion: null,
+                    tipoAccion: tipoAccion);
+
+                _logger.LogInformation("Historial registrado para Com1LiderGTD, entidad {EntidadId}, acción: {TipoAccion}", 
+                    entity.EntidadId, tipoAccion);
+            }
 
             _logger.LogInformation("Com1LiderGTD actualizado exitosamente");
 

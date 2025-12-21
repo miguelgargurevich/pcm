@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCM.Application.Features.Com2CGTD.Queries.GetCom2CGTDByEntidad;
 using PCM.Application.Features.Com3EPGD.Queries.GetCom3EPGDByEntidad;
+using PCM.Application.Interfaces;
 using PCM.Domain.Entities;
 using PCM.Infrastructure.Data;
 
@@ -20,12 +21,18 @@ public class EvaluacionController : ControllerBase
     private readonly PCMDbContext _context;
     private readonly ILogger<EvaluacionController> _logger;
     private readonly IMediator _mediator;
+    private readonly ICumplimientoHistorialService _historialService;
 
-    public EvaluacionController(PCMDbContext context, ILogger<EvaluacionController> logger, IMediator mediator)
+    public EvaluacionController(
+        PCMDbContext context, 
+        ILogger<EvaluacionController> logger, 
+        IMediator mediator,
+        ICumplimientoHistorialService historialService)
     {
         _context = context;
         _logger = logger;
         _mediator = mediator;
+        _historialService = historialService;
     }
 
     /// <summary>
@@ -254,6 +261,9 @@ public class EvaluacionController : ControllerBase
             var cumplimientoExistente = await _context.CumplimientosNormativos
                 .FirstOrDefaultAsync(c => c.EntidadId == entidadId && c.CompromisoId == compromisoId);
 
+            int? estadoAnteriorId = cumplimientoExistente?.EstadoId;
+            long cumplimientoId;
+
             if (cumplimientoExistente != null)
             {
                 // Actualizar registro existente
@@ -261,6 +271,7 @@ public class EvaluacionController : ControllerBase
                 cumplimientoExistente.OperadorId = operadorId;
                 cumplimientoExistente.ObservacionPcm = request.Observaciones ?? "";
                 cumplimientoExistente.UpdatedAt = DateTime.UtcNow;
+                cumplimientoId = cumplimientoExistente.CumplimientoId;
             }
             else
             {
@@ -277,9 +288,45 @@ public class EvaluacionController : ControllerBase
                     UpdatedAt = DateTime.UtcNow
                 };
                 _context.CumplimientosNormativos.Add(nuevoCumplimiento);
+                await _context.SaveChangesAsync();
+                cumplimientoId = nuevoCumplimiento.CumplimientoId;
             }
 
-            await _context.SaveChangesAsync();
+            if (cumplimientoExistente != null)
+            {
+                await _context.SaveChangesAsync();
+            }
+
+            // Registrar en historial de cumplimiento
+            string tipoAccion = estadoId switch
+            {
+                8 => "APROBACION",
+                7 => "OBSERVACION",
+                6 => "REVISION",
+                _ => "CAMBIO_ESTADO"
+            };
+
+            try
+            {
+                await _historialService.RegistrarCambioConSnapshotAsync(
+                    cumplimientoId: cumplimientoId,
+                    compromisoId: compromisoId,
+                    entidadId: entidadId,
+                    estadoAnteriorId: estadoAnteriorId,
+                    estadoNuevoId: estadoId,
+                    usuarioId: operadorId ?? Guid.Empty,
+                    observacion: request.Observaciones,
+                    tipoAccion: tipoAccion,
+                    ipOrigen: HttpContext.Connection.RemoteIpAddress?.ToString()
+                );
+                _logger.LogInformation("Historial registrado para compromiso {CompromisoId}, entidad {EntidadId}, acción: {TipoAccion}", 
+                    compromisoId, entidadId, tipoAccion);
+            }
+            catch (Exception histEx)
+            {
+                // Log pero no fallar si el historial falla
+                _logger.LogWarning(histEx, "Error al registrar historial para compromiso {CompromisoId}", compromisoId);
+            }
 
             _logger.LogInformation("Estado actualizado y registrado en cumplimiento_normativo para compromiso {CompromisoId}, entidad {EntidadId}", 
                 compromisoId, entidadId);

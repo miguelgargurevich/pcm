@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Common;
 using PCM.Application.Features.Com2CGTD.Commands.UpdateCom2CGTD;
+using PCM.Application.Interfaces;
 using PCM.Infrastructure.Data;
 using ComiteMiembroEntity = PCM.Domain.Entities.ComiteMiembro;
 
@@ -12,11 +13,16 @@ public class UpdateCom2CGTDHandler : IRequestHandler<UpdateCom2CGTDCommand, Resu
 {
     private readonly PCMDbContext _context;
     private readonly ILogger<UpdateCom2CGTDHandler> _logger;
+    private readonly ICumplimientoHistorialService _historialService;
 
-    public UpdateCom2CGTDHandler(PCMDbContext context, ILogger<UpdateCom2CGTDHandler> logger)
+    public UpdateCom2CGTDHandler(
+        PCMDbContext context, 
+        ILogger<UpdateCom2CGTDHandler> logger,
+        ICumplimientoHistorialService historialService)
     {
         _context = context;
         _logger = logger;
+        _historialService = historialService;
     }
 
     public async Task<Result<Com2CGTDResponse>> Handle(UpdateCom2CGTDCommand request, CancellationToken cancellationToken)
@@ -30,6 +36,9 @@ public class UpdateCom2CGTDHandler : IRequestHandler<UpdateCom2CGTDCommand, Resu
             {
                 return Result<Com2CGTDResponse>.Failure("Registro no encontrado");
             }
+
+            // Guardar estado anterior para el historial
+            string? estadoAnterior = entity.Estado;
 
             // Actualizar campos - solo si el valor no está vacío
             if (!string.IsNullOrEmpty(request.EtapaFormulario))
@@ -45,6 +54,29 @@ public class UpdateCom2CGTDHandler : IRequestHandler<UpdateCom2CGTDCommand, Resu
                 entity.RutaPdfNormativa = request.RutaPdfNormativa;
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Registrar en historial si el estado cambió
+            if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
+            {
+                string tipoAccion = request.Estado.ToLower() switch
+                {
+                    "enviado" or "publicado" => "ENVIO",
+                    "en_proceso" or "borrador" => "BORRADOR",
+                    _ => "CAMBIO_ESTADO"
+                };
+
+                await _historialService.RegistrarCambioDesdeFormularioAsync(
+                    compromisoId: entity.CompromisoId,
+                    entidadId: entity.EntidadId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: request.Estado,
+                    usuarioId: Guid.Empty,
+                    observacion: null,
+                    tipoAccion: tipoAccion);
+
+                _logger.LogInformation("Historial registrado para Com2CGTD, entidad {EntidadId}, acción: {TipoAccion}", 
+                    entity.EntidadId, tipoAccion);
+            }
 
             // Gestionar miembros del comité
             var miembrosResponse = new List<ComiteMiembroDto>();

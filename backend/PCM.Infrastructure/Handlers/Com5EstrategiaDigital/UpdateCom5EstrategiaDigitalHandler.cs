@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Features.Com5EstrategiaDigital.Commands;
+using PCM.Application.Interfaces;
 using PCM.Infrastructure.Data;
 using PCM.Application.Common;
 
@@ -10,13 +11,16 @@ public class UpdateCom5EstrategiaDigitalHandler
 {
     private readonly PCMDbContext _context;
     private readonly ILogger<UpdateCom5EstrategiaDigitalHandler> _logger;
+    private readonly ICumplimientoHistorialService _historialService;
 
     public UpdateCom5EstrategiaDigitalHandler(
         PCMDbContext context,
-        ILogger<UpdateCom5EstrategiaDigitalHandler> logger)
+        ILogger<UpdateCom5EstrategiaDigitalHandler> logger,
+        ICumplimientoHistorialService historialService)
     {
         _context = context;
         _logger = logger;
+        _historialService = historialService;
     }
 
     public async Task<Result<Com5EstrategiaDigitalResponse>> Handle(UpdateCom5EstrategiaDigitalCommand command)
@@ -33,6 +37,9 @@ public class UpdateCom5EstrategiaDigitalHandler
                 _logger.LogWarning("Registro Com5 con ID {ComdedEntId} no encontrado", command.ComdedEntId);
                 return Result<Com5EstrategiaDigitalResponse>.Failure("Registro no encontrado");
             }
+
+            // Guardar estado anterior para el historial
+            string? estadoAnterior = entity.Estado;
 
             // Actualizar campos (solo si vienen con valores no-default)
             if (command.CompromisoId > 0) entity.CompromisoId = command.CompromisoId;
@@ -62,6 +69,29 @@ public class UpdateCom5EstrategiaDigitalHandler
             }
 
             await _context.SaveChangesAsync();
+
+            // Registrar en historial si el estado cambió
+            if (!string.IsNullOrEmpty(command.Estado) && command.Estado != estadoAnterior)
+            {
+                string tipoAccion = command.Estado.ToLower() switch
+                {
+                    "enviado" or "publicado" => "ENVIO",
+                    "en_proceso" or "borrador" => "BORRADOR",
+                    _ => "CAMBIO_ESTADO"
+                };
+
+                await _historialService.RegistrarCambioDesdeFormularioAsync(
+                    compromisoId: entity.CompromisoId,
+                    entidadId: entity.EntidadId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: command.Estado,
+                    usuarioId: Guid.Empty,
+                    observacion: null,
+                    tipoAccion: tipoAccion);
+
+                _logger.LogInformation("Historial registrado para Com5EstrategiaDigital, entidad {EntidadId}, acción: {TipoAccion}", 
+                    entity.EntidadId, tipoAccion);
+            }
 
             _logger.LogInformation("Registro Com5 actualizado exitosamente");
 

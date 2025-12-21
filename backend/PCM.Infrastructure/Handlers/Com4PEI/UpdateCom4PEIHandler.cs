@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Features.Com4PEI.Commands.UpdateCom4PEI;
 using PCM.Application.Common;
+using PCM.Application.Interfaces;
 using PCM.Infrastructure.Data;
 
 namespace PCM.Infrastructure.Handlers.Com4PEI;
@@ -11,11 +12,16 @@ public class UpdateCom4PEIHandler : IRequestHandler<UpdateCom4PEICommand, Result
 {
     private readonly PCMDbContext _context;
     private readonly ILogger<UpdateCom4PEIHandler> _logger;
+    private readonly ICumplimientoHistorialService _historialService;
 
-    public UpdateCom4PEIHandler(PCMDbContext context, ILogger<UpdateCom4PEIHandler> logger)
+    public UpdateCom4PEIHandler(
+        PCMDbContext context, 
+        ILogger<UpdateCom4PEIHandler> logger,
+        ICumplimientoHistorialService historialService)
     {
         _context = context;
         _logger = logger;
+        _historialService = historialService;
     }
 
     public async Task<Result<Com4PEIResponse>> Handle(UpdateCom4PEICommand request, CancellationToken cancellationToken)
@@ -32,6 +38,9 @@ public class UpdateCom4PEIHandler : IRequestHandler<UpdateCom4PEICommand, Result
                 _logger.LogWarning("No se encontró registro Com4PEI con ID {ComtdpeiEntId}", request.ComtdpeiEntId);
                 return Result<Com4PEIResponse>.Failure("Registro no encontrado");
             }
+
+            // Guardar estado anterior para el historial
+            string? estadoAnterior = entity.Estado;
 
             // Actualizar campos - solo si el valor no está vacío o si explícitamente se envía
             if (!string.IsNullOrEmpty(request.EtapaFormulario))
@@ -68,6 +77,30 @@ public class UpdateCom4PEIHandler : IRequestHandler<UpdateCom4PEICommand, Result
             }
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Registrar en historial si el estado cambió
+            if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
+            {
+                string tipoAccion = request.Estado.ToLower() switch
+                {
+                    "enviado" => "ENVIO",
+                    "publicado" => "ENVIO",
+                    "en_proceso" or "borrador" => "BORRADOR",
+                    _ => "CAMBIO_ESTADO"
+                };
+
+                await _historialService.RegistrarCambioDesdeFormularioAsync(
+                    compromisoId: entity.CompromisoId,
+                    entidadId: entity.EntidadId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: request.Estado,
+                    usuarioId: Guid.Empty, // TODO: Obtener del contexto de usuario
+                    observacion: null,
+                    tipoAccion: tipoAccion);
+
+                _logger.LogInformation("Historial registrado para Com4PEI, entidad {EntidadId}, acción: {TipoAccion}", 
+                    entity.EntidadId, tipoAccion);
+            }
 
             _logger.LogInformation("Registro Com4PEI actualizado exitosamente con ID {ComtdpeiEntId}", entity.ComtdpeiEntId);
 

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using PCM.Application.Common;
 using PCM.Application.Features.Com3EPGD.Commands.CreateCom3EPGD;
 using PCM.Application.Features.Com3EPGD.Commands.UpdateCom3EPGD;
+using PCM.Application.Interfaces;
 using PCM.Infrastructure.Data;
 using PersonalTIEntity = PCM.Domain.Entities.PersonalTI;
 using InventarioSoftwareEntity = PCM.Domain.Entities.InventarioSoftware;
@@ -22,11 +23,16 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
 {
     private readonly PCMDbContext _context;
     private readonly ILogger<UpdateCom3EPGDHandler> _logger;
+    private readonly ICumplimientoHistorialService _historialService;
 
-    public UpdateCom3EPGDHandler(PCMDbContext context, ILogger<UpdateCom3EPGDHandler> logger)
+    public UpdateCom3EPGDHandler(
+        PCMDbContext context, 
+        ILogger<UpdateCom3EPGDHandler> logger,
+        ICumplimientoHistorialService historialService)
     {
         _context = context;
         _logger = logger;
+        _historialService = historialService;
     }
 
     public async Task<Result<Com3EPGDResponse>> Handle(UpdateCom3EPGDCommand request, CancellationToken cancellationToken)
@@ -40,6 +46,9 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
             {
                 return Result<Com3EPGDResponse>.Failure("Registro no encontrado");
             }
+
+            // Guardar estado anterior para el historial
+            string? estadoAnterior = entity.Estado;
 
             // Actualizar campos principales
             entity.EtapaFormulario = !string.IsNullOrEmpty(request.EtapaFormulario) ? request.EtapaFormulario : entity.EtapaFormulario;
@@ -61,6 +70,29 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
 
             _context.Com3EPGD.Update(entity);
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Registrar en historial si el estado cambió
+            if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
+            {
+                string tipoAccion = request.Estado.ToLower() switch
+                {
+                    "enviado" or "publicado" => "ENVIO",
+                    "en_proceso" or "borrador" => "BORRADOR",
+                    _ => "CAMBIO_ESTADO"
+                };
+
+                await _historialService.RegistrarCambioDesdeFormularioAsync(
+                    compromisoId: entity.CompromisoId,
+                    entidadId: entity.EntidadId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: request.Estado,
+                    usuarioId: Guid.Empty,
+                    observacion: null,
+                    tipoAccion: tipoAccion);
+
+                _logger.LogInformation("Historial registrado para Com3EPGD, entidad {EntidadId}, acción: {TipoAccion}", 
+                    entity.EntidadId, tipoAccion);
+            }
 
             // Actualizar Personal TI
             await UpdatePersonalTI(entity.ComepgdEntId, request.PersonalTI, cancellationToken);

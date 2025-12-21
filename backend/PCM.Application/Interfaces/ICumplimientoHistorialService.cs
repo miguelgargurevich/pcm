@@ -82,4 +82,27 @@ public interface ICumplimientoHistorialService
         long cumplimientoId,
         string tipoAccion,
         string? ipOrigen = null);
+    
+    /// <summary>
+    /// Registra un cambio de estado cuando una entidad envía un formulario.
+    /// Automáticamente busca o crea el registro de cumplimiento.
+    /// </summary>
+    /// <param name="compromisoId">ID del compromiso</param>
+    /// <param name="entidadId">ID de la entidad</param>
+    /// <param name="estadoAnterior">Estado anterior en texto (ej: "en_proceso")</param>
+    /// <param name="estadoNuevo">Nuevo estado en texto (ej: "enviado")</param>
+    /// <param name="usuarioId">Usuario que realiza la acción</param>
+    /// <param name="observacion">Observación opcional</param>
+    /// <param name="tipoAccion">Tipo de acción: ENVIO, BORRADOR, CORRECCION</param>
+    /// <param name="ipOrigen">IP de origen</param>
+    /// <returns>ID del historial creado, 0 si no se creó</returns>
+    Task<long> RegistrarCambioDesdeFormularioAsync(
+        long compromisoId,
+        Guid entidadId,
+        string? estadoAnterior,
+        string estadoNuevo,
+        Guid usuarioId,
+        string? observacion = null,
+        string tipoAccion = "ENVIO",
+        string? ipOrigen = null);
 }
