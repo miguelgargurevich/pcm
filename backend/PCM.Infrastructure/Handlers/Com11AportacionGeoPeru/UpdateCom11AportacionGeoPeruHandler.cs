@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Features.Com11AportacionGeoPeru.Commands.UpdateCom11AportacionGeoPeru;
 using PCM.Application.Common;
+using PCM.Application.Interfaces;
 using PCM.Infrastructure.Data;
 
 namespace PCM.Infrastructure.Handlers.Com11AportacionGeoPeru;
@@ -11,11 +12,13 @@ public class UpdateCom11AportacionGeoPeruHandler : IRequestHandler<UpdateCom11Ap
 {
     private readonly PCMDbContext _context;
     private readonly ILogger<UpdateCom11AportacionGeoPeruHandler> _logger;
+    private readonly ICumplimientoHistorialService _historialService;
 
-    public UpdateCom11AportacionGeoPeruHandler(PCMDbContext context, ILogger<UpdateCom11AportacionGeoPeruHandler> logger)
+    public UpdateCom11AportacionGeoPeruHandler(PCMDbContext context, ILogger<UpdateCom11AportacionGeoPeruHandler> logger, ICumplimientoHistorialService historialService)
     {
         _context = context;
         _logger = logger;
+        _historialService = historialService;
     }
 
     public async Task<Result<Com11AportacionGeoPeruResponse>> Handle(UpdateCom11AportacionGeoPeruCommand request, CancellationToken cancellationToken)
@@ -31,6 +34,9 @@ public class UpdateCom11AportacionGeoPeruHandler : IRequestHandler<UpdateCom11Ap
             {
                 return Result<Com11AportacionGeoPeruResponse>.Failure($"Registro con ID {request.ComageopEntId} no encontrado");
             }
+
+            // Guardar estado anterior para historial
+            string? estadoAnterior = entity.Estado;
 
             // Actualizar campos comunes
             if (request.CompromisoId.HasValue) entity.CompromisoId = request.CompromisoId.Value;
@@ -58,6 +64,29 @@ public class UpdateCom11AportacionGeoPeruHandler : IRequestHandler<UpdateCom11Ap
             if (!string.IsNullOrEmpty(request.RutaPdfGeo)) entity.RutaPdfGeo = request.RutaPdfGeo;
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Registrar en historial si el estado cambió
+            if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
+            {
+                string tipoAccion = request.Estado.ToLower() switch
+                {
+                    "enviado" or "publicado" => "ENVIO",
+                    "en_proceso" or "borrador" => "BORRADOR",
+                    _ => "CAMBIO_ESTADO"
+                };
+
+                await _historialService.RegistrarCambioDesdeFormularioAsync(
+                    compromisoId: entity.CompromisoId,
+                    entidadId: entity.EntidadId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: request.Estado,
+                    usuarioId: Guid.Empty,
+                    observacion: null,
+                    tipoAccion: tipoAccion);
+
+                _logger.LogInformation("Historial registrado para Com11 Aportación GeoPeru, entidad {EntidadId}, acción: {TipoAccion}", 
+                    entity.EntidadId, tipoAccion);
+            }
 
             var response = new Com11AportacionGeoPeruResponse
             {

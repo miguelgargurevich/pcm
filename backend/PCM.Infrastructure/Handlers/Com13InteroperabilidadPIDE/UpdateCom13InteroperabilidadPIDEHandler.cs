@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Features.Com13InteroperabilidadPIDE.Commands.UpdateCom13InteroperabilidadPIDE;
 using PCM.Application.Common;
+using PCM.Application.Interfaces;
 using PCM.Infrastructure.Data;
 
 namespace PCM.Infrastructure.Handlers.Com13InteroperabilidadPIDE;
@@ -11,11 +12,13 @@ public class UpdateCom13InteroperabilidadPIDEHandler : IRequestHandler<UpdateCom
 {
     private readonly PCMDbContext _context;
     private readonly ILogger<UpdateCom13InteroperabilidadPIDEHandler> _logger;
+    private readonly ICumplimientoHistorialService _historialService;
 
-    public UpdateCom13InteroperabilidadPIDEHandler(PCMDbContext context, ILogger<UpdateCom13InteroperabilidadPIDEHandler> logger)
+    public UpdateCom13InteroperabilidadPIDEHandler(PCMDbContext context, ILogger<UpdateCom13InteroperabilidadPIDEHandler> logger, ICumplimientoHistorialService historialService)
     {
         _context = context;
         _logger = logger;
+        _historialService = historialService;
     }
 
     public async Task<Result<Com13InteroperabilidadPIDEResponse>> Handle(UpdateCom13InteroperabilidadPIDECommand request, CancellationToken cancellationToken)
@@ -31,6 +34,8 @@ public class UpdateCom13InteroperabilidadPIDEHandler : IRequestHandler<UpdateCom
             {
                 return Result<Com13InteroperabilidadPIDEResponse>.Failure($"Registro con ID {request.CompcpideEntId} no encontrado");
             }
+
+            string? estadoAnterior = entity.Estado;
 
             // Actualizar campos comunes
             if (request.CompromisoId.HasValue) entity.CompromisoId = request.CompromisoId.Value;
@@ -53,6 +58,29 @@ public class UpdateCom13InteroperabilidadPIDEHandler : IRequestHandler<UpdateCom
             if (!string.IsNullOrEmpty(request.Responsable)) entity.Responsable = request.Responsable;
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Registrar en historial si el estado cambió
+            if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
+            {
+                string tipoAccion = request.Estado.ToLower() switch
+                {
+                    "enviado" or "publicado" => "ENVIO",
+                    "en_proceso" or "borrador" => "BORRADOR",
+                    _ => "CAMBIO_ESTADO"
+                };
+
+                await _historialService.RegistrarCambioDesdeFormularioAsync(
+                    compromisoId: entity.CompromisoId,
+                    entidadId: entity.EntidadId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: request.Estado,
+                    usuarioId: Guid.Empty,
+                    observacion: null,
+                    tipoAccion: tipoAccion);
+
+                _logger.LogInformation("Historial registrado para Com13, entidad {EntidadId}, acción: {TipoAccion}", 
+                    entity.EntidadId, tipoAccion);
+            }
 
             var response = new Com13InteroperabilidadPIDEResponse
             {

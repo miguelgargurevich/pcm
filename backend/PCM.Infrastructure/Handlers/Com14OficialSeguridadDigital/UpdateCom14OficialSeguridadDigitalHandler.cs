@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Features.Com14OficialSeguridadDigital.Commands.UpdateCom14OficialSeguridadDigital;
 using PCM.Application.Common;
+using PCM.Application.Interfaces;
 using PCM.Infrastructure.Data;
 
 namespace PCM.Infrastructure.Handlers.Com14OficialSeguridadDigital;
@@ -11,11 +12,13 @@ public class UpdateCom14OficialSeguridadDigitalHandler : IRequestHandler<UpdateC
 {
     private readonly PCMDbContext _context;
     private readonly ILogger<UpdateCom14OficialSeguridadDigitalHandler> _logger;
+    private readonly ICumplimientoHistorialService _historialService;
 
-    public UpdateCom14OficialSeguridadDigitalHandler(PCMDbContext context, ILogger<UpdateCom14OficialSeguridadDigitalHandler> logger)
+    public UpdateCom14OficialSeguridadDigitalHandler(PCMDbContext context, ILogger<UpdateCom14OficialSeguridadDigitalHandler> logger, ICumplimientoHistorialService historialService)
     {
         _context = context;
         _logger = logger;
+        _historialService = historialService;
     }
 
     public async Task<Result<Com14OficialSeguridadDigitalResponse>> Handle(UpdateCom14OficialSeguridadDigitalCommand request, CancellationToken cancellationToken)
@@ -31,6 +34,8 @@ public class UpdateCom14OficialSeguridadDigitalHandler : IRequestHandler<UpdateC
             {
                 return Result<Com14OficialSeguridadDigitalResponse>.Failure($"Registro con ID {request.ComdoscdEntId} no encontrado");
             }
+
+            string? estadoAnterior = entity.Estado;
 
             // Actualizar campos comunes
             if (request.CompromisoId.HasValue) entity.CompromisoId = request.CompromisoId.Value;
@@ -52,6 +57,29 @@ public class UpdateCom14OficialSeguridadDigitalHandler : IRequestHandler<UpdateC
             if (request.FechaVigencia.HasValue) entity.FechaVigencia = DateTime.SpecifyKind(request.FechaVigencia.Value, DateTimeKind.Utc);
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Registrar en historial si el estado cambió
+            if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
+            {
+                string tipoAccion = request.Estado.ToLower() switch
+                {
+                    "enviado" or "publicado" => "ENVIO",
+                    "en_proceso" or "borrador" => "BORRADOR",
+                    _ => "CAMBIO_ESTADO"
+                };
+
+                await _historialService.RegistrarCambioDesdeFormularioAsync(
+                    compromisoId: entity.CompromisoId,
+                    entidadId: entity.EntidadId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: request.Estado,
+                    usuarioId: Guid.Empty,
+                    observacion: null,
+                    tipoAccion: tipoAccion);
+
+                _logger.LogInformation("Historial registrado para Com14, entidad {EntidadId}, acción: {TipoAccion}", 
+                    entity.EntidadId, tipoAccion);
+            }
 
             var response = new Com14OficialSeguridadDigitalResponse
             {

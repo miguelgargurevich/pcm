@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Features.Com17PlanTransicionIPv6.Commands.UpdateCom17PlanTransicionIPv6;
 using PCM.Application.Common;
+using PCM.Application.Interfaces;
 using PCM.Infrastructure.Data;
 
 namespace PCM.Infrastructure.Handlers.Com17PlanTransicionIPv6;
@@ -11,11 +12,13 @@ public class UpdateCom17PlanTransicionIPv6Handler : IRequestHandler<UpdateCom17P
 {
     private readonly PCMDbContext _context;
     private readonly ILogger<UpdateCom17PlanTransicionIPv6Handler> _logger;
+    private readonly ICumplimientoHistorialService _historialService;
 
-    public UpdateCom17PlanTransicionIPv6Handler(PCMDbContext context, ILogger<UpdateCom17PlanTransicionIPv6Handler> logger)
+    public UpdateCom17PlanTransicionIPv6Handler(PCMDbContext context, ILogger<UpdateCom17PlanTransicionIPv6Handler> logger, ICumplimientoHistorialService historialService)
     {
         _context = context;
         _logger = logger;
+        _historialService = historialService;
     }
 
     public async Task<Result<Com17PlanTransicionIPv6Response>> Handle(UpdateCom17PlanTransicionIPv6Command request, CancellationToken cancellationToken)
@@ -31,6 +34,8 @@ public class UpdateCom17PlanTransicionIPv6Handler : IRequestHandler<UpdateCom17P
             {
                 return Result<Com17PlanTransicionIPv6Response>.Failure($"Registro con ID {request.Comptipv6EntId} no encontrado");
             }
+
+            string? estadoAnterior = entity.Estado;
 
             // Actualizar campos comunes
             if (request.CompromisoId.HasValue) entity.CompromisoId = request.CompromisoId.Value;
@@ -52,6 +57,29 @@ public class UpdateCom17PlanTransicionIPv6Handler : IRequestHandler<UpdateCom17P
             if (!string.IsNullOrEmpty(request.Descripcion)) entity.Descripcion = request.Descripcion;
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Registrar en historial si el estado cambió
+            if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
+            {
+                string tipoAccion = request.Estado.ToLower() switch
+                {
+                    "enviado" or "publicado" => "ENVIO",
+                    "en_proceso" or "borrador" => "BORRADOR",
+                    _ => "CAMBIO_ESTADO"
+                };
+
+                await _historialService.RegistrarCambioDesdeFormularioAsync(
+                    compromisoId: entity.CompromisoId,
+                    entidadId: entity.EntidadId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: request.Estado,
+                    usuarioId: Guid.Empty,
+                    observacion: null,
+                    tipoAccion: tipoAccion);
+
+                _logger.LogInformation("Historial registrado para Com17, entidad {EntidadId}, acción: {TipoAccion}", 
+                    entity.EntidadId, tipoAccion);
+            }
 
             var response = new Com17PlanTransicionIPv6Response
             {

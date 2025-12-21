@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Features.Com7ImplementacionMPD.Commands.UpdateCom7ImplementacionMPD;
 using PCM.Application.Common;
+using PCM.Application.Interfaces;
 using PCM.Infrastructure.Data;
 
 namespace PCM.Infrastructure.Handlers.Com7ImplementacionMPD;
@@ -11,13 +12,16 @@ public class UpdateCom7ImplementacionMPDHandler : IRequestHandler<UpdateCom7Impl
 {
     private readonly PCMDbContext _context;
     private readonly ILogger<UpdateCom7ImplementacionMPDHandler> _logger;
+    private readonly ICumplimientoHistorialService _historialService;
 
     public UpdateCom7ImplementacionMPDHandler(
         PCMDbContext context,
-        ILogger<UpdateCom7ImplementacionMPDHandler> logger)
+        ILogger<UpdateCom7ImplementacionMPDHandler> logger,
+        ICumplimientoHistorialService historialService)
     {
         _context = context;
         _logger = logger;
+        _historialService = historialService;
     }
 
     public async Task<Result<Com7ImplementacionMPDResponse>> Handle(UpdateCom7ImplementacionMPDCommand request, CancellationToken cancellationToken)
@@ -34,6 +38,9 @@ public class UpdateCom7ImplementacionMPDHandler : IRequestHandler<UpdateCom7Impl
                 _logger.LogWarning("No se encontró el registro Com7ImplementacionMPD con ID: {ComimpdEntId}", request.ComimpdEntId);
                 return Result<Com7ImplementacionMPDResponse>.Failure("Registro no encontrado");
             }
+
+            // Guardar estado anterior para historial
+            string? estadoAnterior = entity.Estado;
 
             // Actualizar solo los campos que no son nulos
             if (request.CompromisoId.HasValue)
@@ -74,6 +81,29 @@ public class UpdateCom7ImplementacionMPDHandler : IRequestHandler<UpdateCom7Impl
                 entity.Estado = request.Estado;
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Registrar en historial si el estado cambió
+            if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
+            {
+                string tipoAccion = request.Estado.ToLower() switch
+                {
+                    "enviado" or "publicado" => "ENVIO",
+                    "en_proceso" or "borrador" => "BORRADOR",
+                    _ => "CAMBIO_ESTADO"
+                };
+
+                await _historialService.RegistrarCambioDesdeFormularioAsync(
+                    compromisoId: entity.CompromisoId,
+                    entidadId: entity.EntidadId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: request.Estado,
+                    usuarioId: Guid.Empty,
+                    observacion: null,
+                    tipoAccion: tipoAccion);
+
+                _logger.LogInformation("Historial registrado para Com7ImplementacionMPD, entidad {EntidadId}, acción: {TipoAccion}", 
+                    entity.EntidadId, tipoAccion);
+            }
 
             var response = new Com7ImplementacionMPDResponse
             {

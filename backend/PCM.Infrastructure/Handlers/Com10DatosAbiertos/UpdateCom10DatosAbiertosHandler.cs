@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Common;
+using PCM.Application.Interfaces;
 using PCM.Application.Features.Com10DatosAbiertos.Commands.UpdateCom10DatosAbiertos;
 using PCM.Infrastructure.Data;
 using System;
@@ -14,11 +15,13 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
     {
         private readonly PCMDbContext _context;
         private readonly ILogger<UpdateCom10DatosAbiertosHandler> _logger;
+        private readonly ICumplimientoHistorialService _historialService;
 
-        public UpdateCom10DatosAbiertosHandler(PCMDbContext context, ILogger<UpdateCom10DatosAbiertosHandler> logger)
+        public UpdateCom10DatosAbiertosHandler(PCMDbContext context, ILogger<UpdateCom10DatosAbiertosHandler> logger, ICumplimientoHistorialService historialService)
         {
             _context = context;
             _logger = logger;
+            _historialService = historialService;
         }
 
         public async Task<Result<bool>> Handle(UpdateCom10DatosAbiertosCommand request, CancellationToken cancellationToken)
@@ -35,6 +38,9 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                     _logger.LogWarning($"No se encontró Com10 Datos Abiertos con ID {request.ComdaEntId}");
                     return Result<bool>.Failure("Registro no encontrado");
                 }
+
+                // Guardar estado anterior para historial
+                string? estadoAnterior = registro.Estado;
 
                 // Actualizar campos
                 registro.UrlDatosAbiertos = request.UrlDatosAbiertos ?? registro.UrlDatosAbiertos;
@@ -65,6 +71,29 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                 registro.UpdatedAt = DateTime.UtcNow;
 
                 await _context.SaveChangesAsync(cancellationToken);
+
+                // Registrar en historial si el estado cambió
+                if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
+                {
+                    string tipoAccion = request.Estado.ToLower() switch
+                    {
+                        "enviado" or "publicado" => "ENVIO",
+                        "en_proceso" or "borrador" => "BORRADOR",
+                        _ => "CAMBIO_ESTADO"
+                    };
+
+                    await _historialService.RegistrarCambioDesdeFormularioAsync(
+                        compromisoId: registro.CompromisoId,
+                        entidadId: registro.EntidadId,
+                        estadoAnterior: estadoAnterior,
+                        estadoNuevo: request.Estado,
+                        usuarioId: Guid.Empty,
+                        observacion: null,
+                        tipoAccion: tipoAccion);
+
+                    _logger.LogInformation("Historial registrado para Com10 Datos Abiertos, entidad {EntidadId}, acción: {TipoAccion}", 
+                        registro.EntidadId, tipoAccion);
+                }
 
                 _logger.LogInformation($"Com10 Datos Abiertos actualizado exitosamente");
 

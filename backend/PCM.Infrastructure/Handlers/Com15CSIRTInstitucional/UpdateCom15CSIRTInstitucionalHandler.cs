@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Features.Com15CSIRTInstitucional.Commands.UpdateCom15CSIRTInstitucional;
 using PCM.Application.Common;
+using PCM.Application.Interfaces;
 using PCM.Infrastructure.Data;
 
 namespace PCM.Infrastructure.Handlers.Com15CSIRTInstitucional;
@@ -11,11 +12,13 @@ public class UpdateCom15CSIRTInstitucionalHandler : IRequestHandler<UpdateCom15C
 {
     private readonly PCMDbContext _context;
     private readonly ILogger<UpdateCom15CSIRTInstitucionalHandler> _logger;
+    private readonly ICumplimientoHistorialService _historialService;
 
-    public UpdateCom15CSIRTInstitucionalHandler(PCMDbContext context, ILogger<UpdateCom15CSIRTInstitucionalHandler> logger)
+    public UpdateCom15CSIRTInstitucionalHandler(PCMDbContext context, ILogger<UpdateCom15CSIRTInstitucionalHandler> logger, ICumplimientoHistorialService historialService)
     {
         _context = context;
         _logger = logger;
+        _historialService = historialService;
     }
 
     public async Task<Result<Com15CSIRTInstitucionalResponse>> Handle(UpdateCom15CSIRTInstitucionalCommand request, CancellationToken cancellationToken)
@@ -31,6 +34,8 @@ public class UpdateCom15CSIRTInstitucionalHandler : IRequestHandler<UpdateCom15C
             {
                 return Result<Com15CSIRTInstitucionalResponse>.Failure($"Registro con ID {request.ComcsirtEntId} no encontrado");
             }
+
+            string? estadoAnterior = entity.Estado;
 
             // Actualizar campos comunes
             if (request.CompromisoId.HasValue) entity.CompromisoId = request.CompromisoId.Value;
@@ -52,6 +57,29 @@ public class UpdateCom15CSIRTInstitucionalHandler : IRequestHandler<UpdateCom15C
             if (!string.IsNullOrEmpty(request.Descripcion)) entity.Descripcion = request.Descripcion;
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Registrar en historial si el estado cambió
+            if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
+            {
+                string tipoAccion = request.Estado.ToLower() switch
+                {
+                    "enviado" or "publicado" => "ENVIO",
+                    "en_proceso" or "borrador" => "BORRADOR",
+                    _ => "CAMBIO_ESTADO"
+                };
+
+                await _historialService.RegistrarCambioDesdeFormularioAsync(
+                    compromisoId: entity.CompromisoId,
+                    entidadId: entity.EntidadId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: request.Estado,
+                    usuarioId: Guid.Empty,
+                    observacion: null,
+                    tipoAccion: tipoAccion);
+
+                _logger.LogInformation("Historial registrado para Com15, entidad {EntidadId}, acción: {TipoAccion}", 
+                    entity.EntidadId, tipoAccion);
+            }
 
             var response = new Com15CSIRTInstitucionalResponse
             {

@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Common;
+using PCM.Application.Interfaces;
 using PCM.Application.Features.Com9ModeloGestionDocumental.Commands.UpdateCom9ModeloGestionDocumental;
 using PCM.Infrastructure.Data;
 using System;
@@ -14,11 +15,13 @@ namespace PCM.Infrastructure.Handlers.Com9ModeloGestionDocumental
     {
         private readonly PCMDbContext _context;
         private readonly ILogger<UpdateCom9ModeloGestionDocumentalHandler> _logger;
+        private readonly ICumplimientoHistorialService _historialService;
 
-        public UpdateCom9ModeloGestionDocumentalHandler(PCMDbContext context, ILogger<UpdateCom9ModeloGestionDocumentalHandler> logger)
+        public UpdateCom9ModeloGestionDocumentalHandler(PCMDbContext context, ILogger<UpdateCom9ModeloGestionDocumentalHandler> logger, ICumplimientoHistorialService historialService)
         {
             _context = context;
             _logger = logger;
+            _historialService = historialService;
         }
 
         public async Task<Result<bool>> Handle(UpdateCom9ModeloGestionDocumentalCommand request, CancellationToken cancellationToken)
@@ -35,6 +38,9 @@ namespace PCM.Infrastructure.Handlers.Com9ModeloGestionDocumental
                     _logger.LogWarning($"No se encontró Com9 MGD con ID {request.CommgdEntId}");
                     return Result<bool>.Failure("Registro no encontrado");
                 }
+
+                // Guardar estado anterior para historial
+                string? estadoAnterior = registro.Estado;
 
                 // Actualizar campos
                 registro.FechaAprobacionMgd = request.FechaAprobacionMgd.HasValue 
@@ -63,6 +69,29 @@ namespace PCM.Infrastructure.Handlers.Com9ModeloGestionDocumental
                 registro.UpdatedAt = DateTime.UtcNow;
 
                 await _context.SaveChangesAsync(cancellationToken);
+
+                // Registrar en historial si el estado cambió
+                if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
+                {
+                    string tipoAccion = request.Estado.ToLower() switch
+                    {
+                        "enviado" or "publicado" => "ENVIO",
+                        "en_proceso" or "borrador" => "BORRADOR",
+                        _ => "CAMBIO_ESTADO"
+                    };
+
+                    await _historialService.RegistrarCambioDesdeFormularioAsync(
+                        compromisoId: registro.CompromisoId,
+                        entidadId: registro.EntidadId,
+                        estadoAnterior: estadoAnterior,
+                        estadoNuevo: request.Estado,
+                        usuarioId: Guid.Empty,
+                        observacion: null,
+                        tipoAccion: tipoAccion);
+
+                    _logger.LogInformation("Historial registrado para Com9 MGD, entidad {EntidadId}, acción: {TipoAccion}", 
+                        registro.EntidadId, tipoAccion);
+                }
 
                 _logger.LogInformation($"Com9 MGD actualizado exitosamente");
 
