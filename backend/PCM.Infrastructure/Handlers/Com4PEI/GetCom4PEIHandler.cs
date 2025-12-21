@@ -59,8 +59,7 @@ public class GetCom4PEIHandler : IRequestHandler<GetCom4PEIQuery, Result<Com4PEI
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
-                RutaPdfNormativa = entity.RutaPdfNormativa,
-                CriteriosEvaluados = entity.CriteriosEvaluados
+                RutaPdfNormativa = entity.RutaPdfNormativa
             };
 
             _logger.LogInformation("Registro Com4PEI encontrado con ID {ComtdpeiEntId}", entity.ComtdpeiEntId);

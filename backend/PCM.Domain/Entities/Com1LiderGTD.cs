@@ -33,7 +33,6 @@ public class Com1LiderGTD
     public DateTime FecIniLider { get; set; }
     public string? UrlDocPcm { get; set; }
     public string? RutaPdfNormativa { get; set; }
-    public string? CriteriosEvaluados { get; set; }
     
     // Navegación
     public virtual CompromisoGobiernoDigital? Compromiso { get; set; }

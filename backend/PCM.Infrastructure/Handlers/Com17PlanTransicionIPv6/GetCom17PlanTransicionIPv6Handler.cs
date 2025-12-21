@@ -61,8 +61,7 @@ public class GetCom17PlanTransicionIPv6Handler : IRequestHandler<GetCom17PlanTra
                 DescripcionPlanIpv6 = entity.DescripcionPlanIpv6,
                 RutaPdfPlanIpv6 = entity.RutaPdfPlanIpv6,
                 ObservacionIpv6 = entity.ObservacionIpv6,
-                RutaPdfNormativa = entity.RutaPdfNormativa,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
+                RutaPdfNormativa = entity.RutaPdfNormativa
             };
 
             return Result<Com17PlanTransicionIPv6Response>.Success(response);

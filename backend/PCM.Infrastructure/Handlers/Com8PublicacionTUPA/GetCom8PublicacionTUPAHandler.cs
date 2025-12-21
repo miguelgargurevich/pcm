@@ -66,8 +66,7 @@ public class GetCom8PublicacionTUPAHandler : IRequestHandler<GetCom8PublicacionT
                 UpdatedAt = entity.UpdatedAt,
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
-                RutaPdfNormativa = entity.RutaPdfNormativa,
-                CriteriosEvaluados = entity.CriteriosEvaluados
+                RutaPdfNormativa = entity.RutaPdfNormativa
             };
 
             _logger.LogInformation("Registro Com8PublicacionTUPA encontrado con ID {ComptupaEntId}", entity.ComptupaEntId);

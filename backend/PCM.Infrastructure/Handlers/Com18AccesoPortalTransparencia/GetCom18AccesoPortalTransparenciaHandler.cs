@@ -61,8 +61,7 @@ public class GetCom18AccesoPortalTransparenciaHandler : IRequestHandler<GetCom18
                 DescripcionPte = entity.DescripcionPte,
                 RutaPdfPte = entity.RutaPdfPte,
                 ObservacionPte = entity.ObservacionPte,
-                RutaPdfNormativa = entity.RutaPdfNormativa,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
+                RutaPdfNormativa = entity.RutaPdfNormativa
             };
 
             return Result<Com18AccesoPortalTransparenciaResponse>.Success(response);

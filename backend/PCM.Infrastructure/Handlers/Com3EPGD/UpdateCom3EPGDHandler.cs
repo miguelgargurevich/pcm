@@ -48,8 +48,6 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
             entity.CheckDdjj = request.CheckDdjj;
             if (request.RutaPdfNormativa != null)
                 entity.RutaPdfNormativa = request.RutaPdfNormativa;
-            if (request.CriteriosEvaluados != null)
-                entity.CriteriosEvaluados = request.CriteriosEvaluados;
             entity.EstadoPcm = request.EstadoPcm ?? entity.EstadoPcm;
             entity.ObservacionesPcm = request.ObservacionesPcm ?? entity.ObservacionesPcm;
             entity.FechaReporte = request.FechaReporte ?? entity.FechaReporte;

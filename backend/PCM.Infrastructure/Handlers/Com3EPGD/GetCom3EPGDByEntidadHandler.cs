@@ -134,7 +134,6 @@ public class GetCom3EPGDByEntidadHandler : IRequestHandler<GetCom3EPGDByEntidadQ
                 CostoAnualTi = entity.CostoAnualTi,
                 ExisteComisionGdTi = entity.ExisteComisionGdTi,
                 RutaPdfNormativa = entity.RutaPdfNormativa,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 PersonalTI = personalList.Select(p => new PersonalTIDto
                 {
                     PersonalId = p.PersonalId,

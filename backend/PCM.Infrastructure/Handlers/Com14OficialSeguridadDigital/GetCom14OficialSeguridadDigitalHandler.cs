@@ -61,8 +61,7 @@ public class GetCom14OficialSeguridadDigitalHandler : IRequestHandler<GetCom14Of
                 ComunicadoPcmOscd = entity.ComunicadoPcmOscd,
                 RutaPdfOscd = entity.RutaPdfOscd,
                 ObservacionOscd = entity.ObservacionOscd,
-                RutaPdfNormativa = entity.RutaPdfNormativa,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
+                RutaPdfNormativa = entity.RutaPdfNormativa
             };
 
             return Result<Com14OficialSeguridadDigitalResponse>.Success(response);

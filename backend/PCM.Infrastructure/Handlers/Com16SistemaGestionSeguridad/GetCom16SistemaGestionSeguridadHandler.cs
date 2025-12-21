@@ -66,8 +66,7 @@ public class GetCom16SistemaGestionSeguridadHandler : IRequestHandler<GetCom16Si
                 FechaImplementacionSgsi = entity.FechaImplementacionSgsi,
                 NormaAplicadaSgsi = entity.NormaAplicadaSgsi,
                 RutaPdfSgsi = entity.RutaPdfSgsi,
-                NivelImplementacionSgsi = entity.NivelImplementacionSgsi,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
+                NivelImplementacionSgsi = entity.NivelImplementacionSgsi
             };
 
             return Result<Com16SistemaGestionSeguridadResponse>.Success(response);

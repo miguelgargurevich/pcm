@@ -63,8 +63,7 @@ namespace PCM.Infrastructure.Handlers.Com9ModeloGestionDocumental
                     Estado = registro.Estado,
                     CreatedAt = registro.CreatedAt,
                     UpdatedAt = registro.UpdatedAt,
-                    RutaPdfNormativa = registro.RutaPdfNormativa,
-                    CriteriosEvaluados = registro.CriteriosEvaluados
+                    RutaPdfNormativa = registro.RutaPdfNormativa
                 };
 
                 return Result<Com9ModeloGestionDocumentalResponse>.Success(response);

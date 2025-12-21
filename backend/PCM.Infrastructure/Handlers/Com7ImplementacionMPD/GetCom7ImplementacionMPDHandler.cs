@@ -64,8 +64,7 @@ public class GetCom7ImplementacionMPDHandler : IRequestHandler<GetCom7Implementa
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
-                RutaPdfNormativa = entity.RutaPdfNormativa,
-                CriteriosEvaluados = entity.CriteriosEvaluados
+                RutaPdfNormativa = entity.RutaPdfNormativa
             };
 
             _logger.LogInformation("Registro Com7ImplementacionMPD encontrado con ID {ComimpdEntId}", entity.ComimpdEntId);

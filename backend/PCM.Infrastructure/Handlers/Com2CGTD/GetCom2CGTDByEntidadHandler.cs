@@ -72,7 +72,6 @@ public class GetCom2CGTDByEntidadHandler : IRequestHandler<GetCom2CGTDByEntidadQ
                 Activo = entity.Activo,
                 UrlDocPcm = entity.UrlDocPcm,
                 RutaPdfNormativa = entity.RutaPdfNormativa,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 Miembros = miembrosDto
             };
 

@@ -99,9 +99,6 @@ public class Com19EncuestaNacionalGobDigital
     [MaxLength(500)]
     public string? RutaPdfNormativa { get; set; }
 
-    [Column("criterios_evaluados")]
-    public string? CriteriosEvaluados { get; set; }
-
     // Propiedades de compatibilidad para handlers existentes
     [NotMapped]
     [JsonIgnore]

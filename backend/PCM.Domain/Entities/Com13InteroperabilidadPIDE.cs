@@ -114,9 +114,6 @@ public class Com13InteroperabilidadPIDE
     [MaxLength(500)]
     public string? RutaPdfNormativa { get; set; }
 
-    [Column("criterios_evaluados")]
-    public string? CriteriosEvaluados { get; set; }
-
     [Column("fecha_integracion_pide")]
     public DateTime? FechaIntegracionPide { get; set; }
 

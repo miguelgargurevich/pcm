@@ -64,7 +64,6 @@ public class GetCom13InteroperabilidadPIDEHandler : IRequestHandler<GetCom13Inte
                 ObservacionPide = entity.ObservacionPide,
                 RutaPdfPide = entity.RutaPdfPide,
                 RutaPdfNormativa = entity.RutaPdfNormativa,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
                 FechaIntegracionPide = entity.FechaIntegracionPide,
                 ServiciosPublicadosPide = entity.ServiciosPublicadosPide,
             };

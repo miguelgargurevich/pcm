@@ -60,8 +60,7 @@ public class GetCom12ResponsableSoftwarePublicoHandler : IRequestHandler<GetCom1
                 NumeroResolucionRsp = entity.NumeroResolucionRsp,
                 RutaPdfRsp = entity.RutaPdfRsp,
                 ObservacionRsp = entity.ObservacionRsp,
-                RutaPdfNormativa = entity.RutaPdfNormativa,
-                CriteriosEvaluados = entity.CriteriosEvaluados,
+                RutaPdfNormativa = entity.RutaPdfNormativa
             };
 
             return Result<Com12ResponsableSoftwarePublicoResponse>.Success(response);

@@ -102,9 +102,6 @@ public class Com10DatosAbiertos
     [MaxLength(500)]
     public string? RutaPdfNormativa { get; set; }
 
-    [Column("criterios_evaluados")]
-    public string? CriteriosEvaluados { get; set; }
-
     [NotMapped]
     [JsonIgnore]
     public DateTime? UpdatedAt { get; set; }
