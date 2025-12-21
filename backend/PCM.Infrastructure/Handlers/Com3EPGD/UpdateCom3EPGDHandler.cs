@@ -42,8 +42,8 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
             }
 
             // Actualizar campos principales
-            entity.EtapaFormulario = request.EtapaFormulario ?? entity.EtapaFormulario;
-            entity.Estado = request.Estado ?? entity.Estado;
+            entity.EtapaFormulario = !string.IsNullOrEmpty(request.EtapaFormulario) ? request.EtapaFormulario : entity.EtapaFormulario;
+            entity.Estado = !string.IsNullOrEmpty(request.Estado) ? request.Estado : entity.Estado;
             entity.CheckPrivacidad = request.CheckPrivacidad;
             entity.CheckDdjj = request.CheckDdjj;
             if (request.RutaPdfNormativa != null)

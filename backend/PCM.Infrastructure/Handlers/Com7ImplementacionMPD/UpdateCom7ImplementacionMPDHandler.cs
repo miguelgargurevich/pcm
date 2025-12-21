@@ -70,6 +70,8 @@ public class UpdateCom7ImplementacionMPDHandler : IRequestHandler<UpdateCom7Impl
                 entity.UsuarioRegistra = request.UsuarioRegistra.Value;
             if (request.EtapaFormulario != null)
                 entity.EtapaFormulario = request.EtapaFormulario;
+            if (!string.IsNullOrEmpty(request.Estado))
+                entity.Estado = request.Estado;
 
             await _context.SaveChangesAsync(cancellationToken);
 

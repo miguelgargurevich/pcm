@@ -82,6 +82,7 @@ const EvaluacionDetallePanel = ({
   const [entidadData, setEntidadData] = useState(null);
   const [criteriosEvaluacion, setCriteriosEvaluacion] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   // Función para mostrar documento en el visor
   const handleVerDocumento = (url) => {
@@ -188,15 +189,25 @@ const EvaluacionDetallePanel = ({
     }
   };
 
-  const handleObservar = () => {
-    if (onEvaluar) {
-      onEvaluar('observado', observaciones);
+  const handleObservar = async () => {
+    if (onEvaluar && !submitting) {
+      setSubmitting(true);
+      try {
+        await onEvaluar('observado', observaciones);
+      } finally {
+        setSubmitting(false);
+      }
     }
   };
 
-  const handleAprobar = () => {
-    if (onEvaluar) {
-      onEvaluar('aceptado', observaciones);
+  const handleAprobar = async () => {
+    if (onEvaluar && !submitting) {
+      setSubmitting(true);
+      try {
+        await onEvaluar('aceptado', observaciones);
+      } finally {
+        setSubmitting(false);
+      }
     }
   };
 
@@ -291,7 +302,7 @@ const EvaluacionDetallePanel = ({
             {/* Estado Actual */}
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">Estado Actual</label>
-              <span className={`inline-block px-3 py-1 text-sm font-medium rounded-full border ${getEstadoStyles(estadoActual)}`}>
+              <span className={`inline-block px-3 py-1 text-sm font-semibold rounded-full border ${getEstadoStyles(estadoActual)}`}>
                 {estadoActual}
               </span>
             </div>
@@ -307,6 +318,7 @@ const EvaluacionDetallePanel = ({
                 placeholder="Ingrese las observaciones de la evaluación..."
                 className="input-field resize-none"
                 rows={4}
+                disabled={submitting}
               />
             </div>
 
@@ -314,16 +326,26 @@ const EvaluacionDetallePanel = ({
             <div className="flex gap-2">
               <button
                 onClick={handleObservar}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                disabled={submitting}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <XCircle size={16} />
+                {submitting ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <XCircle size={16} />
+                )}
                 OBSERVAR
               </button>
               <button
                 onClick={handleAprobar}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                disabled={submitting}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <CheckCircle size={16} />
+                {submitting ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <CheckCircle size={16} />
+                )}
                 APROBAR
               </button>
             </div>

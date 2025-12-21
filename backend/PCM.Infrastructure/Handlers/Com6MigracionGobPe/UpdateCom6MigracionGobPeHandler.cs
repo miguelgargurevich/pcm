@@ -35,7 +35,7 @@ public class UpdateCom6MigracionGobPeHandler : IRequestHandler<UpdateCom6Migraci
 
             // Actualizar campos
             if (request.EtapaFormulario != null) entity.EtapaFormulario = request.EtapaFormulario;
-            if (request.Estado != null) entity.Estado = request.Estado;
+            if (!string.IsNullOrEmpty(request.Estado)) entity.Estado = request.Estado;
             if (request.UrlGobPe != null) entity.UrlGobPe = request.UrlGobPe;
             if (request.FechaMigracionGobPe.HasValue) 
                 entity.FechaMigracionGobPe = DateTime.SpecifyKind(request.FechaMigracionGobPe.Value, DateTimeKind.Utc);

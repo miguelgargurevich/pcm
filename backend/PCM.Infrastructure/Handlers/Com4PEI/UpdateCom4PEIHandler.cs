@@ -33,9 +33,11 @@ public class UpdateCom4PEIHandler : IRequestHandler<UpdateCom4PEICommand, Result
                 return Result<Com4PEIResponse>.Failure("Registro no encontrado");
             }
 
-            // Actualizar campos
-            entity.EtapaFormulario = request.EtapaFormulario;
-            entity.Estado = request.Estado;
+            // Actualizar campos - solo si el valor no está vacío
+            if (!string.IsNullOrEmpty(request.EtapaFormulario))
+                entity.EtapaFormulario = request.EtapaFormulario;
+            if (!string.IsNullOrEmpty(request.Estado))
+                entity.Estado = request.Estado;
             entity.AnioInicioPei = request.AnioInicioPei;
             entity.AnioFinPei = request.AnioFinPei;
             entity.FechaAprobacionPei = request.FechaAprobacionPei.HasValue 

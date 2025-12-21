@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { showSuccessToast } from '../utils/toast.jsx';
-import { FilterX, Search, X, Save, FolderKanban, TrendingUp } from 'lucide-react';
+import { FilterX, X, Save, FolderKanban, TrendingUp } from 'lucide-react';
 
 // Datos de ejemplo para el portafolio de proyectos
 const proyectosIniciales = [
@@ -115,7 +115,9 @@ const SeguimientoPGDPP = () => {
   const [filtros, setFiltros] = useState({
     codigo: '',
     nombre: '',
-    etapa: ''
+    etapa: '',
+    tipoProyecto: '',
+    ambito: ''
   });
 
   // Form data para el modal
@@ -157,6 +159,14 @@ const SeguimientoPGDPP = () => {
       filtered = filtered.filter((p) => p.etapa === filtros.etapa);
     }
 
+    if (filtros.tipoProyecto) {
+      filtered = filtered.filter((p) => p.tipoProyecto === filtros.tipoProyecto);
+    }
+
+    if (filtros.ambito) {
+      filtered = filtered.filter((p) => p.ambito === filtros.ambito);
+    }
+
     return filtered;
   }, [proyectos, filtros]);
 
@@ -166,7 +176,7 @@ const SeguimientoPGDPP = () => {
   };
 
   const limpiarFiltros = () => {
-    setFiltros({ codigo: '', nombre: '', etapa: '' });
+    setFiltros({ codigo: '', nombre: '', etapa: '', tipoProyecto: '', ambito: '' });
   };
 
   const handleRowClick = (proyecto) => {
@@ -265,15 +275,11 @@ const SeguimientoPGDPP = () => {
         <p className="text-gray-600 mt-1">Plan de Gobierno Digital - Portafolio de Proyectos</p>
       </div>
 
-      {/* Panel de Búsqueda Avanzada */}
+      {/* Filtros */}
       <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <Search size={20} />
-          Búsqueda Avanzada
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Código
             </label>
             <input
@@ -281,13 +287,13 @@ const SeguimientoPGDPP = () => {
               name="codigo"
               value={filtros.codigo}
               onChange={handleFiltroChange}
-              placeholder="Buscar por código..."
+              placeholder="Buscar código..."
               className="input-field"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Nombre
             </label>
             <input
@@ -295,13 +301,30 @@ const SeguimientoPGDPP = () => {
               name="nombre"
               value={filtros.nombre}
               onChange={handleFiltroChange}
-              placeholder="Buscar por nombre..."
+              placeholder="Buscar nombre..."
               className="input-field"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tipo Proyecto
+            </label>
+            <select
+              name="tipoProyecto"
+              value={filtros.tipoProyecto}
+              onChange={handleFiltroChange}
+              className="input-field"
+            >
+              <option value="">Todos los tipos</option>
+              {tiposProyectoOptions.map((tipo) => (
+                <option key={tipo} value={tipo}>{tipo}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Etapa
             </label>
             <select
@@ -317,16 +340,44 @@ const SeguimientoPGDPP = () => {
             </select>
           </div>
 
-          <div className="flex items-end">
-            <button
-              onClick={limpiarFiltros}
-              className="btn-secondary flex items-center gap-2 px-4 py-2 w-full justify-center"
-              title="Limpiar filtros"
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ámbito
+            </label>
+            <select
+              name="ambito"
+              value={filtros.ambito}
+              onChange={handleFiltroChange}
+              className="input-field"
             >
-              <FilterX size={20} />
-              Limpiar Filtros
-            </button>
+              <option value="">Todos los ámbitos</option>
+              {ambitosOptions.map((ambito) => (
+                <option key={ambito} value={ambito}>{ambito}</option>
+              ))}
+            </select>
           </div>
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm text-gray-600 mr-2">Etapas:</span>
+            {etapasOptions.map((etapa) => (
+              <span
+                key={etapa}
+                className={`px-2 py-1 text-xs font-semibold rounded-full ${getEtapaBadgeClass(etapa)}`}
+              >
+                {etapa}
+              </span>
+            ))}
+          </div>
+          <button
+            onClick={limpiarFiltros}
+            className="btn-secondary flex items-center gap-2 px-4 py-2"
+            title="Limpiar filtros"
+          >
+            <FilterX size={20} />
+            Limpiar Filtros
+          </button>
         </div>
       </div>
 
@@ -343,14 +394,14 @@ const SeguimientoPGDPP = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                {/* Columnas sticky */}
-                <th className="sticky left-0 z-10 bg-gray-50 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">
+                {/* Columnas sticky - con anchos fijos y posiciones calculadas */}
+                <th className="sticky left-0 z-20 bg-gray-50 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 w-[60px] min-w-[60px] max-w-[60px]">
                   Id
                 </th>
-                <th className="sticky left-[60px] z-10 bg-gray-50 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">
+                <th className="sticky left-[60px] z-20 bg-gray-50 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 w-[100px] min-w-[100px] max-w-[100px]">
                   Código
                 </th>
-                <th className="sticky left-[160px] z-10 bg-gray-50 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 min-w-[250px]">
+                <th className="sticky left-[160px] z-20 bg-gray-50 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 w-[250px] min-w-[250px] max-w-[250px]">
                   Nombre
                 </th>
                 {/* Columnas con scroll */}
@@ -393,18 +444,18 @@ const SeguimientoPGDPP = () => {
               {proyectosFiltrados.map((proyecto) => (
                 <tr 
                   key={proyecto.id} 
-                  className="hover:bg-gray-50 cursor-pointer"
+                  className="hover:bg-gray-50 cursor-pointer group"
                   onClick={() => handleRowClick(proyecto)}
                 >
-                  {/* Columnas sticky */}
-                  <td className="sticky left-0 z-10 bg-white px-4 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">
+                  {/* Columnas sticky - con anchos fijos y posiciones calculadas */}
+                  <td className="sticky left-0 z-20 bg-white group-hover:bg-gray-50 px-4 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200 w-[60px] min-w-[60px] max-w-[60px]">
                     {proyecto.id}
                   </td>
-                  <td className="sticky left-[60px] z-10 bg-white px-4 py-4 whitespace-nowrap text-sm font-medium text-primary border-r border-gray-200">
+                  <td className="sticky left-[60px] z-20 bg-white group-hover:bg-gray-50 px-4 py-4 whitespace-nowrap text-sm font-medium text-primary border-r border-gray-200 w-[100px] min-w-[100px] max-w-[100px]">
                     {proyecto.codigo}
                   </td>
                   <td 
-                    className="sticky left-[160px] z-10 bg-white px-4 py-4 text-sm text-blue-600 hover:text-blue-800 hover:underline border-r border-gray-200 min-w-[250px] cursor-pointer"
+                    className="sticky left-[160px] z-20 bg-white group-hover:bg-gray-50 px-4 py-4 text-sm text-blue-600 hover:text-blue-800 hover:underline border-r border-gray-200 w-[250px] min-w-[250px] max-w-[250px] cursor-pointer"
                   >
                     {proyecto.nombre}
                   </td>
@@ -471,7 +522,7 @@ const SeguimientoPGDPP = () => {
       {/* Modal Editar Proyecto */}
       {showModal && editingProyecto && (
         <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-          <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[95vh] overflow-y-auto">
+          <div className="relative bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[95vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10">
               <h3 className="text-lg font-semibold text-gray-900">
                 Editar Proyecto
@@ -484,231 +535,267 @@ const SeguimientoPGDPP = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              {/* Código */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Código
-                </label>
-                <input
-                  type="text"
-                  name="codigo"
-                  value={formData.codigo}
-                  onChange={handleInputChange}
-                  className="input-field bg-gray-100"
-                  readOnly
-                />
-              </div>
-
-              {/* Nombre */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Nombre
-                </label>
-                <input
-                  type="text"
-                  name="nombre"
-                  value={formData.nombre}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
-                />
-              </div>
-
-              {/* Tipo Proyecto */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tipo Proyecto
-                </label>
-                <select
-                  name="tipoProyecto"
-                  value={formData.tipoProyecto}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
-                >
-                  <option value="">Seleccionar...</option>
-                  {tiposProyectoOptions.map((tipo) => (
-                    <option key={tipo} value={tipo}>{tipo}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Tipo Beneficiario */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tipo Beneficiario
-                </label>
-                <select
-                  name="tipoBeneficiario"
-                  value={formData.tipoBeneficiario}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
-                >
-                  <option value="">Seleccionar...</option>
-                  {tiposBeneficiarioOptions.map((tipo) => (
-                    <option key={tipo} value={tipo}>{tipo}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Fechas programadas */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fecha Inicio Programada
-                  </label>
-                  <input
-                    type="date"
-                    name="fechaInicioProg"
-                    value={formData.fechaInicioProg}
-                    onChange={handleInputChange}
-                    className="input-field"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fecha Fin Programada
-                  </label>
-                  <input
-                    type="date"
-                    name="fechaFinProg"
-                    value={formData.fechaFinProg}
-                    onChange={handleInputChange}
-                    className="input-field"
-                  />
-                </div>
-              </div>
-
-              {/* Fechas reales */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fecha Inicio Real
-                  </label>
-                  <input
-                    type="date"
-                    name="fechaInicioReal"
-                    value={formData.fechaInicioReal}
-                    onChange={handleInputChange}
-                    className="input-field"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fecha Fin Real
-                  </label>
-                  <input
-                    type="date"
-                    name="fechaFinReal"
-                    value={formData.fechaFinReal}
-                    onChange={handleInputChange}
-                    className="input-field"
-                  />
-                </div>
-              </div>
-
-              {/* Etapa */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Etapa
-                </label>
-                <select
-                  name="etapa"
-                  value={formData.etapa}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
-                >
-                  <option value="">Seleccionar...</option>
-                  {etapasOptions.map((etapa) => (
-                    <option key={etapa} value={etapa}>{etapa}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* % Avance */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  % Avance
-                </label>
-                <div className="flex items-center gap-4">
-                  <input
-                    type="range"
-                    name="porcentajeAvance"
-                    value={formData.porcentajeAvance}
-                    onChange={handleInputChange}
-                    min="0"
-                    max="100"
-                    className="flex-1"
-                  />
-                  <span className="text-sm font-medium w-12 text-right">{formData.porcentajeAvance}%</span>
-                </div>
-              </div>
-
-              {/* Informe Avance */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Informe Avance
-                </label>
-                <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-2">
+            <form onSubmit={handleSubmit} className="p-6">
+              {/* Sección: Información General */}
+              <div className="mb-6">
+                <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 pb-2 border-b border-gray-100">
+                  Información General
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Código */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Código
+                    </label>
                     <input
-                      type="radio"
-                      name="informeAvance"
-                      checked={formData.informeAvance === true}
-                      onChange={() => setFormData(prev => ({ ...prev, informeAvance: true }))}
-                      className="w-4 h-4 text-primary"
+                      type="text"
+                      name="codigo"
+                      value={formData.codigo}
+                      onChange={handleInputChange}
+                      className="input-field bg-gray-100 text-gray-500"
+                      readOnly
                     />
-                    <span>SI</span>
+                  </div>
+
+                  {/* Tipo Proyecto */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Tipo Proyecto
+                    </label>
+                    <select
+                      name="tipoProyecto"
+                      value={formData.tipoProyecto}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      required
+                    >
+                      <option value="">Seleccionar...</option>
+                      {tiposProyectoOptions.map((tipo) => (
+                        <option key={tipo} value={tipo}>{tipo}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Tipo Beneficiario */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Tipo Beneficiario
+                    </label>
+                    <select
+                      name="tipoBeneficiario"
+                      value={formData.tipoBeneficiario}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      required
+                    >
+                      <option value="">Seleccionar...</option>
+                      {tiposBeneficiarioOptions.map((tipo) => (
+                        <option key={tipo} value={tipo}>{tipo}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Nombre - ancho completo */}
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Nombre del Proyecto
                   </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="informeAvance"
-                      checked={formData.informeAvance === false}
-                      onChange={() => setFormData(prev => ({ ...prev, informeAvance: false }))}
-                      className="w-4 h-4 text-primary"
-                    />
-                    <span>NO</span>
-                  </label>
+                  <input
+                    type="text"
+                    name="nombre"
+                    value={formData.nombre}
+                    onChange={handleInputChange}
+                    className="input-field"
+                    required
+                  />
                 </div>
               </div>
 
-              {/* Monto Inversión */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Monto Inversión
-                </label>
-                <input
-                  type="number"
-                  name="montoInversion"
-                  value={formData.montoInversion}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  min="0"
-                  step="0.01"
-                />
+              {/* Sección: Fechas */}
+              <div className="mb-6">
+                <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 pb-2 border-b border-gray-100">
+                  Cronograma
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Inicio Programado
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaInicioProg"
+                      value={formData.fechaInicioProg}
+                      onChange={handleInputChange}
+                      className="input-field"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fin Programado
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaFinProg"
+                      value={formData.fechaFinProg}
+                      onChange={handleInputChange}
+                      className="input-field"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Inicio Real
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaInicioReal"
+                      value={formData.fechaInicioReal}
+                      onChange={handleInputChange}
+                      className="input-field"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fin Real
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaFinReal"
+                      value={formData.fechaFinReal}
+                      onChange={handleInputChange}
+                      className="input-field"
+                    />
+                  </div>
+                </div>
               </div>
 
-              {/* Ámbito */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ámbito
-                </label>
-                <select
-                  name="ambito"
-                  value={formData.ambito}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
-                >
-                  <option value="">Seleccionar...</option>
-                  {ambitosOptions.map((ambito) => (
-                    <option key={ambito} value={ambito}>{ambito}</option>
-                  ))}
-                </select>
+              {/* Sección: Estado y Avance */}
+              <div className="mb-6">
+                <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 pb-2 border-b border-gray-100">
+                  Estado y Avance
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Columna izquierda */}
+                  <div className="space-y-4">
+                    {/* Etapa */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Etapa
+                      </label>
+                      <select
+                        name="etapa"
+                        value={formData.etapa}
+                        onChange={handleInputChange}
+                        className="input-field"
+                        required
+                      >
+                        <option value="">Seleccionar...</option>
+                        {etapasOptions.map((etapa) => (
+                          <option key={etapa} value={etapa}>{etapa}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* % Avance */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Porcentaje de Avance
+                      </label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="range"
+                          name="porcentajeAvance"
+                          value={formData.porcentajeAvance}
+                          onChange={handleInputChange}
+                          min="0"
+                          max="100"
+                          className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
+                        />
+                        <span className="text-sm font-semibold bg-gray-100 px-3 py-1 rounded-md min-w-[50px] text-center">
+                          {formData.porcentajeAvance}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Columna derecha */}
+                  <div className="space-y-4">
+                    {/* Informe Avance */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Informe de Avance
+                      </label>
+                      <div className="flex items-center gap-6">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="informeAvance"
+                            checked={formData.informeAvance === true}
+                            onChange={() => setFormData(prev => ({ ...prev, informeAvance: true }))}
+                            className="w-4 h-4 text-primary accent-primary"
+                          />
+                          <span className="text-sm">Sí</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="informeAvance"
+                            checked={formData.informeAvance === false}
+                            onChange={() => setFormData(prev => ({ ...prev, informeAvance: false }))}
+                            className="w-4 h-4 text-primary accent-primary"
+                          />
+                          <span className="text-sm">No</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Monto Inversión */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Monto de Inversión
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">S/</span>
+                        <input
+                          type="number"
+                          name="montoInversion"
+                          value={formData.montoInversion}
+                          onChange={handleInputChange}
+                          className="input-field pl-8"
+                          min="0"
+                          step="0.01"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sección: Ubicación */}
+              <div className="mb-6">
+                <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 pb-2 border-b border-gray-100">
+                  Ubicación
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Ámbito */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Ámbito
+                    </label>
+                    <select
+                      name="ambito"
+                      value={formData.ambito}
+                      onChange={handleInputChange}
+                      className="input-field"
+                      required
+                    >
+                      <option value="">Seleccionar...</option>
+                      {ambitosOptions.map((ambito) => (
+                        <option key={ambito} value={ambito}>{ambito}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
 
               {/* Botones */}

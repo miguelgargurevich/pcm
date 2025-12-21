@@ -2530,7 +2530,7 @@ const CumplimientoNormativoDetalle = () => {
           } else if (parseInt(formData.compromisoId) === 2) {
             // Compromiso 2: Actualizar com2_cgtd
             const com2UpdateData = {
-              ...(pasoActual === 2 && documentoUrl && { UrlDocPcm: documentoUrl }),
+              ...(pasoActual === 2 && documentoUrl && { RutaPdfNormativa: documentoUrl }),
               ...(pasoActual === 3 && {
                 CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
                 CheckDdjj: formData.aceptaDeclaracionJurada || false,

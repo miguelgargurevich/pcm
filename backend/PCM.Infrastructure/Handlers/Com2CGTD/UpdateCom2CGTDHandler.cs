@@ -31,9 +31,11 @@ public class UpdateCom2CGTDHandler : IRequestHandler<UpdateCom2CGTDCommand, Resu
                 return Result<Com2CGTDResponse>.Failure("Registro no encontrado");
             }
 
-            // Actualizar campos
-            entity.EtapaFormulario = request.EtapaFormulario;
-            entity.Estado = request.Estado;
+            // Actualizar campos - solo si el valor no está vacío
+            if (!string.IsNullOrEmpty(request.EtapaFormulario))
+                entity.EtapaFormulario = request.EtapaFormulario;
+            if (!string.IsNullOrEmpty(request.Estado))
+                entity.Estado = request.Estado;
             entity.CheckPrivacidad = request.CheckPrivacidad;
             entity.CheckDdjj = request.CheckDdjj;
             entity.EstadoPcm = request.EstadoPcm;

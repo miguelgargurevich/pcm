@@ -60,6 +60,8 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                     registro.UsuarioRegistra = request.UsuarioRegistra.Value;
                 }
                 registro.EtapaFormulario = request.EtapaFormulario ?? registro.EtapaFormulario;
+                if (!string.IsNullOrEmpty(request.Estado))
+                    registro.Estado = request.Estado;
                 registro.UpdatedAt = DateTime.UtcNow;
 
                 await _context.SaveChangesAsync(cancellationToken);

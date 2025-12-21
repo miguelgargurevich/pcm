@@ -158,7 +158,7 @@ const EvaluacionCompromiso3 = ({ data, activeTab, criterios = [], onVerDocumento
                   <td className="px-3 py-2 text-sm text-gray-900">{p.nombrePersona || '-'}</td>
                   <td className="px-3 py-2 text-sm text-gray-600">{p.cargo || '-'}</td>
                   <td className="px-3 py-2 text-sm">
-                    <span className="px-2 py-0.5 text-[10px] rounded-full bg-purple-100 text-purple-800">
+                    <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-purple-100 text-purple-800">
                       {p.rol || '-'}
                     </span>
                   </td>

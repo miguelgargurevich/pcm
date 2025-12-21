@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { BarChart3, Search, FilterX, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
-import { showSuccessToast, showErrorToast } from '../utils/toast.jsx';
+import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast.jsx';
 import EvaluacionDetallePanel from '../components/Evaluacion/EvaluacionDetallePanel';
 import evaluacionService from '../services/evaluacionService';
 
@@ -172,8 +172,8 @@ const EvaluacionCumplimiento = () => {
     cargarMatriz();
   };
 
-  // Handler para evaluar un compromiso
-  const handleEvaluar = async (nuevoEstado, observaciones) => {
+  // Handler interno que ejecuta la evaluación
+  const ejecutarEvaluacion = async (nuevoEstado, observaciones) => {
     if (entidadSeleccionada && compromisoSeleccionado) {
       try {
         const response = await evaluacionService.updateEstado(
@@ -184,7 +184,7 @@ const EvaluacionCumplimiento = () => {
         );
         
         if (response.isSuccess) {
-          // Actualizar el estado local
+          // Actualizar el estado local de las entidades
           const nuevasEntidades = entidades.map(e => {
             if (e.id === entidadSeleccionada.id) {
               const nuevosCompromisos = [...e.compromisos];
@@ -195,6 +195,18 @@ const EvaluacionCumplimiento = () => {
           });
           
           setEntidades(nuevasEntidades);
+          
+          // Actualizar también la entidad seleccionada para que el panel refleje el cambio
+          setEntidadSeleccionada(prev => {
+            if (prev) {
+              const nuevosCompromisos = [...(prev.compromisos || [])];
+              nuevosCompromisos[compromisoSeleccionado - 1] = nuevoEstado;
+              return { ...prev, compromisos: nuevosCompromisos };
+            }
+            return prev;
+          });
+          
+          // Actualizar el estado seleccionado para el panel de detalle
           setEstadoSeleccionado(nuevoEstado);
           
           if (nuevoEstado === 'aceptado') {
@@ -204,6 +216,12 @@ const EvaluacionCumplimiento = () => {
           } else {
             showSuccessToast(`Estado actualizado a "${nuevoEstado}"`);
           }
+          
+          // Volver al panel de matriz después de evaluar
+          setVistaDetalle(false);
+          setEntidadSeleccionada(null);
+          setCompromisoSeleccionado(null);
+          setEstadoSeleccionado(null);
         } else {
           showErrorToast('Error al actualizar el estado');
         }
@@ -212,6 +230,33 @@ const EvaluacionCumplimiento = () => {
         showErrorToast('Error al actualizar el estado. Por favor intente nuevamente.');
       }
     }
+  };
+
+  // Handler para evaluar un compromiso con confirmación
+  const handleEvaluar = async (nuevoEstado, observaciones) => {
+    if (!entidadSeleccionada || !compromisoSeleccionado) return;
+
+    const esAprobacion = nuevoEstado === 'aceptado';
+    const titulo = esAprobacion 
+      ? `¿Confirmar aprobación del Compromiso ${compromisoSeleccionado}?`
+      : `¿Confirmar observación del Compromiso ${compromisoSeleccionado}?`;
+    const mensaje = esAprobacion
+      ? `Se aprobará el cumplimiento para la entidad "${entidadSeleccionada.nombre}".`
+      : `Se marcará como observado y se notificará a la entidad "${entidadSeleccionada.nombre}".`;
+
+    showConfirmToast({
+      title: titulo,
+      message: mensaje,
+      confirmText: esAprobacion ? 'Aprobar' : 'Observar',
+      cancelText: 'Cancelar',
+      loadingText: esAprobacion ? 'Aprobando...' : 'Registrando observación...',
+      confirmButtonClass: esAprobacion 
+        ? 'px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors'
+        : 'px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors',
+      onConfirm: async () => {
+        await ejecutarEvaluacion(nuevoEstado, observaciones);
+      }
+    });
   };
 
   // Si está en vista de detalle, mostrar el panel
@@ -242,10 +287,10 @@ const EvaluacionCumplimiento = () => {
 
       {/* Panel de Búsqueda Avanzada */}
       <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        {/* <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
           <Search size={20} />
           Búsqueda Avanzada
-        </h2>
+        </h2> */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -359,7 +404,7 @@ const EvaluacionCumplimiento = () => {
             {estadosOptions.map((estado) => (
               <span
                 key={estado}
-                className={`px-2 py-1 text-xs font-medium rounded ${getEstadoStyles(estado)}`}
+                className={`px-2 py-1 text-xs font-semibold rounded-full ${getEstadoStyles(estado)}`}
               >
                 {getEstadoAbreviado(estado)} - {estado}
               </span>
@@ -418,7 +463,7 @@ const EvaluacionCumplimiento = () => {
                       <td key={index} className="px-1 py-2 text-center">
                         <button
                           onClick={() => handleChipClick(entidad, index, estado)}
-                          className={`inline-block px-2 py-1 text-xs font-semibold rounded cursor-pointer transition-all hover:scale-110 hover:shadow-md ${getEstadoStyles(estado)}`}
+                          className={`inline-block px-2 py-1 text-xs font-semibold rounded-full cursor-pointer transition-all hover:scale-110 hover:shadow-md ${getEstadoStyles(estado)}`}
                           title={`Clic para evaluar Compromiso ${index + 1}: ${estado}`}
                         >
                           {getEstadoAbreviado(estado)}

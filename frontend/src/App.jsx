@@ -15,6 +15,7 @@ import CumplimientoNormativo from './pages/CumplimientoNormativo';
 import CumplimientoNormativoDetalle from './pages/CumplimientoNormativoDetalle';
 import SeguimientoPGDPP from './pages/SeguimientoPGDPP';
 import EvaluacionCumplimiento from './pages/EvaluacionCumplimiento';
+import Reportes from './pages/Reportes';
 import DashboardLayout from './layouts/DashboardLayout';
 
 function App() {
@@ -74,7 +75,7 @@ function App() {
             <Route path="cumplimiento/:id" element={<CumplimientoNormativoDetalle />} />
             <Route path="seguimiento" element={<SeguimientoPGDPP />} />
             <Route path="evaluacion" element={<EvaluacionCumplimiento />} />
-            <Route path="reportes" element={<div className="card">Módulo de Reportes</div>} />
+            <Route path="reportes" element={<Reportes />} />
           </Route>
 
           {/* Redirigir a login por defecto */}

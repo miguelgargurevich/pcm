@@ -70,6 +70,8 @@ public class UpdateCom8PublicacionTUPAHandler : IRequestHandler<UpdateCom8Public
                 entity.UsuarioRegistra = request.UsuarioRegistra.Value;
             if (request.EtapaFormulario != null)
                 entity.EtapaFormulario = request.EtapaFormulario;
+            if (!string.IsNullOrEmpty(request.Estado))
+                entity.Estado = request.Estado;
 
             entity.UpdatedAt = DateTime.UtcNow;
 

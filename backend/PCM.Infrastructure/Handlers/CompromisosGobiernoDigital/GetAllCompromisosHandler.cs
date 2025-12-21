@@ -126,6 +126,16 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                     registrosEspecificos[2] = (com2.CreatedAt, com2.Estado);
                 }
 
+                // Com3: Plan de Gobierno Digital (EPGD)
+                var com3 = await _context.Com3EPGD
+                    .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (com3 != null)
+                {
+                    registrosEspecificos[3] = (com3.CreatedAt, com3.Estado);
+                }
+
                 // Com4: PEI
                 var com4 = await _context.Com4PEI
                     .Where(c => c.EntidadId == userEntidadId.Value && c.Activo)

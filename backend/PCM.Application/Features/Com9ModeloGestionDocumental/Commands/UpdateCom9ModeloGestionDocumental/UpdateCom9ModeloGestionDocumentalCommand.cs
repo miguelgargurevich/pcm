@@ -25,5 +25,6 @@ namespace PCM.Application.Features.Com9ModeloGestionDocumental.Commands.UpdateCo
         public bool CheckDdjj { get; set; }
         public Guid? UsuarioRegistra { get; set; }
         public string? EtapaFormulario { get; set; }
+        public string? Estado { get; set; }
     }
 }
