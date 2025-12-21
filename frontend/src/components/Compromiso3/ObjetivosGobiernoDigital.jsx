@@ -292,7 +292,7 @@ const ObjetivosGobiernoDigital = ({ objetivos = [], onObjetivosChange, viewMode 
                 <textarea
                   value={formObjetivo.descripcionObjetivo}
                   onChange={(e) => setFormObjetivo({ descripcionObjetivo: e.target.value })}
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="input-field-sm"
                   rows={3}
                   placeholder="Describa el objetivo de gobierno digital..."
                 />
@@ -333,7 +333,7 @@ const ObjetivosGobiernoDigital = ({ objetivos = [], onObjetivosChange, viewMode 
                 <textarea
                   value={formAccion.descripcionAccion}
                   onChange={(e) => setFormAccion({ descripcionAccion: e.target.value })}
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="input-field-sm"
                   rows={3}
                   placeholder="Describa la acción para este objetivo..."
                 />

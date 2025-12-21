@@ -9137,7 +9137,7 @@ const CumplimientoNormativoDetalle = () => {
                     setMiembroActual({ ...miembroActual, dni: value });
                   }}
                   maxLength="8"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="input-field"
                   placeholder="12345678"
                 />
                 {miembroActual.dni && miembroActual.dni.length !== 8 && (
@@ -9153,7 +9153,7 @@ const CumplimientoNormativoDetalle = () => {
                   type="text"
                   value={miembroActual.nombre}
                   onChange={(e) => setMiembroActual({ ...miembroActual, nombre: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="input-field"
                   placeholder="Juan Carlos"
                 />
               </div>
@@ -9166,7 +9166,7 @@ const CumplimientoNormativoDetalle = () => {
                   type="text"
                   value={miembroActual.apellidoPaterno}
                   onChange={(e) => setMiembroActual({ ...miembroActual, apellidoPaterno: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="input-field"
                   placeholder="García"
                 />
               </div>
@@ -9179,7 +9179,7 @@ const CumplimientoNormativoDetalle = () => {
                   type="text"
                   value={miembroActual.apellidoMaterno}
                   onChange={(e) => setMiembroActual({ ...miembroActual, apellidoMaterno: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="input-field"
                   placeholder="López"
                 />
               </div>
@@ -9192,7 +9192,7 @@ const CumplimientoNormativoDetalle = () => {
                   type="text"
                   value={miembroActual.cargo}
                   onChange={(e) => setMiembroActual({ ...miembroActual, cargo: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="input-field"
                   placeholder="Director de TI"
                 />
               </div>
@@ -9204,7 +9204,7 @@ const CumplimientoNormativoDetalle = () => {
                 <select
                   value={miembroActual.rol}
                   onChange={(e) => setMiembroActual({ ...miembroActual, rol: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="input-field"
                   disabled={loadingCatalogos}
                 >
                   <option value="">
@@ -9226,7 +9226,7 @@ const CumplimientoNormativoDetalle = () => {
                   type="email"
                   value={miembroActual.email}
                   onChange={(e) => setMiembroActual({ ...miembroActual, email: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="input-field"
                   placeholder="ejemplo@gob.pe"
                 />
                 {miembroActual.email && !miembroActual.email.endsWith('@gob.pe') && (
@@ -9242,7 +9242,7 @@ const CumplimientoNormativoDetalle = () => {
                   type="text"
                   value={miembroActual.telefono}
                   onChange={(e) => setMiembroActual({ ...miembroActual, telefono: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="input-field"
                   placeholder="987654321"
                 />
               </div>

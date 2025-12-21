@@ -251,7 +251,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       type="text"
                       value={formItem.nombreEquipo}
                       onChange={(e) => setFormItem(prev => ({ ...prev, nombreEquipo: e.target.value }))}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="input-field-sm"
                       maxLength="100"
                       required
                     />
@@ -262,7 +262,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       <select
                         value={formItem.tipoEquipo}
                         onChange={(e) => setFormItem(prev => ({ ...prev, tipoEquipo: e.target.value }))}
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        className="input-field-sm"
                         required
                       >
                         <option key="tipo-empty" value="">Seleccione...</option>
@@ -276,7 +276,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       <select
                         value={formItem.estado}
                         onChange={(e) => setFormItem(prev => ({ ...prev, estado: e.target.value }))}
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        className="input-field-sm"
                         required
                       >
                         <option key="estado-empty" value="">Seleccione...</option>
@@ -292,7 +292,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       <select
                         value={formItem.capa}
                         onChange={(e) => setFormItem(prev => ({ ...prev, capa: e.target.value }))}
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        className="input-field-sm"
                         required
                       >
                         <option key="capa-empty" value="">Seleccione...</option>
@@ -306,7 +306,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       <select
                         value={formItem.propiedad}
                         onChange={(e) => setFormItem(prev => ({ ...prev, propiedad: e.target.value }))}
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        className="input-field-sm"
                         required
                       >
                         <option key="propiedad-empty" value="">Seleccione...</option>
@@ -320,7 +320,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       <select
                         value={formItem.montaje}
                         onChange={(e) => setFormItem(prev => ({ ...prev, montaje: e.target.value }))}
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        className="input-field-sm"
                         required
                       >
                         <option key="montaje-empty" value="">Seleccione...</option>
@@ -343,7 +343,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       type="text"
                       value={formItem.marcaCpu}
                       onChange={(e) => setFormItem(prev => ({ ...prev, marcaCpu: e.target.value }))}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="input-field-sm"
                       placeholder="Ej: Intel, AMD"
                       maxLength="50"
                       required
@@ -355,7 +355,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       type="text"
                       value={formItem.modeloCpu}
                       onChange={(e) => setFormItem(prev => ({ ...prev, modeloCpu: e.target.value }))}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="input-field-sm"
                       placeholder="Ej: Xeon E5-2680 v4"
                       maxLength="50"
                       required
@@ -369,7 +369,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       min="0"
                       value={formItem.velocidadGhz}
                       onChange={(e) => setFormItem(prev => ({ ...prev, velocidadGhz: e.target.value }))}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="input-field-sm"
                       placeholder="Ej: 2.40"
                       required
                     />
@@ -381,7 +381,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       min="1"
                       value={formItem.nucleos}
                       onChange={(e) => setFormItem(prev => ({ ...prev, nucleos: e.target.value }))}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="input-field-sm"
                       placeholder="Ej: 14"
                       required
                     />
@@ -400,7 +400,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       min="0"
                       value={formItem.memoriaGb}
                       onChange={(e) => setFormItem(prev => ({ ...prev, memoriaGb: e.target.value }))}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="input-field-sm"
                       placeholder="Ej: 64"
                       required
                     />
@@ -412,7 +412,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       min="1"
                       value={formItem.cantidadMemoria}
                       onChange={(e) => setFormItem(prev => ({ ...prev, cantidadMemoria: e.target.value }))}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="input-field-sm"
                       placeholder="Ej: 4"
                       required
                     />
@@ -423,7 +423,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       type="text"
                       value={formItem.marcaMemoria}
                       onChange={(e) => setFormItem(prev => ({ ...prev, marcaMemoria: e.target.value }))}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="input-field-sm"
                       placeholder="Ej: Kingston, Samsung"
                       maxLength="50"
                       required
@@ -435,7 +435,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                       type="text"
                       value={formItem.modeloMemoria}
                       onChange={(e) => setFormItem(prev => ({ ...prev, modeloMemoria: e.target.value }))}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="input-field-sm"
                       placeholder="Ej: DDR4-2666 ECC"
                       maxLength="50"
                       required
@@ -455,7 +455,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                     min="0"
                     value={formItem.costoMantenimientoAnual}
                     onChange={(e) => setFormItem(prev => ({ ...prev, costoMantenimientoAnual: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     placeholder="0.00"
                     required
                   />
@@ -469,7 +469,7 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
                   value={formItem.observaciones}
                   onChange={(e) => setFormItem(prev => ({ ...prev, observaciones: e.target.value }))}
                   rows={3}
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="input-field-sm"
                   maxLength="255"
                 />
               </div>

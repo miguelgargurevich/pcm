@@ -154,7 +154,7 @@ const SeguridadInfoTab = ({
             onChange={(e) => handleCheckboxChange('observaciones', e.target.value)}
             disabled={viewMode}
             rows={3}
-            className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+            className="input-field-sm disabled:bg-gray-100"
             placeholder="Observaciones adicionales sobre la seguridad de la información..."
           />
         </div>
@@ -249,7 +249,7 @@ const SeguridadInfoTab = ({
                   onChange={(e) => setFormItem(prev => ({ ...prev, curso: e.target.value }))}
                   required
                   maxLength={100}
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="input-field-sm"
                   placeholder="Ej: Curso de Ciberseguridad Básica"
                 />
               </div>
@@ -263,7 +263,7 @@ const SeguridadInfoTab = ({
                   onChange={(e) => setFormItem(prev => ({ ...prev, cantidadPersonas: e.target.value }))}
                   required
                   min="1"
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="input-field-sm"
                   placeholder="Número de personas capacitadas"
                 />
               </div>

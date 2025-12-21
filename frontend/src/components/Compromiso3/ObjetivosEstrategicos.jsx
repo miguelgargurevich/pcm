@@ -292,7 +292,7 @@ const ObjetivosEstrategicos = ({ objetivos = [], onObjetivosChange, viewMode = f
                 <textarea
                   value={formObjetivo.descripcionObjetivo}
                   onChange={(e) => setFormObjetivo({ descripcionObjetivo: e.target.value })}
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="input-field-sm"
                   rows={3}
                   placeholder="Describa el objetivo estratégico..."
                 />
@@ -333,7 +333,7 @@ const ObjetivosEstrategicos = ({ objetivos = [], onObjetivosChange, viewMode = f
                 <textarea
                   value={formAccion.descripcionAccion}
                   onChange={(e) => setFormAccion({ descripcionAccion: e.target.value })}
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="input-field-sm"
                   rows={3}
                   placeholder="Describa la acción para este objetivo..."
                 />

@@ -211,7 +211,7 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
                   type="text"
                   value={formItem.codProducto}
                   onChange={(e) => setFormItem(prev => ({ ...prev, codProducto: e.target.value }))}
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="input-field-sm"
                   maxLength="50"
                   required
                 />
@@ -224,7 +224,7 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
                   type="text"
                   value={formItem.nombreProducto}
                   onChange={(e) => setFormItem(prev => ({ ...prev, nombreProducto: e.target.value }))}
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="input-field-sm"
                   maxLength="150"
                   required
                 />
@@ -236,7 +236,7 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
                     type="text"
                     value={formItem.version}
                     onChange={(e) => setFormItem(prev => ({ ...prev, version: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     maxLength="50"
                     required
                   />
@@ -246,7 +246,7 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
                   <select
                     value={formItem.tipoSoftware}
                     onChange={(e) => setFormItem(prev => ({ ...prev, tipoSoftware: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     required
                   >
                     <option key="tipo-empty" value="">Seleccione...</option>
@@ -272,7 +272,7 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
                         excesoDeficiencia: exceso
                       }));
                     }}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     required
                   />
                 </div>
@@ -291,7 +291,7 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
                         excesoDeficiencia: exceso
                       }));
                     }}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     required
                   />
                 </div>
@@ -305,7 +305,7 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
                     type="number"
                     value={formItem.excesoDeficiencia}
                     disabled
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg bg-gray-100"
+                    className="input-field-readonly"
                   />
                   <p className="text-xs text-gray-500 mt-1">
                     Positivo = Exceso | Negativo = Deficiencia
@@ -319,7 +319,7 @@ const InventarioSoftwareTab = ({ inventario = [], onInventarioChange, viewMode =
                     min="0"
                     value={formItem.costoLicencias}
                     onChange={(e) => setFormItem(prev => ({ ...prev, costoLicencias: parseFloat(e.target.value) || 0 }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     required
                   />
                 </div>

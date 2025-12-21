@@ -293,7 +293,7 @@ const EvaluacionDetallePanel = ({
                 value={observaciones}
                 onChange={(e) => setObservaciones(e.target.value)}
                 placeholder="Ingrese las observaciones de la evaluación..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                className="input-field resize-none"
                 rows={4}
               />
             </div>

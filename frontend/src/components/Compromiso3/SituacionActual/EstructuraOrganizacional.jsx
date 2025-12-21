@@ -150,7 +150,7 @@ const EstructuraOrganizacional = ({
               onChange={(e) => handleHeaderFieldChange('fechaReporte', e.target.value)}
               disabled={viewMode}
               max={new Date().toISOString().split('T')[0]}
-              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+              className="input-field-sm disabled:bg-gray-100"
               required
             />
             <p className="text-xs text-gray-500 mt-0.5">No puede ser una fecha futura</p>
@@ -164,7 +164,7 @@ const EstructuraOrganizacional = ({
               value={localHeader.sede || ''}
               onChange={(e) => handleHeaderFieldChange('sede', e.target.value)}
               disabled={viewMode}
-              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+              className="input-field-sm disabled:bg-gray-100"
               placeholder="Sede principal de la entidad"
               maxLength="100"
               required
@@ -179,7 +179,7 @@ const EstructuraOrganizacional = ({
               value={localHeader.ubicacionAreaTi || ''}
               onChange={(e) => handleHeaderFieldChange('ubicacionAreaTi', e.target.value)}
               disabled={viewMode}
-              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+              className="input-field-sm disabled:bg-gray-100"
               placeholder="Ubicación física del área"
               maxLength="255"
               required
@@ -194,7 +194,7 @@ const EstructuraOrganizacional = ({
             value={localHeader.observaciones || ''}
             onChange={(e) => handleHeaderFieldChange('observaciones', e.target.value)}
             disabled={viewMode}
-            className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+            className="input-field-sm disabled:bg-gray-100"
             placeholder="Observaciones o comentarios generales sobre el área de TI"
             rows="3"
             maxLength="255"
@@ -216,7 +216,7 @@ const EstructuraOrganizacional = ({
               value={localHeader.dependenciaAreaTi || ''}
               onChange={(e) => handleHeaderFieldChange('dependenciaAreaTi', e.target.value)}
               disabled={viewMode}
-              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+              className="input-field-sm disabled:bg-gray-100"
               placeholder="Ej: Gerencia General, Secretaría General"
               maxLength="100"
               required
@@ -232,7 +232,7 @@ const EstructuraOrganizacional = ({
               value={localHeader.costoAnualTi || ''}
               onChange={(e) => handleHeaderFieldChange('costoAnualTi', parseFloat(e.target.value))}
               disabled={viewMode}
-              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+              className="input-field-sm disabled:bg-gray-100"
               placeholder="0.00"
               required
             />
@@ -357,7 +357,7 @@ const EstructuraOrganizacional = ({
                   type="text"
                   value={formPersonal.nombrePersona}
                   onChange={(e) => setFormPersonal(prev => ({ ...prev, nombrePersona: e.target.value }))}
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="input-field-sm"
                   maxLength="100"
                   required
                 />
@@ -370,7 +370,7 @@ const EstructuraOrganizacional = ({
                     value={formPersonal.dni}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, dni: e.target.value }))}
                     maxLength="12"
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     required
                   />
                 </div>
@@ -380,7 +380,7 @@ const EstructuraOrganizacional = ({
                     type="text"
                     value={formPersonal.cargo}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, cargo: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     maxLength="100"
                     required
                   />
@@ -392,7 +392,7 @@ const EstructuraOrganizacional = ({
                   <select
                     value={formPersonal.rol}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, rol: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     required
                   >
                     <option key="rol-empty" value="">Seleccione...</option>
@@ -407,7 +407,7 @@ const EstructuraOrganizacional = ({
                     type="text"
                     value={formPersonal.especialidad}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, especialidad: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     maxLength="80"
                     required
                   />
@@ -419,7 +419,7 @@ const EstructuraOrganizacional = ({
                   <select
                     value={formPersonal.gradoInstruccion}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, gradoInstruccion: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     required
                   >
                     <option key="grado-empty" value="">Seleccione...</option>
@@ -434,7 +434,7 @@ const EstructuraOrganizacional = ({
                     type="text"
                     value={formPersonal.certificacion}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, certificacion: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     maxLength="80"
                     placeholder="Ej: ITIL, PMP, COBIT"
                     required
@@ -448,7 +448,7 @@ const EstructuraOrganizacional = ({
                     type="text"
                     value={formPersonal.acreditadora}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, acreditadora: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     maxLength="80"
                     placeholder="Entidad que otorga la certificación"
                     required
@@ -460,7 +460,7 @@ const EstructuraOrganizacional = ({
                     type="text"
                     value={formPersonal.codigoCertificacion}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, codigoCertificacion: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     maxLength="50"
                     required
                   />
@@ -473,7 +473,7 @@ const EstructuraOrganizacional = ({
                     type="text"
                     value={formPersonal.colegiatura}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, colegiatura: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     maxLength="20"
                     placeholder="N° de colegiatura"
                     required
@@ -485,7 +485,7 @@ const EstructuraOrganizacional = ({
                     type="text"
                     value={formPersonal.telefono}
                     onChange={(e) => setFormPersonal(prev => ({ ...prev, telefono: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     maxLength="30"
                     required
                   />
@@ -497,7 +497,7 @@ const EstructuraOrganizacional = ({
                   type="email"
                   value={formPersonal.emailPersonal}
                   onChange={(e) => setFormPersonal(prev => ({ ...prev, emailPersonal: e.target.value }))}
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="input-field-sm"
                   maxLength="100"
                   required
                 />

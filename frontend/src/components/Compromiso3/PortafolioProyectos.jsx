@@ -317,7 +317,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       type="text"
                       value={formProyecto.numeracionProy}
                       disabled
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
+                      className="input-field-readonly"
                     />
                   </div>
                   <div className="col-span-2">
@@ -328,7 +328,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, nombre: e.target.value }))}
                       required
                       maxLength={100}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                     />
                   </div>
                 </div>
@@ -341,7 +341,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, alcance: e.target.value }))}
                       required
                       maxLength={240}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                       placeholder="Descripción del alcance del proyecto"
                     />
                   </div>
@@ -353,7 +353,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, justificacion: e.target.value }))}
                       required
                       maxLength={240}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                       placeholder="Justificación del proyecto"
                     />
                   </div>
@@ -370,7 +370,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       value={formProyecto.tipoProy}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, tipoProy: e.target.value }))}
                       required
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                     >
                       <option value="">Seleccione...</option>
                       {tiposProyecto.map(t => (
@@ -386,7 +386,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, etapaProyecto: e.target.value }))}
                       required
                       maxLength={100}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                       placeholder="Ej: Diseño, Ejecución"
                     />
                   </div>
@@ -398,7 +398,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, ambitoProyecto: e.target.value }))}
                       required
                       maxLength={100}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                       placeholder="Ej: Local, Nacional"
                     />
                   </div>
@@ -417,7 +417,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, areaProy: e.target.value }))}
                       required
                       maxLength={50}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                       placeholder="Área responsable"
                     />
                   </div>
@@ -429,7 +429,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, areaEjecuta: e.target.value }))}
                       required
                       maxLength={50}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                       placeholder="Área ejecutora"
                     />
                   </div>
@@ -441,7 +441,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, tipoBeneficiario: e.target.value }))}
                       required
                       maxLength={100}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                       placeholder="Ej: Ciudadanos, Personal"
                     />
                   </div>
@@ -460,7 +460,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, objEst: e.target.value }))}
                       required
                       maxLength={100}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                       placeholder="Ej: OE-01"
                     />
                   </div>
@@ -472,7 +472,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, objTranDig: e.target.value }))}
                       required
                       maxLength={100}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                       placeholder="Ej: OGD-01"
                     />
                   </div>
@@ -484,7 +484,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, alineadoPgd: e.target.value }))}
                       required
                       maxLength={100}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                       placeholder="Alineamiento con PGD"
                     />
                   </div>
@@ -497,7 +497,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                     onChange={(e) => setFormProyecto(prev => ({ ...prev, accEst: e.target.value }))}
                     required
                     maxLength={100}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="input-field-sm"
                     placeholder="Acción estratégica vinculada"
                   />
                 </div>
@@ -514,7 +514,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       value={formProyecto.fecIniProg}
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, fecIniProg: e.target.value }))}
                       required
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                     />
                   </div>
                   <div>
@@ -525,7 +525,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, fecFinProg: e.target.value }))}
                       min={formProyecto.fecIniProg || ''}
                       required
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                     />
                     {formProyecto.fecIniProg && <p className="text-xs text-gray-500 mt-1">Debe ser mayor o igual a fecha inicio</p>}
                   </div>
@@ -537,7 +537,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       onChange={(e) => setFormProyecto(prev => ({ ...prev, fecIniReal: e.target.value }))}
                       max={new Date().toISOString().split('T')[0]}
                       required
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                     />
                     <p className="text-xs text-gray-500 mt-1">No puede ser una fecha futura</p>
                   </div>
@@ -550,7 +550,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       min={formProyecto.fecIniReal || ''}
                       max={new Date().toISOString().split('T')[0]}
                       required
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="input-field-sm"
                     />
                     {formProyecto.fecIniReal && <p className="text-xs text-gray-500 mt-1">Debe ser mayor o igual a fecha inicio real y no futura</p>}
                   </div>

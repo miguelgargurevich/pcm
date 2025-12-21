@@ -195,7 +195,7 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                     type="text"
                     value={formItem.codigo}
                     onChange={(e) => setFormItem(prev => ({ ...prev, codigo: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     placeholder="Ej: SIS-001"
                     maxLength="20"
                     required
@@ -209,7 +209,7 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                     type="text"
                     value={formItem.nombreSistema}
                     onChange={(e) => setFormItem(prev => ({ ...prev, nombreSistema: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     maxLength="150"
                     required
                   />
@@ -221,7 +221,7 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                   value={formItem.descripcion}
                   onChange={(e) => setFormItem(prev => ({ ...prev, descripcion: e.target.value }))}
                   rows={2}
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="input-field-sm"
                   maxLength="255"
                   required
                 />
@@ -232,7 +232,7 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                   <select
                     value={formItem.tipoSistema}
                     onChange={(e) => setFormItem(prev => ({ ...prev, tipoSistema: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     required
                   >
                     <option key="tipo-empty" value="">Seleccione...</option>
@@ -246,7 +246,7 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                   <select
                     value={formItem.plataforma}
                     onChange={(e) => setFormItem(prev => ({ ...prev, plataforma: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     required
                   >
                     <option key="plataforma-empty" value="">Seleccione...</option>
@@ -263,7 +263,7 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                     type="text"
                     value={formItem.lenguajeProgramacion}
                     onChange={(e) => setFormItem(prev => ({ ...prev, lenguajeProgramacion: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     placeholder="Ej: Java, Python, .NET"
                     maxLength="50"
                     required
@@ -275,7 +275,7 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
                     type="text"
                     value={formItem.baseDatos}
                     onChange={(e) => setFormItem(prev => ({ ...prev, baseDatos: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="input-field-sm"
                     placeholder="Ej: PostgreSQL, MySQL, Oracle"
                     maxLength="50"
                     required

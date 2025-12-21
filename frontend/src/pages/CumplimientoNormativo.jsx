@@ -121,13 +121,19 @@ const CumplimientoNormativo = () => {
     navigate(`/dashboard/cumplimiento/${cumplimientoId}?compromiso=${compromisoId}`);
   };
 
+  // Semaforización de estados (mismos colores que la matriz de evaluación)
   const getEstadoBadgeClass = (estadoId) => {
     const classes = {
-      1: 'bg-gray-100 text-gray-800', // bandeja
-      2: 'bg-yellow-100 text-yellow-800', // sin_reportar
-      3: 'bg-green-100 text-green-800', // publicado
+      1: 'bg-orange-500 text-white',    // PENDIENTE
+      2: 'bg-red-700 text-white',       // SIN REPORTAR
+      3: 'bg-gray-400 text-white',      // NO EXIGIBLE
+      4: 'bg-yellow-500 text-white',    // EN PROCESO
+      5: 'bg-blue-500 text-white',      // ENVIADO
+      6: 'bg-purple-500 text-white',    // EN REVISIÓN
+      7: 'bg-red-500 text-white',       // OBSERVADO
+      8: 'bg-green-500 text-white',     // ACEPTADO
     };
-    return classes[estadoId] || 'bg-gray-100 text-gray-800';
+    return classes[estadoId] || 'bg-gray-300 text-gray-700';
   };
 
   const getEstadoNombre = (estadoId) => {
@@ -269,11 +275,11 @@ const CumplimientoNormativo = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {compromiso.estadoCumplimiento ? (
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadgeClass(compromiso.estadoCumplimiento)}`}>
+                          <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadgeClass(compromiso.estadoCumplimiento)}`}>
                             {getEstadoNombre(compromiso.estadoCumplimiento)}
                           </span>
                         ) : (
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                          <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-500 text-white">
                             Sin registrar
                           </span>
                         )}

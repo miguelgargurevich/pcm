@@ -448,12 +448,19 @@ const Compromiso3Paso1 = ({
       }
 
       if (response.isSuccess || response.success) {
-        // Si era creación, actualizar el ID
+        // Si era creación, actualizar el ID y notificar al padre
         if (!isUpdate && response.data?.comepgdEntId) {
-          setFormData(prev => ({ ...prev, com3EPGDId: response.data.comepgdEntId }));
+          const newId = response.data.comepgdEntId;
+          setFormData(prev => ({ ...prev, com3EPGDId: newId }));
+          
+          // IMPORTANTE: Notificar al padre con el nuevo ID
+          if (onDataChange) {
+            onDataChange({ ...dataToSave, com3EPGDId: newId });
+          }
+          console.log('✅ Com3 creado con ID:', newId);
+        } else {
+          console.log('✅ Com3 actualizado exitosamente');
         }
-
-        console.log('✅ Com3 guardado exitosamente');
       } else {
         throw new Error(response.message || 'Error al guardar');
       }

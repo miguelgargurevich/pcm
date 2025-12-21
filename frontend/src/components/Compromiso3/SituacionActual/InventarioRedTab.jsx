@@ -201,7 +201,7 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
                   value={formItem.tipoEquipo}
                   onChange={(e) => setFormItem(prev => ({ ...prev, tipoEquipo: e.target.value }))}
                   required
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="input-field-sm"
                 >
                   <option key="tipo-empty" value="">Seleccione...</option>
                   {tiposEquipo.map(t => (
@@ -219,7 +219,7 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
                   onChange={(e) => setFormItem(prev => ({ ...prev, cantidad: e.target.value }))}
                   required
                   min="1"
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="input-field-sm"
                   placeholder="Cantidad total de equipos de este tipo"
                 />
               </div>
@@ -245,7 +245,7 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
                       }}
                       required
                       min="0"
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="input-field-sm"
                       placeholder="0"
                     />
                   </div>
@@ -267,7 +267,7 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
                       }}
                       required
                       min="0"
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="input-field-sm"
                       placeholder="0"
                     />
                   </div>
@@ -280,7 +280,7 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
                     type="number"
                     value={formItem.totalPuertos}
                     disabled
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg bg-gray-100 text-gray-600 font-semibold"
+                    className="input-field-readonly font-semibold"
                   />
                   <p className="text-xs text-gray-500 mt-1">
                     Se calcula automáticamente: Operativos + Inoperativos
@@ -299,7 +299,7 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
                   required
                   step="0.01"
                   min="0"
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="input-field-sm"
                   placeholder="0.00"
                 />
               </div>
@@ -311,7 +311,7 @@ const InventarioRedTab = ({ inventario = [], onInventarioChange, viewMode = fals
                   onChange={(e) => setFormItem(prev => ({ ...prev, observaciones: e.target.value }))}
                   rows={2}
                   maxLength={255}
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="input-field-sm"
                   placeholder="Información adicional..."
                 />
               </div>
