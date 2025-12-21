@@ -63,4 +63,5 @@ public class Com11AportacionGeoPeruResponse
     public bool InteroperabilidadGeo { get; set; }
     public string? ObservacionGeo { get; set; }
     public string? RutaPdfGeo { get; set; }
+    public string? RutaPdfNormativa { get; set; }
 }

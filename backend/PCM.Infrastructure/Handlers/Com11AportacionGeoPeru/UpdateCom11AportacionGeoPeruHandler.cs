@@ -87,6 +87,7 @@ public class UpdateCom11AportacionGeoPeruHandler : IRequestHandler<UpdateCom11Ap
                 InteroperabilidadGeo = entity.InteroperabilidadGeo,
                 ObservacionGeo = entity.ObservacionGeo,
                 RutaPdfGeo = entity.RutaPdfGeo,
+                RutaPdfNormativa = entity.RutaPdfNormativa
             };
 
             return Result<Com11AportacionGeoPeruResponse>.Success(response);
