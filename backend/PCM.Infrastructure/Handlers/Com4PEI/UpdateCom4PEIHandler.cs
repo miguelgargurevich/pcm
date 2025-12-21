@@ -33,21 +33,31 @@ public class UpdateCom4PEIHandler : IRequestHandler<UpdateCom4PEICommand, Result
                 return Result<Com4PEIResponse>.Failure("Registro no encontrado");
             }
 
-            // Actualizar campos - solo si el valor no está vacío
+            // Actualizar campos - solo si el valor no está vacío o si explícitamente se envía
             if (!string.IsNullOrEmpty(request.EtapaFormulario))
                 entity.EtapaFormulario = request.EtapaFormulario;
             if (!string.IsNullOrEmpty(request.Estado))
                 entity.Estado = request.Estado;
-            entity.AnioInicioPei = request.AnioInicioPei;
-            entity.AnioFinPei = request.AnioFinPei;
-            entity.FechaAprobacionPei = request.FechaAprobacionPei.HasValue 
-                ? DateTime.SpecifyKind(request.FechaAprobacionPei.Value, DateTimeKind.Utc)
-                : null;
-            entity.ObjetivoPei = request.ObjetivoPei;
-            entity.DescripcionPei = request.DescripcionPei;
-            entity.AlineadoPgd = request.AlineadoPgd;
-            entity.RutaPdfPei = request.RutaPdfPei;
-            entity.RutaPdfNormativa = request.RutaPdfNormativa;
+            
+            // Solo actualizar campos del Paso 1 si se envían valores (no nulos)
+            if (request.AnioInicioPei.HasValue)
+                entity.AnioInicioPei = request.AnioInicioPei;
+            if (request.AnioFinPei.HasValue)
+                entity.AnioFinPei = request.AnioFinPei;
+            if (request.FechaAprobacionPei.HasValue)
+                entity.FechaAprobacionPei = DateTime.SpecifyKind(request.FechaAprobacionPei.Value, DateTimeKind.Utc);
+            if (!string.IsNullOrEmpty(request.ObjetivoPei))
+                entity.ObjetivoPei = request.ObjetivoPei;
+            if (!string.IsNullOrEmpty(request.DescripcionPei))
+                entity.DescripcionPei = request.DescripcionPei;
+            // AlineadoPgd es bool, siempre actualizar
+            if (request.AlineadoPgd != entity.AlineadoPgd)
+                entity.AlineadoPgd = request.AlineadoPgd;
+            if (!string.IsNullOrEmpty(request.RutaPdfPei))
+                entity.RutaPdfPei = request.RutaPdfPei;
+            if (!string.IsNullOrEmpty(request.RutaPdfNormativa))
+                entity.RutaPdfNormativa = request.RutaPdfNormativa;
+            // Checkboxes de Paso 3 - actualizar si se envían
             entity.CheckPrivacidad = request.CheckPrivacidad;
             entity.CheckDdjj = request.CheckDdjj;
 

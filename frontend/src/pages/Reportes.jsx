@@ -12,7 +12,6 @@ import {
   ChevronDown,
   ChevronRight,
   Calendar,
-  DollarSign,
   Clock,
   CheckCircle2,
   XCircle,
@@ -59,19 +58,9 @@ const ETAPA_COLORS = {
 // Colores para gráficos de pie
 const PIE_COLORS = ['#22c55e', '#3b82f6', '#a855f7', '#eab308', '#f97316', '#ef4444', '#b91c1c', '#9ca3af'];
 
-// Datos de ejemplo para proyectos (los mismos de SeguimientoPGDPP)
-const proyectosData = [
-  { id: 1, codigo: 'PROY-001', nombre: 'Implementación de la Agencia Digital', tipoProyecto: 'SOFTWARE O APLICACIONES', fechaInicioProg: '2024-02-29', fechaFinProg: '2024-09-29', fechaInicioReal: '2024-03-04', fechaFinReal: '2024-10-14', etapa: 'CERRADO', porcentajeAvance: 100, montoInversion: 450000 },
-  { id: 2, codigo: 'PROY-002', nombre: 'Sistema de Gestión Documental', tipoProyecto: 'SOFTWARE O APLICACIONES', fechaInicioProg: '2024-05-31', fechaFinProg: '2024-12-30', fechaInicioReal: '2024-06-14', fechaFinReal: null, etapa: 'EJECUCIÓN', porcentajeAvance: 65, montoInversion: 280000 },
-  { id: 3, codigo: 'PROY-003', nombre: 'Renovación de Infraestructura TI', tipoProyecto: 'RENOVACIÓN TECNOLÓGICA', fechaInicioProg: '2025-01-14', fechaFinProg: '2025-06-29', fechaInicioReal: null, fechaFinReal: null, etapa: 'SIN INICIAR', porcentajeAvance: 0, montoInversion: 650000 },
-  { id: 4, codigo: 'PROY-004', nombre: 'Plataforma de Servicios Ciudadanos', tipoProyecto: 'SOFTWARE O APLICACIONES', fechaInicioProg: '2024-07-31', fechaFinProg: '2025-02-27', fechaInicioReal: '2024-08-09', fechaFinReal: null, etapa: 'PLANIFICACIÓN', porcentajeAvance: 25, montoInversion: 320000 },
-  { id: 5, codigo: 'PROY-005', nombre: 'Implementación de Metodología Ágil', tipoProyecto: 'IMPLEMENTACIÓN DE METODOLOGÍA', fechaInicioProg: '2024-09-30', fechaFinProg: '2025-03-30', fechaInicioReal: '2024-10-04', fechaFinReal: null, etapa: 'EJECUCIÓN', porcentajeAvance: 40, montoInversion: 180000 }
-];
-
 // Tipos de reportes
 const TIPOS_REPORTE = [
   { id: 'avance-global', nombre: 'Avance Global de Cumplimiento', icon: BarChart3, color: 'bg-blue-500' },
-  { id: 'cumplimiento-entidad', nombre: 'Cumplimiento por Entidad', icon: Building2, color: 'bg-green-500' },
   { id: 'observaciones', nombre: 'Entidades con Observaciones', icon: AlertTriangle, color: 'bg-orange-500' },
   { id: 'portafolio', nombre: 'Portafolio de Proyectos', icon: FolderKanban, color: 'bg-purple-500' }
 ];
@@ -93,6 +82,7 @@ const Reportes = () => {
   const [clasificaciones, setClasificaciones] = useState([]);
   const [entidades, setEntidades] = useState([]);
   const [datosEvaluacion, setDatosEvaluacion] = useState([]);
+  const [proyectosData, setProyectosData] = useState([]);
   
   // Cargar datos iniciales
   useEffect(() => {
@@ -124,6 +114,16 @@ const Reportes = () => {
         } catch (error) {
           console.error('Error al cargar datos de evaluación:', error);
         }
+        
+        // Cargar proyectos para el reporte de portafolio
+        try {
+          const proyectosRes = await evaluacionService.getProyectos();
+          if (proyectosRes.isSuccess) {
+            setProyectosData(proyectosRes.data || []);
+          }
+        } catch (error) {
+          console.error('Error al cargar proyectos:', error);
+        }
       } catch (error) {
         console.error('Error al cargar datos:', error);
       } finally {
@@ -136,21 +136,33 @@ const Reportes = () => {
 
   // Recargar datos cuando cambian los filtros
   useEffect(() => {
-    if (tipoReporteActivo === 'portafolio') return;
-    
     const cargarDatosConFiltros = async () => {
       try {
-        const response = await evaluacionService.getMatriz({
-          page: 1,
-          pageSize: 1000,
-          ...filtros
-        });
+        // Cargar datos de evaluación (para reportes que no son portafolio)
+        if (tipoReporteActivo !== 'portafolio') {
+          const response = await evaluacionService.getMatriz({
+            page: 1,
+            pageSize: 1000,
+            ...filtros
+          });
+          
+          if (response.isSuccess) {
+            setDatosEvaluacion(response.data || []);
+          }
+        }
         
-        if (response.isSuccess) {
-          setDatosEvaluacion(response.data || []);
+        // Cargar proyectos para el reporte de portafolio
+        if (tipoReporteActivo === 'portafolio') {
+          const proyectosRes = await evaluacionService.getProyectos({
+            sectorId: filtros.sectorId || undefined,
+            clasificacionId: filtros.clasificacionId || undefined
+          });
+          if (proyectosRes.isSuccess) {
+            setProyectosData(proyectosRes.data || []);
+          }
         }
       } catch (error) {
-        console.error('Error al cargar datos de evaluación:', error);
+        console.error('Error al cargar datos:', error);
       }
     };
     
@@ -232,20 +244,18 @@ const Reportes = () => {
   const datosPortafolio = useMemo(() => {
     const porEtapa = {};
     const porTipo = {};
-    let inversionTotal = 0;
     const proyectosConRetraso = [];
     
     proyectosData.forEach(p => {
+      const etapa = p.etapa?.toUpperCase() || 'SIN DEFINIR';
+      const tipo = p.tipoProyecto || 'OTROS';
+      
       // Por etapa
-      porEtapa[p.etapa] = (porEtapa[p.etapa] || 0) + 1;
+      porEtapa[etapa] = (porEtapa[etapa] || 0) + 1;
       
       // Por tipo
-      porTipo[p.tipoProyecto] = (porTipo[p.tipoProyecto] || { cantidad: 0, inversion: 0 });
-      porTipo[p.tipoProyecto].cantidad++;
-      porTipo[p.tipoProyecto].inversion += p.montoInversion;
-      
-      // Inversión total
-      inversionTotal += p.montoInversion;
+      porTipo[tipo] = (porTipo[tipo] || { cantidad: 0 });
+      porTipo[tipo].cantidad++;
       
       // Proyectos con retraso
       if (p.fechaFinProg && p.fechaFinReal) {
@@ -255,7 +265,7 @@ const Reportes = () => {
           const diasRetraso = Math.ceil((fechaReal - fechaProg) / (1000 * 60 * 60 * 24));
           proyectosConRetraso.push({ ...p, diasRetraso });
         }
-      } else if (p.fechaFinProg && p.etapa !== 'CERRADO' && p.etapa !== 'SIN INICIAR') {
+      } else if (p.fechaFinProg && etapa !== 'CERRADO' && etapa !== 'SIN INICIAR') {
         const fechaProg = new Date(p.fechaFinProg);
         const hoy = new Date();
         if (hoy > fechaProg) {
@@ -273,45 +283,12 @@ const Reportes = () => {
       })),
       porTipo: Object.entries(porTipo).map(([tipo, data]) => ({
         tipo,
-        cantidad: data.cantidad,
-        inversion: data.inversion
+        cantidad: data.cantidad
       })),
-      inversionTotal,
+      totalProyectos: proyectosData.length,
       proyectosConRetraso: proyectosConRetraso.sort((a, b) => b.diasRetraso - a.diasRetraso)
     };
-  }, []);
-
-  const formatMoney = (amount) => {
-    return new Intl.NumberFormat('es-PE', {
-      style: 'currency',
-      currency: 'PEN',
-      minimumFractionDigits: 0
-    }).format(amount);
-  };
-
-  const getEstadoStyles = (estado) => {
-    const styles = {
-      'aceptado': 'bg-green-500 text-white',
-      'enviado': 'bg-blue-500 text-white',
-      'en revisión': 'bg-purple-500 text-white',
-      'en proceso': 'bg-yellow-500 text-white',
-      'pendiente': 'bg-orange-500 text-white',
-      'observado': 'bg-red-500 text-white',
-      'sin reportar': 'bg-red-700 text-white',
-      'no exigible': 'bg-gray-400 text-white'
-    };
-    return styles[estado] || 'bg-gray-300 text-gray-700';
-  };
-
-  const exportarExcel = () => {
-    // Por ahora solo muestra un mensaje
-    alert('Funcionalidad de exportación a Excel en desarrollo');
-  };
-
-  const exportarPDF = () => {
-    // Por ahora solo muestra un mensaje
-    alert('Funcionalidad de exportación a PDF en desarrollo');
-  };
+  }, [proyectosData]);
 
   if (loading) {
     return (
@@ -570,102 +547,7 @@ const Reportes = () => {
           </>
         )}
 
-        {/* ==================== REPORTE 2: CUMPLIMIENTO POR ENTIDAD ==================== */}
-        {tipoReporteActivo === 'cumplimiento-entidad' && (
-          <>
-            {/* Botones de Exportación */}
-            <div className="flex justify-end gap-2 mb-4">
-              <button 
-                onClick={exportarExcel}
-                className="btn-secondary flex items-center gap-2 px-4 py-2"
-              >
-                <Download size={18} />
-                Exportar Excel
-              </button>
-              <button 
-                onClick={exportarPDF}
-                className="btn-primary flex items-center gap-2 px-4 py-2"
-              >
-                <FileText size={18} />
-                Exportar PDF
-              </button>
-            </div>
-
-            {/* Tabla de Entidades con Compromisos */}
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Detalle de Cumplimiento por Entidad ({datosEvaluacion.length})
-                </h3>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="sticky left-0 z-10 bg-gray-50 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 min-w-[250px]">
-                        Entidad
-                      </th>
-                      {Array.from({ length: 21 }, (_, i) => (
-                        <th 
-                          key={i} 
-                          className="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[50px]"
-                        >
-                          C{i + 1}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {datosEvaluacion.slice(0, 20).map((entidad, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50">
-                        <td className="sticky left-0 z-10 bg-white px-4 py-3 text-sm text-gray-900 border-r border-gray-200">
-                          <div className="truncate max-w-[230px]" title={entidad.nombre}>
-                            {entidad.nombre}
-                          </div>
-                        </td>
-                        {entidad.compromisos?.map((estado, cIdx) => (
-                          <td key={cIdx} className="px-1 py-2 text-center">
-                            <span 
-                              className={`inline-block px-2 py-1 text-[10px] font-semibold rounded-full ${getEstadoStyles(estado)}`}
-                              title={estado}
-                            >
-                              {estado.substring(0, 3).toUpperCase()}
-                            </span>
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                {datosEvaluacion.length === 0 && (
-                  <div className="text-center py-12 text-gray-500">
-                    <Building2 size={48} className="mx-auto mb-4 text-gray-300" />
-                    <p>No hay datos de entidades disponibles</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Leyenda */}
-            <div className="bg-white rounded-lg shadow-sm p-4">
-              <p className="text-sm font-medium text-gray-600 mb-2">Leyenda de estados:</p>
-              <div className="flex flex-wrap gap-2">
-                {Object.entries(ESTADO_COLORS).map(([estado, color]) => (
-                  <span
-                    key={estado}
-                    className="px-2 py-1 text-xs font-semibold rounded-full text-white"
-                    style={{ backgroundColor: color }}
-                  >
-                    {estado}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* ==================== REPORTE 3: ENTIDADES CON OBSERVACIONES ==================== */}
+        {/* ==================== REPORTE 2: ENTIDADES CON OBSERVACIONES ==================== */}
         {tipoReporteActivo === 'observaciones' && (
           <>
             {/* KPIs de Alertas */}
@@ -797,12 +679,12 @@ const Reportes = () => {
               <div className="bg-white rounded-lg shadow-sm p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">Inversión Total</p>
+                    <p className="text-sm text-gray-500">Cerrados</p>
                     <p className="text-2xl font-bold text-green-600">
-                      {formatMoney(datosPortafolio.inversionTotal)}
+                      {datosPortafolio.porEtapa.find(e => e.name === 'CERRADO')?.value || 0}
                     </p>
                   </div>
-                  <DollarSign className="text-green-500" size={32} />
+                  <CheckCircle2 className="text-green-500" size={32} />
                 </div>
               </div>
               <div className="bg-white rounded-lg shadow-sm p-4">
@@ -857,10 +739,10 @@ const Reportes = () => {
                 </ResponsiveContainer>
               </div>
 
-              {/* Inversión por Tipo de Proyecto */}
+              {/* Proyectos por Tipo */}
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                  Inversión por Tipo de Proyecto
+                  Proyectos por Tipo
                 </h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart 
@@ -869,10 +751,10 @@ const Reportes = () => {
                     margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" tickFormatter={(value) => formatMoney(value)} />
+                    <XAxis type="number" />
                     <YAxis dataKey="tipo" type="category" width={150} tick={{ fontSize: 11 }} />
-                    <Tooltip formatter={(value) => formatMoney(value)} />
-                    <Bar dataKey="inversion" fill="#8b5cf6" name="Inversión" />
+                    <Tooltip />
+                    <Bar dataKey="cantidad" fill="#8b5cf6" name="Cantidad" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -971,9 +853,6 @@ const Reportes = () => {
                         Cantidad
                       </th>
                       <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Inversión Total
-                      </th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                         % del Total
                       </th>
                     </tr>
@@ -987,11 +866,8 @@ const Reportes = () => {
                         <td className="px-4 py-3 text-sm text-center text-gray-500">
                           {tipo.cantidad}
                         </td>
-                        <td className="px-4 py-3 text-sm text-right font-medium text-gray-900">
-                          {formatMoney(tipo.inversion)}
-                        </td>
                         <td className="px-4 py-3 text-sm text-right text-gray-500">
-                          {((tipo.inversion / datosPortafolio.inversionTotal) * 100).toFixed(1)}%
+                          {proyectosData.length > 0 ? ((tipo.cantidad / proyectosData.length) * 100).toFixed(1) : 0}%
                         </td>
                       </tr>
                     ))}
@@ -1003,9 +879,6 @@ const Reportes = () => {
                       </td>
                       <td className="px-4 py-3 text-sm text-center font-semibold text-gray-900">
                         {proyectosData.length}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-right font-semibold text-gray-900">
-                        {formatMoney(datosPortafolio.inversionTotal)}
                       </td>
                       <td className="px-4 py-3 text-sm text-right font-semibold text-gray-900">
                         100%

@@ -709,6 +709,85 @@ public class EvaluacionController : ControllerBase
     }
 
     #endregion
+
+    /// <summary>
+    /// Obtiene todos los proyectos del portafolio de todas las entidades para reportes
+    /// </summary>
+    [HttpGet("proyectos")]
+    public async Task<IActionResult> GetProyectos(
+        [FromQuery] int? sectorId = null,
+        [FromQuery] long? clasificacionId = null,
+        [FromQuery] string? etapa = null)
+    {
+        try
+        {
+            // Obtener proyectos con información de entidad
+            var proyectosQuery = from p in _context.ProyectosEntidades
+                                 join c3 in _context.Com3EPGD on p.ComEntidadId equals c3.ComepgdEntId
+                                 join e in _context.Entidades on c3.EntidadId equals e.EntidadId
+                                 where p.EstadoProyecto && e.Activo && c3.Activo
+                                 select new
+                                 {
+                                     id = p.ProyEntId,
+                                     codigo = p.NumeracionProy,
+                                     nombre = p.Nombre,
+                                     alcance = p.Alcance,
+                                     tipoProyecto = p.TipoProy,
+                                     areaProyecto = p.AreaProy,
+                                     areaEjecuta = p.AreaEjecuta,
+                                     tipoBeneficiario = p.TipoBeneficiario,
+                                     etapa = p.EtapaProyecto,
+                                     ambito = p.AmbitoProyecto,
+                                     fechaInicioProg = p.FecIniProg,
+                                     fechaFinProg = p.FecFinProg,
+                                     fechaInicioReal = p.FecIniReal,
+                                     fechaFinReal = p.FecFinReal,
+                                     alineadoPgd = p.AlineadoPgd,
+                                     objetivoTransformacionDigital = p.ObjTranDig,
+                                     objetivoEstrategico = p.ObjEst,
+                                     accionEstrategica = p.AccEst,
+                                     porcentajeAvance = p.PorcentajeAvance,
+                                     informoAvance = p.InformoAvance,
+                                     entidad = new
+                                     {
+                                         id = e.EntidadId,
+                                         nombre = e.Nombre,
+                                         sectorId = e.SectorId,
+                                         clasificacionId = e.ClasificacionId
+                                     }
+                                 };
+
+            // Aplicar filtros
+            if (sectorId.HasValue)
+            {
+                proyectosQuery = proyectosQuery.Where(p => p.entidad.sectorId == sectorId.Value);
+            }
+
+            if (clasificacionId.HasValue)
+            {
+                proyectosQuery = proyectosQuery.Where(p => p.entidad.clasificacionId == clasificacionId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(etapa))
+            {
+                proyectosQuery = proyectosQuery.Where(p => p.etapa.ToLower() == etapa.ToLower());
+            }
+
+            var proyectos = await proyectosQuery.ToListAsync();
+
+            return Ok(new
+            {
+                isSuccess = true,
+                data = proyectos,
+                total = proyectos.Count
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener proyectos para reportes");
+            return StatusCode(500, new { isSuccess = false, message = "Error interno del servidor" });
+        }
+    }
 }
 
 public class UpdateEstadoRequest

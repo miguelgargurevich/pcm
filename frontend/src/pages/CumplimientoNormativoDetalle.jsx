@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import cumplimientoService from '../services/cumplimientoService'; // Solo para uploadDocument
 import com1LiderGTDService from '../services/com1LiderGTDService';
@@ -85,6 +85,8 @@ const CumplimientoNormativoDetalle = () => {
   
   const [_compromisos, setCompromisos] = useState([]);
   const [compromisoSeleccionado, setCompromisoSeleccionado] = useState(null);
+  const [datosDBCargados, setDatosDBCargados] = useState(false); // Flag para evitar sobrescribir datos cargados de BD
+  const datosDBCargadosRef = useRef(false); // Ref para acceder al valor actual en closures
   const [pdfUrl, setPdfUrl] = useState(null); // PDF principal (Paso 1)
   const [pdfUrlPaso2, setPdfUrlPaso2] = useState(null); // PDF para Paso 2 (cumplimiento normativo)
   const [showPdfViewer, setShowPdfViewer] = useState(false);
@@ -301,13 +303,17 @@ const CumplimientoNormativoDetalle = () => {
   }, []);
 
   useEffect(() => {
+    console.log('🔄 useEffect principal ejecutándose - user?.entidadId:', user?.entidadId, 'compromisoIdFromUrl:', compromisoIdFromUrl);
     loadCompromisos();
     // Cargar datos si está editando O si es Compromiso 1-21 (que usan tablas especiales)
     if (isEdit || (['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'].includes(compromisoIdFromUrl) && user?.entidadId)) {
+      console.log('✅ Condición cumplida, llamando loadCumplimiento()');
       loadCumplimiento();
+    } else {
+      console.log('❌ Condición NO cumplida para loadCumplimiento - isEdit:', isEdit, 'compromisoIdFromUrl:', compromisoIdFromUrl, 'user?.entidadId:', user?.entidadId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, user]);
+  }, [id, user?.entidadId]);
 
   // Establecer compromiso seleccionado cuando ambos datos estén disponibles
   useEffect(() => {
@@ -346,26 +352,15 @@ const CumplimientoNormativoDetalle = () => {
           console.log('🔍 Compromiso encontrado:', compromiso);
           if (compromiso) {
             setCompromisoSeleccionado(compromiso);
-            // NO sobrescribir formData si ya tiene datos cargados (verificar campos específicos del paso 1)
+            // NO sobrescribir formData si ya se cargaron datos desde la BD (usar ref para valor actual)
             setFormData(prev => {
-              // Si ya tiene compromisoId correcto Y tiene datos del paso 1, no sobrescribir
-              const tieneDatasPaso1 = prev.compromisoId === compromisoIdFromUrl && (
-                // Com1: tiene datos del líder
-                (compromisoIdFromUrl === '1' && (prev.nroDni || prev.nombres)) ||
-                // Com2: tiene miembros (se maneja en otro estado)
-                (compromisoIdFromUrl === '2' && prev.compromisoId === '2') ||
-                // Com3: tiene datos del PGD
-                (compromisoIdFromUrl === '3' && prev.compromisoId === '3') ||
-                // Com4: tiene datos del PEI
-                (compromisoIdFromUrl === '4' && (prev.anioInicio || prev.objetivoEstrategico)) ||
-                // Com5: tiene datos de Estrategia Digital
-                (compromisoIdFromUrl === '5' && (prev.nombreEstrategia || prev.objetivosEstrategicos)) ||
-                // Com6-21: tiene compromisoId establecido
-                (parseInt(compromisoIdFromUrl) >= 6 && prev.compromisoId === compromisoIdFromUrl)
-              );
-              
-              if (tieneDatasPaso1) {
-                console.log('⏭️ formData ya tiene datos del paso 1, no sobrescribir');
+              if (datosDBCargadosRef.current) {
+                console.log('⏭️ datosDBCargadosRef.current=true, no sobrescribir formData');
+                return prev;
+              }
+              // Si no hay datos de BD pero ya tiene compromisoId correcto, no sobrescribir
+              if (prev.compromisoId === compromisoIdFromUrl) {
+                console.log('⏭️ formData ya tiene compromisoId correcto');
                 return prev;
               }
               console.log('🔧 Estado anterior de formData:', prev);
@@ -590,6 +585,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '1' }));
@@ -673,6 +672,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '2' }));
@@ -720,6 +723,10 @@ const CumplimientoNormativoDetalle = () => {
                 aceptaDeclaracionJurada: cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || false,
                 estado: data.estado || 1
               });
+              
+              // Marcar que los datos de BD fueron cargados
+              datosDBCargadosRef.current = true;
+              setDatosDBCargados(true);
             } else {
               // No existe registro, inicializar
               setFormData(prev => ({ ...prev, compromisoId: '3' }));
@@ -771,7 +778,7 @@ const CumplimientoNormativoDetalle = () => {
             const cumplimientoData = loadPaso2y3FromComData(data);
             console.log('✅ Datos cumplimiento retornados para Com4:', cumplimientoData);
             
-            setFormData({
+            const newFormData = {
               compromisoId: '4',
               anioInicio: data.anioInicioPei || '',
               anioFin: data.anioFinPei || '',
@@ -784,10 +791,16 @@ const CumplimientoNormativoDetalle = () => {
               aceptaPoliticaPrivacidad: data.checkPrivacidad || cumplimientoData?.AceptaPoliticaPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false,
               aceptaDeclaracionJurada: data.checkDdjj || cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false,
               estado: data.estado === 'pendiente' ? 1 : data.estado === 'sin_reportar' ? 2 : 3
-            });
+            };
+            console.log('🎯 FormData que se va a establecer para Com4:', newFormData);
+            setFormData(newFormData);
             
             setHaVistoPolitica(data.checkPrivacidad || cumplimientoData?.AceptaPoliticaPrivacidad || cumplimientoData?.aceptaPoliticaPrivacidad || cumplimientoData?.acepta_politica_privacidad || false);
             setHaVistoDeclaracion(data.checkDdjj || cumplimientoData?.AceptaDeclaracionJurada || cumplimientoData?.aceptaDeclaracionJurada || cumplimientoData?.acepta_declaracion_jurada || false);
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
             
             // Si hay documento guardado, establecer la URL para vista previa (Paso 1)
             console.log('🔍 DEBUG - Datos completos de Com4:', data);
@@ -858,6 +871,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '5' }));
@@ -935,6 +952,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '6' }));
@@ -992,6 +1013,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '7' }));
@@ -1049,6 +1074,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '8' }));
@@ -1107,6 +1136,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '9' }));
@@ -1165,6 +1198,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '10' }));
@@ -1225,6 +1262,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '11' }));
@@ -1282,6 +1323,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '12' }));
@@ -1342,6 +1387,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '13' }));
@@ -1400,6 +1449,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '14' }));
@@ -1458,6 +1511,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '15' }));
@@ -1517,6 +1574,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF certificado SGSI desde:', data.rutaPdfCertificadoSgsi);
               setPdfUrlPaso2(data.rutaPdfCertificadoSgsi);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '16' }));
@@ -1576,6 +1637,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '17' }));
@@ -1635,6 +1700,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '18' }));
@@ -1692,6 +1761,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '19' }));
@@ -1749,6 +1822,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '20' }));
@@ -1807,6 +1884,10 @@ const CumplimientoNormativoDetalle = () => {
               console.log('📄 Cargando PDF de Normativa (Paso 2) desde:', data.rutaPdfNormativa);
               setPdfUrlPaso2(data.rutaPdfNormativa);
             }
+            
+            // Marcar que los datos de BD fueron cargados
+            datosDBCargadosRef.current = true;
+            setDatosDBCargados(true);
           } else {
             // No existe registro, inicializar
             setFormData(prev => ({ ...prev, compromisoId: '21' }));

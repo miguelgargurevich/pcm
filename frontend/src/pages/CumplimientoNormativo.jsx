@@ -53,11 +53,11 @@ const CumplimientoNormativo = () => {
 
     if (filtros.estado) {
       filtered = filtered.filter((c) => {
-        const cumplimiento = cumplimientos.find(cum => cum.compromisoId === c.compromisoId);
+        // Usar estadoCumplimiento del compromiso (viene del API con el estado ya mapeado)
         if (filtros.estado === 'sin_registrar') {
-          return !cumplimiento;
+          return !c.estadoCumplimiento;
         }
-        return cumplimiento && cumplimiento.estadoId === parseInt(filtros.estado);
+        return c.estadoCumplimiento === parseInt(filtros.estado);
       });
     }
 

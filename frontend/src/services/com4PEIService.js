@@ -33,6 +33,7 @@ const com4PEIService = {
       // Normalizar respuesta según estructura Result<T>
       if (response.data && response.data.isSuccess) {
         return {
+          isSuccess: true,
           success: true,
           data: response.data.data
         };
@@ -83,6 +84,7 @@ const com4PEIService = {
       // Normalizar respuesta
       if (response.data && response.data.isSuccess) {
         return {
+          isSuccess: true,
           success: true,
           data: response.data.data
         };
@@ -126,6 +128,7 @@ const com4PEIService = {
       // Normalizar respuesta
       if (response.data && response.data.isSuccess) {
         return {
+          isSuccess: true,
           success: true,
           data: response.data.data
         };

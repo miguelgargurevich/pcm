@@ -57,6 +57,23 @@ export const evaluacionService = {
       { estado, observaciones }
     );
     return response.data;
+  },
+
+  /**
+   * Obtiene todos los proyectos del portafolio de todas las entidades para reportes
+   */
+  getProyectos: async (filters = {}) => {
+    const params = new URLSearchParams();
+    
+    if (filters.sectorId) params.append('sectorId', filters.sectorId);
+    if (filters.clasificacionId) params.append('clasificacionId', filters.clasificacionId);
+    if (filters.etapa) params.append('etapa', filters.etapa);
+
+    const queryString = params.toString();
+    const url = `${BASE_URL}/proyectos${queryString ? `?${queryString}` : ''}`;
+    
+    const response = await api.get(url);
+    return response.data;
   }
 };
 
