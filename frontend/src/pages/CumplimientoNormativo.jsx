@@ -57,7 +57,7 @@ const CumplimientoNormativo = () => {
         if (filtros.estado === 'sin_registrar') {
           return !cumplimiento;
         }
-        return cumplimiento && cumplimiento.estado === parseInt(filtros.estado);
+        return cumplimiento && cumplimiento.estadoId === parseInt(filtros.estado);
       });
     }
 

@@ -303,7 +303,7 @@ const CumplimientoNormativoDetalle = () => {
   useEffect(() => {
     loadCompromisos();
     // Cargar datos si está editando O si es Compromiso 1-21 (que usan tablas especiales)
-    if (isEdit || (['1', '2', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'].includes(compromisoIdFromUrl) && user?.entidadId)) {
+    if (isEdit || (['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'].includes(compromisoIdFromUrl) && user?.entidadId)) {
       loadCumplimiento();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -346,10 +346,26 @@ const CumplimientoNormativoDetalle = () => {
           console.log('🔍 Compromiso encontrado:', compromiso);
           if (compromiso) {
             setCompromisoSeleccionado(compromiso);
-            // NO sobrescribir formData si ya tiene un compromisoId establecido (datos ya cargados)
+            // NO sobrescribir formData si ya tiene datos cargados (verificar campos específicos del paso 1)
             setFormData(prev => {
-              if (prev.compromisoId && prev.compromisoId === compromisoIdFromUrl) {
-                console.log('⏭️ formData ya tiene compromisoId, no sobrescribir');
+              // Si ya tiene compromisoId correcto Y tiene datos del paso 1, no sobrescribir
+              const tieneDatasPaso1 = prev.compromisoId === compromisoIdFromUrl && (
+                // Com1: tiene datos del líder
+                (compromisoIdFromUrl === '1' && (prev.nroDni || prev.nombres)) ||
+                // Com2: tiene miembros (se maneja en otro estado)
+                (compromisoIdFromUrl === '2' && prev.compromisoId === '2') ||
+                // Com3: tiene datos del PGD
+                (compromisoIdFromUrl === '3' && prev.compromisoId === '3') ||
+                // Com4: tiene datos del PEI
+                (compromisoIdFromUrl === '4' && (prev.anioInicio || prev.objetivoEstrategico)) ||
+                // Com5: tiene datos de Estrategia Digital
+                (compromisoIdFromUrl === '5' && (prev.nombreEstrategia || prev.objetivosEstrategicos)) ||
+                // Com6-21: tiene compromisoId establecido
+                (parseInt(compromisoIdFromUrl) >= 6 && prev.compromisoId === compromisoIdFromUrl)
+              );
+              
+              if (tieneDatasPaso1) {
+                console.log('⏭️ formData ya tiene datos del paso 1, no sobrescribir');
                 return prev;
               }
               console.log('🔧 Estado anterior de formData:', prev);

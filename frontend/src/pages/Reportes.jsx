@@ -379,7 +379,7 @@ const Reportes = () => {
                 <option value="">Todos los sectores</option>
                 {sectores.map((sector) => (
                   <option key={sector.sectorId} value={sector.sectorId}>
-                    {sector.nombreSector}
+                    {sector.nombre}
                   </option>
                 ))}
               </select>
@@ -395,7 +395,7 @@ const Reportes = () => {
                 <option value="">Todas las clasificaciones</option>
                 {clasificaciones.map((clas) => (
                   <option key={clas.clasificacionId} value={clas.clasificacionId}>
-                    {clas.nombreClasificacion}
+                    {clas.nombre}
                   </option>
                 ))}
               </select>
