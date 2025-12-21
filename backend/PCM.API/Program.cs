@@ -91,6 +91,7 @@ builder.Services.AddMediatR(cfg =>
 // Registro de servicios de aplicación
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddScoped<ICumplimientoHistorialService, CumplimientoHistorialService>();
 builder.Services.AddHttpClient<IReCaptchaService, ReCaptchaService>();
 builder.Services.AddHttpClient<IEmailService, ResendEmailService>();
 builder.Services.AddHttpClient<ISunatService, SunatService>();

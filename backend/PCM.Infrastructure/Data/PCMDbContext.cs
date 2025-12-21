@@ -66,6 +66,7 @@ public class PCMDbContext : DbContext
     public DbSet<Com21OficialGobiernoDatos> Com21OficialGobiernoDatos { get; set; }
     public DbSet<LogAuditoria> LogAuditoria { get; set; }
     public DbSet<Exigibilidad> Exigibilidades { get; set; }
+    public DbSet<CumplimientoHistorial> CumplimientosHistorial { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -945,6 +946,31 @@ public class PCMDbContext : DbContext
             //     .HasForeignKey(e => e.ComEntidadId)
             //     .HasPrincipalKey(c => c.ComepgdEntId)
             //     .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // Configuración de CumplimientoHistorial
+        modelBuilder.Entity<CumplimientoHistorial>(entity =>
+        {
+            entity.ToTable("cumplimiento_historial");
+            entity.HasKey(e => e.HistorialId);
+            entity.Property(e => e.HistorialId).HasColumnName("historial_id").ValueGeneratedOnAdd();
+            entity.Property(e => e.CumplimientoId).HasColumnName("cumplimiento_id").IsRequired();
+            entity.Property(e => e.EstadoAnteriorId).HasColumnName("estado_anterior_id");
+            entity.Property(e => e.EstadoNuevoId).HasColumnName("estado_nuevo_id").IsRequired();
+            entity.Property(e => e.UsuarioResponsableId).HasColumnName("usuario_responsable_id").IsRequired();
+            entity.Property(e => e.ObservacionSnapshot).HasColumnName("observacion_snapshot").HasColumnType("text");
+            entity.Property(e => e.DatosSnapshot).HasColumnName("datos_snapshot").HasColumnType("jsonb");
+            entity.Property(e => e.FechaCambio).HasColumnName("fecha_cambio").HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(e => e.Cumplimiento)
+                .WithMany()
+                .HasForeignKey(e => e.CumplimientoId)
+                .HasConstraintName("fk_historial_cumplimiento");
+
+            entity.HasOne(e => e.UsuarioResponsable)
+                .WithMany()
+                .HasForeignKey(e => e.UsuarioResponsableId)
+                .HasConstraintName("fk_historial_usuario");
         });
     }
 }
