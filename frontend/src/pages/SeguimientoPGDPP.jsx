@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { showSuccessToast } from '../utils/toast.jsx';
-import { FilterX, X, Save, FolderKanban, TrendingUp } from 'lucide-react';
+import { FilterX, X, Save, FolderKanban, TrendingUp, Edit2 } from 'lucide-react';
 
 // Datos de ejemplo para el portafolio de proyectos
 const proyectosIniciales = [
@@ -268,11 +268,15 @@ const SeguimientoPGDPP = () => {
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-          <TrendingUp className="text-primary" size={24} />
-          Seguimiento PGD-PP
-        </h1>
-        <p className="text-gray-600 mt-1">Plan de Gobierno Digital - Portafolio de Proyectos</p>
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-primary-100 rounded-xl">
+            <TrendingUp className="w-8 h-8 text-primary-600" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-gray-800">Seguimiento PGD-PP</h1>
+            <p className="text-gray-600 mt-1">Plan de Gobierno Digital - Portafolio de Proyectos</p>
+          </div>
+        </div>
       </div>
 
       {/* Filtros */}
@@ -521,21 +525,27 @@ const SeguimientoPGDPP = () => {
 
       {/* Modal Editar Proyecto */}
       {showModal && editingProyecto && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-          <div className="relative bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[95vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Editar Proyecto
-              </h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[95vh] flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-600 to-primary-700 rounded-t-xl text-white">
+              <div className="flex items-center gap-3">
+                <Edit2 className="w-6 h-6" />
+                <div>
+                  <h2 className="text-lg font-semibold">Editar Proyecto</h2>
+                  <p className="text-sm text-white/80">Seguimiento de proyecto PGDPP</p>
+                </div>
+              </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
               >
-                <X size={24} />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6">
+            {/* Content */}
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6">
               {/* Sección: Información General */}
               <div className="mb-6">
                 <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 pb-2 border-b border-gray-100">

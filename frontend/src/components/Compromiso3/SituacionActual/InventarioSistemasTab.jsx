@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2, X } from 'lucide-react';
+import { Plus, Trash2, Edit2, X, FileText } from 'lucide-react';
 
 /**
  * Componente para gestionar el Inventario de Sistemas de Información
@@ -180,12 +180,27 @@ const InventarioSistemasTab = ({ inventario = [], onInventarioChange, viewMode =
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-base font-semibold mb-4">
-              {editingItem ? 'Editar Sistema' : 'Agregar Sistema'}
-            </h3>
-            <div className="space-y-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-600 to-primary-700 rounded-t-xl text-white">
+              <div className="flex items-center gap-3">
+                <FileText className="w-6 h-6" />
+                <div>
+                  <h2 className="text-lg font-semibold">{editingItem ? 'Editar Sistema' : 'Agregar Sistema'}</h2>
+                  <p className="text-sm text-white/80">Inventario de sistemas informáticos</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowModal(false)}
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">

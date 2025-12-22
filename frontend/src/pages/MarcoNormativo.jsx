@@ -283,15 +283,22 @@ const MarcoNormativo = () => {
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-xl font-bold text-gray-800">Gestionar Marco Normativo</h1>
-          <p className="text-gray-600 mt-1">Administración de normas y documentos legales</p>
+      <div className="mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-primary-100 rounded-xl">
+              <FileText className="w-8 h-8 text-primary-600" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-800">Marco Normativo</h1>
+              <p className="text-gray-600 mt-1">Administración de normas y documentos legales</p>
+            </div>
+          </div>
+          <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
+            <Plus size={20} />
+            Nueva Norma
+          </button>
         </div>
-        <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
-          <Plus size={20} />
-          Nueva Norma
-        </button>
       </div>
 
       {/* Filtros */}
@@ -538,21 +545,27 @@ const MarcoNormativo = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-          <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">
-                {editingNorma ? 'Editar Norma' : 'Nueva Norma'}
-              </h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-600 to-primary-700 rounded-t-xl text-white">
+              <div className="flex items-center gap-3">
+                <FileText className="w-6 h-6" />
+                <div>
+                  <h2 className="text-lg font-semibold">{editingNorma ? 'Editar Norma' : 'Nueva Norma'}</h2>
+                  <p className="text-sm text-white/80">Marco normativo del gobierno digital</p>
+                </div>
+              </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
               >
-                <X size={24} />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            {/* Content */}
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -704,15 +717,15 @@ const MarcoNormativo = () => {
 
       {/* Modal Visor de PDF */}
       {showPdfModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
-          <div className="relative bg-white rounded-lg shadow-xl w-full max-w-6xl h-[90vh] flex flex-col">
-            {/* Header del modal */}
-            <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center gap-2">
-                <FileText size={24} className="text-primary" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-600 to-primary-700 rounded-t-xl text-white">
+              <div className="flex items-center gap-3">
+                <Eye className="w-6 h-6" />
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Visor de Documento</h3>
-                  <p className="text-sm text-gray-600">{pdfTitle}</p>
+                  <h2 className="text-lg font-semibold">Visor de Documento</h2>
+                  <p className="text-sm text-white/80">{pdfTitle}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -720,7 +733,7 @@ const MarcoNormativo = () => {
                   href={pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-secondary flex items-center gap-2 px-3 py-2"
+                  className="flex items-center gap-2 px-3 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors text-white"
                   title="Abrir en nueva pestaña"
                 >
                   <ExternalLink size={18} />
@@ -732,10 +745,10 @@ const MarcoNormativo = () => {
                     setPdfUrl('');
                     setPdfTitle('');
                   }}
-                  className="text-gray-400 hover:text-gray-600 p-2"
+                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
                   title="Cerrar"
                 >
-                  <X size={24} />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
             </div>

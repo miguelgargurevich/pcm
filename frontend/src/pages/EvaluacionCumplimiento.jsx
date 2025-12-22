@@ -278,11 +278,15 @@ const EvaluacionCumplimiento = () => {
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-          <BarChart3 className="text-primary" size={24} />
-          Evaluación & Cumplimiento
-        </h1>
-        <p className="text-gray-600 mt-1">Matriz de evaluación de compromisos por entidad</p>
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-primary-100 rounded-xl">
+            <BarChart3 className="w-8 h-8 text-primary-600" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-gray-800">Evaluación & Cumplimiento</h1>
+            <p className="text-gray-600 mt-1">Matriz de evaluación de compromisos por entidad</p>
+          </div>
+        </div>
       </div>
 
       {/* Panel de Búsqueda Avanzada */}

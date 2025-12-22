@@ -431,15 +431,22 @@ const CompromisoGobiernoDigital = () => {
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-xl font-bold text-gray-800">Gestión de Compromisos Gobierno Digital</h1>
-          <p className="text-gray-600 mt-1">Administración de compromisos y metas digitales</p>
+      <div className="mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-primary-100 rounded-xl">
+              <FileCheck className="w-8 h-8 text-primary-600" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-800">Compromisos de Gobierno Digital</h1>
+              <p className="text-gray-600 mt-1">Administración de compromisos y metas digitales</p>
+            </div>
+          </div>
+          <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
+            <Plus size={20} />
+            Nuevo Compromiso
+          </button>
         </div>
-        <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
-          <Plus size={20} />
-          Nuevo Compromiso
-        </button>
       </div>
 
       {/* Filtros */}
@@ -656,21 +663,27 @@ const CompromisoGobiernoDigital = () => {
 
       {/* Modal Crear/Editar */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-          <div className="relative bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[95vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10">
-              <h3 className="text-lg font-semibold text-gray-900">
-                {editingCompromiso ? 'Editar Compromiso' : 'Nuevo Compromiso'}
-              </h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[95vh] flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-600 to-primary-700 rounded-t-xl text-white">
+              <div className="flex items-center gap-3">
+                <FileCheck className="w-6 h-6" />
+                <div>
+                  <h2 className="text-lg font-semibold">{editingCompromiso ? 'Editar Compromiso' : 'Nuevo Compromiso'}</h2>
+                  <p className="text-sm text-white/80">Compromisos de gobierno digital</p>
+                </div>
+              </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
               >
-                <X size={24} />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            {/* Content */}
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
               {/* Información básica */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -1012,23 +1025,31 @@ const CompromisoGobiernoDigital = () => {
         const totalPaginasNormas = Math.ceil(normasFiltradas.length / normasPorPagina);
 
         return (
-          <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-[60] flex items-center justify-center p-4">
-            <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[85vh] flex flex-col">
-              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900">Seleccionar Norma</h3>
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col">
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-600 to-primary-700 rounded-t-xl text-white">
+                <div className="flex items-center gap-3">
+                  <Search className="w-6 h-6" />
+                  <div>
+                    <h2 className="text-lg font-semibold">Seleccionar Norma</h2>
+                    <p className="text-sm text-white/80">Buscar y asociar normas al compromiso</p>
+                  </div>
+                </div>
                 <button
                   onClick={() => {
                     setShowBuscarNormaModal(false);
                     setNormaSearchTerm('');
                     setPaginaNormas(1);
                   }}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
                 >
-                  <X size={24} />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="p-6 flex-1 overflow-auto">
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-6">
                 {/* Buscador */}
                 <div className="mb-4">
                   <input

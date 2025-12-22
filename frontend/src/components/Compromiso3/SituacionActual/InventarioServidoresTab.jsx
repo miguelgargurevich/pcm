@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2, X } from 'lucide-react';
+import { Plus, Trash2, Edit2, X, Server } from 'lucide-react';
 
 /**
  * Componente para gestionar el Inventario de Servidores
@@ -235,12 +235,27 @@ const InventarioServidoresTab = ({ inventario = [], onInventarioChange, viewMode
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-base font-semibold mb-4">
-              {editingItem ? 'Editar Servidor' : 'Agregar Servidor'}
-            </h3>
-            <div className="space-y-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-600 to-primary-700 rounded-t-xl text-white">
+              <div className="flex items-center gap-3">
+                <Server className="w-6 h-6" />
+                <div>
+                  <h2 className="text-lg font-semibold">{editingItem ? 'Editar Servidor' : 'Agregar Servidor'}</h2>
+                  <p className="text-sm text-white/80">Inventario de servidores</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowModal(false)}
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {/* Sección: Datos Generales */}
               <div>
                 <h4 className="font-medium text-gray-700 mb-3 pb-2 border-b">Datos Generales</h4>

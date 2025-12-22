@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import cumplimientoService from '../services/cumplimientoService';
 import { compromisosService } from '../services/compromisosService';
-import { FilterX, Edit2, Eye, FileText, FileCheck, Calendar, Search } from 'lucide-react';
+import { FilterX, Edit2, Eye, FileText, FileCheck, Calendar, Search, ClipboardCheck } from 'lucide-react';
 
 const CumplimientoNormativo = () => {
   const navigate = useNavigate();
@@ -152,8 +152,15 @@ const CumplimientoNormativo = () => {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-800">Gestión de Cumplimiento Normativo</h1>
-        <p className="text-gray-600 mt-1">Compromisos de Gobierno Digital</p>
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-primary-100 rounded-xl">
+            <ClipboardCheck className="w-8 h-8 text-primary-600" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-gray-800">Cumplimiento Normativo</h1>
+            <p className="text-gray-600 mt-1">Gestión de cumplimiento de compromisos de Gobierno Digital</p>
+          </div>
+        </div>
       </div>
 
       {/* Filtros */}

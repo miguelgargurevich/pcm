@@ -3,7 +3,7 @@ import { entidadesService } from '../services/entidadesService';
 import { catalogosService } from '../services/catalogosService';
 import { ubigeoService } from '../services/ubigeoService';
 import { showConfirmToast, showSuccessToast, showErrorToast, showInfoToast } from '../utils/toast.jsx';
-import { Plus, Edit2, Trash2, X, Save, Filter, FilterX, Search } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, Filter, FilterX, Search, Building2 } from 'lucide-react';
 
 const Entidades = () => {
   const [entidades, setEntidades] = useState([]);
@@ -642,15 +642,22 @@ const Entidades = () => {
   return (
     <>
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-xl font-bold text-gray-800">Gestión de Entidades</h1>
-            <p className="text-gray-600 mt-1">Administración de entidades del Estado</p>
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-primary-100 rounded-xl">
+                <Building2 className="w-8 h-8 text-primary-600" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-800">Gestión de Entidades</h1>
+                <p className="text-gray-600 mt-1">Administración de entidades del Estado</p>
+              </div>
+            </div>
+            <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
+              <Plus size={20} />
+              Nueva Entidad
+            </button>
           </div>
-          <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
-            <Plus size={20} />
-            Nueva Entidad
-          </button>
         </div>
 
       {error && (
@@ -974,21 +981,27 @@ const Entidades = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-          <div className="relative bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">
-                {editingEntidad ? 'Editar Entidad' : 'Nueva Entidad'}
-              </h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-600 to-primary-700 rounded-t-xl text-white">
+              <div className="flex items-center gap-3">
+                <Building2 className="w-6 h-6" />
+                <div>
+                  <h2 className="text-lg font-semibold">{editingEntidad ? 'Editar Entidad' : 'Nueva Entidad'}</h2>
+                  <p className="text-sm text-white/80">Gestión de entidades públicas</p>
+                </div>
+              </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
               >
-                <X size={24} />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-6">
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6">
 
               {error && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
