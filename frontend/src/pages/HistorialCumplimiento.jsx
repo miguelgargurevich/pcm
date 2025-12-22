@@ -54,6 +54,7 @@ const SnapshotModal = ({ isOpen, onClose, historial }) => {
   const datosRelacionados = snapshot?.DatosRelacionados || snapshot?.datosRelacionados || {};
   const cumplimiento = snapshot?.Cumplimiento || snapshot?.cumplimiento || {};
   const metadata = snapshot?.Metadata || snapshot?.metadata || {};
+  const compromiso = snapshot?.Compromiso || snapshot?.compromiso || {};
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -164,14 +165,16 @@ const SnapshotModal = ({ isOpen, onClose, historial }) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {Object.entries(datosFormulario).map(([key, value]) => (
-                        <tr key={key} className="hover:bg-gray-50">
-                          <td className="p-3 font-medium text-gray-600">{formatFieldName(key)}</td>
-                          <td className="p-3">
-                            {formatFieldValue(value)}
-                          </td>
-                        </tr>
-                      ))}
+                      {Object.entries(datosFormulario)
+                        .filter(([key]) => !['estadoPcm', 'EstadoPCM', 'estadoPCM'].includes(key))
+                        .map(([key, value]) => (
+                          <tr key={key} className="hover:bg-gray-50">
+                            <td className="p-3 font-medium text-gray-600">{formatFieldName(key)}</td>
+                            <td className="p-3">
+                              {formatFieldValue(value)}
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
@@ -186,13 +189,57 @@ const SnapshotModal = ({ isOpen, onClose, historial }) => {
               {cumplimiento && Object.keys(cumplimiento).length > 0 && (
                 <div className="mt-4">
                   <h4 className="font-medium text-gray-700 mb-2">Información de Cumplimiento</h4>
-                  <div className="bg-gray-50 rounded-lg p-4 grid grid-cols-2 gap-4 text-sm">
-                    {Object.entries(cumplimiento).map(([key, value]) => (
-                      <div key={key}>
-                        <span className="text-gray-500">{formatFieldName(key)}:</span>
-                        <span className="ml-2 font-medium">{formatFieldValue(value)}</span>
+                  <div className="bg-gray-50 rounded-lg p-4 space-y-3 text-sm">
+                    {/* Compromiso */}
+                    {compromiso.Nombre && (
+                      <div className="pb-3 border-b border-gray-200">
+                        <span className="text-gray-600 block mb-1">Compromiso:</span>
+                        <p className="font-semibold text-gray-900">{compromiso.Nombre}</p>
+                        {compromiso.Descripcion && (
+                          <p className="text-xs text-gray-600 mt-1">{compromiso.Descripcion}</p>
+                        )}
                       </div>
-                    ))}
+                    )}
+                    
+                    {/* ID de Cumplimiento */}
+                    {cumplimiento.CumplimientoId && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600">Código de Cumplimiento:</span>
+                        <span className="font-mono text-sm font-semibold text-primary-600">#{cumplimiento.CumplimientoId}</span>
+                      </div>
+                    )}
+                    
+                    {/* Estado */}
+                    {cumplimiento.EstadoNombre && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600">Estado:</span>
+                        <span className="font-medium text-gray-900">{cumplimiento.EstadoNombre}</span>
+                      </div>
+                    )}
+                    
+                    {/* Fecha de Asignación */}
+                    {cumplimiento.FechaAsignacion && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600">Fecha de Asignación:</span>
+                        <span className="font-medium text-gray-900">
+                          {new Date(cumplimiento.FechaAsignacion).toLocaleDateString('es-PE', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                          })}
+                        </span>
+                      </div>
+                    )}
+                    
+                    {/* Observaciones PCM */}
+                    {cumplimiento.ObservacionPcm && (
+                      <div className="pt-2 border-t border-gray-200">
+                        <span className="text-gray-600 block mb-1">Observaciones PCM:</span>
+                        <p className="font-medium text-gray-900 bg-white p-3 rounded border border-gray-200">
+                          {cumplimiento.ObservacionPcm}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -243,9 +290,33 @@ const formatFieldValue = (value) => {
   if (value === null || value === undefined) return <span className="text-gray-400 italic">Sin valor</span>;
   if (typeof value === 'boolean') return value ? '✓ Sí' : '✗ No';
   if (typeof value === 'object') return <pre className="text-xs bg-gray-100 p-2 rounded overflow-x-auto">{JSON.stringify(value, null, 2)}</pre>;
-  if (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2}/)) {
-    return new Date(value).toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric' });
+  
+  // Detectar rutas de archivos PDF o URLs
+  if (typeof value === 'string') {
+    // Verificar si es una ruta PDF
+    if (value.includes('.pdf') || value.includes('/pdfs/') || value.includes('/uploads/')) {
+      const fileName = value.split('/').pop() || 'documento.pdf';
+      const fullUrl = value.startsWith('http') ? value : `${import.meta.env.VITE_API_URL || 'http://localhost:5147'}${value}`;
+      return (
+        <a 
+          href={fullUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 hover:underline"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          {fileName}
+        </a>
+      );
+    }
+    // Verificar si es una fecha
+    if (value.match(/^\d{4}-\d{2}-\d{2}/)) {
+      return new Date(value).toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
   }
+  
   return String(value);
 };
 
