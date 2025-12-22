@@ -855,6 +855,9 @@ const Entidades = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  #
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   RUC
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -889,15 +892,18 @@ const Entidades = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {entidadesPaginadas.length === 0 ? (
                 <tr>
-                  <td colSpan="10" className="px-3 py-8 text-center text-gray-500">
+                  <td colSpan="11" className="px-3 py-8 text-center text-gray-500">
                     {entidades.length === 0
                       ? 'No hay entidades registradas'
                       : 'No se encontraron entidades con los filtros aplicados'}
                   </td>
                 </tr>
               ) : (
-                entidadesPaginadas.map((entidad) => (
+                entidadesPaginadas.map((entidad, index) => (
                   <tr key={entidad.entidadId} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {(paginaActual - 1) * itemsPorPagina + index + 1}
+                    </td>
                     <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                       {entidad.ruc}
                     </td>

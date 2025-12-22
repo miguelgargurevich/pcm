@@ -434,6 +434,9 @@ const Usuarios = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  #
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   DNI
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -459,7 +462,7 @@ const Usuarios = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {usuariosFiltrados.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan="8" className="px-6 py-4 text-center text-gray-500">
                     {usuarios.length === 0 
                       ? 'No hay usuarios registrados' 
                       : 'No se encontraron usuarios con los filtros aplicados'}
@@ -467,15 +470,18 @@ const Usuarios = () => {
                 </tr>
               ) : usuariosPaginados.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan="8" className="px-6 py-8 text-center text-gray-500">
                     {usuarios.length === 0
                       ? 'No hay usuarios registrados'
                       : 'No se encontraron usuarios con los filtros aplicados'}
                   </td>
                 </tr>
               ) : (
-                usuariosPaginados.map((usuario) => (
+                usuariosPaginados.map((usuario, index) => (
                   <tr key={usuario.userId}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {(paginaActual - 1) * itemsPorPagina + index + 1}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {usuario.numDni || 'N/A'}
                     </td>

@@ -450,12 +450,6 @@ const EvaluacionCumplimiento = () => {
 
       {/* Matriz de Evaluación */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800">
-            Matriz de Evaluación ({pagination.totalItems} entidades - Página {currentPage} de {pagination.totalPages || 1})
-          </h2>
-        </div>
-
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 size={48} className="animate-spin text-primary" />
@@ -466,6 +460,9 @@ const EvaluacionCumplimiento = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    #
+                  </th>
                   {/* Columna fija de Entidad */}
                   <th className="sticky left-0 z-20 bg-gray-50 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r-2 border-gray-300 min-w-[300px]">
                     Entidad
@@ -476,14 +473,17 @@ const EvaluacionCumplimiento = () => {
                       key={i + 1}
                       className="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap min-w-[60px]"
                     >
-                      {i + 1}
+                      C{i + 1}
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {entidades.map((entidad) => (
+                {entidades.map((entidad, index) => (
                   <tr key={entidad.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
+                    </td>
                     {/* Columna fija de Entidad */}
                     <td className="sticky left-0 z-10 bg-white px-4 py-3 text-sm font-medium text-gray-900 border-r-2 border-gray-300 min-w-[300px] hover:bg-gray-50">
                       <div className="truncate max-w-[280px]" title={entidad.nombre}>
@@ -521,64 +521,28 @@ const EvaluacionCumplimiento = () => {
 
         {/* Paginación */}
         {pagination.totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+          <div className="flex items-center justify-between p-4 border-t bg-gray-50">
             <div className="text-sm text-gray-600">
-              Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, pagination.totalItems)} de {pagination.totalItems} entidades
+              Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, pagination.totalItems)} de {pagination.totalItems} registros
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className={`flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  currentPage === 1
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50'
-                }`}
+                className="px-3 py-1 text-sm text-gray-600 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
               >
-                <ChevronLeft size={16} />
                 Anterior
               </button>
-              
-              {/* Números de página */}
-              <div className="flex gap-1">
-                {Array.from({ length: Math.min(pagination.totalPages, 7) }, (_, i) => {
-                  let pageNum;
-                  if (pagination.totalPages <= 7) {
-                    pageNum = i + 1;
-                  } else if (currentPage <= 4) {
-                    pageNum = i + 1;
-                  } else if (currentPage >= pagination.totalPages - 3) {
-                    pageNum = pagination.totalPages - 6 + i;
-                  } else {
-                    pageNum = currentPage - 3 + i;
-                  }
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => setCurrentPage(pageNum)}
-                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                        pageNum === currentPage
-                          ? 'bg-primary text-white'
-                          : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
-              </div>
-
+              <span className="px-3 py-1 text-sm bg-primary-600 text-white rounded-lg">
+                {currentPage}
+              </span>
+              <span className="text-sm text-gray-600">de {pagination.totalPages}</span>
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
                 disabled={currentPage === pagination.totalPages}
-                className={`flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  currentPage === pagination.totalPages
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50'
-                }`}
+                className="px-3 py-1 text-sm text-gray-600 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
               >
                 Siguiente
-                <ChevronRight size={16} />
               </button>
             </div>
           </div>

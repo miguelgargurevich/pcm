@@ -558,6 +558,9 @@ const HistorialCumplimiento = () => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      #
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Fecha
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -578,8 +581,11 @@ const HistorialCumplimiento = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {historial.map((item) => (
+                  {historial.map((item, index) => (
                     <tr key={item.historialId}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {(pagination.currentPage - 1) * pagination.pageSize + index + 1}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <div className="font-medium">
                           {new Date(item.fechaCambio).toLocaleDateString('es-PE')}

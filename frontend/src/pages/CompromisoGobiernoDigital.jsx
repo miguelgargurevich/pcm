@@ -587,7 +587,7 @@ const CompromisoGobiernoDigital = () => {
                 <tr key={compromiso.compromisoId} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <span className="text-sm font-bold text-primary">{compromiso.compromisoId}</span>
+                      <span className="text-sm font-bold text-primary">C{compromiso.compromisoId}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">

@@ -425,59 +425,57 @@ const SeguimientoPGDPP = () => {
 
       {/* Panel de Lista - Portafolio de Proyectos */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
+        {/* <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
             <FolderKanban size={20} />
             Portafolio de Proyectos ({proyectosFiltrados.length})
           </h2>
-        </div>
+        </div> */}
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                {/* Columnas sticky - con anchos fijos y posiciones calculadas */}
-                <th className="sticky left-0 z-20 bg-gray-50 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 w-[60px] min-w-[60px] max-w-[60px]">
-                  Id
+                <th className="sticky left-0 z-20 bg-gray-200 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[80px] min-w-[80px]">
+                  #
                 </th>
-                <th className="sticky left-[60px] z-20 bg-gray-50 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 w-[100px] min-w-[100px] max-w-[100px]">
+                <th className="sticky left-[80px] z-20 bg-gray-200 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[140px] min-w-[140px]">
                   Código
                 </th>
-                <th className="sticky left-[160px] z-20 bg-gray-50 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 w-[250px] min-w-[250px] max-w-[250px]">
+                <th className="sticky left-[220px] z-20 bg-gray-200 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[350px] min-w-[350px]">
                   Nombre
                 </th>
-                {/* Columnas con scroll */}
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Tipo Proyecto
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Tipo Beneficiario
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Fecha Inicio Prog.
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Fecha Fin Prog.
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Fecha Inicio Real
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Fecha Fin Real
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Etapa
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   % Avance
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Informe Avance
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Monto Inversión
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Ámbito
                 </th>
               </tr>
@@ -489,43 +487,39 @@ const SeguimientoPGDPP = () => {
                   className="hover:bg-gray-50 cursor-pointer group"
                   onClick={() => handleRowClick(proyecto)}
                 >
-                  {/* Columnas sticky - con anchos fijos y posiciones calculadas */}
-                  <td className="sticky left-0 z-20 bg-white group-hover:bg-gray-50 px-4 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200 w-[60px] min-w-[60px] max-w-[60px]">
+                  <td className="sticky left-0 z-10 bg-gray-200 group-hover:bg-gray-100 px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-[80px] min-w-[80px]">
                     {proyecto.id}
                   </td>
-                  <td className="sticky left-[60px] z-20 bg-white group-hover:bg-gray-50 px-4 py-4 whitespace-nowrap text-sm font-medium text-primary border-r border-gray-200 w-[100px] min-w-[100px] max-w-[100px]">
+                  <td className="sticky left-[80px] z-10 bg-gray-200 group-hover:bg-gray-100 px-6 py-4 whitespace-nowrap text-sm font-medium text-primary w-[140px] min-w-[140px]">
                     {proyecto.codigo}
                   </td>
-                  <td 
-                    className="sticky left-[160px] z-20 bg-white group-hover:bg-gray-50 px-4 py-4 text-sm text-blue-600 hover:text-blue-800 hover:underline border-r border-gray-200 w-[250px] min-w-[250px] max-w-[250px] cursor-pointer"
-                  >
+                  <td className="sticky left-[220px] z-10 bg-gray-200 group-hover:bg-gray-100 px-6 py-4 text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer w-[350px] min-w-[350px]">
                     {proyecto.nombre}
                   </td>
-                  {/* Columnas con scroll */}
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {proyecto.tipoProyecto}
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {proyecto.tipoBeneficiario}
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {formatDate(proyecto.fechaInicioProg)}
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {formatDate(proyecto.fechaFinProg)}
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {formatDate(proyecto.fechaInicioReal)}
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {formatDate(proyecto.fechaFinReal)}
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getEtapaBadgeClass(proyecto.etapa)}`}>
                       {proyecto.etapa}
                     </span>
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex items-center gap-2">
                       <div className="w-16 bg-gray-200 rounded-full h-2">
                         <div 
@@ -536,15 +530,15 @@ const SeguimientoPGDPP = () => {
                       <span>{proyecto.porcentajeAvance}%</span>
                     </div>
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${proyecto.informeAvance ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                       {proyecto.informeAvance ? 'SI' : 'NO'}
                     </span>
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {formatMoney(proyecto.montoInversion)}
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {proyecto.ambito}
                   </td>
                 </tr>
