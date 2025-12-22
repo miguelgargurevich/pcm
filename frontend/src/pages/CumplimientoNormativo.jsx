@@ -385,18 +385,18 @@ const CumplimientoNormativo = () => {
               <button
                 onClick={() => cambiarPagina(paginaActual - 1)}
                 disabled={paginaActual <= 1}
-                className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                className="px-3 py-1 text-sm text-gray-600 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
               >
                 Anterior
               </button>
-              <span className="px-3 py-1 bg-primary-600 text-white rounded-lg">
+              <span className="px-3 py-1 text-sm bg-primary-600 text-white rounded-lg">
                 {paginaActual}
               </span>
-              <span className="text-gray-500">de {totalPaginas}</span>
+              <span className="text-sm text-gray-600">de {totalPaginas}</span>
               <button
                 onClick={() => cambiarPagina(paginaActual + 1)}
                 disabled={paginaActual >= totalPaginas}
-                className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                className="px-3 py-1 text-sm text-gray-600 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
               >
                 Siguiente
               </button>

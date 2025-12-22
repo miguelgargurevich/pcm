@@ -111,7 +111,10 @@ const Reportes = () => {
           });
           
           if (response.isSuccess) {
+            console.log('Datos de evaluación cargados:', response.data?.length || 0, 'entidades');
             setDatosEvaluacion(response.data || []);
+          } else {
+            console.warn('No se pudieron cargar datos de evaluación');
           }
         } catch (error) {
           console.error('Error al cargar datos de evaluación:', error);
@@ -121,7 +124,10 @@ const Reportes = () => {
         try {
           const proyectosRes = await evaluacionService.getProyectos();
           if (proyectosRes.isSuccess) {
+            console.log('Proyectos cargados:', proyectosRes.data?.length || 0, 'proyectos');
             setProyectosData(proyectosRes.data || []);
+          } else {
+            console.warn('No se pudieron cargar proyectos');
           }
         } catch (error) {
           console.error('Error al cargar proyectos:', error);

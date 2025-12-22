@@ -638,18 +638,18 @@ const HistorialCumplimiento = () => {
                   <button
                     onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
                     disabled={pagination.page <= 1}
-                    className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                    className="px-3 py-1 text-sm text-gray-600 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
                   >
                     Anterior
                   </button>
-                  <span className="px-3 py-1 bg-primary-600 text-white rounded-lg">
+                  <span className="px-3 py-1 text-sm bg-primary-600 text-white rounded-lg">
                     {pagination.page}
                   </span>
-                  <span className="text-gray-500">de {pagination.totalPages}</span>
+                  <span className="text-sm text-gray-600">de {pagination.totalPages}</span>
                   <button
                     onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
                     disabled={pagination.page >= pagination.totalPages}
-                    className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                    className="px-3 py-1 text-sm text-gray-600 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
                   >
                     Siguiente
                   </button>

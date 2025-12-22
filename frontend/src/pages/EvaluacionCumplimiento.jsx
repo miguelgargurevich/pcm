@@ -532,7 +532,7 @@ const EvaluacionCumplimiento = () => {
                 className={`flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   currentPage === 1
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                    : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
                 <ChevronLeft size={16} />
@@ -574,7 +574,7 @@ const EvaluacionCumplimiento = () => {
                 className={`flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   currentPage === pagination.totalPages
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                    : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
                 Siguiente
