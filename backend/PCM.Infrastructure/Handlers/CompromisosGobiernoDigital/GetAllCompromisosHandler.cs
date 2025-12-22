@@ -363,8 +363,13 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
         DateTime? fechaRegistro = registroEspecifico.fecha != default ? registroEspecifico.fecha : cumplimiento?.CreatedAt;
         int? estadoCumplimiento = null;
         
-        // Convertir estado string a int si existe registro específico
-        if (!string.IsNullOrEmpty(registroEspecifico.estado))
+        // PRIORIDAD 1: Si existe evaluación en cumplimiento_normativo, usar ese estado
+        if (cumplimiento != null)
+        {
+            estadoCumplimiento = cumplimiento.EstadoId;
+        }
+        // PRIORIDAD 2: Si no hay evaluación, usar el estado de la tabla específica (comX)
+        else if (!string.IsNullOrEmpty(registroEspecifico.estado))
         {
             estadoCumplimiento = registroEspecifico.estado switch
             {
@@ -378,14 +383,10 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                 "observado" => 7,  // OBSERVADO
                 "aceptado" => 8,  // ACEPTADO
                 "aprobado" => 8,  // ACEPTADO (aprobado = aceptado)
-                _ => cumplimiento?.EstadoId
+                _ => null
             };
         }
-        else if (cumplimiento != null)
-        {
-            estadoCumplimiento = cumplimiento.EstadoId;
-        }
-        // Si no hay registro ni cumplimiento, calcular desde exigibilidad
+        // PRIORIDAD 3: Si no hay registro ni cumplimiento, calcular desde exigibilidad
         else if (!string.IsNullOrEmpty(nivelExigibilidad))
         {
             estadoCumplimiento = nivelExigibilidad switch
