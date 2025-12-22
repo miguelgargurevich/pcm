@@ -74,6 +74,9 @@ public class EvaluacionController : ControllerBase
 
             var entidades = await entidadesQuery.OrderBy(e => e.Nombre).ToListAsync();
             
+            // Obtener estados evaluados desde cumplimiento_normativo
+            var cumplimientos = await _context.CumplimientosNormativos.ToListAsync();
+            
             // Obtener todos los estados de compromisos por entidad
             var com1Data = await _context.Com1LiderGTD.Where(c => c.Activo).ToListAsync();
             var com2Data = await _context.Com2CGTD.Where(c => c.Activo).ToListAsync();
@@ -117,6 +120,7 @@ public class EvaluacionController : ControllerBase
                     // ya que la configuración de alcances puede no estar completa
                     string estadoCompromiso = ObtenerEstadoCompromiso(
                         i, ent.EntidadId,
+                        cumplimientos,
                         com1Data, com2Data, com3Data, com4Data, com5Data,
                         com6Data, com7Data, com8Data, com9Data, com10Data,
                         com11Data, com12Data, com13Data, com14Data, com15Data,
@@ -479,6 +483,7 @@ public class EvaluacionController : ControllerBase
     private string ObtenerEstadoCompromiso(
         int compromisoId, 
         Guid entidadId,
+        List<CumplimientoNormativo> cumplimientos,
         List<Com1LiderGTD> com1Data,
         List<Com2CGTD> com2Data,
         List<Com3EPGD> com3Data,
@@ -501,6 +506,28 @@ public class EvaluacionController : ControllerBase
         List<Com20DigitalizacionServiciosFacilita> com20Data,
         List<Com21OficialGobiernoDatos> com21Data)
     {
+        // PRIORIDAD 1: Verificar si existe evaluación en cumplimiento_normativo
+        var cumplimiento = cumplimientos.FirstOrDefault(c => 
+            c.EntidadId == entidadId && c.CompromisoId == compromisoId);
+        
+        if (cumplimiento != null)
+        {
+            // Mapear estado_id a string
+            return cumplimiento.EstadoId switch
+            {
+                8 => "aceptado",     // ACEPTADO
+                7 => "observado",    // OBSERVADO
+                6 => "en revisión",  // EN REVISIÓN
+                5 => "enviado",      // ENVIADO
+                4 => "en proceso",   // EN PROCESO
+                3 => "no exigible",  // NO EXIGIBLE
+                2 => "sin reportar", // SIN REPORTAR
+                1 => "pendiente",    // PENDIENTE
+                _ => "pendiente"
+            };
+        }
+        
+        // PRIORIDAD 2: Si no hay evaluación, verificar el estado en las tablas comX
         string? estado = null;
         string? etapa = null;
 
