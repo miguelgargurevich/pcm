@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   History, 
   Search, 
@@ -281,54 +281,30 @@ const HistorialCumplimiento = () => {
     { id: 8, nombre: 'ACEPTADO' },
   ];
 
-  const cargarDatosIniciales = useCallback(async () => {
-    try {
-      // Cargar compromisos y entidades para los filtros
-      const [compRes, entRes] = await Promise.all([
-        apiService.get('/CompromisoGobiernoDigital'),
-        apiService.get('/entidades')
-      ]);
-
-      if (compRes.data?.isSuccess || compRes.data?.success) {
-        setCompromisos(compRes.data.data || []);
-      }
-      if (entRes.data?.isSuccess || entRes.data?.success) {
-        setEntidades(entRes.data.data || []);
-      }
-
-      // Cargar historial inicial
-      setLoading(true);
+  // Cargar datos iniciales (solo una vez al montar)
+  useEffect(() => {
+    const cargarDatosIniciales = async () => {
       try {
-        const params = new URLSearchParams();
-        params.append('page', pagination.page);
-        params.append('pageSize', pagination.pageSize);
-        
-        const response = await apiService.get(`/CumplimientoHistorial?${params.toString()}`);
-        
-        if (response.data) {
-          setHistorial(response.data.items || []);
-          setPagination(prev => ({
-            ...prev,
-            totalItems: response.data.totalItems || 0,
-            totalPages: response.data.totalPages || 0
-          }));
+        // Cargar compromisos y entidades para los filtros
+        const [compRes, entRes] = await Promise.all([
+          apiService.get('/CompromisoGobiernoDigital'),
+          apiService.get('/entidades')
+        ]);
+
+        if (compRes.data?.isSuccess || compRes.data?.success) {
+          setCompromisos(compRes.data.data || []);
+        }
+        if (entRes.data?.isSuccess || entRes.data?.success) {
+          setEntidades(entRes.data.data || []);
         }
       } catch (error) {
-        console.error('Error cargando historial:', error);
-        toast.error('Error al cargar historial');
-      } finally {
-        setLoading(false);
+        console.error('Error cargando datos iniciales:', error);
+        toast.error('Error al cargar datos iniciales');
       }
-    } catch (error) {
-      console.error('Error cargando datos iniciales:', error);
-      toast.error('Error al cargar datos iniciales');
-    }
-  }, [pagination.page, pagination.pageSize]);
+    };
 
-  // Cargar datos iniciales
-  useEffect(() => {
     cargarDatosIniciales();
-  }, [cargarDatosIniciales]);
+  }, []); // Solo al montar el componente
 
   // Cargar historial cuando cambian filtros o paginación
   useEffect(() => {
