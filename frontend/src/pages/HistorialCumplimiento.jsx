@@ -24,16 +24,16 @@ import toast from 'react-hot-toast';
 const EstadoBadge = ({ estado, esNuevo }) => {
   const getColor = (estado) => {
     const colors = {
-      'PENDIENTE': 'bg-gray-100 text-gray-700',
-      'SIN REPORTAR': 'bg-yellow-100 text-yellow-700',
-      'NO EXIGIBLE': 'bg-purple-100 text-purple-700',
-      'EN PROCESO': 'bg-blue-100 text-blue-700',
-      'ENVIADO': 'bg-cyan-100 text-cyan-700',
-      'EN REVISIÓN': 'bg-orange-100 text-orange-700',
-      'OBSERVADO': 'bg-red-100 text-red-700',
-      'ACEPTADO': 'bg-green-100 text-green-700',
+      'ACEPTADO': 'bg-green-500 text-white',
+      'ENVIADO': 'bg-blue-500 text-white',
+      'EN REVISIÓN': 'bg-purple-500 text-white',
+      'EN PROCESO': 'bg-yellow-500 text-white',
+      'PENDIENTE': 'bg-orange-500 text-white',
+      'OBSERVADO': 'bg-red-500 text-white',
+      'SIN REPORTAR': 'bg-red-700 text-white',
+      'NO EXIGIBLE': 'bg-gray-400 text-white',
     };
-    return colors[estado] || 'bg-gray-100 text-gray-700';
+    return colors[estado] || 'bg-gray-300 text-gray-700';
   };
 
   return (
@@ -468,7 +468,7 @@ const HistorialCumplimiento = () => {
                   <option value="">Todos</option>
                   {compromisos.map(c => (
                     <option key={c.compromisoId} value={c.compromisoId}>
-                      {c.nombreCompromiso}
+                      C{c.compromisoId} - {c.nombreCompromiso}
                     </option>
                   ))}
                 </select>
@@ -540,7 +540,7 @@ const HistorialCumplimiento = () => {
       </div>
 
       {/* Tabla de historial */}
-      <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <RefreshCw className="w-8 h-8 text-primary-600 animate-spin" />
@@ -554,87 +554,73 @@ const HistorialCumplimiento = () => {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
                   <tr>
-                    <th className="text-left p-4 font-semibold text-gray-700">
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        Fecha
-                      </div>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Fecha
                     </th>
-                    <th className="text-left p-4 font-semibold text-gray-700">
-                      <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4" />
-                        Compromiso
-                      </div>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Compromiso
                     </th>
-                    <th className="text-left p-4 font-semibold text-gray-700">
-                      <div className="flex items-center gap-2">
-                        <Building2 className="w-4 h-4" />
-                        Entidad
-                      </div>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Entidad
                     </th>
-                    <th className="text-left p-4 font-semibold text-gray-700">Cambio de Estado</th>
-                    <th className="text-left p-4 font-semibold text-gray-700">
-                      <div className="flex items-center gap-2">
-                        <User className="w-4 h-4" />
-                        Usuario
-                      </div>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Cambio de Estado
                     </th>
-                    <th className="text-center p-4 font-semibold text-gray-700">Acciones</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Usuario
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Acciones
+                    </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {historial.map((item) => (
-                    <tr key={item.historialId} className="hover:bg-gray-50 transition-colors">
-                      <td className="p-4">
-                        <div className="text-sm">
-                          <div className="font-medium text-gray-800">
-                            {new Date(item.fechaCambio).toLocaleDateString('es-PE')}
-                          </div>
-                          <div className="text-gray-500 text-xs">
-                            {new Date(item.fechaCambio).toLocaleTimeString('es-PE')}
-                          </div>
+                    <tr key={item.historialId}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <div className="font-medium">
+                          {new Date(item.fechaCambio).toLocaleDateString('es-PE')}
+                        </div>
+                        <div className="text-gray-500 text-xs">
+                          {new Date(item.fechaCambio).toLocaleTimeString('es-PE')}
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <div className="flex items-center gap-2">
                           <span className="px-2 py-1 bg-primary-100 text-primary-700 text-xs font-bold rounded">
                             C{item.compromisoId || '?'}
                           </span>
-                          <div className="text-sm font-medium text-gray-800 max-w-xs truncate">
+                          <div className="font-medium max-w-xs truncate">
                             {item.compromisoNombre || 'Sin nombre'}
                           </div>
                         </div>
                       </td>
-                      <td className="p-4">
-                        <div className="text-sm text-gray-700 max-w-xs truncate">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <div className="max-w-xs truncate">
                           {item.entidadNombre || 'N/A'}
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <div className="flex items-center gap-2">
                           <EstadoBadge estado={item.estadoAnteriorNombre} />
                           <ArrowRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
                           <EstadoBadge estado={item.estadoNuevoNombre} esNuevo />
                         </div>
                       </td>
-                      <td className="p-4">
-                        <div className="text-sm text-gray-700">
-                          {item.usuarioResponsableNombre || 'Sistema'}
-                        </div>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {item.usuarioResponsableNombre || 'Sistema'}
                       </td>
-                      <td className="p-4">
-                        <div className="flex justify-center">
-                          <button
-                            onClick={() => setSelectedHistorial(item)}
-                            className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-                            title="Ver snapshot"
-                          >
-                            <Eye className="w-5 h-5" />
-                          </button>
-                        </div>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={() => setSelectedHistorial(item)}
+                          className="text-primary-600 hover:text-blue-900 flex items-center gap-1"
+                          title="Ver snapshot"
+                        >
+                          <Eye size={16} />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -643,31 +629,33 @@ const HistorialCumplimiento = () => {
             </div>
 
             {/* Paginación */}
-            <div className="flex items-center justify-between p-4 border-t bg-gray-50">
-              <div className="text-sm text-gray-600">
-                Mostrando {((pagination.page - 1) * pagination.pageSize) + 1} - {Math.min(pagination.page * pagination.pageSize, pagination.totalItems)} de {pagination.totalItems} registros
+            {pagination.totalPages > 1 && (
+              <div className="flex items-center justify-between p-4 border-t bg-gray-50">
+                <div className="text-sm text-gray-600">
+                  Mostrando {((pagination.page - 1) * pagination.pageSize) + 1} - {Math.min(pagination.page * pagination.pageSize, pagination.totalItems)} de {pagination.totalItems} registros
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                    disabled={pagination.page <= 1}
+                    className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                  >
+                    Anterior
+                  </button>
+                  <span className="px-3 py-1 bg-primary-600 text-white rounded-lg">
+                    {pagination.page}
+                  </span>
+                  <span className="text-gray-500">de {pagination.totalPages}</span>
+                  <button
+                    onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                    disabled={pagination.page >= pagination.totalPages}
+                    className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                  >
+                    Siguiente
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
-                  disabled={pagination.page <= 1}
-                  className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
-                >
-                  Anterior
-                </button>
-                <span className="px-3 py-1 bg-primary-600 text-white rounded-lg">
-                  {pagination.page}
-                </span>
-                <span className="text-gray-500">de {pagination.totalPages}</span>
-                <button
-                  onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
-                  disabled={pagination.page >= pagination.totalPages}
-                  className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
-                >
-                  Siguiente
-                </button>
-              </div>
-            </div>
+            )}
           </>
         )}
       </div>
