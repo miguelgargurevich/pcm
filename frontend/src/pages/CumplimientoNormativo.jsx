@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import cumplimientoService from '../services/cumplimientoService';
 import { compromisosService } from '../services/compromisosService';
-import { FilterX, Edit2, Eye, FileText, FileCheck, Calendar, Search, ClipboardCheck } from 'lucide-react';
+import { FilterX, Edit2, Eye, FileText, FileCheck, Calendar, Search, ClipboardCheck, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 
 const CumplimientoNormativo = () => {
   const navigate = useNavigate();
@@ -20,6 +20,7 @@ const CumplimientoNormativo = () => {
     nombreCompromiso: '',
     estado: ''
   });
+  const [showFilters, setShowFilters] = useState(false);
 
   const [estados, setEstados] = useState([]);
 
@@ -164,65 +165,85 @@ const CumplimientoNormativo = () => {
       </div>
 
       {/* Filtros */}
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nombre del Compromiso
-            </label>
-            <input
-              type="text"
-              name="nombreCompromiso"
-              value={filtros.nombreCompromiso}
-              onChange={handleFiltroChange}
-              placeholder="Buscar por nombre..."
-              className="input-field"
-            />
+      <div className="bg-white rounded-xl shadow-sm border mb-6">
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <Filter className="w-5 h-5 text-gray-500" />
+            <span className="font-medium text-gray-700">Filtros</span>
+            {Object.values(filtros).some(v => v) && (
+              <span className="px-2 py-0.5 bg-primary-100 text-primary-700 text-xs rounded-full">
+                Activos
+              </span>
+            )}
           </div>
+          {showFilters ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+        </button>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Estado
-            </label>
-            <select
-              name="estado"
-              value={filtros.estado}
-              onChange={handleFiltroChange}
-              className="input-field"
-            >
-              <option value="">Todos</option>
-              <option value="sin_registrar">Sin registrar</option>
-              {estados.map((estado) => (
-                <option key={estado.id} value={estado.id}>
-                  {estado.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
+        {showFilters && (
+          <div className="p-4 border-t bg-gray-50">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nombre del Compromiso
+                </label>
+                <input
+                  type="text"
+                  name="nombreCompromiso"
+                  value={filtros.nombreCompromiso}
+                  onChange={handleFiltroChange}
+                  placeholder="Buscar por nombre..."
+                  className="input-field"
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              &nbsp;
-            </label>
-            <div className="h-full flex items-center">
-              {/* <span className="text-sm text-gray-500">Filtros disponibles</span> */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Estado
+                </label>
+                <select
+                  name="estado"
+                  value={filtros.estado}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                >
+                  <option value="">Todos</option>
+                  <option value="sin_registrar">Sin registrar</option>
+                  {estados.map((estado) => (
+                    <option key={estado.id} value={estado.id}>
+                      {estado.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  &nbsp;
+                </label>
+                <div className="h-full flex items-center">
+                  {/* <span className="text-sm text-gray-500">Filtros disponibles</span> */}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                Mostrando {compromisosPaginados.length} de {compromisosFiltrados.length} compromisos
+              </div>
+              <button
+                onClick={limpiarFiltros}
+                className="btn-secondary flex items-center gap-2 px-4 py-2"
+                title="Limpiar filtros"
+              >
+                <FilterX size={20} />
+                Limpiar filtros
+              </button>
             </div>
           </div>
-        </div>
-
-        <div className="mt-4 flex items-center justify-between">
-          <div className="text-sm text-gray-600">
-            Mostrando {compromisosPaginados.length} de {compromisosFiltrados.length} compromisos
-          </div>
-          <button
-            onClick={limpiarFiltros}
-            className="btn-secondary flex items-center gap-2 px-4 py-2"
-            title="Limpiar filtros"
-          >
-            <FilterX size={20} />
-            Limpiar filtros
-          </button>
-        </div>
+        )}
       </div>
 
       {/* Tabla de Compromisos */}
@@ -356,86 +377,29 @@ const CumplimientoNormativo = () => {
 
         {/* Paginación */}
         {totalPaginas > 1 && (
-          <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-            <div className="flex flex-1 justify-between sm:hidden">
+          <div className="flex items-center justify-between p-4 border-t bg-gray-50">
+            <div className="text-sm text-gray-600">
+              Mostrando {((paginaActual - 1) * itemsPorPagina) + 1} - {Math.min(paginaActual * itemsPorPagina, compromisosFiltrados.length)} de {compromisosFiltrados.length} registros
+            </div>
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => cambiarPagina(paginaActual - 1)}
-                disabled={paginaActual === 1}
-                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={paginaActual <= 1}
+                className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
               >
                 Anterior
               </button>
+              <span className="px-3 py-1 bg-primary-600 text-white rounded-lg">
+                {paginaActual}
+              </span>
+              <span className="text-gray-500">de {totalPaginas}</span>
               <button
                 onClick={() => cambiarPagina(paginaActual + 1)}
-                disabled={paginaActual === totalPaginas}
-                className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={paginaActual >= totalPaginas}
+                className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
               >
                 Siguiente
               </button>
-            </div>
-            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-gray-700">
-                  Mostrando <span className="font-medium">{indicePrimero + 1}</span> a{' '}
-                  <span className="font-medium">
-                    {Math.min(indiceUltimo, compromisosFiltrados.length)}
-                  </span>{' '}
-                  de <span className="font-medium">{compromisosFiltrados.length}</span> resultados
-                </p>
-              </div>
-              <div>
-                <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                  <button
-                    onClick={() => cambiarPagina(paginaActual - 1)}
-                    disabled={paginaActual === 1}
-                    className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <span className="sr-only">Anterior</span>
-                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                  {[...Array(totalPaginas)].map((_, index) => {
-                    const numeroPagina = index + 1;
-                    // Mostrar siempre la primera página, última página, y páginas cerca de la actual
-                    if (
-                      numeroPagina === 1 ||
-                      numeroPagina === totalPaginas ||
-                      (numeroPagina >= paginaActual - 1 && numeroPagina <= paginaActual + 1)
-                    ) {
-                      return (
-                        <button
-                          key={numeroPagina}
-                          onClick={() => cambiarPagina(numeroPagina)}
-                          className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
-                            paginaActual === numeroPagina
-                              ? 'z-10 bg-blue-600 text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
-                              : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
-                          }`}
-                        >
-                          {numeroPagina}
-                        </button>
-                      );
-                    } else if (
-                      numeroPagina === paginaActual - 2 ||
-                      numeroPagina === paginaActual + 2
-                    ) {
-                      return <span key={numeroPagina} className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">...</span>;
-                    }
-                    return null;
-                  })}
-                  <button
-                    onClick={() => cambiarPagina(paginaActual + 1)}
-                    disabled={paginaActual === totalPaginas}
-                    className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <span className="sr-only">Siguiente</span>
-                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                </nav>
-              </div>
             </div>
           </div>
         )}

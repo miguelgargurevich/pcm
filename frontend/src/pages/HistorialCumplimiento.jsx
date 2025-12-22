@@ -14,7 +14,8 @@ import {
   Clock,
   ArrowRight,
   RefreshCw,
-  Download
+  Download,
+  FilterX
 } from 'lucide-react';
 import apiService from '../services/api';
 import toast from 'react-hot-toast';
@@ -310,7 +311,7 @@ const HistorialCumplimiento = () => {
   useEffect(() => {
     cargarHistorial();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page, pagination.pageSize]);
+  }, [pagination.page, pagination.pageSize, filtros]);
 
   const cargarHistorial = async () => {
     setLoading(true);
@@ -319,13 +320,25 @@ const HistorialCumplimiento = () => {
       params.append('page', pagination.page);
       params.append('pageSize', pagination.pageSize);
       
-      if (filtros.compromisoId) params.append('compromisoId', filtros.compromisoId);
-      if (filtros.entidadId) params.append('entidadId', filtros.entidadId);
-      if (filtros.estadoId) params.append('estadoId', filtros.estadoId);
-      if (filtros.fechaDesde) params.append('fechaDesde', filtros.fechaDesde);
-      if (filtros.fechaHasta) params.append('fechaHasta', filtros.fechaHasta);
+      // Agregar filtros solo si tienen valor
+      if (filtros.compromisoId && filtros.compromisoId !== '') {
+        params.append('compromisoId', filtros.compromisoId);
+      }
+      if (filtros.entidadId && filtros.entidadId !== '') {
+        params.append('entidadId', filtros.entidadId);
+      }
+      if (filtros.estadoId && filtros.estadoId !== '') {
+        params.append('estadoId', filtros.estadoId);
+      }
+      if (filtros.fechaDesde && filtros.fechaDesde !== '') {
+        params.append('fechaDesde', filtros.fechaDesde);
+      }
+      if (filtros.fechaHasta && filtros.fechaHasta !== '') {
+        params.append('fechaHasta', filtros.fechaHasta);
+      }
 
       console.log('📞 Llamando a /CumplimientoHistorial con params:', params.toString());
+      console.log('🔍 Filtros actuales:', filtros);
       const response = await apiService.get(`/CumplimientoHistorial?${params.toString()}`);
       console.log('📦 Respuesta completa del historial:', response);
       console.log('📦 response.data:', response.data);
@@ -353,11 +366,6 @@ const HistorialCumplimiento = () => {
     }
   };
 
-  const aplicarFiltros = () => {
-    setPagination(prev => ({ ...prev, page: 1 }));
-    cargarHistorial();
-  };
-
   const limpiarFiltros = () => {
     setFiltros({
       compromisoId: '',
@@ -367,7 +375,6 @@ const HistorialCumplimiento = () => {
       fechaHasta: '',
     });
     setPagination(prev => ({ ...prev, page: 1 }));
-    setTimeout(cargarHistorial, 100);
   };
 
   const exportarCSV = () => {
@@ -521,16 +528,11 @@ const HistorialCumplimiento = () => {
             <div className="flex justify-end gap-2 mt-4">
               <button
                 onClick={limpiarFiltros}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
+                className="btn-secondary flex items-center gap-2 px-4 py-2"
+                title="Limpiar filtros"
               >
-                Limpiar
-              </button>
-              <button
-                onClick={aplicarFiltros}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2"
-              >
-                <Search className="w-4 h-4" />
-                Buscar
+                <FilterX size={20} />
+                Limpiar filtros
               </button>
             </div>
           </div>

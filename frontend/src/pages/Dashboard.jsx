@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { 
   Users, 
@@ -22,11 +22,7 @@ const Dashboard = () => {
   const [estadisticasCompromisos, setEstadisticasCompromisos] = useState(null);
   const [ultimasActividades, setUltimasActividades] = useState([]);
 
-  useEffect(() => {
-    loadStats();
-  }, []);
-
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     try {
       setLoading(true);
       const response = await dashboardService.getStats();
@@ -105,7 +101,11 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    loadStats();
+  }, [loadStats]);
 
   if (loading) {
     return (

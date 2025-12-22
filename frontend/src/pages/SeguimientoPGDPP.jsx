@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { showSuccessToast } from '../utils/toast.jsx';
-import { FilterX, X, Save, FolderKanban, TrendingUp, Edit2 } from 'lucide-react';
+import { FilterX, X, Save, FolderKanban, TrendingUp, Edit2, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 
 // Datos de ejemplo para el portafolio de proyectos
 const proyectosIniciales = [
@@ -110,6 +110,7 @@ const SeguimientoPGDPP = () => {
   const [loading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingProyecto, setEditingProyecto] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Filtros
   const [filtros, setFiltros] = useState({
@@ -119,6 +120,10 @@ const SeguimientoPGDPP = () => {
     tipoProyecto: '',
     ambito: ''
   });
+
+  // Paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const itemsPorPagina = 10;
 
   // Form data para el modal
   const [formData, setFormData] = useState({
@@ -173,10 +178,23 @@ const SeguimientoPGDPP = () => {
   const handleFiltroChange = (e) => {
     const { name, value } = e.target;
     setFiltros(prev => ({ ...prev, [name]: value }));
+    setPaginaActual(1); // Reset a primera página cuando cambian filtros
   };
 
   const limpiarFiltros = () => {
     setFiltros({ codigo: '', nombre: '', etapa: '', tipoProyecto: '', ambito: '' });
+    setPaginaActual(1);
+  };
+
+  // Calcular proyectos paginados
+  const indiceUltimo = paginaActual * itemsPorPagina;
+  const indicePrimero = indiceUltimo - itemsPorPagina;
+  const proyectosPaginados = proyectosFiltrados.slice(indicePrimero, indiceUltimo);
+  const totalPaginas = Math.ceil(proyectosFiltrados.length / itemsPorPagina);
+
+  const cambiarPagina = (numeroPagina) => {
+    setPaginaActual(numeroPagina);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleRowClick = (proyecto) => {
@@ -281,108 +299,128 @@ const SeguimientoPGDPP = () => {
 
       {/* Filtros */}
       <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Código
-            </label>
-            <input
-              type="text"
-              name="codigo"
-              value={filtros.codigo}
-              onChange={handleFiltroChange}
-              placeholder="Buscar código..."
-              className="input-field"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nombre
-            </label>
-            <input
-              type="text"
-              name="nombre"
-              value={filtros.nombre}
-              onChange={handleFiltroChange}
-              placeholder="Buscar nombre..."
-              className="input-field"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tipo Proyecto
-            </label>
-            <select
-              name="tipoProyecto"
-              value={filtros.tipoProyecto}
-              onChange={handleFiltroChange}
-              className="input-field"
-            >
-              <option value="">Todos los tipos</option>
-              {tiposProyectoOptions.map((tipo) => (
-                <option key={tipo} value={tipo}>{tipo}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Etapa
-            </label>
-            <select
-              name="etapa"
-              value={filtros.etapa}
-              onChange={handleFiltroChange}
-              className="input-field"
-            >
-              <option value="">Todas las etapas</option>
-              {etapasOptions.map((etapa) => (
-                <option key={etapa} value={etapa}>{etapa}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Ámbito
-            </label>
-            <select
-              name="ambito"
-              value={filtros.ambito}
-              onChange={handleFiltroChange}
-              className="input-field"
-            >
-              <option value="">Todos los ámbitos</option>
-              {ambitosOptions.map((ambito) => (
-                <option key={ambito} value={ambito}>{ambito}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm text-gray-600 mr-2">Etapas:</span>
-            {etapasOptions.map((etapa) => (
-              <span
-                key={etapa}
-                className={`px-2 py-1 text-xs font-semibold rounded-full ${getEtapaBadgeClass(etapa)}`}
-              >
-                {etapa}
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className="w-full flex items-center justify-between text-left hover:bg-gray-50 -m-4 p-4 rounded-lg transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <Filter size={18} className="text-gray-500" />
+            <span className="font-medium text-gray-700">Filtros</span>
+            {(filtros.codigo || filtros.nombre || filtros.etapa || filtros.tipoProyecto || filtros.ambito) && (
+              <span className="ml-2 px-2 py-0.5 text-xs bg-primary-100 text-primary-700 rounded-full font-medium">
+                Activos
               </span>
-            ))}
+            )}
           </div>
-          <button
-            onClick={limpiarFiltros}
-            className="btn-secondary flex items-center gap-2 px-4 py-2"
-            title="Limpiar filtros"
-          >
-            <FilterX size={20} />
-            Limpiar Filtros
-          </button>
-        </div>
+          {showFilters ? <ChevronUp size={20} className="text-gray-400" /> : <ChevronDown size={20} className="text-gray-400" />}
+        </button>
+
+        {showFilters && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Código
+                </label>
+                <input
+                  type="text"
+                  name="codigo"
+                  value={filtros.codigo}
+                  onChange={handleFiltroChange}
+                  placeholder="Buscar código..."
+                  className="input-field"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  name="nombre"
+                  value={filtros.nombre}
+                  onChange={handleFiltroChange}
+                  placeholder="Buscar nombre..."
+                  className="input-field"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tipo Proyecto
+                </label>
+                <select
+                  name="tipoProyecto"
+                  value={filtros.tipoProyecto}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                >
+                  <option value="">Todos los tipos</option>
+                  {tiposProyectoOptions.map((tipo) => (
+                    <option key={tipo} value={tipo}>{tipo}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Etapa
+                </label>
+                <select
+                  name="etapa"
+                  value={filtros.etapa}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                >
+                  <option value="">Todas las etapas</option>
+                  {etapasOptions.map((etapa) => (
+                    <option key={etapa} value={etapa}>{etapa}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Ámbito
+                </label>
+                <select
+                  name="ambito"
+                  value={filtros.ambito}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                >
+                  <option value="">Todos los ámbitos</option>
+                  {ambitosOptions.map((ambito) => (
+                    <option key={ambito} value={ambito}>{ambito}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm text-gray-600 mr-2">Etapas:</span>
+                {etapasOptions.map((etapa) => (
+                  <span
+                    key={etapa}
+                    className={`px-2 py-1 text-xs font-semibold rounded-full ${getEtapaBadgeClass(etapa)}`}
+                  >
+                    {etapa}
+                  </span>
+                ))}
+              </div>
+              <button
+                onClick={limpiarFiltros}
+                className="btn-secondary flex items-center gap-2 px-4 py-2"
+                title="Limpiar filtros"
+              >
+                <FilterX size={20} />
+                Limpiar Filtros
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Panel de Lista - Portafolio de Proyectos */}
@@ -445,7 +483,7 @@ const SeguimientoPGDPP = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {proyectosFiltrados.map((proyecto) => (
+              {proyectosPaginados.map((proyecto) => (
                 <tr 
                   key={proyecto.id} 
                   className="hover:bg-gray-50 cursor-pointer group"
@@ -521,6 +559,35 @@ const SeguimientoPGDPP = () => {
             </div>
           )}
         </div>
+
+        {/* Paginación */}
+        {totalPaginas > 1 && (
+          <div className="flex items-center justify-between p-4 border-t bg-gray-50">
+            <div className="text-sm text-gray-600">
+              Mostrando {((paginaActual - 1) * itemsPorPagina) + 1} - {Math.min(paginaActual * itemsPorPagina, proyectosFiltrados.length)} de {proyectosFiltrados.length} registros
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => cambiarPagina(paginaActual - 1)}
+                disabled={paginaActual <= 1}
+                className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+              >
+                Anterior
+              </button>
+              <span className="px-3 py-1 bg-primary-600 text-white rounded-lg">
+                {paginaActual}
+              </span>
+              <span className="text-gray-500">de {totalPaginas}</span>
+              <button
+                onClick={() => cambiarPagina(paginaActual + 1)}
+                disabled={paginaActual >= totalPaginas}
+                className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+              >
+                Siguiente
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Modal Editar Proyecto */}

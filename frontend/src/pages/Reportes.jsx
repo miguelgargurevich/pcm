@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Building2,
   ChevronDown,
+  ChevronUp,
   ChevronRight,
   Calendar,
   Clock,
@@ -68,6 +69,7 @@ const TIPOS_REPORTE = [
 const Reportes = () => {
   const [tipoReporteActivo, setTipoReporteActivo] = useState('avance-global');
   const [loading, setLoading] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   
   // Filtros globales
   const [filtros, setFiltros] = useState({
@@ -344,71 +346,87 @@ const Reportes = () => {
       {/* Filtros (excepto para portafolio) */}
       {tipoReporteActivo !== 'portafolio' && (
         <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Filter size={18} className="text-gray-500" />
-            <span className="font-medium text-gray-700">Filtros</span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sector</label>
-              <select
-                name="sectorId"
-                value={filtros.sectorId}
-                onChange={handleFiltroChange}
-                className="input-field"
-              >
-                <option value="">Todos los sectores</option>
-                {sectores.map((sector) => (
-                  <option key={sector.sectorId} value={sector.sectorId}>
-                    {sector.nombre}
-                  </option>
-                ))}
-              </select>
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="w-full flex items-center justify-between text-left hover:bg-gray-50 -m-4 p-4 rounded-lg transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <Filter size={18} className="text-gray-500" />
+              <span className="font-medium text-gray-700">Filtros</span>
+              {(filtros.sectorId || filtros.clasificacionId || filtros.entidadId) && (
+                <span className="ml-2 px-2 py-0.5 text-xs bg-primary-100 text-primary-700 rounded-full font-medium">
+                  Activos
+                </span>
+              )}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Clasificación</label>
-              <select
-                name="clasificacionId"
-                value={filtros.clasificacionId}
-                onChange={handleFiltroChange}
-                className="input-field"
-              >
-                <option value="">Todas las clasificaciones</option>
-                {clasificaciones.map((clas) => (
-                  <option key={clas.clasificacionId} value={clas.clasificacionId}>
-                    {clas.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {tipoReporteActivo === 'cumplimiento-entidad' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Entidad</label>
-                <select
-                  name="entidadId"
-                  value={filtros.entidadId}
-                  onChange={handleFiltroChange}
-                  className="input-field"
-                >
-                  <option value="">Todas las entidades</option>
-                  {entidades.map((ent) => (
-                    <option key={ent.entidadId} value={ent.entidadId}>
-                      {ent.nombre}
-                    </option>
-                  ))}
-                </select>
+            {showFilters ? <ChevronUp size={20} className="text-gray-400" /> : <ChevronDown size={20} className="text-gray-400" />}
+          </button>
+
+          {showFilters && (
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Sector</label>
+                  <select
+                    name="sectorId"
+                    value={filtros.sectorId}
+                    onChange={handleFiltroChange}
+                    className="input-field"
+                  >
+                    <option value="">Todos los sectores</option>
+                    {sectores.map((sector) => (
+                      <option key={sector.sectorId} value={sector.sectorId}>
+                        {sector.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Clasificación</label>
+                  <select
+                    name="clasificacionId"
+                    value={filtros.clasificacionId}
+                    onChange={handleFiltroChange}
+                    className="input-field"
+                  >
+                    <option value="">Todas las clasificaciones</option>
+                    {clasificaciones.map((clas) => (
+                      <option key={clas.clasificacionId} value={clas.clasificacionId}>
+                        {clas.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {tipoReporteActivo === 'cumplimiento-entidad' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Entidad</label>
+                    <select
+                      name="entidadId"
+                      value={filtros.entidadId}
+                      onChange={handleFiltroChange}
+                      className="input-field"
+                    >
+                      <option value="">Todas las entidades</option>
+                      {entidades.map((ent) => (
+                        <option key={ent.entidadId} value={ent.entidadId}>
+                          {ent.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                <div className="flex items-end">
+                  <button
+                    onClick={limpiarFiltros}
+                    className="btn-secondary flex items-center gap-2 px-4 py-2"
+                  >
+                    <FilterX size={18} />
+                    Limpiar
+                  </button>
+                </div>
               </div>
-            )}
-            <div className="flex items-end">
-              <button
-                onClick={limpiarFiltros}
-                className="btn-secondary flex items-center gap-2 px-4 py-2"
-              >
-                <FilterX size={18} />
-                Limpiar
-              </button>
             </div>
-          </div>
+          )}
         </div>
       )}
 

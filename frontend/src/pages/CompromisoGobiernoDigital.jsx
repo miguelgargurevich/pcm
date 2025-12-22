@@ -3,7 +3,7 @@ import { compromisosService } from '../services/compromisosService';
 import { marcoNormativoService } from '../services/marcoNormativoService';
 import { catalogosService } from '../services/catalogosService';
 import { showConfirmToast, showSuccessToast, showErrorToast } from '../utils/toast.jsx';
-import { Plus, Edit2, Trash2, X, Save, FilterX, Search, FileCheck, Calendar } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, Filter, FilterX, Search, FileCheck, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 
 const CompromisoGobiernoDigital = () => {
   const [compromisos, setCompromisos] = useState([]);
@@ -12,6 +12,7 @@ const CompromisoGobiernoDigital = () => {
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingCompromiso, setEditingCompromiso] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
   const [showBuscarNormaModal, setShowBuscarNormaModal] = useState(false);
   const [normasDisponibles, setNormasDisponibles] = useState([]);
   const [normaSearchTerm, setNormaSearchTerm] = useState('');
@@ -450,69 +451,103 @@ const CompromisoGobiernoDigital = () => {
       </div>
 
       {/* Filtros */}
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nombre del Compromiso
-            </label>
-            <input
-              type="text"
-              name="nombre"
-              value={filtros.nombre}
-              onChange={handleFiltroChange}
-              placeholder="Buscar por nombre..."
-              className="input-field"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Alcance
-            </label>
-            <select
-              name="alcance"
-              value={filtros.alcance}
-              onChange={handleFiltroChange}
-              className="input-field"
+      <div className="bg-white rounded-lg shadow-sm mb-6">
+        {/* Header del panel de filtros */}
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 text-gray-700 hover:text-gray-900 font-medium"
+              >
+                <Filter size={20} />
+                Filtros
+              </button>
+              
+              {/* Badge de filtros activos */}
+              {(filtros.nombre || filtros.alcance || filtros.estado) && (
+                <span className="px-2 py-1 bg-primary-100 text-primary-700 text-xs font-medium rounded-full">
+                  Activos
+                </span>
+              )}
+            </div>
+            
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="text-gray-400 hover:text-gray-600"
             >
-              <option value="">Todos</option>
-              {alcances.map((alcance) => (
-                <option key={alcance.clasificacionId} value={alcance.clasificacionId}>{alcance.nombre}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Estado
-            </label>
-            <select
-              name="estado"
-              value={filtros.estado}
-              onChange={handleFiltroChange}
-              className="input-field"
-            >
-              <option value="">Todos</option>
-              <option value="activo">Activo</option>
-              <option value="inactivo">Inactivo</option>
-            </select>
+              {showFilters ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            </button>
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
-          <div className="text-sm text-gray-600">
-            Mostrando {currentItems.length} de {compromisosFiltrados.length} compromisos
+        {/* Contenido de filtros colapsable */}
+        {showFilters && (
+          <div className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nombre del Compromiso
+                </label>
+                <input
+                  type="text"
+                  name="nombre"
+                  value={filtros.nombre}
+                  onChange={handleFiltroChange}
+                  placeholder="Buscar por nombre..."
+                  className="input-field"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Alcance
+                </label>
+                <select
+                  name="alcance"
+                  value={filtros.alcance}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                >
+                  <option value="">Todos</option>
+                  {alcances.map((alcance) => (
+                    <option key={alcance.clasificacionId} value={alcance.clasificacionId}>{alcance.nombre}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Estado
+                </label>
+                <select
+                  name="estado"
+                  value={filtros.estado}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                >
+                  <option value="">Todos</option>
+                  <option value="activo">Activo</option>
+                  <option value="inactivo">Inactivo</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                Mostrando {currentItems.length} de {compromisosFiltrados.length} compromisos
+              </div>
+              <button
+                onClick={limpiarFiltros}
+                className="btn-secondary flex items-center gap-2 px-4 py-2"
+                title="Limpiar filtros"
+              >
+                <FilterX size={20} />
+                Limpiar filtros
+              </button>
+            </div>
           </div>
-          <button
-            onClick={limpiarFiltros}
-            className="btn-secondary flex items-center gap-2 px-4 py-2"
-            title="Limpiar filtros"
-          >
-            <FilterX size={20} />
-            Limpiar filtros
-          </button>
-        </div>
+        )}
       </div>
 
       {error && (
@@ -616,46 +651,29 @@ const CompromisoGobiernoDigital = () => {
 
         {/* Paginación */}
         {totalPages > 1 && (
-          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-            <div className="flex-1 flex justify-between sm:hidden">
+          <div className="flex items-center justify-between p-4 border-t bg-gray-50">
+            <div className="text-sm text-gray-600">
+              Mostrando {((paginaActual - 1) * itemsPorPagina) + 1} - {Math.min(paginaActual * itemsPorPagina, compromisosFiltrados.length)} de {compromisosFiltrados.length} registros
+            </div>
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => setPaginaActual(prev => Math.max(prev - 1, 1))}
-                disabled={paginaActual === 1}
-                className="btn-secondary"
+                disabled={paginaActual <= 1}
+                className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
               >
                 Anterior
               </button>
+              <span className="px-3 py-1 bg-primary-600 text-white rounded-lg">
+                {paginaActual}
+              </span>
+              <span className="text-gray-500">de {totalPages}</span>
               <button
                 onClick={() => setPaginaActual(prev => Math.min(prev + 1, totalPages))}
-                disabled={paginaActual === totalPages}
-                className="btn-secondary"
+                disabled={paginaActual >= totalPages}
+                className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
               >
                 Siguiente
               </button>
-            </div>
-            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-gray-700">
-                  Mostrando <span className="font-medium">{indexOfFirstItem + 1}</span> a{' '}
-                  <span className="font-medium">{Math.min(indexOfLastItem, compromisosFiltrados.length)}</span> de{' '}
-                  <span className="font-medium">{compromisosFiltrados.length}</span> resultados
-                </p>
-              </div>
-              <div className="flex gap-2">
-                {[...Array(totalPages)].map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setPaginaActual(index + 1)}
-                    className={`px-3 py-1 rounded ${
-                      paginaActual === index + 1
-                        ? 'bg-primary text-white'
-                        : 'bg-white text-gray-700 hover:bg-gray-50 border'
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
         )}

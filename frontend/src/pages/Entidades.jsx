@@ -3,7 +3,7 @@ import { entidadesService } from '../services/entidadesService';
 import { catalogosService } from '../services/catalogosService';
 import { ubigeoService } from '../services/ubigeoService';
 import { showConfirmToast, showSuccessToast, showErrorToast, showInfoToast } from '../utils/toast.jsx';
-import { Plus, Edit2, Trash2, X, Save, Filter, FilterX, Search, Building2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, Filter, FilterX, Search, Building2, ChevronDown, ChevronUp } from 'lucide-react';
 
 const Entidades = () => {
   const [entidades, setEntidades] = useState([]);
@@ -12,6 +12,7 @@ const Entidades = () => {
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingEntidad, setEditingEntidad] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Filtros
   const [filtros, setFiltros] = useState({
@@ -667,149 +668,184 @@ const Entidades = () => {
       )}
 
       {/* Filtros */}
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Buscar por Nombre o RUC
-            </label>
-            <input
-              type="text"
-              name="nombre"
-              value={filtros.nombre}
-              onChange={handleFiltroChange}
-              className="input-field"
-              placeholder="Ingrese nombre o RUC..."
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Departamento
-            </label>
-            <select
-              name="departamento"
-              value={filtros.departamento}
-              onChange={handleFiltroChange}
-              className="input-field"
+      <div className="bg-white rounded-lg shadow-sm mb-6">
+        {/* Header del panel de filtros */}
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 text-gray-700 hover:text-gray-900 font-medium"
+              >
+                <Filter size={20} />
+                Filtros
+              </button>
+              
+              {/* Badge de filtros activos */}
+              {(filtros.nombre || filtros.departamento || filtros.provincia || filtros.distrito || 
+                filtros.sectorId || filtros.clasificacionId || filtros.estado) && (
+                <span className="px-2 py-1 bg-primary-100 text-primary-700 text-xs font-medium rounded-full">
+                  Activos
+                </span>
+              )}
+            </div>
+            
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="text-gray-400 hover:text-gray-600"
             >
-              <option value="">Todos los departamentos</option>
-              {departamentos.map((dept, idx) => (
-                <option key={idx} value={dept}>
-                  {dept}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Provincia
-            </label>
-            <select
-              name="provincia"
-              value={filtros.provincia}
-              onChange={handleFiltroChange}
-              className="input-field"
-              disabled={!filtros.departamento}
-            >
-              <option value="">Todas las provincias</option>
-              {provincias.map((prov, idx) => (
-                <option key={idx} value={prov}>
-                  {prov}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Distrito
-            </label>
-            <select
-              name="distrito"
-              value={filtros.distrito}
-              onChange={handleFiltroChange}
-              className="input-field"
-              disabled={!filtros.provincia}
-            >
-              <option value="">Todos los distritos</option>
-              {distritos.map((dist, idx) => (
-                <option key={idx} value={dist}>
-                  {dist}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Sector
-            </label>
-            <select
-              name="sectorId"
-              value={filtros.sectorId}
-              onChange={handleFiltroChange}
-              className="input-field"
-            >
-              <option value="">Todos los sectores</option>
-              {sectores.map((sector) => (
-                <option key={sector.sectorId} value={sector.sectorId}>
-                  {sector.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Clasificación
-            </label>
-            <select
-              name="clasificacionId"
-              value={filtros.clasificacionId}
-              onChange={handleFiltroChange}
-              className="input-field"
-            >
-              <option value="">Todas las clasificaciones</option>
-              {clasificaciones.map((clasificacion) => (
-                <option key={clasificacion.clasificacionId} value={clasificacion.clasificacionId}>
-                  {clasificacion.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Estado
-            </label>
-            <select
-              name="estado"
-              value={filtros.estado}
-              onChange={handleFiltroChange}
-              className="input-field"
-            >
-              <option value="">Todos los estados</option>
-              <option value="true">Activo</option>
-              <option value="false">Inactivo</option>
-            </select>
+              {showFilters ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            </button>
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
-          <div className="text-sm text-gray-600">
-            Mostrando {entidadesPaginadas.length} de {entidadesFiltradas.length} entidades
+        {/* Contenido de filtros colapsable */}
+        {showFilters && (
+          <div className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Buscar por Nombre o RUC
+                </label>
+                <input
+                  type="text"
+                  name="nombre"
+                  value={filtros.nombre}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                  placeholder="Ingrese nombre o RUC..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Departamento
+                </label>
+                <select
+                  name="departamento"
+                  value={filtros.departamento}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                >
+                  <option value="">Todos los departamentos</option>
+                  {departamentos.map((dept, idx) => (
+                    <option key={idx} value={dept}>
+                      {dept}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Provincia
+                </label>
+                <select
+                  name="provincia"
+                  value={filtros.provincia}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                  disabled={!filtros.departamento}
+                >
+                  <option value="">Todas las provincias</option>
+                  {provincias.map((prov, idx) => (
+                    <option key={idx} value={prov}>
+                      {prov}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Distrito
+                </label>
+                <select
+                  name="distrito"
+                  value={filtros.distrito}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                  disabled={!filtros.provincia}
+                >
+                  <option value="">Todos los distritos</option>
+                  {distritos.map((dist, idx) => (
+                    <option key={idx} value={dist}>
+                      {dist}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sector
+                </label>
+                <select
+                  name="sectorId"
+                  value={filtros.sectorId}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                >
+                  <option value="">Todos los sectores</option>
+                  {sectores.map((sector) => (
+                    <option key={sector.sectorId} value={sector.sectorId}>
+                      {sector.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Clasificación
+                </label>
+                <select
+                  name="clasificacionId"
+                  value={filtros.clasificacionId}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                >
+                  <option value="">Todas las clasificaciones</option>
+                  {clasificaciones.map((clasificacion) => (
+                    <option key={clasificacion.clasificacionId} value={clasificacion.clasificacionId}>
+                      {clasificacion.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Estado
+                </label>
+                <select
+                  name="estado"
+                  value={filtros.estado}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                >
+                  <option value="">Todos los estados</option>
+                  <option value="true">Activo</option>
+                  <option value="false">Inactivo</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                Mostrando {entidadesPaginadas.length} de {entidadesFiltradas.length} entidades
+              </div>
+              <button
+                onClick={limpiarFiltros}
+                className="btn-secondary flex items-center gap-2"
+                title="Limpiar filtros"
+              >
+                <FilterX size={20} />
+                Limpiar filtros
+              </button>
+            </div>
           </div>
-          <button
-            onClick={limpiarFiltros}
-            className="btn-secondary flex items-center gap-2 px-4 py-2"
-            title="Limpiar filtros"
-          >
-            <FilterX size={20} />
-            Limpiar Filtros
-          </button>
-        </div>
+        )}
       </div>
 
       {/* Tabla */}
@@ -925,56 +961,32 @@ const Entidades = () => {
 
       {/* Paginación */}
       {totalPaginas > 1 && (
-        <div className="flex justify-center items-center space-x-2 mt-6">
-          <button
-            onClick={() => cambiarPagina(paginaActual - 1)}
-            disabled={paginaActual === 1}
-            className="px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Anterior
-          </button>
-
-          {[...Array(totalPaginas)].map((_, index) => {
-            const numeroPagina = index + 1;
-            // Mostrar solo páginas cercanas a la actual
-            if (
-              numeroPagina === 1 ||
-              numeroPagina === totalPaginas ||
-              (numeroPagina >= paginaActual - 1 && numeroPagina <= paginaActual + 1)
-            ) {
-              return (
-                <button
-                  key={numeroPagina}
-                  onClick={() => cambiarPagina(numeroPagina)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium ${
-                    paginaActual === numeroPagina
-                      ? 'bg-primary-500 text-white'
-                      : 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-50'
-                  }`}
-                >
-                  {numeroPagina}
-                </button>
-              );
-            } else if (
-              numeroPagina === paginaActual - 2 ||
-              numeroPagina === paginaActual + 2
-            ) {
-              return (
-                <span key={numeroPagina} className="px-2 text-gray-500">
-                  ...
-                </span>
-              );
-            }
-            return null;
-          })}
-
-          <button
-            onClick={() => cambiarPagina(paginaActual + 1)}
-            disabled={paginaActual === totalPaginas}
-            className="px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Siguiente
-          </button>
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden mt-6">
+          <div className="flex items-center justify-between p-4 border-t bg-gray-50">
+            <div className="text-sm text-gray-600">
+              Mostrando {((paginaActual - 1) * itemsPorPagina) + 1} - {Math.min(paginaActual * itemsPorPagina, entidadesFiltradas.length)} de {entidadesFiltradas.length} registros
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => cambiarPagina(paginaActual - 1)}
+                disabled={paginaActual <= 1}
+                className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+              >
+                Anterior
+              </button>
+              <span className="px-3 py-1 bg-primary-600 text-white rounded-lg">
+                {paginaActual}
+              </span>
+              <span className="text-gray-500">de {totalPaginas}</span>
+              <button
+                onClick={() => cambiarPagina(paginaActual + 1)}
+                disabled={paginaActual >= totalPaginas}
+                className="px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+              >
+                Siguiente
+              </button>
+            </div>
+          </div>
         </div>
       )}
       </div>

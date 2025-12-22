@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { BarChart3, Search, FilterX, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { BarChart3, Search, FilterX, ChevronLeft, ChevronRight, Loader2, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast.jsx';
 import EvaluacionDetallePanel from '../components/Evaluacion/EvaluacionDetallePanel';
 import evaluacionService from '../services/evaluacionService';
@@ -59,6 +59,7 @@ const EvaluacionCumplimiento = () => {
     estado: ''
   });
   const [currentPage, setCurrentPage] = useState(1);
+  const [showFilters, setShowFilters] = useState(false);
   
   // Estado para vista de detalle
   const [vistaDetalle, setVistaDetalle] = useState(false);
@@ -290,131 +291,161 @@ const EvaluacionCumplimiento = () => {
       </div>
 
       {/* Panel de Búsqueda Avanzada */}
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-        {/* <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <Search size={20} />
-          Búsqueda Avanzada
-        </h2> */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Entidad
-            </label>
-            <input
-              type="text"
-              name="entidad"
-              value={filtros.entidad}
-              onChange={handleFiltroChange}
-              placeholder="Buscar entidad..."
-              className="input-field"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Sector
-            </label>
-            <select
-              name="sectorId"
-              value={filtros.sectorId}
-              onChange={handleFiltroChange}
-              className="input-field"
-            >
-              <option value="">Todos los sectores</option>
-              {sectores.map((sector) => (
-                <option key={sector.sectorId} value={sector.sectorId}>
-                  {sector.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Clasificación
-            </label>
-            <select
-              name="clasificacionId"
-              value={filtros.clasificacionId}
-              onChange={handleFiltroChange}
-              className="input-field"
-            >
-              <option value="">Todas las clasificaciones</option>
-              {clasificaciones.map((clasificacion) => (
-                <option key={clasificacion.clasificacionId} value={clasificacion.clasificacionId}>
-                  {clasificacion.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Compromiso
-            </label>
-            <select
-              name="compromisoId"
-              value={filtros.compromisoId}
-              onChange={handleFiltroChange}
-              className="input-field"
-            >
-              <option value="">Todos los compromisos</option>
-              {compromisosOptions.map((num) => (
-                <option key={num} value={num}>Compromiso {num}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Estado
-            </label>
-            <select
-              name="estado"
-              value={filtros.estado}
-              onChange={handleFiltroChange}
-              className="input-field"
-            >
-              <option value="">Todos los estados</option>
-              {estadosOptions.map((estado) => (
-                <option key={estado} value={estado}>{estado}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex items-end gap-2">
-            <button
-              onClick={handleBuscar}
-              className="btn-primary flex items-center gap-2 px-4 py-2"
-              disabled={loading}
-            >
-              {loading ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
-              Buscar
-            </button>
-            <button
-              onClick={limpiarFiltros}
-              className="btn-secondary flex items-center gap-2 px-4 py-2"
-              title="Limpiar filtros"
-            >
-              <FilterX size={18} />
-            </button>
-          </div>
-        </div>
-
-        {/* Leyenda de estados */}
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <p className="text-sm font-medium text-gray-600 mb-2">Leyenda de estados:</p>
-          <div className="flex flex-wrap gap-2">
-            {estadosOptions.map((estado) => (
-              <span
-                key={estado}
-                className={`px-2 py-1 text-xs font-semibold rounded-full ${getEstadoStyles(estado)}`}
+      <div className="bg-white rounded-lg shadow-sm mb-6">
+        {/* Header del panel */}
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 text-gray-700 hover:text-gray-900 font-medium"
               >
-                {getEstadoAbreviado(estado)} - {estado}
-              </span>
-            ))}
+                <Filter size={20} />
+                Filtros
+              </button>
+              
+              {/* Badge de filtros activos */}
+              {(filtros.entidad || filtros.sectorId || filtros.clasificacionId || 
+                filtros.compromisoId || filtros.estado) && (
+                <span className="px-2 py-1 bg-primary-100 text-primary-700 text-xs font-medium rounded-full">
+                  Activos
+                </span>
+              )}
+            </div>
+            
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              {showFilters ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            </button>
           </div>
         </div>
+
+        {showFilters && (
+          <div className="p-4 bg-gray-50">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Entidad
+                </label>
+                <input
+                  type="text"
+                  name="entidad"
+                  value={filtros.entidad}
+                  onChange={handleFiltroChange}
+                  placeholder="Buscar entidad..."
+                  className="input-field"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Sector
+                </label>
+                <select
+                  name="sectorId"
+                  value={filtros.sectorId}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                >
+                  <option value="">Todos los sectores</option>
+                  {sectores.map((sector) => (
+                    <option key={sector.sectorId} value={sector.sectorId}>
+                      {sector.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Clasificación
+                </label>
+                <select
+                  name="clasificacionId"
+                  value={filtros.clasificacionId}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                >
+                  <option value="">Todas las clasificaciones</option>
+                  {clasificaciones.map((clasificacion) => (
+                    <option key={clasificacion.clasificacionId} value={clasificacion.clasificacionId}>
+                      {clasificacion.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Compromiso
+                </label>
+                <select
+                  name="compromisoId"
+                  value={filtros.compromisoId}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                >
+                  <option value="">Todos los compromisos</option>
+                  {compromisosOptions.map((num) => (
+                    <option key={num} value={num}>Compromiso {num}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Estado
+                </label>
+                <select
+                  name="estado"
+                  value={filtros.estado}
+                  onChange={handleFiltroChange}
+                  className="input-field"
+                >
+                  <option value="">Todos los estados</option>
+                  {estadosOptions.map((estado) => (
+                    <option key={estado} value={estado}>{estado}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex items-end gap-2">
+                <button
+                  onClick={handleBuscar}
+                  className="btn-primary flex items-center gap-2 px-4 py-2"
+                  disabled={loading}
+                >
+                  {loading ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
+                  Buscar
+                </button>
+                <button
+                  onClick={limpiarFiltros}
+                  className="btn-secondary flex items-center gap-2 px-4 py-2"
+                  title="Limpiar filtros"
+                >
+                  <FilterX size={18} />
+                </button>
+              </div>
+            </div>
+
+            {/* Leyenda de estados */}
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <p className="text-sm font-medium text-gray-600 mb-2">Leyenda de estados:</p>
+              <div className="flex flex-wrap gap-2">
+                {estadosOptions.map((estado) => (
+                  <span
+                    key={estado}
+                    className={`px-2 py-1 text-xs font-semibold rounded-full ${getEstadoStyles(estado)}`}
+                  >
+                    {getEstadoAbreviado(estado)} - {estado}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Matriz de Evaluación */}

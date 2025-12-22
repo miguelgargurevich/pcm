@@ -2278,77 +2278,147 @@ const CumplimientoNormativoDetalle = () => {
           nuevosErrores.numeroConvenioPide = 'Ingrese el número de convenio / resolución de acceso';
         }
       }
-      // Validación específica para Compromiso 14 (OficialSeguridadDigital)
+      // Validación específica para Compromiso 14 (OficialSeguridadDigital - OSCD)
       else if (parseInt(formData.compromisoId) === 14) {
-        if (!formData.fechaElaboracion) {
-          nuevosErrores.fechaElaboracion = 'Seleccione la fecha de elaboración';
+        if (!formData.dniOscd || formData.dniOscd.trim() === '') {
+          nuevosErrores.dniOscd = 'Ingrese el DNI del OSCD';
+        } else if (formData.dniOscd.length !== 8) {
+          nuevosErrores.dniOscd = 'El DNI debe tener 8 dígitos';
         }
-        if (!formData.numeroDocumento || formData.numeroDocumento.trim() === '') {
-          nuevosErrores.numeroDocumento = 'Ingrese el número de documento';
+        if (!formData.nombreOscd || formData.nombreOscd.trim() === '') {
+          nuevosErrores.nombreOscd = 'Ingrese el nombre del OSCD';
         }
-        if (!formData.descripcion || formData.descripcion.trim() === '') {
-          nuevosErrores.descripcion = 'Ingrese una descripción';
+        if (!formData.apePatOscd || formData.apePatOscd.trim() === '') {
+          nuevosErrores.apePatOscd = 'Ingrese el apellido paterno del OSCD';
+        }
+        if (!formData.apeMatOscd || formData.apeMatOscd.trim() === '') {
+          nuevosErrores.apeMatOscd = 'Ingrese el apellido materno del OSCD';
+        }
+        if (!formData.cargoOscd || formData.cargoOscd.trim() === '') {
+          nuevosErrores.cargoOscd = 'Ingrese el cargo del OSCD';
+        }
+        if (!formData.correoOscd || formData.correoOscd.trim() === '') {
+          nuevosErrores.correoOscd = 'Ingrese el correo del OSCD';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoOscd)) {
+          nuevosErrores.correoOscd = 'Ingrese un correo válido';
+        }
+        if (!formData.fechaDesignacionOscd) {
+          nuevosErrores.fechaDesignacionOscd = 'Seleccione la fecha de designación';
+        }
+        if (!formData.numeroResolucionOscd || formData.numeroResolucionOscd.trim() === '') {
+          nuevosErrores.numeroResolucionOscd = 'Ingrese el número de resolución';
         }
       }
       // Validación específica para Compromiso 15 (CSIRTInstitucional)
       else if (parseInt(formData.compromisoId) === 15) {
-        if (!formData.fechaConformacion) {
-          nuevosErrores.fechaConformacion = 'Seleccione la fecha de conformación';
+        if (!formData.nombreCsirt || formData.nombreCsirt.trim() === '') {
+          nuevosErrores.nombreCsirt = 'Ingrese el nombre del CSIRT';
         }
-        if (!formData.numeroResolucion || formData.numeroResolucion.trim() === '') {
-          nuevosErrores.numeroResolucion = 'Ingrese el número de resolución';
+        if (!formData.fechaConformacionCsirt) {
+          nuevosErrores.fechaConformacionCsirt = 'Seleccione la fecha de conformación';
         }
-        if (!formData.responsable || formData.responsable.trim() === '') {
-          nuevosErrores.responsable = 'Ingrese el nombre del responsable';
+        if (!formData.numeroResolucionCsirt || formData.numeroResolucionCsirt.trim() === '') {
+          nuevosErrores.numeroResolucionCsirt = 'Ingrese el número de resolución';
         }
-        if (!formData.emailContacto || formData.emailContacto.trim() === '') {
-          nuevosErrores.emailContacto = 'Ingrese el correo del responsable';
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.emailContacto)) {
-          nuevosErrores.emailContacto = 'Ingrese un correo válido';
+        if (!formData.responsableCsirt || formData.responsableCsirt.trim() === '') {
+          nuevosErrores.responsableCsirt = 'Ingrese el nombre del responsable';
+        }
+        if (!formData.cargoResponsableCsirt || formData.cargoResponsableCsirt.trim() === '') {
+          nuevosErrores.cargoResponsableCsirt = 'Ingrese el cargo del responsable';
+        }
+        if (!formData.correoCsirt || formData.correoCsirt.trim() === '') {
+          nuevosErrores.correoCsirt = 'Ingrese el correo del CSIRT';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoCsirt)) {
+          nuevosErrores.correoCsirt = 'Ingrese un correo válido';
         }
       }
-      // Validación específica para Compromiso 16 (SistemaGestionSeguridad)
+      // Validación específica para Compromiso 16 (SistemaGestionSeguridad - SGSI)
       else if (parseInt(formData.compromisoId) === 16) {
-        if (!formData.fechaImplementacion) {
-          nuevosErrores.fechaImplementacion = 'Seleccione la fecha de implementación';
+        if (!formData.responsableSgsi || formData.responsableSgsi.trim() === '') {
+          nuevosErrores.responsableSgsi = 'Ingrese el nombre del responsable del SGSI';
         }
-        if (!formData.normaAplicable || formData.normaAplicable.trim() === '') {
-          nuevosErrores.normaAplicable = 'Ingrese la norma aplicable';
+        if (!formData.cargoResponsableSgsi || formData.cargoResponsableSgsi.trim() === '') {
+          nuevosErrores.cargoResponsableSgsi = 'Ingrese el cargo del responsable';
+        }
+        if (!formData.correoSgsi || formData.correoSgsi.trim() === '') {
+          nuevosErrores.correoSgsi = 'Ingrese el correo institucional';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoSgsi)) {
+          nuevosErrores.correoSgsi = 'Ingrese un correo válido';
+        }
+        if (!formData.estadoImplementacionSgsi || formData.estadoImplementacionSgsi.trim() === '') {
+          nuevosErrores.estadoImplementacionSgsi = 'Seleccione el estado de implementación';
+        }
+        if (!formData.versionNormaSgsi || formData.versionNormaSgsi.trim() === '') {
+          nuevosErrores.versionNormaSgsi = 'Seleccione la versión de la norma';
+        }
+        if (!formData.fechaInicioSgsi) {
+          nuevosErrores.fechaInicioSgsi = 'Seleccione la fecha de inicio de implementación';
         }
       }
       // Validación específica para Compromiso 17 (PlanTransicionIPv6)
       else if (parseInt(formData.compromisoId) === 17) {
-        if (!formData.fechaInicioTransicion) {
-          nuevosErrores.fechaInicioTransicion = 'Seleccione la fecha de inicio';
+        if (!formData.responsableIpv6 || formData.responsableIpv6.trim() === '') {
+          nuevosErrores.responsableIpv6 = 'Ingrese el nombre del responsable del plan';
         }
-        if (!formData.fechaFinTransicion) {
-          nuevosErrores.fechaFinTransicion = 'Seleccione la fecha de fin';
+        if (!formData.cargoResponsableIpv6 || formData.cargoResponsableIpv6.trim() === '') {
+          nuevosErrores.cargoResponsableIpv6 = 'Ingrese el cargo del responsable';
         }
-        if (formData.fechaInicioTransicion && formData.fechaFinTransicion && formData.fechaInicioTransicion > formData.fechaFinTransicion) {
-          nuevosErrores.fechaFinTransicion = 'La fecha fin debe ser posterior a la fecha inicio';
+        if (!formData.correoIpv6 || formData.correoIpv6.trim() === '') {
+          nuevosErrores.correoIpv6 = 'Ingrese el correo institucional';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoIpv6)) {
+          nuevosErrores.correoIpv6 = 'Ingrese un correo válido';
+        }
+        if (!formData.estadoPlanIpv6 || formData.estadoPlanIpv6.trim() === '') {
+          nuevosErrores.estadoPlanIpv6 = 'Seleccione el estado del plan';
+        }
+        if (!formData.fechaFormulacionIpv6) {
+          nuevosErrores.fechaFormulacionIpv6 = 'Seleccione la fecha de formulación';
         }
       }
-      // Validación específica para Compromiso 18 (AccesoPortalTransparencia)
+      // Validación específica para Compromiso 18 (AccesoPortalTransparencia - PTE)
       else if (parseInt(formData.compromisoId) === 18) {
-        if (!formData.urlPlataforma || formData.urlPlataforma.trim() === '') {
-          nuevosErrores.urlPlataforma = 'Ingrese la URL de la plataforma';
-        } else if (!/^https?:\/\/.+/.test(formData.urlPlataforma)) {
-          nuevosErrores.urlPlataforma = 'Ingrese una URL válida';
+        if (!formData.responsablePte || formData.responsablePte.trim() === '') {
+          nuevosErrores.responsablePte = 'Ingrese el nombre del responsable';
         }
-        if (!formData.fechaImplementacion) {
-          nuevosErrores.fechaImplementacion = 'Seleccione la fecha de implementación';
+        if (!formData.cargoResponsablePte || formData.cargoResponsablePte.trim() === '') {
+          nuevosErrores.cargoResponsablePte = 'Ingrese el cargo del responsable';
+        }
+        if (!formData.correoPte || formData.correoPte.trim() === '') {
+          nuevosErrores.correoPte = 'Ingrese el correo institucional';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoPte)) {
+          nuevosErrores.correoPte = 'Ingrese un correo válido';
+        }
+        if (!formData.numeroOficioPte || formData.numeroOficioPte.trim() === '') {
+          nuevosErrores.numeroOficioPte = 'Ingrese el número de oficio de solicitud';
+        }
+        if (!formData.fechaSolicitudPte) {
+          nuevosErrores.fechaSolicitudPte = 'Seleccione la fecha de solicitud';
+        }
+        if (!formData.estadoAccesoPte || formData.estadoAccesoPte.trim() === '') {
+          nuevosErrores.estadoAccesoPte = 'Seleccione el estado del acceso';
         }
       }
-      // Validación específica para Compromiso 19 (EncuestaNacionalGobDigital)
+      // Validación específica para Compromiso 19 (EncuestaNacionalGobDigital - ENAD)
       else if (parseInt(formData.compromisoId) === 19) {
-        if (!formData.fechaConexion) {
-          nuevosErrores.fechaConexion = 'Seleccione la fecha de conexión';
+        if (!formData.anioEnad) {
+          nuevosErrores.anioEnad = 'Seleccione el año de la ENAD';
         }
-        if (!formData.tipoConexion || formData.tipoConexion.trim() === '') {
-          nuevosErrores.tipoConexion = 'Ingrese el tipo de conexión';
+        if (!formData.responsableEnad || formData.responsableEnad.trim() === '') {
+          nuevosErrores.responsableEnad = 'Ingrese el nombre del responsable del llenado';
         }
-        if (!formData.proveedor || formData.proveedor.trim() === '') {
-          nuevosErrores.proveedor = 'Ingrese el proveedor';
+        if (!formData.cargoResponsableEnad || formData.cargoResponsableEnad.trim() === '') {
+          nuevosErrores.cargoResponsableEnad = 'Ingrese el cargo del responsable';
+        }
+        if (!formData.correoEnad || formData.correoEnad.trim() === '') {
+          nuevosErrores.correoEnad = 'Ingrese el correo institucional';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoEnad)) {
+          nuevosErrores.correoEnad = 'Ingrese un correo válido';
+        }
+        if (!formData.fechaEnvioEnad) {
+          nuevosErrores.fechaEnvioEnad = 'Seleccione la fecha de envío del formulario';
+        }
+        if (!formData.estadoRespuestaEnad) {
+          nuevosErrores.estadoRespuestaEnad = 'Seleccione el estado';
         }
       }
       // Validación específica para Compromiso 20 (DigitalizacionServiciosFacilita)
