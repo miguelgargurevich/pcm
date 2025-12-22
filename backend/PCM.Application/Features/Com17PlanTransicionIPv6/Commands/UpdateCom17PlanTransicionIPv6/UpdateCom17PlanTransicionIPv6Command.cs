@@ -6,6 +6,9 @@ namespace PCM.Application.Features.Com17PlanTransicionIPv6.Commands.UpdateCom17P
 
 public class UpdateCom17PlanTransicionIPv6Command : IRequest<Result<Com17PlanTransicionIPv6Response>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }  // Usuario logueado que realiza la actualización
+    
     public long Comptipv6EntId { get; set; }
     public long? CompromisoId { get; set; }
     public Guid? EntidadId { get; set; }
@@ -18,6 +21,20 @@ public class UpdateCom17PlanTransicionIPv6Command : IRequest<Result<Com17PlanTra
     public Guid? UsuarioRegistra { get; set; }
 
     // Campos específicos
+    public string? ResponsableIpv6 { get; set; }
+    public string? CargoResponsableIpv6 { get; set; }
+    public string? CorreoIpv6 { get; set; }
+    public string? TelefonoIpv6 { get; set; }
+    public string? EstadoPlanIpv6 { get; set; }
+    public DateTime? FechaFormulacionIpv6 { get; set; }
+    public DateTime? FechaAprobacionIpv6 { get; set; }
+    public DateTime? FechaInicioIpv6 { get; set; }
+    public DateTime? FechaFinIpv6 { get; set; }
+    public string? DescripcionPlanIpv6 { get; set; }
+    public string? RutaPdfPlanIpv6 { get; set; }
+    public string? ObservacionIpv6 { get; set; }
+
+    // Campos heredados de compatibilidad
     public DateTime? FechaInicioTransicion { get; set; }
     public DateTime? FechaFinTransicion { get; set; }
     public decimal? PorcentajeAvance { get; set; }

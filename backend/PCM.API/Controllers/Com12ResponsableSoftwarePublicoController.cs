@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PCM.Application.Features.Com12ResponsableSoftwarePublico.Commands.CreateCom12ResponsableSoftwarePublico;
 using PCM.Application.Features.Com12ResponsableSoftwarePublico.Commands.UpdateCom12ResponsableSoftwarePublico;
 using PCM.Application.Features.Com12ResponsableSoftwarePublico.Queries.GetCom12ResponsableSoftwarePublico;
+using System.Security.Claims;
 
 namespace PCM.API.Controllers;
 
@@ -74,7 +75,14 @@ public class Com12ResponsableSoftwarePublicoController : ControllerBase
     {
         try
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+            
             command.ComdrspEntId = id;
+            command.UserId = userId;
             var result = await _mediator.Send(command);
 
             if (result.IsSuccess)

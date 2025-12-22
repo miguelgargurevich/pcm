@@ -6,6 +6,9 @@ namespace PCM.Application.Features.Com4PEI.Commands.UpdateCom4PEI;
 
 public class UpdateCom4PEICommand : IRequest<Result<Com4PEIResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }
+    
     public long ComtdpeiEntId { get; set; }
     
     [JsonPropertyName("etapaFormulario")]

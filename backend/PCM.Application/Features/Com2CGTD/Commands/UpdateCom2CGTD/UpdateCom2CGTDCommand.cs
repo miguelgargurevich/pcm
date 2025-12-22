@@ -1,10 +1,14 @@
 using PCM.Application.Common;
 using MediatR;
+using System.Text.Json.Serialization;
 
 namespace PCM.Application.Features.Com2CGTD.Commands.UpdateCom2CGTD;
 
 public class UpdateCom2CGTDCommand : IRequest<Result<Com2CGTDResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }
+    
     public long ComcgtdEntId { get; set; }
     public string EtapaFormulario { get; set; } = string.Empty;
     public string Estado { get; set; } = string.Empty;

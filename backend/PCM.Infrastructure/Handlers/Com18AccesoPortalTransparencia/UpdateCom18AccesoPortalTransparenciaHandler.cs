@@ -47,7 +47,21 @@ public class UpdateCom18AccesoPortalTransparenciaHandler : IRequestHandler<Updat
             if (request.CheckDdjj.HasValue) entity.CheckDdjj = request.CheckDdjj.Value;
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
-            // Actualizar campos específicos
+            // Actualizar campos específicos PTE
+            if (!string.IsNullOrEmpty(request.ResponsablePte)) entity.ResponsablePte = request.ResponsablePte;
+            if (!string.IsNullOrEmpty(request.CargoResponsablePte)) entity.CargoResponsablePte = request.CargoResponsablePte;
+            if (!string.IsNullOrEmpty(request.CorreoPte)) entity.CorreoPte = request.CorreoPte;
+            if (!string.IsNullOrEmpty(request.TelefonoPte)) entity.TelefonoPte = request.TelefonoPte;
+            if (request.FechaSolicitudPte.HasValue) entity.FechaSolicitudPte = DateTime.SpecifyKind(request.FechaSolicitudPte.Value, DateTimeKind.Utc);
+            if (request.FechaAccesoPte.HasValue) entity.FechaAccesoPte = DateTime.SpecifyKind(request.FechaAccesoPte.Value, DateTimeKind.Utc);
+            if (!string.IsNullOrEmpty(request.NumeroOficioPte)) entity.NumeroOficioPte = request.NumeroOficioPte;
+            if (!string.IsNullOrEmpty(request.EstadoAccesoPte)) entity.EstadoAccesoPte = request.EstadoAccesoPte;
+            if (!string.IsNullOrEmpty(request.EnlacePortalPte)) entity.EnlacePortalPte = request.EnlacePortalPte;
+            if (!string.IsNullOrEmpty(request.DescripcionPte)) entity.DescripcionPte = request.DescripcionPte;
+            if (!string.IsNullOrEmpty(request.RutaPdfPte)) entity.RutaPdfPte = request.RutaPdfPte;
+            if (!string.IsNullOrEmpty(request.ObservacionPte)) entity.ObservacionPte = request.ObservacionPte;
+
+            // Actualizar campos heredados de compatibilidad
             if (!string.IsNullOrEmpty(request.UrlPlataforma)) entity.UrlPlataforma = request.UrlPlataforma;
             if (request.FechaImplementacion.HasValue) entity.FechaImplementacion = DateTime.SpecifyKind(request.FechaImplementacion.Value, DateTimeKind.Utc);
             if (request.TramitesDisponibles.HasValue) entity.TramitesDisponibles = request.TramitesDisponibles;
@@ -73,7 +87,7 @@ public class UpdateCom18AccesoPortalTransparenciaHandler : IRequestHandler<Updat
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: Guid.Empty,
+                    usuarioId: request.UserId,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

@@ -2223,35 +2223,59 @@ const CumplimientoNormativoDetalle = () => {
       }
       // Validación específica para Compromiso 12 (ResponsableSoftwarePublico)
       else if (parseInt(formData.compromisoId) === 12) {
-        if (!formData.fechaElaboracion) {
-          nuevosErrores.fechaElaboracion = 'Seleccione la fecha de elaboración';
+        if (!formData.dniRsp || formData.dniRsp.trim() === '') {
+          nuevosErrores.dniRsp = 'Ingrese el DNI';
+        } else if (formData.dniRsp.length !== 8) {
+          nuevosErrores.dniRsp = 'El DNI debe tener 8 dígitos';
         }
-        if (!formData.numeroDocumento || formData.numeroDocumento.trim() === '') {
-          nuevosErrores.numeroDocumento = 'Ingrese el número de documento';
+        if (!formData.nombreRsp || formData.nombreRsp.trim() === '') {
+          nuevosErrores.nombreRsp = 'Ingrese los nombres';
         }
-        if (!formData.descripcion || formData.descripcion.trim() === '') {
-          nuevosErrores.descripcion = 'Ingrese una descripción';
+        if (!formData.apePatRsp || formData.apePatRsp.trim() === '') {
+          nuevosErrores.apePatRsp = 'Ingrese el apellido paterno';
         }
-        if (!formData.requisitosSeguridad || formData.requisitosSeguridad.trim() === '') {
-          nuevosErrores.requisitosSeguridad = 'Ingrese los requisitos de seguridad';
+        if (!formData.apeMatRsp || formData.apeMatRsp.trim() === '') {
+          nuevosErrores.apeMatRsp = 'Ingrese el apellido materno';
         }
-        if (!formData.requisitosPrivacidad || formData.requisitosPrivacidad.trim() === '') {
-          nuevosErrores.requisitosPrivacidad = 'Ingrese los requisitos de privacidad';
+        if (!formData.cargoRsp || formData.cargoRsp.trim() === '') {
+          nuevosErrores.cargoRsp = 'Ingrese el cargo';
+        }
+        if (!formData.correoRsp || formData.correoRsp.trim() === '') {
+          nuevosErrores.correoRsp = 'Ingrese el correo institucional';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoRsp)) {
+          nuevosErrores.correoRsp = 'Ingrese un correo válido';
+        }
+        if (!formData.fechaDesignacionRsp) {
+          nuevosErrores.fechaDesignacionRsp = 'Seleccione la fecha de designación';
+        }
+        if (!formData.numeroResolucionRsp || formData.numeroResolucionRsp.trim() === '') {
+          nuevosErrores.numeroResolucionRsp = 'Ingrese el número de resolución o documento';
         }
       }
       // Validación específica para Compromiso 13 (InteroperabilidadPIDE)
       else if (parseInt(formData.compromisoId) === 13) {
-        if (!formData.fechaAprobacion) {
-          nuevosErrores.fechaAprobacion = 'Seleccione la fecha de aprobación';
+        if (!formData.tipoIntegracionPide || formData.tipoIntegracionPide.trim() === '') {
+          nuevosErrores.tipoIntegracionPide = 'Seleccione el tipo de integración';
         }
-        if (!formData.numeroResolucion || formData.numeroResolucion.trim() === '') {
-          nuevosErrores.numeroResolucion = 'Ingrese el número de resolución';
+        if (!formData.nombreServicioPide || formData.nombreServicioPide.trim() === '') {
+          nuevosErrores.nombreServicioPide = 'Ingrese el nombre del servicio interoperable';
         }
-        if (!formData.descripcion || formData.descripcion.trim() === '') {
-          nuevosErrores.descripcion = 'Ingrese una descripción';
+        if (!formData.fechaInicioOperacionPide) {
+          nuevosErrores.fechaInicioOperacionPide = 'Seleccione la fecha de inicio de operación';
         }
-        if (!formData.responsable || formData.responsable.trim() === '') {
-          nuevosErrores.responsable = 'Ingrese el nombre del responsable';
+        if (!formData.responsablePide || formData.responsablePide.trim() === '') {
+          nuevosErrores.responsablePide = 'Ingrese el nombre del responsable técnico';
+        }
+        if (!formData.cargoResponsablePide || formData.cargoResponsablePide.trim() === '') {
+          nuevosErrores.cargoResponsablePide = 'Ingrese el cargo del responsable';
+        }
+        if (!formData.correoResponsablePide || formData.correoResponsablePide.trim() === '') {
+          nuevosErrores.correoResponsablePide = 'Ingrese el correo del responsable';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoResponsablePide)) {
+          nuevosErrores.correoResponsablePide = 'Ingrese un correo válido';
+        }
+        if (!formData.numeroConvenioPide || formData.numeroConvenioPide.trim() === '') {
+          nuevosErrores.numeroConvenioPide = 'Ingrese el número de convenio / resolución de acceso';
         }
       }
       // Validación específica para Compromiso 14 (OficialSeguridadDigital)
@@ -3332,11 +3356,11 @@ const CumplimientoNormativoDetalle = () => {
               CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
               CheckDdjj: formData.aceptaDeclaracionJurada || false,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: pasoActual === 3 ? 'enviado' : 'en_proceso'
+            EtapaFormulario: pasoParaGuardar === 3 ? 'completado' : 'paso2',
+            Estado: pasoParaGuardar === 3 ? 'enviado' : 'en_proceso'
           };
           
-          console.log(`📤 Datos Com13 Paso ${pasoActual} a enviar:`, com13UpdateData);
+          console.log(`📤 Datos Com13 Paso ${pasoActual} (pasoParaGuardar: ${pasoParaGuardar}) a enviar:`, com13UpdateData);
           
           if (com13RecordId) {
             response = await com13InteroperabilidadPIDEService.update(com13RecordId, com13UpdateData);

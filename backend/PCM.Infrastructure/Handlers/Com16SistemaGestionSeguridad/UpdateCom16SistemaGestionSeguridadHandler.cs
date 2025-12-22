@@ -47,7 +47,26 @@ public class UpdateCom16SistemaGestionSeguridadHandler : IRequestHandler<UpdateC
             if (request.CheckDdjj.HasValue) entity.CheckDdjj = request.CheckDdjj.Value;
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
-            // Actualizar campos específicos
+            // Actualizar campos específicos SGSI
+            if (!string.IsNullOrEmpty(request.ResponsableSgsi)) entity.ResponsableSgsi = request.ResponsableSgsi;
+            if (!string.IsNullOrEmpty(request.CargoResponsableSgsi)) entity.CargoResponsableSgsi = request.CargoResponsableSgsi;
+            if (!string.IsNullOrEmpty(request.CorreoSgsi)) entity.CorreoSgsi = request.CorreoSgsi;
+            if (!string.IsNullOrEmpty(request.TelefonoSgsi)) entity.TelefonoSgsi = request.TelefonoSgsi;
+            if (!string.IsNullOrEmpty(request.EstadoImplementacionSgsi)) entity.EstadoImplementacionSgsi = request.EstadoImplementacionSgsi;
+            if (!string.IsNullOrEmpty(request.AlcanceSgsi)) entity.AlcanceSgsi = request.AlcanceSgsi;
+            if (request.FechaInicioSgsi.HasValue) entity.FechaInicioSgsi = DateTime.SpecifyKind(request.FechaInicioSgsi.Value, DateTimeKind.Utc);
+            if (request.FechaCertificacionSgsi.HasValue) entity.FechaCertificacionSgsi = DateTime.SpecifyKind(request.FechaCertificacionSgsi.Value, DateTimeKind.Utc);
+            if (!string.IsNullOrEmpty(request.EntidadCertificadoraSgsi)) entity.EntidadCertificadoraSgsi = request.EntidadCertificadoraSgsi;
+            if (!string.IsNullOrEmpty(request.VersionNormaSgsi)) entity.VersionNormaSgsi = request.VersionNormaSgsi;
+            if (!string.IsNullOrEmpty(request.RutaPdfCertificadoSgsi)) entity.RutaPdfCertificadoSgsi = request.RutaPdfCertificadoSgsi;
+            if (!string.IsNullOrEmpty(request.RutaPdfPoliticasSgsi)) entity.RutaPdfPoliticasSgsi = request.RutaPdfPoliticasSgsi;
+            if (!string.IsNullOrEmpty(request.ObservacionSgsi)) entity.ObservacionSgsi = request.ObservacionSgsi;
+            if (request.FechaImplementacionSgsi.HasValue) entity.FechaImplementacionSgsi = DateTime.SpecifyKind(request.FechaImplementacionSgsi.Value, DateTimeKind.Utc);
+            if (!string.IsNullOrEmpty(request.NormaAplicadaSgsi)) entity.NormaAplicadaSgsi = request.NormaAplicadaSgsi;
+            if (!string.IsNullOrEmpty(request.RutaPdfSgsi)) entity.RutaPdfSgsi = request.RutaPdfSgsi;
+            if (!string.IsNullOrEmpty(request.NivelImplementacionSgsi)) entity.NivelImplementacionSgsi = request.NivelImplementacionSgsi;
+
+            // Actualizar campos heredados de compatibilidad
             if (request.FechaImplementacion.HasValue) entity.FechaImplementacion = DateTime.SpecifyKind(request.FechaImplementacion.Value, DateTimeKind.Utc);
             if (!string.IsNullOrEmpty(request.NormaAplicable)) entity.NormaAplicable = request.NormaAplicable;
             if (!string.IsNullOrEmpty(request.Certificacion)) entity.Certificacion = request.Certificacion;
@@ -73,7 +92,7 @@ public class UpdateCom16SistemaGestionSeguridadHandler : IRequestHandler<UpdateC
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: Guid.Empty,
+                    usuarioId: request.UserId,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

@@ -6,6 +6,9 @@ namespace PCM.Application.Features.Com15CSIRTInstitucional.Commands.UpdateCom15C
 
 public class UpdateCom15CSIRTInstitucionalCommand : IRequest<Result<Com15CSIRTInstitucionalResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }  // Usuario logueado que realiza la actualización
+    
     public long ComcsirtEntId { get; set; }
     public long? CompromisoId { get; set; }
     public Guid? EntidadId { get; set; }
@@ -18,6 +21,19 @@ public class UpdateCom15CSIRTInstitucionalCommand : IRequest<Result<Com15CSIRTIn
     public Guid? UsuarioRegistra { get; set; }
 
     // Campos específicos
+    public string? NombreCsirt { get; set; }
+    public DateTime? FechaConformacionCsirt { get; set; }
+    public string? NumeroResolucionCsirt { get; set; }
+    public string? ResponsableCsirt { get; set; }
+    public string? CargoResponsableCsirt { get; set; }
+    public string? CorreoCsirt { get; set; }
+    public string? TelefonoCsirt { get; set; }
+    public bool? ProtocoloIncidentesCsirt { get; set; }
+    public bool? ComunicadoPcmCsirt { get; set; }
+    public string? RutaPdfCsirt { get; set; }
+    public string? ObservacionCsirt { get; set; }
+
+    // Campos heredados de compatibilidad
     public DateTime? FechaConformacion { get; set; }
     public string? NumeroResolucion { get; set; }
     public string? Responsable { get; set; }

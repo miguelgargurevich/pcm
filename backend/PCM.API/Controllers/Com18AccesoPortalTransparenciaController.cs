@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PCM.Application.Features.Com18AccesoPortalTransparencia.Commands.CreateCom18AccesoPortalTransparencia;
 using PCM.Application.Features.Com18AccesoPortalTransparencia.Commands.UpdateCom18AccesoPortalTransparencia;
 using PCM.Application.Features.Com18AccesoPortalTransparencia.Queries.GetCom18AccesoPortalTransparencia;
+using System.Security.Claims;
 
 namespace PCM.API.Controllers;
 
@@ -74,7 +75,14 @@ public class Com18AccesoPortalTransparenciaController : ControllerBase
     {
         try
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+
             command.ComsapteEntId = id;
+            command.UserId = userId;
             var result = await _mediator.Send(command);
 
             if (result.IsSuccess)

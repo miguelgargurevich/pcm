@@ -47,7 +47,21 @@ public class UpdateCom17PlanTransicionIPv6Handler : IRequestHandler<UpdateCom17P
             if (request.CheckDdjj.HasValue) entity.CheckDdjj = request.CheckDdjj.Value;
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
-            // Actualizar campos específicos
+            // Actualizar campos específicos IPv6
+            if (!string.IsNullOrEmpty(request.ResponsableIpv6)) entity.ResponsableIpv6 = request.ResponsableIpv6;
+            if (!string.IsNullOrEmpty(request.CargoResponsableIpv6)) entity.CargoResponsableIpv6 = request.CargoResponsableIpv6;
+            if (!string.IsNullOrEmpty(request.CorreoIpv6)) entity.CorreoIpv6 = request.CorreoIpv6;
+            if (!string.IsNullOrEmpty(request.TelefonoIpv6)) entity.TelefonoIpv6 = request.TelefonoIpv6;
+            if (!string.IsNullOrEmpty(request.EstadoPlanIpv6)) entity.EstadoPlanIpv6 = request.EstadoPlanIpv6;
+            if (request.FechaFormulacionIpv6.HasValue) entity.FechaFormulacionIpv6 = DateTime.SpecifyKind(request.FechaFormulacionIpv6.Value, DateTimeKind.Utc);
+            if (request.FechaAprobacionIpv6.HasValue) entity.FechaAprobacionIpv6 = DateTime.SpecifyKind(request.FechaAprobacionIpv6.Value, DateTimeKind.Utc);
+            if (request.FechaInicioIpv6.HasValue) entity.FechaInicioIpv6 = DateTime.SpecifyKind(request.FechaInicioIpv6.Value, DateTimeKind.Utc);
+            if (request.FechaFinIpv6.HasValue) entity.FechaFinIpv6 = DateTime.SpecifyKind(request.FechaFinIpv6.Value, DateTimeKind.Utc);
+            if (!string.IsNullOrEmpty(request.DescripcionPlanIpv6)) entity.DescripcionPlanIpv6 = request.DescripcionPlanIpv6;
+            if (!string.IsNullOrEmpty(request.RutaPdfPlanIpv6)) entity.RutaPdfPlanIpv6 = request.RutaPdfPlanIpv6;
+            if (!string.IsNullOrEmpty(request.ObservacionIpv6)) entity.ObservacionIpv6 = request.ObservacionIpv6;
+
+            // Actualizar campos heredados de compatibilidad
             if (request.FechaInicioTransicion.HasValue) entity.FechaInicioTransicion = DateTime.SpecifyKind(request.FechaInicioTransicion.Value, DateTimeKind.Utc);
             if (request.FechaFinTransicion.HasValue) entity.FechaFinTransicion = DateTime.SpecifyKind(request.FechaFinTransicion.Value, DateTimeKind.Utc);
             if (request.PorcentajeAvance.HasValue) entity.PorcentajeAvance = request.PorcentajeAvance;
@@ -73,7 +87,7 @@ public class UpdateCom17PlanTransicionIPv6Handler : IRequestHandler<UpdateCom17P
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: Guid.Empty,
+                    usuarioId: request.UserId,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

@@ -6,6 +6,9 @@ namespace PCM.Application.Features.Com19EncuestaNacionalGobDigital.Commands.Upda
 
 public class UpdateCom19EncuestaNacionalGobDigitalCommand : IRequest<Result<Com19EncuestaNacionalGobDigitalResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }  // Usuario logueado que realiza la actualización
+    
     public long ComrenadEntId { get; set; }
     public long? CompromisoId { get; set; }
     public Guid? EntidadId { get; set; }
@@ -18,6 +21,18 @@ public class UpdateCom19EncuestaNacionalGobDigitalCommand : IRequest<Result<Com1
     public Guid? UsuarioRegistra { get; set; }
 
     // Campos específicos
+    public long? AnioEnad { get; set; }
+    public string? ResponsableEnad { get; set; }
+    public string? CargoResponsableEnad { get; set; }
+    public string? CorreoEnad { get; set; }
+    public string? TelefonoEnad { get; set; }
+    public DateTime? FechaEnvioEnad { get; set; }
+    public string? EstadoRespuestaEnad { get; set; }
+    public string? EnlaceFormularioEnad { get; set; }
+    public string? ObservacionEnad { get; set; }
+    public string? RutaPdfEnad { get; set; }
+
+    // Campos heredados de compatibilidad
     public DateTime? FechaConexion { get; set; }
     public string? TipoConexion { get; set; }
     public string? AnchoBanda { get; set; }

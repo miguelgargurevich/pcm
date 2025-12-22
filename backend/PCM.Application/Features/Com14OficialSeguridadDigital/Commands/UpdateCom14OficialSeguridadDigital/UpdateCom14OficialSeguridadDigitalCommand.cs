@@ -6,6 +6,9 @@ namespace PCM.Application.Features.Com14OficialSeguridadDigital.Commands.UpdateC
 
 public class UpdateCom14OficialSeguridadDigitalCommand : IRequest<Result<Com14OficialSeguridadDigitalResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }  // Usuario logueado que realiza la actualización
+    
     public long ComdoscdEntId { get; set; }
     public long? CompromisoId { get; set; }
     public Guid? EntidadId { get; set; }
@@ -17,7 +20,21 @@ public class UpdateCom14OficialSeguridadDigitalCommand : IRequest<Result<Com14Of
     public bool? CheckDdjj { get; set; }
     public Guid? UsuarioRegistra { get; set; }
 
-    // Campos específicos
+    // Campos específicos del Oficial de Seguridad Digital
+    public string? DniOscd { get; set; }
+    public string? NombreOscd { get; set; }
+    public string? ApePatOscd { get; set; }
+    public string? ApeMatOscd { get; set; }
+    public string? CargoOscd { get; set; }
+    public string? CorreoOscd { get; set; }
+    public string? TelefonoOscd { get; set; }
+    public DateTime? FechaDesignacionOscd { get; set; }
+    public string? NumeroResolucionOscd { get; set; }
+    public bool? ComunicadoPcmOscd { get; set; }
+    public string? RutaPdfOscd { get; set; }
+    public string? ObservacionOscd { get; set; }
+
+    // Campos específicos heredados (compatibilidad)
     public DateTime? FechaElaboracion { get; set; }
     public string? NumeroDocumento { get; set; }
     public string? ArchivoDocumento { get; set; }

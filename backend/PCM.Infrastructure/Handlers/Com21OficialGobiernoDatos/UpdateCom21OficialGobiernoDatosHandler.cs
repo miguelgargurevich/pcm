@@ -47,7 +47,21 @@ public class UpdateCom21OficialGobiernoDatosHandler : IRequestHandler<UpdateCom2
             if (request.CheckDdjj.HasValue) entity.CheckDdjj = request.CheckDdjj.Value;
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
-            // Actualizar campos específicos
+            // Actualizar campos específicos OGD
+            if (!string.IsNullOrEmpty(request.DniOgd)) entity.DniOgd = request.DniOgd;
+            if (!string.IsNullOrEmpty(request.NombreOgd)) entity.NombreOgd = request.NombreOgd;
+            if (!string.IsNullOrEmpty(request.ApePatOgd)) entity.ApePatOgd = request.ApePatOgd;
+            if (!string.IsNullOrEmpty(request.ApeMatOgd)) entity.ApeMatOgd = request.ApeMatOgd;
+            if (!string.IsNullOrEmpty(request.CargoOgd)) entity.CargoOgd = request.CargoOgd;
+            if (!string.IsNullOrEmpty(request.CorreoOgd)) entity.CorreoOgd = request.CorreoOgd;
+            if (!string.IsNullOrEmpty(request.TelefonoOgd)) entity.TelefonoOgd = request.TelefonoOgd;
+            if (request.FechaDesignacionOgd.HasValue) entity.FechaDesignacionOgd = DateTime.SpecifyKind(request.FechaDesignacionOgd.Value, DateTimeKind.Utc);
+            if (!string.IsNullOrEmpty(request.NumeroResolucionOgd)) entity.NumeroResolucionOgd = request.NumeroResolucionOgd;
+            if (request.ComunicadoPcmOgd.HasValue) entity.ComunicadoPcmOgd = request.ComunicadoPcmOgd.Value;
+            if (!string.IsNullOrEmpty(request.RutaPdfOgd)) entity.RutaPdfOgd = request.RutaPdfOgd;
+            if (!string.IsNullOrEmpty(request.ObservacionOgd)) entity.ObservacionOgd = request.ObservacionOgd;
+
+            // Actualizar campos heredados de compatibilidad
             if (request.FechaElaboracion.HasValue) entity.FechaElaboracion = DateTime.SpecifyKind(request.FechaElaboracion.Value, DateTimeKind.Utc);
             if (!string.IsNullOrEmpty(request.NumeroDocumento)) entity.NumeroDocumento = request.NumeroDocumento;
             if (!string.IsNullOrEmpty(request.ArchivoDocumento)) entity.ArchivoDocumento = request.ArchivoDocumento;
@@ -73,7 +87,7 @@ public class UpdateCom21OficialGobiernoDatosHandler : IRequestHandler<UpdateCom2
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: Guid.Empty,
+                    usuarioId: request.UserId,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

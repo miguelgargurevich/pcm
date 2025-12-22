@@ -6,6 +6,9 @@ namespace PCM.Application.Features.Com16SistemaGestionSeguridad.Commands.UpdateC
 
 public class UpdateCom16SistemaGestionSeguridadCommand : IRequest<Result<Com16SistemaGestionSeguridadResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }  // Usuario logueado que realiza la actualización
+    
     public long ComsgsiEntId { get; set; }
     public long? CompromisoId { get; set; }
     public Guid? EntidadId { get; set; }
@@ -18,6 +21,25 @@ public class UpdateCom16SistemaGestionSeguridadCommand : IRequest<Result<Com16Si
     public Guid? UsuarioRegistra { get; set; }
 
     // Campos específicos
+    public string? ResponsableSgsi { get; set; }
+    public string? CargoResponsableSgsi { get; set; }
+    public string? CorreoSgsi { get; set; }
+    public string? TelefonoSgsi { get; set; }
+    public string? EstadoImplementacionSgsi { get; set; }
+    public string? AlcanceSgsi { get; set; }
+    public DateTime? FechaInicioSgsi { get; set; }
+    public DateTime? FechaCertificacionSgsi { get; set; }
+    public string? EntidadCertificadoraSgsi { get; set; }
+    public string? VersionNormaSgsi { get; set; }
+    public string? RutaPdfCertificadoSgsi { get; set; }
+    public string? RutaPdfPoliticasSgsi { get; set; }
+    public string? ObservacionSgsi { get; set; }
+    public DateTime? FechaImplementacionSgsi { get; set; }
+    public string? NormaAplicadaSgsi { get; set; }
+    public string? RutaPdfSgsi { get; set; }
+    public string? NivelImplementacionSgsi { get; set; }
+
+    // Campos heredados de compatibilidad
     public DateTime? FechaImplementacion { get; set; }
     public string? NormaAplicable { get; set; }
     public string? Certificacion { get; set; }

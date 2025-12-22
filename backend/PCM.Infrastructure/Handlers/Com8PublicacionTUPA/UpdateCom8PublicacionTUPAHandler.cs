@@ -99,7 +99,7 @@ public class UpdateCom8PublicacionTUPAHandler : IRequestHandler<UpdateCom8Public
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: Guid.Empty,
+                    usuarioId: request.UserId,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

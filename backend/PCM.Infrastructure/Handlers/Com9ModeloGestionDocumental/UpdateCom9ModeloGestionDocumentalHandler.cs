@@ -85,7 +85,7 @@ namespace PCM.Infrastructure.Handlers.Com9ModeloGestionDocumental
                         entidadId: registro.EntidadId,
                         estadoAnterior: estadoAnterior,
                         estadoNuevo: request.Estado,
-                        usuarioId: Guid.Empty,
+                        usuarioId: request.UserId,
                         observacion: null,
                         tipoAccion: tipoAccion);
 

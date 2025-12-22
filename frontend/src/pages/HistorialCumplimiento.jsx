@@ -47,6 +47,14 @@ const SnapshotModal = ({ isOpen, onClose, historial }) => {
   if (!isOpen || !historial) return null;
 
   const snapshot = historial.datosSnapshot;
+  
+  // Backend envía PascalCase (DatosFormulario), convertir a camelCase para el frontend
+  const datosFormulario = snapshot?.DatosFormulario || snapshot?.datosFormulario || {};
+  const datosRelacionados = snapshot?.DatosRelacionados || snapshot?.datosRelacionados || {};
+  const compromiso = snapshot?.Compromiso || snapshot?.compromiso || {};
+  const entidad = snapshot?.Entidad || snapshot?.entidad || {};
+  const cumplimiento = snapshot?.Cumplimiento || snapshot?.cumplimiento || {};
+  const metadata = snapshot?.Metadata || snapshot?.metadata || {};
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -76,8 +84,13 @@ const SnapshotModal = ({ isOpen, onClose, historial }) => {
           <div className="mb-6 p-4 bg-gray-50 rounded-lg">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div>
-                <span className="text-gray-500 block">Compromiso</span>
-                <span className="font-medium">{historial.compromisoNombre || `#${historial.compromisoId || 'N/A'}`}</span>
+                <span className="text-gray-500 block mb-1">Compromiso</span>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-1 bg-primary-100 text-primary-700 text-xs font-bold rounded">
+                    C{historial.compromisoId || '?'}
+                  </span>
+                  <span className="font-medium text-xs">{historial.compromisoNombre || 'Sin nombre'}</span>
+                </div>
               </div>
               <div>
                 <span className="text-gray-500 block">Entidad</span>
@@ -118,23 +131,23 @@ const SnapshotModal = ({ isOpen, onClose, historial }) => {
               </h3>
 
               {/* Metadatos del snapshot */}
-              {snapshot.metadatos && (
+              {metadata && Object.keys(metadata).length > 0 && (
                 <div className="p-3 bg-blue-50 rounded-lg text-sm">
                   <div className="grid grid-cols-3 gap-4">
                     <div>
                       <span className="text-blue-600">Acción:</span>
-                      <span className="ml-2 font-medium">{snapshot.metadatos.tipoAccion}</span>
+                      <span className="ml-2 font-medium">{metadata.TipoAccion || metadata.tipoAccion}</span>
                     </div>
                     <div>
                       <span className="text-blue-600">Timestamp:</span>
                       <span className="ml-2 font-medium">
-                        {new Date(snapshot.metadatos.timestampCaptura).toLocaleString('es-PE')}
+                        {new Date(metadata.FechaCaptura || metadata.timestampCaptura).toLocaleString('es-PE')}
                       </span>
                     </div>
-                    {snapshot.metadatos.ipOrigen && (
+                    {(metadata.IpOrigen || metadata.ipOrigen) && (
                       <div>
                         <span className="text-blue-600">IP:</span>
-                        <span className="ml-2 font-medium">{snapshot.metadatos.ipOrigen}</span>
+                        <span className="ml-2 font-medium">{metadata.IpOrigen || metadata.ipOrigen}</span>
                       </div>
                     )}
                   </div>
@@ -142,7 +155,7 @@ const SnapshotModal = ({ isOpen, onClose, historial }) => {
               )}
 
               {/* Datos del compromiso */}
-              {snapshot.datosCompromiso && Object.keys(snapshot.datosCompromiso).length > 0 ? (
+              {datosFormulario && Object.keys(datosFormulario).length > 0 ? (
                 <div className="border rounded-lg overflow-hidden">
                   <table className="w-full text-sm">
                     <thead className="bg-gray-100">
@@ -152,7 +165,7 @@ const SnapshotModal = ({ isOpen, onClose, historial }) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {Object.entries(snapshot.datosCompromiso).map(([key, value]) => (
+                      {Object.entries(datosFormulario).map(([key, value]) => (
                         <tr key={key} className="hover:bg-gray-50">
                           <td className="p-3 font-medium text-gray-600">{formatFieldName(key)}</td>
                           <td className="p-3">
@@ -171,16 +184,26 @@ const SnapshotModal = ({ isOpen, onClose, historial }) => {
               )}
 
               {/* Información de cumplimiento */}
-              {snapshot.infoCumplimiento && (
+              {cumplimiento && Object.keys(cumplimiento).length > 0 && (
                 <div className="mt-4">
                   <h4 className="font-medium text-gray-700 mb-2">Información de Cumplimiento</h4>
                   <div className="bg-gray-50 rounded-lg p-4 grid grid-cols-2 gap-4 text-sm">
-                    {Object.entries(snapshot.infoCumplimiento).map(([key, value]) => (
+                    {Object.entries(cumplimiento).map(([key, value]) => (
                       <div key={key}>
                         <span className="text-gray-500">{formatFieldName(key)}:</span>
                         <span className="ml-2 font-medium">{formatFieldValue(value)}</span>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Datos relacionados */}
+              {datosRelacionados && Object.keys(datosRelacionados).length > 0 && (
+                <div className="mt-4">
+                  <h4 className="font-medium text-gray-700 mb-2">Datos Relacionados</h4>
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <pre className="text-xs overflow-x-auto">{JSON.stringify(datosRelacionados, null, 2)}</pre>
                   </div>
                 </div>
               )}
@@ -234,7 +257,7 @@ const HistorialCumplimiento = () => {
   const [filtros, setFiltros] = useState({
     compromisoId: '',
     entidadId: '',
-    estadoNuevoId: '',
+    estadoId: '',
     fechaDesde: '',
     fechaHasta: '',
   });
@@ -302,23 +325,33 @@ const HistorialCumplimiento = () => {
       
       if (filtros.compromisoId) params.append('compromisoId', filtros.compromisoId);
       if (filtros.entidadId) params.append('entidadId', filtros.entidadId);
-      if (filtros.estadoNuevoId) params.append('estadoNuevoId', filtros.estadoNuevoId);
+      if (filtros.estadoId) params.append('estadoId', filtros.estadoId);
       if (filtros.fechaDesde) params.append('fechaDesde', filtros.fechaDesde);
       if (filtros.fechaHasta) params.append('fechaHasta', filtros.fechaHasta);
 
+      console.log('📞 Llamando a /CumplimientoHistorial con params:', params.toString());
       const response = await apiService.get(`/CumplimientoHistorial?${params.toString()}`);
+      console.log('📦 Respuesta completa del historial:', response);
+      console.log('📦 response.data:', response.data);
       
-      if (response.data?.success) {
-        setHistorial(response.data.data?.items || []);
+      if (response.data?.success || response.data?.isSuccess) {
+        const items = response.data.data?.items || response.data.data || [];
+        console.log('✅ Items de historial:', items);
+        setHistorial(items);
         setPagination(prev => ({
           ...prev,
-          totalItems: response.data.data?.totalItems || 0,
-          totalPages: response.data.data?.totalPages || 0
+          totalItems: response.data.data?.totalItems || items.length || 0,
+          totalPages: response.data.data?.totalPages || 1
         }));
+      } else {
+        console.warn('⚠️ Respuesta sin éxito:', response.data);
+        setHistorial([]);
       }
     } catch (error) {
-      console.error('Error cargando historial:', error);
+      console.error('❌ Error cargando historial:', error);
+      console.error('Error details:', error.response?.data);
       toast.error('Error al cargar historial de cumplimiento');
+      setHistorial([]);
     } finally {
       setLoading(false);
     }
@@ -333,7 +366,7 @@ const HistorialCumplimiento = () => {
     setFiltros({
       compromisoId: '',
       entidadId: '',
-      estadoNuevoId: '',
+      estadoId: '',
       fechaDesde: '',
       fechaHasta: '',
     });
@@ -347,10 +380,11 @@ const HistorialCumplimiento = () => {
       return;
     }
 
-    const headers = ['Fecha', 'Compromiso', 'Entidad', 'Estado Anterior', 'Estado Nuevo', 'Usuario', 'Observación'];
+    const headers = ['Fecha', 'Compromiso', 'Compromiso Nombre', 'Entidad', 'Estado Anterior', 'Estado Nuevo', 'Usuario', 'Observación'];
     const rows = historial.map(h => [
       new Date(h.fechaCambio).toLocaleString('es-PE'),
-      h.compromisoNombre || h.compromisoId,
+      `C${h.compromisoId || '?'}`,
+      h.compromisoNombre || 'Sin nombre',
       h.entidadNombre || h.entidadId,
       h.estadoAnteriorNombre || 'N/A',
       h.estadoNuevoNombre,
@@ -377,8 +411,8 @@ const HistorialCumplimiento = () => {
               <History className="w-8 h-8 text-primary-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">Historial de Cumplimiento</h1>
-              <p className="text-gray-500">Visualiza todos los cambios de estado y snapshots de datos</p>
+              <h1 className="text-xl font-bold text-gray-800">Historial de Cumplimiento</h1>
+              <p className="text-gray-600 mt-1">Visualiza todos los cambios de estado y snapshots de datos</p>
             </div>
           </div>
           <div className="flex gap-2">
@@ -454,10 +488,10 @@ const HistorialCumplimiento = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Estado Nuevo</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
                 <select
-                  value={filtros.estadoNuevoId}
-                  onChange={(e) => setFiltros({ ...filtros, estadoNuevoId: e.target.value })}
+                  value={filtros.estadoId}
+                  onChange={(e) => setFiltros({ ...filtros, estadoId: e.target.value })}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 >
                   <option value="">Todos</option>
@@ -567,8 +601,13 @@ const HistorialCumplimiento = () => {
                         </div>
                       </td>
                       <td className="p-4">
-                        <div className="text-sm font-medium text-gray-800 max-w-xs truncate">
-                          {item.compromisoNombre || `Compromiso #${item.compromisoId || 'N/A'}`}
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-1 bg-primary-100 text-primary-700 text-xs font-bold rounded">
+                            C{item.compromisoId || '?'}
+                          </span>
+                          <div className="text-sm font-medium text-gray-800 max-w-xs truncate">
+                            {item.compromisoNombre || 'Sin nombre'}
+                          </div>
                         </div>
                       </td>
                       <td className="p-4">

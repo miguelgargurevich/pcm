@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PCM.Application.Features.Com19EncuestaNacionalGobDigital.Commands.CreateCom19EncuestaNacionalGobDigital;
 using PCM.Application.Features.Com19EncuestaNacionalGobDigital.Commands.UpdateCom19EncuestaNacionalGobDigital;
 using PCM.Application.Features.Com19EncuestaNacionalGobDigital.Queries.GetCom19EncuestaNacionalGobDigital;
+using System.Security.Claims;
 
 namespace PCM.API.Controllers;
 
@@ -74,7 +75,14 @@ public class Com19EncuestaNacionalGobDigitalController : ControllerBase
     {
         try
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+
             command.ComrenadEntId = id;
+            command.UserId = userId;
             var result = await _mediator.Send(command);
 
             if (result.IsSuccess)

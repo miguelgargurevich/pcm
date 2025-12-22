@@ -47,7 +47,21 @@ public class UpdateCom14OficialSeguridadDigitalHandler : IRequestHandler<UpdateC
             if (request.CheckDdjj.HasValue) entity.CheckDdjj = request.CheckDdjj.Value;
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
-            // Actualizar campos específicos
+            // Actualizar campos específicos del Oficial de Seguridad Digital
+            if (!string.IsNullOrEmpty(request.DniOscd)) entity.DniOscd = request.DniOscd;
+            if (!string.IsNullOrEmpty(request.NombreOscd)) entity.NombreOscd = request.NombreOscd;
+            if (!string.IsNullOrEmpty(request.ApePatOscd)) entity.ApePatOscd = request.ApePatOscd;
+            if (!string.IsNullOrEmpty(request.ApeMatOscd)) entity.ApeMatOscd = request.ApeMatOscd;
+            if (!string.IsNullOrEmpty(request.CargoOscd)) entity.CargoOscd = request.CargoOscd;
+            if (!string.IsNullOrEmpty(request.CorreoOscd)) entity.CorreoOscd = request.CorreoOscd;
+            if (!string.IsNullOrEmpty(request.TelefonoOscd)) entity.TelefonoOscd = request.TelefonoOscd;
+            if (request.FechaDesignacionOscd.HasValue) entity.FechaDesignacionOscd = DateTime.SpecifyKind(request.FechaDesignacionOscd.Value, DateTimeKind.Utc);
+            if (!string.IsNullOrEmpty(request.NumeroResolucionOscd)) entity.NumeroResolucionOscd = request.NumeroResolucionOscd;
+            if (request.ComunicadoPcmOscd.HasValue) entity.ComunicadoPcmOscd = request.ComunicadoPcmOscd.Value;
+            if (!string.IsNullOrEmpty(request.RutaPdfOscd)) entity.RutaPdfOscd = request.RutaPdfOscd;
+            if (!string.IsNullOrEmpty(request.ObservacionOscd)) entity.ObservacionOscd = request.ObservacionOscd;
+
+            // Actualizar campos específicos heredados (compatibilidad)
             if (request.FechaElaboracion.HasValue) entity.FechaElaboracion = DateTime.SpecifyKind(request.FechaElaboracion.Value, DateTimeKind.Utc);
             if (!string.IsNullOrEmpty(request.NumeroDocumento)) entity.NumeroDocumento = request.NumeroDocumento;
             if (!string.IsNullOrEmpty(request.ArchivoDocumento)) entity.ArchivoDocumento = request.ArchivoDocumento;
@@ -73,7 +87,7 @@ public class UpdateCom14OficialSeguridadDigitalHandler : IRequestHandler<UpdateC
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: Guid.Empty,
+                    usuarioId: request.UserId,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

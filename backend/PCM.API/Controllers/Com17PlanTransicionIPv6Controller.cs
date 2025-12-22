@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PCM.Application.Features.Com17PlanTransicionIPv6.Commands.CreateCom17PlanTransicionIPv6;
 using PCM.Application.Features.Com17PlanTransicionIPv6.Commands.UpdateCom17PlanTransicionIPv6;
 using PCM.Application.Features.Com17PlanTransicionIPv6.Queries.GetCom17PlanTransicionIPv6;
+using System.Security.Claims;
 
 namespace PCM.API.Controllers;
 
@@ -74,7 +75,14 @@ public class Com17PlanTransicionIPv6Controller : ControllerBase
     {
         try
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+
             command.Comptipv6EntId = id;
+            command.UserId = userId;
             var result = await _mediator.Send(command);
 
             if (result.IsSuccess)

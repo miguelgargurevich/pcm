@@ -94,7 +94,7 @@ public class UpdateCom4PEIHandler : IRequestHandler<UpdateCom4PEICommand, Result
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: Guid.Empty, // TODO: Obtener del contexto de usuario
+                    usuarioId: request.UserId,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

@@ -6,6 +6,9 @@ namespace PCM.Application.Features.Com20DigitalizacionServiciosFacilita.Commands
 
 public class UpdateCom20DigitalizacionServiciosFacilitaCommand : IRequest<Result<Com20DigitalizacionServiciosFacilitaResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }  // Usuario logueado que realiza la actualización
+    
     public long ComdsfpeEntId { get; set; }
     public long? CompromisoId { get; set; }
     public Guid? EntidadId { get; set; }

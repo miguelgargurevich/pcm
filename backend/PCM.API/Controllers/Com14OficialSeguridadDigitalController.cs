@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PCM.Application.Features.Com14OficialSeguridadDigital.Commands.CreateCom14OficialSeguridadDigital;
 using PCM.Application.Features.Com14OficialSeguridadDigital.Commands.UpdateCom14OficialSeguridadDigital;
 using PCM.Application.Features.Com14OficialSeguridadDigital.Queries.GetCom14OficialSeguridadDigital;
+using System.Security.Claims;
 
 namespace PCM.API.Controllers;
 
@@ -74,7 +75,15 @@ public class Com14OficialSeguridadDigitalController : ControllerBase
     {
         try
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+
             command.ComdoscdEntId = id;
+            command.UserId = userId;
+            
             var result = await _mediator.Send(command);
 
             if (result.IsSuccess)

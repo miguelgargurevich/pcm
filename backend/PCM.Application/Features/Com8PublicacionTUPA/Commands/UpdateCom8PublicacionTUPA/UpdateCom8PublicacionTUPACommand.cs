@@ -6,6 +6,9 @@ namespace PCM.Application.Features.Com8PublicacionTUPA.Commands.UpdateCom8Public
 
 public class UpdateCom8PublicacionTUPACommand : IRequest<Result<Com8PublicacionTUPAResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }  // Usuario logueado que realiza la actualización
+    
     public long ComptupaEntId { get; set; }
     public long? CompromisoId { get; set; }
     public Guid? EntidadId { get; set; }

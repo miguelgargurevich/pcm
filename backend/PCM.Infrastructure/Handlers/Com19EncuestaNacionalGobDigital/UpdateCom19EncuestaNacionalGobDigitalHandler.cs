@@ -47,7 +47,19 @@ public class UpdateCom19EncuestaNacionalGobDigitalHandler : IRequestHandler<Upda
             if (request.CheckDdjj.HasValue) entity.CheckDdjj = request.CheckDdjj.Value;
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
-            // Actualizar campos específicos
+            // Actualizar campos específicos ENAD
+            if (request.AnioEnad.HasValue) entity.AnioEnad = request.AnioEnad.Value;
+            if (!string.IsNullOrEmpty(request.ResponsableEnad)) entity.ResponsableEnad = request.ResponsableEnad;
+            if (!string.IsNullOrEmpty(request.CargoResponsableEnad)) entity.CargoResponsableEnad = request.CargoResponsableEnad;
+            if (!string.IsNullOrEmpty(request.CorreoEnad)) entity.CorreoEnad = request.CorreoEnad;
+            if (!string.IsNullOrEmpty(request.TelefonoEnad)) entity.TelefonoEnad = request.TelefonoEnad;
+            if (request.FechaEnvioEnad.HasValue) entity.FechaEnvioEnad = DateTime.SpecifyKind(request.FechaEnvioEnad.Value, DateTimeKind.Utc);
+            if (!string.IsNullOrEmpty(request.EstadoRespuestaEnad)) entity.EstadoRespuestaEnad = request.EstadoRespuestaEnad;
+            if (!string.IsNullOrEmpty(request.EnlaceFormularioEnad)) entity.EnlaceFormularioEnad = request.EnlaceFormularioEnad;
+            if (!string.IsNullOrEmpty(request.ObservacionEnad)) entity.ObservacionEnad = request.ObservacionEnad;
+            if (!string.IsNullOrEmpty(request.RutaPdfEnad)) entity.RutaPdfEnad = request.RutaPdfEnad;
+
+            // Actualizar campos heredados de compatibilidad
             if (request.FechaConexion.HasValue) entity.FechaConexion = DateTime.SpecifyKind(request.FechaConexion.Value, DateTimeKind.Utc);
             if (!string.IsNullOrEmpty(request.TipoConexion)) entity.TipoConexion = request.TipoConexion;
             if (!string.IsNullOrEmpty(request.AnchoBanda)) entity.AnchoBanda = request.AnchoBanda;
@@ -72,7 +84,7 @@ public class UpdateCom19EncuestaNacionalGobDigitalHandler : IRequestHandler<Upda
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: Guid.Empty,
+                    usuarioId: request.UserId,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

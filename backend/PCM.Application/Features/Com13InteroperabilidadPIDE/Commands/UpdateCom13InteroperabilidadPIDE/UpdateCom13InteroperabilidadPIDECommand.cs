@@ -6,6 +6,9 @@ namespace PCM.Application.Features.Com13InteroperabilidadPIDE.Commands.UpdateCom
 
 public class UpdateCom13InteroperabilidadPIDECommand : IRequest<Result<Com13InteroperabilidadPIDEResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }  // Usuario logueado que realiza la actualización
+    
     public long CompcpideEntId { get; set; }
     public long? CompromisoId { get; set; }
     public Guid? EntidadId { get; set; }
@@ -17,7 +20,29 @@ public class UpdateCom13InteroperabilidadPIDECommand : IRequest<Result<Com13Inte
     public bool? CheckDdjj { get; set; }
     public Guid? UsuarioRegistra { get; set; }
 
-    // Campos específicos
+    // Campos específicos del Paso 1 - Interoperabilidad PIDE
+    public string? TipoIntegracionPide { get; set; }
+    public string? NombreServicioPide { get; set; }
+    public string? DescripcionServicioPide { get; set; }
+    public DateTime? FechaInicioOperacionPide { get; set; }
+    public string? ResponsablePide { get; set; }
+    public string? CargoResponsablePide { get; set; }
+    public string? CorreoResponsablePide { get; set; }
+    public string? TelefonoResponsablePide { get; set; }
+    public string? NumeroConvenioPide { get; set; }
+    public DateTime? FechaConvenioPide { get; set; }
+    public bool? InteroperabilidadPide { get; set; }
+    public string? UrlServicioPide { get; set; }
+    public string? ObservacionPide { get; set; }
+    public string? RutaPdfPide { get; set; }
+    public DateTime? FechaIntegracionPide { get; set; }
+    public int? ServiciosPublicadosPide { get; set; }
+    public int? ServiciosConsumidosPide { get; set; }
+    public long? TotalTransaccionesPide { get; set; }
+    public string? EnlacePortalPide { get; set; }
+    public bool? IntegradoPide { get; set; }
+
+    // Campos específicos heredados (compatibilidad con handlers anteriores)
     public DateTime? FechaAprobacion { get; set; }
     public string? NumeroResolucion { get; set; }
     public string? ArchivoPlan { get; set; }

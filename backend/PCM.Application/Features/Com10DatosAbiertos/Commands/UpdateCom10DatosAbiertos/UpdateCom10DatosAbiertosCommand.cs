@@ -7,6 +7,9 @@ namespace PCM.Application.Features.Com10DatosAbiertos.Commands.UpdateCom10DatosA
 {
     public class UpdateCom10DatosAbiertosCommand : IRequest<Result<bool>>
     {
+        [JsonIgnore]
+        public Guid UserId { get; set; }  // Usuario logueado que realiza la actualización
+        
         public long ComdaEntId { get; set; }
         public string? UrlDatosAbiertos { get; set; }
         public long? TotalDatasets { get; set; }

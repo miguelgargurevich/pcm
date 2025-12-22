@@ -47,7 +47,20 @@ public class UpdateCom15CSIRTInstitucionalHandler : IRequestHandler<UpdateCom15C
             if (request.CheckDdjj.HasValue) entity.CheckDdjj = request.CheckDdjj.Value;
             if (request.UsuarioRegistra.HasValue) entity.UsuarioRegistra = request.UsuarioRegistra.Value;
 
-            // Actualizar campos específicos
+            // Actualizar campos específicos del CSIRT
+            if (!string.IsNullOrEmpty(request.NombreCsirt)) entity.NombreCsirt = request.NombreCsirt;
+            if (request.FechaConformacionCsirt.HasValue) entity.FechaConformacionCsirt = DateTime.SpecifyKind(request.FechaConformacionCsirt.Value, DateTimeKind.Utc);
+            if (!string.IsNullOrEmpty(request.NumeroResolucionCsirt)) entity.NumeroResolucionCsirt = request.NumeroResolucionCsirt;
+            if (!string.IsNullOrEmpty(request.ResponsableCsirt)) entity.ResponsableCsirt = request.ResponsableCsirt;
+            if (!string.IsNullOrEmpty(request.CargoResponsableCsirt)) entity.CargoResponsableCsirt = request.CargoResponsableCsirt;
+            if (!string.IsNullOrEmpty(request.CorreoCsirt)) entity.CorreoCsirt = request.CorreoCsirt;
+            if (!string.IsNullOrEmpty(request.TelefonoCsirt)) entity.TelefonoCsirt = request.TelefonoCsirt;
+            if (request.ProtocoloIncidentesCsirt.HasValue) entity.ProtocoloIncidentesCsirt = request.ProtocoloIncidentesCsirt.Value;
+            if (request.ComunicadoPcmCsirt.HasValue) entity.ComunicadoPcmCsirt = request.ComunicadoPcmCsirt.Value;
+            if (!string.IsNullOrEmpty(request.RutaPdfCsirt)) entity.RutaPdfCsirt = request.RutaPdfCsirt;
+            if (!string.IsNullOrEmpty(request.ObservacionCsirt)) entity.ObservacionCsirt = request.ObservacionCsirt;
+
+            // Campos heredados (compatibilidad)
             if (request.FechaConformacion.HasValue) entity.FechaConformacion = DateTime.SpecifyKind(request.FechaConformacion.Value, DateTimeKind.Utc);
             if (!string.IsNullOrEmpty(request.NumeroResolucion)) entity.NumeroResolucion = request.NumeroResolucion;
             if (!string.IsNullOrEmpty(request.Responsable)) entity.Responsable = request.Responsable;
@@ -73,7 +86,7 @@ public class UpdateCom15CSIRTInstitucionalHandler : IRequestHandler<UpdateCom15C
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: Guid.Empty,
+                    usuarioId: request.UserId,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

@@ -6,6 +6,9 @@ namespace PCM.Application.Features.Com6MigracionGobPe.Commands.UpdateCom6Migraci
 
 public class UpdateCom6MigracionGobPeCommand : IRequest<Result<Com6MigracionGobPeResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }
+    
     public long CommpgobpeEntId { get; set; }
     public string? EtapaFormulario { get; set; }
     public string? Estado { get; set; }

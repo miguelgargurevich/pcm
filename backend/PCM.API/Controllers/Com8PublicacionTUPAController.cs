@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PCM.Application.Features.Com8PublicacionTUPA.Commands.CreateCom8PublicacionTUPA;
 using PCM.Application.Features.Com8PublicacionTUPA.Commands.UpdateCom8PublicacionTUPA;
 using PCM.Application.Features.Com8PublicacionTUPA.Queries.GetCom8PublicacionTUPA;
+using System.Security.Claims;
 
 namespace PCM.API.Controllers;
 
@@ -72,7 +73,14 @@ public class Com8PublicacionTUPAController : ControllerBase
         {
             _logger.LogInformation("PUT Com8PublicacionTUPA - ID: {Id}", id);
 
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+            
             command.ComptupaEntId = id;
+            command.UserId = userId;
             var result = await _mediator.Send(command);
 
             if (result.IsSuccess)

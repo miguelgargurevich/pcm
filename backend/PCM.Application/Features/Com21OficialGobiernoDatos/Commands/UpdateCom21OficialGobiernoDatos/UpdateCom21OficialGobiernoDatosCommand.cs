@@ -6,6 +6,9 @@ namespace PCM.Application.Features.Com21OficialGobiernoDatos.Commands.UpdateCom2
 
 public class UpdateCom21OficialGobiernoDatosCommand : IRequest<Result<Com21OficialGobiernoDatosResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }  // Usuario logueado que realiza la actualización
+    
     public long ComdogdEntId { get; set; }
     public long? CompromisoId { get; set; }
     public Guid? EntidadId { get; set; }
@@ -18,6 +21,20 @@ public class UpdateCom21OficialGobiernoDatosCommand : IRequest<Result<Com21Ofici
     public Guid? UsuarioRegistra { get; set; }
 
     // Campos específicos
+    public string? DniOgd { get; set; }
+    public string? NombreOgd { get; set; }
+    public string? ApePatOgd { get; set; }
+    public string? ApeMatOgd { get; set; }
+    public string? CargoOgd { get; set; }
+    public string? CorreoOgd { get; set; }
+    public string? TelefonoOgd { get; set; }
+    public DateTime? FechaDesignacionOgd { get; set; }
+    public string? NumeroResolucionOgd { get; set; }
+    public bool? ComunicadoPcmOgd { get; set; }
+    public string? RutaPdfOgd { get; set; }
+    public string? ObservacionOgd { get; set; }
+
+    // Campos heredados de compatibilidad
     public DateTime? FechaElaboracion { get; set; }
     public string? NumeroDocumento { get; set; }
     public string? ArchivoDocumento { get; set; }

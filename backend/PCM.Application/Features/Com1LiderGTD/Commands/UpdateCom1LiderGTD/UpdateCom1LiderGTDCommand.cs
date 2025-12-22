@@ -1,11 +1,15 @@
 using MediatR;
 using PCM.Application.Common;
 using PCM.Application.Features.Com1LiderGTD.Commands.CreateCom1LiderGTD;
+using System.Text.Json.Serialization;
 
 namespace PCM.Application.Features.Com1LiderGTD.Commands.UpdateCom1LiderGTD;
 
 public class UpdateCom1LiderGTDCommand : IRequest<Result<Com1LiderGTDResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }
+    
     public long ComlgtdEntId { get; set; }
     public string? EtapaFormulario { get; set; }
     public string? Estado { get; set; }

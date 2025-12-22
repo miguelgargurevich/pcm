@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PCM.Application.Features.Com7ImplementacionMPD.Commands.CreateCom7ImplementacionMPD;
 using PCM.Application.Features.Com7ImplementacionMPD.Commands.UpdateCom7ImplementacionMPD;
 using PCM.Application.Features.Com7ImplementacionMPD.Queries.GetCom7ImplementacionMPD;
+using System.Security.Claims;
 
 namespace PCM.API.Controllers;
 
@@ -72,7 +73,14 @@ public class Com7ImplementacionMPDController : ControllerBase
         {
             _logger.LogInformation("PUT Com7ImplementacionMPD - ID: {Id}", id);
 
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+            
             command.ComimpdEntId = id;
+            command.UserId = userId;
             var result = await _mediator.Send(command);
 
             if (result.IsSuccess)

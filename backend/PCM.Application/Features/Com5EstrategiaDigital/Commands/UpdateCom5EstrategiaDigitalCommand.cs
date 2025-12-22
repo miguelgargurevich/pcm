@@ -4,6 +4,9 @@ namespace PCM.Application.Features.Com5EstrategiaDigital.Commands;
 
 public class UpdateCom5EstrategiaDigitalCommand
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }
+    
     public long ComdedEntId { get; set; }
     public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PCM.Application.Features.Com13InteroperabilidadPIDE.Commands.CreateCom13InteroperabilidadPIDE;
 using PCM.Application.Features.Com13InteroperabilidadPIDE.Commands.UpdateCom13InteroperabilidadPIDE;
 using PCM.Application.Features.Com13InteroperabilidadPIDE.Queries.GetCom13InteroperabilidadPIDE;
+using System.Security.Claims;
 
 namespace PCM.API.Controllers;
 
@@ -74,7 +75,15 @@ public class Com13InteroperabilidadPIDEController : ControllerBase
     {
         try
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+
             command.CompcpideEntId = id;
+            command.UserId = userId;
+            
             var result = await _mediator.Send(command);
 
             if (result.IsSuccess)

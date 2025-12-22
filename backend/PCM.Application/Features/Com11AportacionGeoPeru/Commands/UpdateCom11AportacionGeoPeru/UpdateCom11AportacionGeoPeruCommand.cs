@@ -6,6 +6,9 @@ namespace PCM.Application.Features.Com11AportacionGeoPeru.Commands.UpdateCom11Ap
 
 public class UpdateCom11AportacionGeoPeruCommand : IRequest<Result<Com11AportacionGeoPeruResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }  // Usuario logueado que realiza la actualización
+    
     public long ComageopEntId { get; set; }
     public long? CompromisoId { get; set; }
     public Guid? EntidadId { get; set; }

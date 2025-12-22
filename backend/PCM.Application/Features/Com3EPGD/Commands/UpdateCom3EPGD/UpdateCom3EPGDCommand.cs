@@ -1,11 +1,15 @@
 using PCM.Application.Common;
 using MediatR;
 using PCM.Application.Features.Com3EPGD.Commands.CreateCom3EPGD;
+using System.Text.Json.Serialization;
 
 namespace PCM.Application.Features.Com3EPGD.Commands.UpdateCom3EPGD;
 
 public class UpdateCom3EPGDCommand : IRequest<Result<Com3EPGDResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }
+    
     public long ComepgdEntId { get; set; }
     public long CompromisoId { get; set; }
     public Guid EntidadId { get; set; }

@@ -6,6 +6,9 @@ namespace PCM.Application.Features.Com7ImplementacionMPD.Commands.UpdateCom7Impl
 
 public class UpdateCom7ImplementacionMPDCommand : IRequest<Result<Com7ImplementacionMPDResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }  // Usuario logueado que realiza la actualización
+    
     public long ComimpdEntId { get; set; }
     public long? CompromisoId { get; set; }
     public Guid? EntidadId { get; set; }

@@ -6,6 +6,9 @@ namespace PCM.Application.Features.Com12ResponsableSoftwarePublico.Commands.Upda
 
 public class UpdateCom12ResponsableSoftwarePublicoCommand : IRequest<Result<Com12ResponsableSoftwarePublicoResponse>>
 {
+    [JsonIgnore]
+    public Guid UserId { get; set; }  // Usuario logueado que realiza la actualización
+    
     public long ComdrspEntId { get; set; }
     public long? CompromisoId { get; set; }
     public Guid? EntidadId { get; set; }

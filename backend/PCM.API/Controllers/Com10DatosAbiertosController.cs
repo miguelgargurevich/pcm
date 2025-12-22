@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PCM.Application.Features.Com10DatosAbiertos.Commands.CreateCom10DatosAbiertos;
 using PCM.Application.Features.Com10DatosAbiertos.Commands.UpdateCom10DatosAbiertos;
 using PCM.Application.Features.Com10DatosAbiertos.Queries.GetCom10DatosAbiertos;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace PCM.API.Controllers
@@ -55,7 +56,14 @@ namespace PCM.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(long id, [FromBody] UpdateCom10DatosAbiertosCommand command)
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+            
             command.ComdaEntId = id;
+            command.UserId = userId;
             var result = await _mediator.Send(command);
 
             if (result.IsSuccess)

@@ -7,6 +7,9 @@ namespace PCM.Application.Features.Com9ModeloGestionDocumental.Commands.UpdateCo
 {
     public class UpdateCom9ModeloGestionDocumentalCommand : IRequest<Result<bool>>
     {
+        [JsonIgnore]
+        public Guid UserId { get; set; }  // Usuario logueado que realiza la actualización
+        
         public long CommgdEntId { get; set; }
         public DateTime? FechaAprobacionMgd { get; set; }
         public string? NumeroResolucionMgd { get; set; }

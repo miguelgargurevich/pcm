@@ -41,6 +41,11 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
     {
         try
         {
+            _logger.LogInformation("🔵 RegistrarCambioEstadoAsync - Iniciando...");
+            _logger.LogInformation("🔵 DatosSnapshot es null: {EsNull}, Tiene elementos: {Count}", 
+                dto.DatosSnapshot == null, 
+                dto.DatosSnapshot?.GetType().GetProperty("Count")?.GetValue(dto.DatosSnapshot) ?? "N/A");
+
             var historial = new CumplimientoHistorial
             {
                 CumplimientoId = dto.CumplimientoId,
@@ -54,11 +59,14 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
                 FechaCambio = DateTime.UtcNow
             };
 
+            _logger.LogInformation("🔵 DatosSnapshot JSON length: {Length}", 
+                historial.DatosSnapshot?.Length ?? 0);
+
             _context.CumplimientosHistorial.Add(historial);
             await _context.SaveChangesAsync();
 
             _logger.LogInformation(
-                "Historial registrado: CumplimientoId={CumplimientoId}, EstadoAnterior={EstadoAnterior}, EstadoNuevo={EstadoNuevo}",
+                "✅ Historial registrado: CumplimientoId={CumplimientoId}, EstadoAnterior={EstadoAnterior}, EstadoNuevo={EstadoNuevo}",
                 dto.CumplimientoId, dto.EstadoAnteriorId, dto.EstadoNuevoId);
 
             return historial.HistorialId;
@@ -83,8 +91,13 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
     {
         try
         {
+            _logger.LogInformation("🟢 RegistrarCambioConSnapshotAsync - CumplimientoId={CumplimientoId}, CompromisoId={CompromisoId}, EstadoAnteriorId={EstadoAnteriorId}, EstadoNuevoId={EstadoNuevoId}",
+                cumplimientoId, compromisoId, estadoAnteriorId, estadoNuevoId);
+            
             // Generar snapshot de datos
             var snapshot = await GenerarSnapshotAsync(compromisoId, entidadId, cumplimientoId, tipoAccion, ipOrigen);
+
+            _logger.LogInformation("🟢 Snapshot generado. Registrando en BD...");
 
             var dto = new CreateCumplimientoHistorialDto
             {
@@ -96,11 +109,15 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
                 DatosSnapshot = snapshot
             };
 
-            return await RegistrarCambioEstadoAsync(dto);
+            var historialId = await RegistrarCambioEstadoAsync(dto);
+            
+            _logger.LogInformation("✅ Historial registrado exitosamente con ID={HistorialId}", historialId);
+            
+            return historialId;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al registrar historial con snapshot para compromiso {CompromisoId}", compromisoId);
+            _logger.LogError(ex, "❌ ERROR al registrar historial con snapshot para compromiso {CompromisoId}", compromisoId);
             throw;
         }
     }
@@ -172,8 +189,15 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
         }
 
         // Obtener datos específicos del formulario según el compromiso
+        _logger.LogInformation("🔵 Antes de ObtenerDatosFormularioAsync");
         snapshot.DatosFormulario = await ObtenerDatosFormularioAsync(compromisoId, entidadId);
+        _logger.LogInformation("🔵 Después de ObtenerDatosFormularioAsync, DatosFormulario tiene {Count} elementos", 
+            snapshot.DatosFormulario?.Count ?? 0);
+        
         snapshot.DatosRelacionados = await ObtenerDatosRelacionadosAsync(compromisoId, entidadId);
+
+        _logger.LogInformation("🟢 Snapshot generado completo con {CountFormulario} datos formulario y {CountRelacionados} datos relacionados",
+            snapshot.DatosFormulario?.Count ?? 0, snapshot.DatosRelacionados?.Count ?? 0);
 
         return snapshot;
     }
@@ -184,6 +208,9 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
 
         try
         {
+            _logger.LogInformation("🔵 ObtenerDatosFormularioAsync - CompromisoId={CompromisoId}, EntidadId={EntidadId}", 
+                compromisoId, entidadId);
+            
             object? registro = compromisoId switch
             {
                 1 => await _context.Com1LiderGTD
@@ -294,10 +321,15 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
                 _ => null
             };
 
+            _logger.LogInformation("🔵 Registro encontrado: {RegistroEncontrado}, Tipo: {TipoRegistro}", 
+                registro != null, registro?.GetType().Name);
+
             if (registro != null)
             {
                 // Usar reflexión para obtener todas las propiedades
                 var properties = registro.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                
+                _logger.LogInformation("🔵 Total propiedades encontradas: {TotalPropiedades}", properties.Length);
                 
                 foreach (var prop in properties)
                 {
@@ -316,6 +348,8 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
                         // Convertir nombres PascalCase a camelCase para consistencia JSON
                         var key = char.ToLowerInvariant(prop.Name[0]) + prop.Name[1..];
                         datos[key] = value;
+                        _logger.LogInformation("   ✅ {PropiedadNombre} ({PropiedadTipo}) = {Valor}", 
+                            prop.Name, prop.PropertyType.Name, value);
                     }
                     catch
                     {
@@ -323,6 +357,8 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
                     }
                 }
             }
+            
+            _logger.LogInformation("🟢 Total datos capturados: {TotalDatos}", datos.Count);
         }
         catch (Exception ex)
         {
@@ -488,10 +524,15 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
 
     public async Task<CumplimientoHistorialPaginatedResponseDto> ObtenerHistorialFiltradoAsync(CumplimientoHistorialFilterDto filtro)
     {
+        _logger.LogInformation("🔍 ObtenerHistorialFiltradoAsync - Filtros: CompromisoId={CompromisoId}, EntidadId={EntidadId}, EstadoId={EstadoId}, FechaDesde={FechaDesde}, FechaHasta={FechaHasta}",
+            filtro.CompromisoId, filtro.EntidadId, filtro.EstadoId, filtro.FechaDesde, filtro.FechaHasta);
+        
         var query = _context.CumplimientosHistorial
             .Include(h => h.Cumplimiento)
             .Include(h => h.UsuarioResponsable)
             .AsQueryable();
+
+        _logger.LogInformation("🔍 Total registros en cumplimiento_historial: {Total}", await _context.CumplimientosHistorial.CountAsync());
 
         // Aplicar filtros
         if (filtro.CumplimientoId.HasValue)
@@ -531,6 +572,8 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
 
         // Contar total
         var totalItems = await query.CountAsync();
+
+        _logger.LogInformation("🔍 Items encontrados después de filtros: {TotalItems}", totalItems);
 
         // Paginar
         var historiales = await query
@@ -658,20 +701,29 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
     {
         try
         {
+            _logger.LogInformation("🔵 RegistrarCambioDesdeFormularioAsync INICIO - CompromisoId={CompromisoId}, EntidadId={EntidadId}, EstadoAnterior={EstadoAnterior}, EstadoNuevo={EstadoNuevo}, TipoAccion={TipoAccion}",
+                compromisoId, entidadId, estadoAnterior, estadoNuevo, tipoAccion);
+            
             // Convertir estados de texto a IDs
             int? estadoAnteriorId = ConvertirEstadoTextoAId(estadoAnterior);
             int estadoNuevoId = ConvertirEstadoTextoAId(estadoNuevo) ?? 4; // Default EN PROCESO
 
+            _logger.LogInformation("🔵 Estados convertidos - AnteriorId={EstadoAnteriorId}, NuevoId={EstadoNuevoId}",
+                estadoAnteriorId, estadoNuevoId);
+
             // Solo registrar si hay cambio real de estado
             if (estadoAnteriorId == estadoNuevoId)
             {
-                _logger.LogDebug("No se registra historial, estado no cambió: {Estado}", estadoNuevo);
+                _logger.LogWarning("⚠️ No se registra historial, estado no cambió: {Estado}", estadoNuevo);
                 return 0;
             }
 
             // Buscar cumplimiento existente
             var cumplimiento = await _context.CumplimientosNormativos
                 .FirstOrDefaultAsync(c => c.CompromisoId == compromisoId && c.EntidadId == entidadId);
+
+            _logger.LogInformation("🔵 Cumplimiento existente: {Existe}, CumplimientoId={CumplimientoId}",
+                cumplimiento != null ? "SÍ" : "NO", cumplimiento?.CumplimientoId);
 
             long cumplimientoId;
 
@@ -701,6 +753,9 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
 
             await _context.SaveChangesAsync();
 
+            _logger.LogInformation("🔵 CumplimientoId={CumplimientoId} actualizado/creado. Llamando RegistrarCambioConSnapshotAsync...",
+                cumplimientoId);
+
             // Registrar en historial
             return await RegistrarCambioConSnapshotAsync(
                 cumplimientoId: cumplimientoId,
@@ -715,7 +770,7 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Error al registrar historial desde formulario para compromiso {CompromisoId}", compromisoId);
+            _logger.LogError(ex, "❌ ERROR al registrar historial desde formulario para compromiso {CompromisoId}", compromisoId);
             return 0; // No fallar la operación principal
         }
     }
