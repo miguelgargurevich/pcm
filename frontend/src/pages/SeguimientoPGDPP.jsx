@@ -298,25 +298,39 @@ const SeguimientoPGDPP = () => {
       </div>
 
       {/* Filtros */}
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="w-full flex items-center justify-between text-left hover:bg-gray-50 -m-4 p-4 rounded-lg transition-colors"
-        >
-          <div className="flex items-center gap-2">
-            <Filter size={18} className="text-gray-500" />
-            <span className="font-medium text-gray-700">Filtros</span>
-            {(filtros.codigo || filtros.nombre || filtros.etapa || filtros.tipoProyecto || filtros.ambito) && (
-              <span className="ml-2 px-2 py-0.5 text-xs bg-primary-100 text-primary-700 rounded-full font-medium">
-                Activos
-              </span>
-            )}
+      <div className="bg-white rounded-lg shadow-sm mb-6">
+        {/* Header del panel de filtros */}
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 text-gray-700 hover:text-gray-900 font-medium"
+              >
+                <Filter size={20} />
+                Filtros
+              </button>
+              
+              {/* Badge de filtros activos */}
+              {(filtros.codigo || filtros.nombre || filtros.etapa || filtros.tipoProyecto || filtros.ambito) && (
+                <span className="px-2 py-1 bg-primary-100 text-primary-700 text-xs font-medium rounded-full">
+                  Activos
+                </span>
+              )}
+            </div>
+            
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              {showFilters ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            </button>
           </div>
-          {showFilters ? <ChevronUp size={20} className="text-gray-400" /> : <ChevronDown size={20} className="text-gray-400" />}
-        </button>
+        </div>
 
+        {/* Contenido de filtros colapsable */}
         {showFilters && (
-          <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
