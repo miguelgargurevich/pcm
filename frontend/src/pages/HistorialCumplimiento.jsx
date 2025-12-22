@@ -51,8 +51,6 @@ const SnapshotModal = ({ isOpen, onClose, historial }) => {
   // Backend envía PascalCase (DatosFormulario), convertir a camelCase para el frontend
   const datosFormulario = snapshot?.DatosFormulario || snapshot?.datosFormulario || {};
   const datosRelacionados = snapshot?.DatosRelacionados || snapshot?.datosRelacionados || {};
-  const compromiso = snapshot?.Compromiso || snapshot?.compromiso || {};
-  const entidad = snapshot?.Entidad || snapshot?.entidad || {};
   const cumplimiento = snapshot?.Cumplimiento || snapshot?.cumplimiento || {};
   const metadata = snapshot?.Metadata || snapshot?.metadata || {};
 
