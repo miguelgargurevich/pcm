@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   History, 
   Search, 
@@ -281,18 +281,7 @@ const HistorialCumplimiento = () => {
     { id: 8, nombre: 'ACEPTADO' },
   ];
 
-  // Cargar datos iniciales
-  useEffect(() => {
-    cargarDatosIniciales();
-  }, []);
-
-  // Cargar historial cuando cambian filtros o paginación
-  useEffect(() => {
-    cargarHistorial();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page, pagination.pageSize]);
-
-  const cargarDatosIniciales = async () => {
+  const cargarDatosIniciales = useCallback(async () => {
     try {
       // Cargar compromisos y entidades para los filtros
       const [compRes, entRes] = await Promise.all([
@@ -307,12 +296,45 @@ const HistorialCumplimiento = () => {
         setEntidades(entRes.data.data || []);
       }
 
-      await cargarHistorial();
+      // Cargar historial inicial
+      setLoading(true);
+      try {
+        const params = new URLSearchParams();
+        params.append('page', pagination.page);
+        params.append('pageSize', pagination.pageSize);
+        
+        const response = await apiService.get(`/CumplimientoHistorial?${params.toString()}`);
+        
+        if (response.data) {
+          setHistorial(response.data.items || []);
+          setPagination(prev => ({
+            ...prev,
+            totalItems: response.data.totalItems || 0,
+            totalPages: response.data.totalPages || 0
+          }));
+        }
+      } catch (error) {
+        console.error('Error cargando historial:', error);
+        toast.error('Error al cargar historial');
+      } finally {
+        setLoading(false);
+      }
     } catch (error) {
       console.error('Error cargando datos iniciales:', error);
       toast.error('Error al cargar datos iniciales');
     }
-  };
+  }, [pagination.page, pagination.pageSize]);
+
+  // Cargar datos iniciales
+  useEffect(() => {
+    cargarDatosIniciales();
+  }, [cargarDatosIniciales]);
+
+  // Cargar historial cuando cambian filtros o paginación
+  useEffect(() => {
+    cargarHistorial();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination.page, pagination.pageSize]);
 
   const cargarHistorial = async () => {
     setLoading(true);
