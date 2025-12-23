@@ -29,7 +29,7 @@ import { getCatalogoOptions, getConfigValue } from '../services/catalogoService'
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
 import PDFViewer from '../components/PDFViewer';
 import Compromiso3Paso1 from '../components/Compromiso3/Compromiso3Paso1';
-import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save, Eye, ExternalLink, Plus, Trash2, Edit2 } from 'lucide-react';
+import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save, Eye, ExternalLink, Plus, Trash2, Edit2, HelpCircle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import emailService from '../services/emailService';
 import emailTemplates from '../services/emailTemplates';
@@ -89,6 +89,7 @@ const CumplimientoNormativoDetalle = () => {
   const datosDBCargadosRef = useRef(false); // Ref para acceder al valor actual en closures
   const [pdfUrl, setPdfUrl] = useState(null); // PDF principal (Paso 1)
   const [pdfUrlPaso2, setPdfUrlPaso2] = useState(null); // PDF para Paso 2 (cumplimiento normativo)
+  const [pdfAyudaUrl, setPdfAyudaUrl] = useState(null); // PDF de ayuda para llenar el compromiso
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [documentoActualUrl, setDocumentoActualUrl] = useState(null); // URL del documento que se está viendo
   const [haVistoPolitica, setHaVistoPolitica] = useState(false);
@@ -324,6 +325,30 @@ const CumplimientoNormativoDetalle = () => {
       }
     }
   }, [formData.compromisoId, _compromisos, compromisoSeleccionado]);
+
+  // Cargar PDF de ayuda cuando se selecciona un compromiso
+  useEffect(() => {
+    const loadPdfAyuda = async () => {
+      if (formData.compromisoId) {
+        try {
+          const columnaId = `PDF_AYUDA_C${formData.compromisoId}`;
+          const pdfUrl = await getConfigValue('CONFIG_PDF_AYUDA', columnaId);
+          if (pdfUrl) {
+            setPdfAyudaUrl(pdfUrl);
+            console.log(`📄 PDF de ayuda cargado para Compromiso ${formData.compromisoId}:`, pdfUrl);
+          } else {
+            setPdfAyudaUrl(null);
+            console.log(`ℹ️ No hay PDF de ayuda configurado para Compromiso ${formData.compromisoId}`);
+          }
+        } catch (error) {
+          console.error('Error cargando PDF de ayuda:', error);
+          setPdfAyudaUrl(null);
+        }
+      }
+    };
+    
+    loadPdfAyuda();
+  }, [formData.compromisoId]);
 
   // Cleanup del blob URL al desmontar el componente
   useEffect(() => {
@@ -4188,11 +4213,25 @@ const CumplimientoNormativoDetalle = () => {
           {viewMode ? 'Ver Cumplimiento Normativo' : (isEdit ? 'Editar Cumplimiento Normativo' : 'Nuevo Cumplimiento Normativo')}
         </h1>
         {compromisoSeleccionado && (
-          <div className="mt-3 p-4 bg-primary/5 border-l-4 border-primary rounded-r-lg">
-            <p className="text-sm text-gray-600 mb-1">Compromiso seleccionado:</p>
-            <p className="text-base font-semibold text-primary">
-              Compromiso {compromisoSeleccionado.compromisoId}: {compromisoSeleccionado.nombreCompromiso}
-            </p>
+          <div className="mt-3 p-4 bg-primary/5 border-l-4 border-primary rounded-r-lg flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Compromiso seleccionado:</p>
+              <p className="text-base font-semibold text-primary">
+                Compromiso {compromisoSeleccionado.compromisoId}: {compromisoSeleccionado.nombreCompromiso}
+              </p>
+            </div>
+            {pdfAyudaUrl && (
+              <button
+                onClick={() => {
+                  setDocumentoActualUrl(pdfAyudaUrl);
+                  setShowPdfViewer(true);
+                }}
+                className="ml-4 p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-full transition-colors"
+                title="Ver guía de ayuda para llenar este compromiso"
+              >
+                <HelpCircle className="w-6 h-6" />
+              </button>
+            )}
           </div>
         )}
         <p className="text-gray-600 mt-3">Complete la información en los 3 pasos siguientes</p>

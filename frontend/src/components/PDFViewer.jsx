@@ -1,4 +1,4 @@
-import { X, Loader2 } from 'lucide-react';
+import { X, Loader2, FileText } from 'lucide-react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -13,19 +13,27 @@ const PDFViewer = ({ pdfUrl, onClose, title = 'Vista Previa del Documento' }) =>
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col">
-        <div className="flex justify-between items-center p-4 border-b">
-          <h3 className="text-lg font-semibold">{title}</h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-600 to-primary-700 rounded-t-xl text-white">
+          <div className="flex items-center gap-3">
+            <FileText className="w-6 h-6" />
+            <div>
+              <h2 className="text-lg font-semibold">{title}</h2>
+              <p className="text-sm text-white/80">Documento PDF</p>
+            </div>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
-            title="Cerrar"
+            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
           >
-            <X size={24} />
+            <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="flex-1 overflow-auto p-4 relative">
+        
+        {/* Content */}
+        <div className="flex-1 overflow-auto p-6 relative">
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 z-10">
               <div className="flex flex-col items-center gap-3">
@@ -36,7 +44,7 @@ const PDFViewer = ({ pdfUrl, onClose, title = 'Vista Previa del Documento' }) =>
           )}
           <iframe
             src={pdfUrl}
-            className="w-full h-full min-h-[600px] border-0"
+            className="w-full h-full min-h-[600px] border-0 rounded-lg"
             title={title}
             onLoad={() => {
               console.log('✅ PDF cargado correctamente en iframe');
@@ -48,18 +56,20 @@ const PDFViewer = ({ pdfUrl, onClose, title = 'Vista Previa del Documento' }) =>
             }}
           />
         </div>
-        <div className="p-4 border-t bg-gray-50 flex justify-end gap-2">
+        
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-3 p-6 border-t bg-gray-50 rounded-b-xl">
           <a
             href={pdfUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-secondary"
+            className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
           >
             Abrir en nueva pestaña
           </a>
           <button
             onClick={onClose}
-            className="btn-primary"
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
           >
             Cerrar
           </button>
