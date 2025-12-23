@@ -89,24 +89,87 @@ const Dashboard = () => {
 
         // Procesar estadísticas de compromisos por estado desde datos reales
         const compromisosData = compromisosResponse?.data?.items || [];
-        const estadosPorNombre = {};
+        
+        // Contar por estados usando los IDs correctos
+        let pendientes = 0;
+        let sinReportar = 0;
+        let enProceso = 0;
+        let enviados = 0;
+        let enRevision = 0;
+        let observados = 0;
+        let aceptados = 0;
         
         compromisosData.forEach(comp => {
-          const estadoNombre = comp.estadoNombre || 'SIN ESTADO';
-          estadosPorNombre[estadoNombre] = (estadosPorNombre[estadoNombre] || 0) + 1;
+          const estadoId = comp.estadoId;
+          const estadoNombre = comp.estadoNombre?.toUpperCase() || '';
+          
+          switch(estadoId) {
+            case 1: // PENDIENTE
+              pendientes++;
+              break;
+            case 2: // SIN REPORTAR
+              sinReportar++;
+              break;
+            case 3: // NO EXIGIBLE
+              // No contar, no es relevante para progreso
+              break;
+            case 4: // EN PROCESO
+              enProceso++;
+              break;
+            case 5: // ENVIADO
+              enviados++;
+              break;
+            case 6: // EN REVISIÓN
+              enRevision++;
+              break;
+            case 7: // OBSERVADO
+              observados++;
+              break;
+            case 8: // ACEPTADO
+              aceptados++;
+              break;
+            default:
+              // Si no tiene estadoId, usar estadoNombre
+              if (estadoNombre.includes('PENDIENTE')) pendientes++;
+              else if (estadoNombre.includes('SIN REPORTAR')) sinReportar++;
+              else if (estadoNombre.includes('EN PROCESO')) enProceso++;
+              else if (estadoNombre.includes('ENVIADO')) enviados++;
+              else if (estadoNombre.includes('REVISIÓN')) enRevision++;
+              else if (estadoNombre.includes('OBSERVADO')) observados++;
+              else if (estadoNombre.includes('ACEPTADO')) aceptados++;
+          }
         });
         
-        // Calcular estadísticas generales
-        const completados = data.compromisosCompletados || 0;
-        const enProceso = estadosPorNombre['EN PROCESO'] || 0;
+        // Total de compromisos activos (excluyendo NO EXIGIBLE)
+        const totalActivos = pendientes + sinReportar + enProceso + enviados + enRevision + observados + aceptados;
+        
+        // Compromisos completados = ACEPTADOS
+        const completados = aceptados;
+        
+        // Compromisos en trabajo = EN PROCESO + ENVIADO + EN REVISIÓN + OBSERVADO
+        const enTrabajo = enProceso + enviados + enRevision + observados;
+        
+        // Compromisos sin iniciar = PENDIENTE + SIN REPORTAR
+        const sinIniciar = pendientes + sinReportar;
+        
         setEstadisticasCompromisos({
-          total: data.totalCompromisos,
-          pendientes: data.compromisosPendientes,
-          enProceso: enProceso,
+          total: totalActivos > 0 ? totalActivos : data.totalCompromisos,
+          pendientes: sinIniciar,
+          enProceso: enTrabajo,
           completados: completados,
-          porcentajeCumplimiento: data.totalCompromisos > 0 
-            ? Math.round((completados / data.totalCompromisos) * 100) 
+          porcentajeCumplimiento: totalActivos > 0 
+            ? Math.round((completados / totalActivos) * 100) 
             : 0,
+          // Desglose detallado para mostrar
+          desglose: {
+            pendientes,
+            sinReportar,
+            enProceso,
+            enviados,
+            enRevision,
+            observados,
+            aceptados
+          }
         });
 
         // Procesar actividad reciente real
@@ -211,24 +274,62 @@ const Dashboard = () => {
               </div>
             </div>
             
+            {/* Resumen principal */}
             <div className="grid grid-cols-4 gap-3 mb-4">
-              <div className="text-center p-3 bg-gray-50 rounded-lg">
+              <div className="text-center p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
                 <p className="text-2xl font-bold text-gray-800">{estadisticasCompromisos.total}</p>
-                <p className="text-xs text-gray-600 mt-1">Total</p>
+                <p className="text-xs text-gray-600 mt-1">Total Activos</p>
               </div>
-              <div className="text-center p-3 bg-orange-50 rounded-lg">
-                <p className="text-2xl font-bold text-orange-600">{estadisticasCompromisos.pendientes}</p>
-                <p className="text-xs text-gray-600 mt-1">Pendientes</p>
+              <div className="text-center p-3 bg-red-50 rounded-lg border-2 border-red-200">
+                <p className="text-2xl font-bold text-red-600">{estadisticasCompromisos.pendientes}</p>
+                <p className="text-xs text-gray-600 mt-1">Sin Iniciar</p>
               </div>
-              <div className="text-center p-3 bg-blue-50 rounded-lg">
+              <div className="text-center p-3 bg-blue-50 rounded-lg border-2 border-blue-200">
                 <p className="text-2xl font-bold text-blue-600">{estadisticasCompromisos.enProceso}</p>
-                <p className="text-xs text-gray-600 mt-1">En Proceso</p>
+                <p className="text-xs text-gray-600 mt-1">En Trabajo</p>
               </div>
-              <div className="text-center p-3 bg-green-50 rounded-lg">
+              <div className="text-center p-3 bg-green-50 rounded-lg border-2 border-green-200">
                 <p className="text-2xl font-bold text-green-600">{estadisticasCompromisos.completados}</p>
-                <p className="text-xs text-gray-600 mt-1">Completados</p>
+                <p className="text-xs text-gray-600 mt-1">Aceptados</p>
               </div>
             </div>
+
+            {/* Desglose detallado de estados */}
+            {estadisticasCompromisos.desglose && (
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                <p className="text-xs font-semibold text-gray-700 mb-2">Desglose por Estado:</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                  <div className="flex items-center justify-between p-2 bg-white rounded border border-gray-200">
+                    <span className="text-gray-600">Pendientes:</span>
+                    <span className="font-semibold text-gray-800">{estadisticasCompromisos.desglose.pendientes}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border border-gray-200">
+                    <span className="text-gray-600">Sin Reportar:</span>
+                    <span className="font-semibold text-gray-800">{estadisticasCompromisos.desglose.sinReportar}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border border-blue-200">
+                    <span className="text-gray-600">En Proceso:</span>
+                    <span className="font-semibold text-blue-600">{estadisticasCompromisos.desglose.enProceso}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border border-blue-200">
+                    <span className="text-gray-600">Enviados:</span>
+                    <span className="font-semibold text-blue-600">{estadisticasCompromisos.desglose.enviados}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border border-blue-200">
+                    <span className="text-gray-600">En Revisión:</span>
+                    <span className="font-semibold text-blue-600">{estadisticasCompromisos.desglose.enRevision}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border border-orange-200">
+                    <span className="text-gray-600">Observados:</span>
+                    <span className="font-semibold text-orange-600">{estadisticasCompromisos.desglose.observados}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border border-green-200">
+                    <span className="text-gray-600">Aceptados:</span>
+                    <span className="font-semibold text-green-600">{estadisticasCompromisos.desglose.aceptados}</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Barra de progreso */}
             <div>
