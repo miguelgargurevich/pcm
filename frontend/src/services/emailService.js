@@ -1,10 +1,8 @@
 /**
- * Servicio para envío de correos usando FormSubmit
- * https://formsubmit.co/
+ * Servicio para envío de correos usando el backend (ResendEmailService)
  */
 
-// Email con copia para pruebas
-const EMAIL_COPIA_PRUEBAS = 'miguel.gargurevich@gmail.com';
+import api from './api';
 
 const emailService = {
   /**
@@ -44,32 +42,29 @@ const emailService = {
         estadoFinal
       });
 
-      // Crear FormData para FormSubmit
-      const formData = new FormData();
-      formData.append('_subject', `✅ Cumplimiento Normativo - ${compromisoNombre}`);
-      formData.append('_template', 'box'); // Template prediseñado de FormSubmit
-      formData.append('_captcha', 'false'); // Desactivar captcha
-      formData.append('_cc', `${toEmail},${EMAIL_COPIA_PRUEBAS}`); // Copia al remitente y email de pruebas
-      formData.append('message', emailHtml); // Contenido HTML
+      console.log('📧 Llamando al backend para envío de correo...');
 
-      // Enviar a FormSubmit
-      const response = await fetch(`https://formsubmit.co/${toEmail}`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
+      // Enviar a través del backend
+      const response = await api.post('/Email/send-cumplimiento-notification', {
+        toEmail,
+        compromisoId,
+        compromisoNombre,
+        entidadNombre,
+        htmlContent: emailHtml
       });
 
-      if (response.ok) {
-        console.log('Correo enviado exitosamente');
+      console.log('📧 Respuesta del backend:', response.data);
+
+      if (response.data.success) {
+        console.log('✅ Correo enviado exitosamente a', toEmail);
         return true;
       } else {
-        console.error('Error al enviar correo:', response.statusText);
+        console.error('❌ Error al enviar correo:', response.data.message);
         return false;
       }
     } catch (error) {
       console.error('❌ Error en emailService.sendCumplimientoConfirmation:', error);
+      console.error('❌ Detalles:', error.response?.data || error.message);
       return false;
     }
   },
