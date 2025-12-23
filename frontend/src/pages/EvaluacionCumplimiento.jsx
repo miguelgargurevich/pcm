@@ -3,6 +3,9 @@ import { BarChart3, Search, FilterX, ChevronLeft, ChevronRight, Loader2, Filter,
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast.jsx';
 import EvaluacionDetallePanel from '../components/Evaluacion/EvaluacionDetallePanel';
 import evaluacionService from '../services/evaluacionService';
+import emailService from '../services/emailService';
+import com1LiderGTDService from '../services/com1LiderGTDService';
+import { useAuth } from '../hooks/useAuth';
 
 // Opciones para los estados
 const estadosOptions = [
@@ -50,7 +53,33 @@ const getEstadoAbreviado = (estado) => {
 
 const ITEMS_PER_PAGE = 10;
 
+// Nombres de los compromisos para el correo
+const COMPROMISOS_NOMBRES = {
+  1: 'Designación del Líder Digital',
+  2: 'Conformar el Comité de GTD',
+  3: 'Elaborar Plan de Gobierno Digital',
+  4: 'Incorporar TD en el PEI',
+  5: 'Formular Estrategia Digital',
+  6: 'Migración a GOB.PE',
+  7: 'Implementar Mesa de Partes Digital',
+  8: 'Implementar TUPA Digital',
+  9: 'Modelo de Gestión Documental',
+  10: 'Plataforma Nacional de Datos Abiertos',
+  11: 'Implementar GeoPERU',
+  12: 'Mecanismos de Participación',
+  13: 'Interoperabilidad',
+  14: 'Seguridad Digital',
+  15: 'Arquitectura Digital',
+  16: 'Servicios Digitales',
+  17: 'Identidad Digital',
+  18: 'Datos como Activo Estratégico',
+  19: 'Talento Digital',
+  20: 'Innovación Digital',
+  21: 'Oficina de Gobierno Digital'
+};
+
 const EvaluacionCumplimiento = () => {
+  const { user } = useAuth();
   const [filtros, setFiltros] = useState({
     entidad: '',
     sectorId: '',
@@ -218,6 +247,9 @@ const EvaluacionCumplimiento = () => {
             showSuccessToast(`Estado actualizado a "${nuevoEstado}"`);
           }
           
+          // Enviar correo de notificación
+          await enviarCorreoEvaluacion(nuevoEstado, observaciones);
+          
           // Volver al panel de matriz después de evaluar
           setVistaDetalle(false);
           setEntidadSeleccionada(null);
@@ -230,6 +262,154 @@ const EvaluacionCumplimiento = () => {
         console.error('Error al evaluar:', error);
         showErrorToast('Error al actualizar el estado. Por favor intente nuevamente.');
       }
+    }
+  };
+
+  // Función para enviar correo de evaluación
+  const enviarCorreoEvaluacion = async (nuevoEstado, observaciones) => {
+    try {
+      console.log('📧 ===== INICIANDO ENVÍO DE CORREO DE EVALUACIÓN =====');
+      console.log('🔍 Entidad completa:', entidadSeleccionada);
+      console.log('🔍 Entidad ID:', entidadSeleccionada?.id);
+      console.log('🔍 Entidad nombre:', entidadSeleccionada?.nombre);
+      console.log('🔍 Compromiso:', compromisoSeleccionado);
+      console.log('🔍 Estado:', nuevoEstado);
+      console.log('🔍 Observaciones:', observaciones);
+      
+      if (!entidadSeleccionada || !entidadSeleccionada.id) {
+        console.error('❌ No hay entidad seleccionada o no tiene ID');
+        return;
+      }
+      
+      // Obtener email del Líder GTD (siempre desde C1)
+      console.log('🔍 Llamando com1LiderGTDService.getByEntidad(1, ' + entidadSeleccionada.id + ')');
+      const response = await com1LiderGTDService.getByEntidad(1, entidadSeleccionada.id);
+      console.log('🔍 Respuesta getByEntidad:', response);
+      
+      if (!response.isSuccess || !response.data) {
+        console.warn('⚠️ No se encontró registro del Líder GTD');
+        showErrorToast('No se puede enviar el correo: la entidad no ha completado el Compromiso 1');
+        return;
+      }
+      
+      const email = response.data.emailLider || response.data.email_lider || response.data.correoElectronico;
+      console.log('📧 Email destinatario:', email);
+      
+      if (!email) {
+        console.warn('⚠️ No se encontró email del Líder GTD');
+        showErrorToast('No se puede enviar el correo: no hay email registrado en el Compromiso 1');
+        return;
+      }
+      
+      // Construir HTML del correo
+      const esAprobado = nuevoEstado === 'aceptado';
+      const estadoTexto = esAprobado ? 'APROBADO' : 'OBSERVADO';
+      const colorEstado = esAprobado ? '#10b981' : '#ef4444';
+      const iconoEstado = esAprobado ? '✅' : '⚠️';
+      
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; }
+            .status-box { background: ${colorEstado}; color: white; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0; }
+            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+            .info-item { background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #667eea; }
+            .footer { text-align: center; color: #6b7280; padding: 20px; font-size: 12px; }
+            .obs-box { background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 8px; margin: 20px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1 style="margin: 0; font-size: 24px;">${iconoEstado} Evaluación de Cumplimiento Normativo</h1>
+              <p style="margin: 10px 0 0 0; opacity: 0.9;">Plataforma de Cumplimiento Digital - PCM</p>
+            </div>
+            
+            <div class="content">
+              <p>Estimado(a) Líder de Gobierno y Transformación Digital,</p>
+              
+              <p>Le informamos que su cumplimiento ha sido evaluado:</p>
+              
+              <div class="status-box">
+                <h2 style="margin: 0; font-size: 28px;">${estadoTexto}</h2>
+              </div>
+              
+              <div class="info-grid">
+                <div class="info-item">
+                  <strong style="color: #667eea;">Compromiso</strong>
+                  <p style="margin: 5px 0 0 0;">C${compromisoSeleccionado}</p>
+                </div>
+                <div class="info-item">
+                  <strong style="color: #667eea;">Entidad</strong>
+                  <p style="margin: 5px 0 0 0;">${entidadSeleccionada.nombre}</p>
+                </div>
+                <div class="info-item">
+                  <strong style="color: #667eea;">Evaluado por</strong>
+                  <p style="margin: 5px 0 0 0;">${user?.nombreCompleto || 'Operador PCM'}</p>
+                </div>
+                <div class="info-item">
+                  <strong style="color: #667eea;">Fecha</strong>
+                  <p style="margin: 5px 0 0 0;">${new Date().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' })}</p>
+                </div>
+              </div>
+              
+              ${observaciones ? `
+                <div class="obs-box">
+                  <strong style="color: #856404;">📝 Observaciones:</strong>
+                  <p style="margin: 10px 0 0 0;">${observaciones}</p>
+                </div>
+              ` : ''}
+              
+              <p style="margin-top: 30px;">
+                ${esAprobado 
+                  ? 'Felicitaciones, su cumplimiento ha sido aprobado satisfactoriamente.' 
+                  : 'Por favor, revise las observaciones y realice las correcciones necesarias para volver a enviar su cumplimiento.'}
+              </p>
+              
+              <p>Para más detalles, ingrese a la Plataforma de Cumplimiento Digital.</p>
+            </div>
+            
+            <div class="footer">
+              <p><strong>Plataforma de Cumplimiento Digital</strong></p>
+              <p>Presidencia del Consejo de Ministros - PCM</p>
+              <p>Este es un correo automático, por favor no responder.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+      
+      const compromisoNombre = COMPROMISOS_NOMBRES[compromisoSeleccionado] || `Compromiso ${compromisoSeleccionado}`;
+      
+      console.log('📧 Enviando correo con:', { email, compromisoId: compromisoSeleccionado, compromisoNombre, entidadNombre: entidadSeleccionada.nombre });
+      
+      const success = await emailService.sendEvaluacionNotification(
+        email,
+        compromisoSeleccionado,
+        compromisoNombre,
+        entidadSeleccionada.nombre,
+        htmlContent
+      );
+      
+      if (success) {
+        console.log('✅ Correo de evaluación enviado exitosamente a:', email);
+        showSuccessToast(`Correo de evaluación enviado a ${email}`);
+      } else {
+        console.warn('⚠️ No se pudo enviar el correo de evaluación');
+        showErrorToast('No se pudo enviar el correo de notificación');
+      }
+      
+      console.log('📧 ===== FIN DEL PROCESO DE ENVÍO DE CORREO =====');
+    } catch (error) {
+      console.error('❌ Error al enviar correo de evaluación:', error);
+      showErrorToast('Error al enviar el correo: ' + error.message);
     }
   };
 

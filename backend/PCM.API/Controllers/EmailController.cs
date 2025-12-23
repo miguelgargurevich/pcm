@@ -39,7 +39,21 @@ public class EmailController : ControllerBase
                 return BadRequest(new { message = "El contenido HTML del correo es requerido" });
             }
 
-            var subject = $"✅ Cumplimiento Normativo - {request.CompromisoNombre ?? $"Compromiso {request.CompromisoId}"}";
+            // Determinar el tipo de notificación basado en el contenido HTML
+            string subject;
+            if (request.HtmlContent.Contains("APROBADO") || request.HtmlContent.Contains("aprobado satisfactoriamente"))
+            {
+                subject = $"✅ APROBADO | C{request.CompromisoId}: {request.CompromisoNombre} | {request.EntidadNombre}";
+            }
+            else if (request.HtmlContent.Contains("OBSERVADO") || request.HtmlContent.Contains("observaciones y realice las correcciones"))
+            {
+                subject = $"⚠️ OBSERVADO | C{request.CompromisoId}: {request.CompromisoNombre} | {request.EntidadNombre}";
+            }
+            else
+            {
+                // Envío de cumplimiento para revisión
+                subject = $"📋 ENVIADO PARA REVISIÓN | C{request.CompromisoId}: {request.CompromisoNombre} | {request.EntidadNombre}";
+            }
             
             var success = await _emailService.SendEmailAsync(
                 request.ToEmail,

@@ -70,6 +70,42 @@ const emailService = {
   },
 
   /**
+   * Envía correo de evaluación (aprobar/observar)
+   * @param {string} toEmail - Email destinatario
+   * @param {number} compromisoId - ID del compromiso
+   * @param {string} compromisoNombre - Nombre del compromiso
+   * @param {string} entidadNombre - Nombre de la entidad
+   * @param {string} htmlContent - HTML del correo
+   */
+  async sendEvaluacionNotification(toEmail, compromisoId, compromisoNombre, entidadNombre, htmlContent) {
+    try {
+      console.log('📧 [Evaluación] Enviando correo a:', toEmail);
+
+      const response = await api.post('/Email/send-cumplimiento-notification', {
+        toEmail,
+        compromisoId,
+        compromisoNombre,
+        entidadNombre,
+        htmlContent
+      });
+
+      console.log('📧 [Evaluación] Respuesta del backend:', response.data);
+
+      if (response.data.success) {
+        console.log('✅ [Evaluación] Correo enviado exitosamente a', toEmail);
+        return true;
+      } else {
+        console.error('❌ [Evaluación] Error al enviar correo:', response.data.message);
+        return false;
+      }
+    } catch (error) {
+      console.error('❌ [Evaluación] Error:', error);
+      console.error('❌ [Evaluación] Detalles:', error.response?.data || error.message);
+      return false;
+    }
+  },
+
+  /**
    * Construye el template HTML del correo
    */
   buildEmailTemplate({
