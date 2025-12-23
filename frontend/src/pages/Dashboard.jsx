@@ -49,12 +49,17 @@ const Dashboard = () => {
         console.log('🔍 Dashboard - Datos de compromisos:', {
           total: compromisosData.length,
           primerosRegistros: compromisosData.slice(0, 3),
-          estructura: compromisosData[0]
+          estructura: compromisosData[0],
+          compromisosIds: compromisosData.map(c => `C${c.compromisoId}`).sort(),
+          faltantes: Array.from({length: 21}, (_, i) => i + 1).filter(id => 
+            !compromisosData.find(c => c.compromisoId === id)
+          )
         });
         
         // Contar por estados usando los IDs correctos
         let pendientes = 0;
         let sinReportar = 0;
+        let noExigible = 0;
         let enProceso = 0;
         let enviados = 0;
         let enRevision = 0;
@@ -74,7 +79,8 @@ const Dashboard = () => {
               sinReportar++;
               break;
             case 3: // NO EXIGIBLE
-              // No contar, no es relevante para progreso
+              noExigible++;
+              console.log(`❌ Compromiso ${comp.compromisoId} es NO EXIGIBLE`);
               break;
             case 4: // EN PROCESO
               enProceso++;
@@ -96,9 +102,6 @@ const Dashboard = () => {
           }
         });
         
-        // Total de compromisos activos (excluyendo NO EXIGIBLE)
-        const totalActivos = pendientes + sinReportar + enProceso + enviados + enRevision + observados + aceptados;
-        
         // Compromisos completados = ACEPTADOS
         const completados = aceptados;
         
@@ -107,6 +110,27 @@ const Dashboard = () => {
         
         // Compromisos sin iniciar = PENDIENTE + SIN REPORTAR
         const sinIniciar = pendientes + sinReportar;
+        
+        // Total de compromisos activos (excluyendo NO EXIGIBLE)
+        const totalActivos = pendientes + sinReportar + enProceso + enviados + enRevision + observados + aceptados;
+        const totalConNoExigible = totalActivos + noExigible;
+        
+        // IMPORTANTE: El backend solo devuelve compromisos con registros en cumplimiento_normativo
+        // Pero el sistema tiene 21 compromisos en total. Usamos el mayor valor.
+        const totalReal = Math.max(totalConNoExigible, data.totalCompromisos, 21);
+        const compromisosSinRegistro = totalReal - totalConNoExigible;
+        
+        console.log('📊 Estadísticas calculadas:', {
+          totalActivos,
+          totalConNoExigible,
+          totalReal,
+          compromisosSinRegistro,
+          noExigible,
+          sinIniciar,
+          enTrabajo,
+          completados,
+          desglose: { pendientes, sinReportar, noExigible, enProceso, enviados, enRevision, observados, aceptados }
+        });
         
         console.log('📊 Estadísticas calculadas:', {
           totalActivos,
@@ -153,7 +177,7 @@ const Dashboard = () => {
           },
           {
             title: isAdmin ? 'Compromisos Totales' : 'Mis Compromisos',
-            value: (totalActivos > 0 ? totalActivos : data.totalCompromisos).toString(),
+            value: totalReal.toString(),
             icon: CheckSquare,
             color: 'bg-orange-500',
             subtitle: enTrabajo > 0 ? `${enTrabajo} en trabajo` : `${sinIniciar} sin iniciar`,
@@ -165,17 +189,17 @@ const Dashboard = () => {
         
         // TERCERO: Establecer estadísticas detalladas para el panel
         setEstadisticasCompromisos({
-          total: totalActivos > 0 ? totalActivos : data.totalCompromisos,
-          pendientes: sinIniciar,
+          total: totalReal,
+          pendientes: sinIniciar + compromisosSinRegistro, // Los sin registro se consideran "sin iniciar"
           enProceso: enTrabajo,
           completados: completados,
-          porcentajeCumplimiento: totalActivos > 0 
-            ? Math.round((completados / totalActivos) * 100) 
+          porcentajeCumplimiento: totalReal > 0 
+            ? Math.round((completados / totalReal) * 100) 
             : 0,
           // Desglose detallado para mostrar
           desglose: {
             pendientes,
-            sinReportar,
+            sinReportar: sinReportar + compromisosSinRegistro, // Los sin registro van como "Sin Reportar"
             enProceso,
             enviados,
             enRevision,
