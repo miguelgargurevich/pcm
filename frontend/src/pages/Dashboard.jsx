@@ -40,7 +40,83 @@ const Dashboard = () => {
       if (statsResponse.isSuccess || statsResponse.IsSuccess) {
         const data = statsResponse.data || statsResponse.Data;
         
-        // Construir estadísticas según el rol
+        // PRIMERO: Procesar estadísticas de compromisos por estado desde datos reales
+        console.log('🔍 Dashboard - Response completo:', compromisosResponse);
+        
+        // La API puede devolver data.items o directamente data
+        const compromisosData = compromisosResponse?.data?.items || compromisosResponse?.data || [];
+        
+        console.log('🔍 Dashboard - Datos de compromisos:', {
+          total: compromisosData.length,
+          primerosRegistros: compromisosData.slice(0, 3),
+          estructura: compromisosData[0]
+        });
+        
+        // Contar por estados usando los IDs correctos
+        let pendientes = 0;
+        let sinReportar = 0;
+        let enProceso = 0;
+        let enviados = 0;
+        let enRevision = 0;
+        let observados = 0;
+        let aceptados = 0;
+        
+        compromisosData.forEach(comp => {
+          const estadoId = comp.estadoId;
+          
+          console.log(`Compromiso ${comp.compromisoId} - Estado: ${estadoId}`);
+          
+          switch(estadoId) {
+            case 1: // PENDIENTE
+              pendientes++;
+              break;
+            case 2: // SIN REPORTAR
+              sinReportar++;
+              break;
+            case 3: // NO EXIGIBLE
+              // No contar, no es relevante para progreso
+              break;
+            case 4: // EN PROCESO
+              enProceso++;
+              break;
+            case 5: // ENVIADO
+              enviados++;
+              break;
+            case 6: // EN REVISIÓN
+              enRevision++;
+              break;
+            case 7: // OBSERVADO
+              observados++;
+              break;
+            case 8: // ACEPTADO
+              aceptados++;
+              break;
+            default:
+              console.warn(`⚠️ Estado desconocido: ${estadoId} para compromiso ${comp.compromisoId}`);
+          }
+        });
+        
+        // Total de compromisos activos (excluyendo NO EXIGIBLE)
+        const totalActivos = pendientes + sinReportar + enProceso + enviados + enRevision + observados + aceptados;
+        
+        // Compromisos completados = ACEPTADOS
+        const completados = aceptados;
+        
+        // Compromisos en trabajo = EN PROCESO + ENVIADO + EN REVISIÓN + OBSERVADO
+        const enTrabajo = enProceso + enviados + enRevision + observados;
+        
+        // Compromisos sin iniciar = PENDIENTE + SIN REPORTAR
+        const sinIniciar = pendientes + sinReportar;
+        
+        console.log('📊 Estadísticas calculadas:', {
+          totalActivos,
+          sinIniciar,
+          enTrabajo,
+          completados,
+          desglose: { pendientes, sinReportar, enProceso, enviados, enRevision, observados, aceptados }
+        });
+        
+        // SEGUNDO: Construir estadísticas según el rol usando datos reales
         const statsData = [];
         
         // ADMIN: Muestra todas las estadísticas
@@ -77,81 +153,17 @@ const Dashboard = () => {
           },
           {
             title: isAdmin ? 'Compromisos Totales' : 'Mis Compromisos',
-            value: data.totalCompromisos.toString(),
+            value: (totalActivos > 0 ? totalActivos : data.totalCompromisos).toString(),
             icon: CheckSquare,
             color: 'bg-orange-500',
-            subtitle: `${data.compromisosPendientes} pendientes`,
-            description: `${data.compromisosCompletados || 0} completados`,
+            subtitle: enTrabajo > 0 ? `${enTrabajo} en trabajo` : `${sinIniciar} sin iniciar`,
+            description: `${completados} aceptados`,
           }
         );
         
         setStats(statsData);
-
-        // Procesar estadísticas de compromisos por estado desde datos reales
-        const compromisosData = compromisosResponse?.data?.items || [];
         
-        // Contar por estados usando los IDs correctos
-        let pendientes = 0;
-        let sinReportar = 0;
-        let enProceso = 0;
-        let enviados = 0;
-        let enRevision = 0;
-        let observados = 0;
-        let aceptados = 0;
-        
-        compromisosData.forEach(comp => {
-          const estadoId = comp.estadoId;
-          const estadoNombre = comp.estadoNombre?.toUpperCase() || '';
-          
-          switch(estadoId) {
-            case 1: // PENDIENTE
-              pendientes++;
-              break;
-            case 2: // SIN REPORTAR
-              sinReportar++;
-              break;
-            case 3: // NO EXIGIBLE
-              // No contar, no es relevante para progreso
-              break;
-            case 4: // EN PROCESO
-              enProceso++;
-              break;
-            case 5: // ENVIADO
-              enviados++;
-              break;
-            case 6: // EN REVISIÓN
-              enRevision++;
-              break;
-            case 7: // OBSERVADO
-              observados++;
-              break;
-            case 8: // ACEPTADO
-              aceptados++;
-              break;
-            default:
-              // Si no tiene estadoId, usar estadoNombre
-              if (estadoNombre.includes('PENDIENTE')) pendientes++;
-              else if (estadoNombre.includes('SIN REPORTAR')) sinReportar++;
-              else if (estadoNombre.includes('EN PROCESO')) enProceso++;
-              else if (estadoNombre.includes('ENVIADO')) enviados++;
-              else if (estadoNombre.includes('REVISIÓN')) enRevision++;
-              else if (estadoNombre.includes('OBSERVADO')) observados++;
-              else if (estadoNombre.includes('ACEPTADO')) aceptados++;
-          }
-        });
-        
-        // Total de compromisos activos (excluyendo NO EXIGIBLE)
-        const totalActivos = pendientes + sinReportar + enProceso + enviados + enRevision + observados + aceptados;
-        
-        // Compromisos completados = ACEPTADOS
-        const completados = aceptados;
-        
-        // Compromisos en trabajo = EN PROCESO + ENVIADO + EN REVISIÓN + OBSERVADO
-        const enTrabajo = enProceso + enviados + enRevision + observados;
-        
-        // Compromisos sin iniciar = PENDIENTE + SIN REPORTAR
-        const sinIniciar = pendientes + sinReportar;
-        
+        // TERCERO: Establecer estadísticas detalladas para el panel
         setEstadisticasCompromisos({
           total: totalActivos > 0 ? totalActivos : data.totalCompromisos,
           pendientes: sinIniciar,
@@ -171,7 +183,7 @@ const Dashboard = () => {
             aceptados
           }
         });
-
+        
         // Procesar actividad reciente real
         const historialItems = activityResponse?.data?.items || [];
         const actividades = historialItems.slice(0, 5).map(item => ({
@@ -220,7 +232,7 @@ const Dashboard = () => {
           {isAdmin 
             ? 'Panel de control de la Plataforma de Cumplimiento Digital' 
             : `Panel de control - ${user?.entidadNombre || 'Tu Entidad'}`
-          }{`grid grid-cols-1 md:grid-cols-2 ${isAdmin ? 'lg:grid-cols-4' : 'lg:grid-cols-2'} gap-6 mb-8`}
+          }
         </p>
         {!isAdmin && (
           <p className="text-sm text-gray-500 mt-1">
