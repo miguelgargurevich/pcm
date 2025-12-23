@@ -7,6 +7,9 @@ namespace PCM.Application.Features.CumplimientoNormativo.Commands.UpdateCumplimi
 
 public class UpdateCumplimientoCommand : IRequest<Result<CumplimientoResponseDto>>
 {
+    [JsonIgnore]
+    public Guid? UserId { get; set; }
+    
     [JsonPropertyName("cumplimiento_id")]
     public long CumplimientoId { get; set; }
     

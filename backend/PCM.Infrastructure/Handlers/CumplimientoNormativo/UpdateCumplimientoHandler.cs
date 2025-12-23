@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using PCM.Application.Common;
 using PCM.Application.DTOs.CumplimientoNormativo;
 using PCM.Application.Features.CumplimientoNormativo.Commands.UpdateCumplimiento;
+using PCM.Application.Interfaces;
 using PCM.Infrastructure.Data;
 
 namespace PCM.Infrastructure.Handlers.CumplimientoNormativo;
@@ -12,11 +13,16 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
 {
     private readonly PCMDbContext _context;
     private readonly ILogger<UpdateCumplimientoHandler> _logger;
+    private readonly ICumplimientoHistorialService _historialService;
 
-    public UpdateCumplimientoHandler(PCMDbContext context, ILogger<UpdateCumplimientoHandler> logger)
+    public UpdateCumplimientoHandler(
+        PCMDbContext context, 
+        ILogger<UpdateCumplimientoHandler> logger,
+        ICumplimientoHistorialService historialService)
     {
         _context = context;
         _logger = logger;
+        _historialService = historialService;
     }
 
     public async Task<Result<CumplimientoResponseDto>> Handle(UpdateCumplimientoCommand request, CancellationToken cancellationToken)
@@ -26,12 +32,18 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
             _logger.LogInformation("🔍 UpdateCumplimiento - Request recibido para CumplimientoId: {CumplimientoId}", request.CumplimientoId);
             
             var cumplimiento = await _context.CumplimientosNormativos
+                .Include(c => c.Compromiso)
+                .Include(c => c.Entidad)
                 .FirstOrDefaultAsync(c => c.CumplimientoId == request.CumplimientoId, cancellationToken);
 
             if (cumplimiento == null)
             {
                 return Result<CumplimientoResponseDto>.Failure("Cumplimiento normativo no encontrado");
             }
+
+            // Guardar estado anterior para el historial
+            var estadoAnterior = cumplimiento.EstadoId;
+            var estadoAnteriorNombre = GetEstadoNombre(estadoAnterior);
 
             // Actualizar estado si viene un valor válido (1, 2 o 3)
             if (request.EstadoId > 0 && request.EstadoId <= 3)
@@ -60,6 +72,25 @@ public class UpdateCumplimientoHandler : IRequestHandler<UpdateCumplimientoComma
             cumplimiento.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Registrar en historial si cambió el estado
+            if (estadoAnterior != cumplimiento.EstadoId)
+            {
+                var estadoNuevoNombre = GetEstadoNombre(cumplimiento.EstadoId);
+                var usuarioId = request.UserId ?? Guid.Empty;
+                
+                _logger.LogInformation("📝 Registrando cambio de estado en historial - CompromisoId: {CompromisoId}, EntidadId: {EntidadId}, EstadoAnterior: {EstadoAnterior}, EstadoNuevo: {EstadoNuevo}, UsuarioId: {UsuarioId}",
+                    cumplimiento.CompromisoId, cumplimiento.EntidadId, estadoAnteriorNombre, estadoNuevoNombre, usuarioId);
+
+                await _historialService.RegistrarCambioDesdeFormularioAsync(
+                    compromisoId: cumplimiento.CompromisoId,
+                    entidadId: cumplimiento.EntidadId,
+                    estadoAnterior: estadoAnteriorNombre,
+                    estadoNuevo: estadoNuevoNombre,
+                    usuarioId: usuarioId,
+                    observacion: request.ObservacionPcm,
+                    tipoAccion: "CAMBIO_ESTADO_PCM");
+            }
 
             // Recargar con datos relacionados
             var updated = await _context.CumplimientosNormativos

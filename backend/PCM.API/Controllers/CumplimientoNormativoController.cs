@@ -142,13 +142,22 @@ public class CumplimientoNormativoController : ControllerBase
             _logger.LogInformation("Actualizando cumplimiento {Id} - EstadoId: {EstadoId}", 
                 id, request.EstadoId);
             
+            // Obtener UserId del JWT token
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            Guid? userId = null;
+            if (!string.IsNullOrEmpty(userIdClaim) && Guid.TryParse(userIdClaim, out var parsedUserId))
+            {
+                userId = parsedUserId;
+            }
+            
             var command = new UpdateCumplimientoCommand
             {
                 CumplimientoId = id,
                 EstadoId = request.EstadoId,
                 OperadorId = request.OperadorId,
                 FechaAsignacion = request.FechaAsignacion,
-                ObservacionPcm = request.ObservacionPcm
+                ObservacionPcm = request.ObservacionPcm,
+                UserId = userId
             };
 
             var result = await _mediator.Send(command);

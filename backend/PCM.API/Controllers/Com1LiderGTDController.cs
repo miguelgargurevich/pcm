@@ -92,7 +92,14 @@ public class Com1LiderGTDController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(long id, [FromBody] UpdateCom1LiderGTDCommand command)
     {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized(new { message = "Usuario no autenticado" });
+        }
+        
         command.ComlgtdEntId = id;
+        command.UserId = userId;
 
         var result = await _mediator.Send(command);
 

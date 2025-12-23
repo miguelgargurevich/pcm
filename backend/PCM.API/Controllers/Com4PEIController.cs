@@ -73,7 +73,14 @@ namespace PCM.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(long id, [FromBody] UpdateCom4PEICommand command)
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+            
             command.ComtdpeiEntId = id;
+            command.UserId = userId;
 
             var result = await _mediator.Send(command);
 

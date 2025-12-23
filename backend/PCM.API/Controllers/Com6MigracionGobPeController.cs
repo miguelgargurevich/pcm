@@ -70,7 +70,14 @@ public class Com6MigracionGobPeController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(long id, [FromBody] UpdateCom6MigracionGobPeCommand command)
     {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized(new { message = "Usuario no autenticado" });
+        }
+        
         command.CommpgobpeEntId = id;
+        command.UserId = userId;
 
         var result = await _mediator.Send(command);
 
