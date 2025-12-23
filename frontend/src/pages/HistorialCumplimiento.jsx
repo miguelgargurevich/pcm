@@ -417,7 +417,7 @@ const HistorialCumplimiento = () => {
         params.append('entidadId', filtros.entidadId);
       }
       if (filtros.estadoId && filtros.estadoId !== '') {
-        params.append('estadoId', filtros.estadoId);
+        params.append('estadoId', parseInt(filtros.estadoId));
       }
       if (filtros.fechaDesde && filtros.fechaDesde !== '') {
         params.append('fechaDesde', filtros.fechaDesde);
