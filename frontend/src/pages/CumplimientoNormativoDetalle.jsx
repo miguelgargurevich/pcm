@@ -4027,19 +4027,29 @@ const CumplimientoNormativoDetalle = () => {
    */
   const getCorreoLiderGTD = async () => {
     try {
+      console.log('🔍 Obteniendo correo del líder GTD para entidad:', user.entidadId);
       const response = await com1LiderGTDService.getByEntidad(1, user.entidadId);
       console.log('🔍 Respuesta completa getCorreoLiderGTD:', response);
       
       if (response.isSuccess && response.data) {
         console.log('🔍 Datos del líder:', response.data);
         // El backend puede devolver emailLider o email_lider
-        const email = response.data.emailLider || response.data.email_lider || null;
-        console.log('📧 Email encontrado:', email);
+        const email = response.data.emailLider || response.data.email_lider || response.data.correoElectronico || null;
+        console.log('📧 Email del Líder GTD encontrado:', email);
+        
+        if (!email) {
+          showErrorToast('No se encontró el email del Líder de Gobierno y Transformación Digital. Por favor, complete primero el Compromiso 1.');
+        }
+        
         return email;
       }
+      
+      console.warn('⚠️ No se encontró registro del Líder GTD para esta entidad');
+      showErrorToast('No se encontró el registro del Líder de Gobierno y Transformación Digital. Por favor, complete primero el Compromiso 1.');
       return null;
     } catch (error) {
-      console.error('Error al obtener correo del líder GTD:', error);
+      console.error('❌ Error al obtener correo del líder GTD:', error);
+      showErrorToast('Error al obtener el correo del Líder GTD. Intente nuevamente.');
       return null;
     }
   };
@@ -4049,14 +4059,17 @@ const CumplimientoNormativoDetalle = () => {
    */
   const enviarCorreoConfirmacion = async () => {
     try {
-      console.log('📧 Iniciando envío de correo de confirmación...');
+      console.log('📧 ===== INICIANDO ENVÍO DE CORREO DE CONFIRMACIÓN =====');
       
       // Obtener correo del líder GTD
       const correoLider = await getCorreoLiderGTD();
       if (!correoLider) {
-        console.warn('⚠️ No se encontró correo del líder GTD. No se enviará notificación.');
+        console.warn('⚠️ No se encontró correo del líder GTD. El correo no se enviará.');
         return false;
       }
+
+      console.log('✅ Correo destinatario:', correoLider);
+      console.log('📝 Compromiso:', parseInt(formData.compromisoId), '-', compromisoSeleccionado?.nombreCompromiso);
 
       // Preparar datos para los templates
       const paso1Data = { ...formData, miembros: miembrosComite };
@@ -4070,6 +4083,7 @@ const CumplimientoNormativoDetalle = () => {
       };
 
       // Generar HTML de los pasos
+      console.log('🔧 Generando templates HTML...');
       const paso1Html = emailTemplates.getPaso1Html(
         parseInt(formData.compromisoId),
         compromisoSeleccionado?.nombreCompromiso || `Compromiso ${formData.compromisoId}`,
@@ -4078,27 +4092,33 @@ const CumplimientoNormativoDetalle = () => {
       const paso2Html = emailTemplates.paso2Html(paso2Data);
       const paso3Html = emailTemplates.paso3Html(paso3Data);
 
+      console.log('📧 Enviando correo a:', correoLider);
+
       // Enviar correo
       const enviado = await emailService.sendCumplimientoConfirmation({
         toEmail: correoLider,
-        entidadNombre: user.nombreCompleto || 'Entidad',
+        entidadNombre: user.entidadNombre || user.nombreCompleto || 'Entidad',
         compromisoId: parseInt(formData.compromisoId),
         compromisoNombre: compromisoSeleccionado?.nombreCompromiso || `Compromiso ${formData.compromisoId}`,
         paso1Html,
         paso2Html,
         paso3Html,
-        estadoFinal: formData.estado
+        estadoFinal: formData.estado || 'enviado'
       });
 
       if (enviado) {
-        console.log('✅ Correo de confirmación enviado exitosamente');
+        console.log('✅ Correo de confirmación enviado exitosamente a', correoLider);
+        showSuccessToast('Se ha enviado una notificación por correo al Líder de Gobierno y Transformación Digital.');
       } else {
         console.warn('⚠️ No se pudo enviar el correo de confirmación');
+        showErrorToast('No se pudo enviar la notificación por correo. Los datos fueron guardados correctamente.');
       }
 
+      console.log('📧 ===== FIN DEL PROCESO DE ENVÍO DE CORREO =====');
       return enviado;
     } catch (error) {
       console.error('❌ Error al enviar correo de confirmación:', error);
+      showErrorToast('Error al enviar notificación por correo. Los datos fueron guardados correctamente.');
       return false;
     }
   };
