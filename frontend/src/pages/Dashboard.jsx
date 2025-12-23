@@ -335,19 +335,29 @@ const Dashboard = () => {
         
         // Procesar actividad reciente real
         const historialItems = activityResponse?.data?.items || [];
-        const actividades = historialItems.slice(0, 5).map(item => ({
-          tipo: item.accion || 'ACTUALIZACION',
-          descripcion: `${item.accion || 'Cambio'} en ${item.nombreCompromiso || 'compromiso'}`,
-          entidad: item.entidadNombre || 'Entidad',
-          fecha: item.fechaCambio || new Date().toISOString(),
-          estadoAnterior: item.estadoAnterior,
-          estadoNuevo: item.estadoNuevo,
-        }));
+        const actividades = historialItems.slice(0, 5).map(item => {
+          const compromisoId = item.compromisoId || '?';
+          const compromisoNombre = item.compromisoNombre || 'Sin nombre';
+          const estadoAnt = item.estadoAnteriorNombre || 'N/A';
+          const estadoNew = item.estadoNuevoNombre || 'N/A';
+          const usuario = item.usuarioResponsableNombre || 'Sistema';
+          
+          return {
+            tipo: 'CAMBIO_ESTADO',
+            descripcion: `C${compromisoId}: ${compromisoNombre}`,
+            entidad: item.entidadNombre || 'Entidad',
+            usuario: usuario,
+            fecha: item.fechaCambio || new Date().toISOString(),
+            estadoAnterior: estadoAnt,
+            estadoNuevo: estadoNew,
+            compromisoId: compromisoId
+          };
+        });
         
         setUltimasActividades(actividades.length > 0 ? actividades : [
           {
             tipo: 'SISTEMA',
-            descripcion: 'Sistema iniciado correctamente',
+            descripcion: 'Sin actividad reciente',
             fecha: new Date().toISOString(),
           }
         ]);
@@ -811,22 +821,41 @@ const Dashboard = () => {
                     <Building2 className="text-green-600" size={18} />
                   )}
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-800">{actividad.descripcion}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-800 truncate" title={actividad.descripcion}>
+                    {actividad.descripcion}
+                  </p>
                   {actividad.entidad && (
-                    <p className="text-xs text-gray-600 mt-1">
-                      <Building2 className="inline w-3 h-3 mr-1" />
-                      {actividad.entidad}
+                    <p className="text-xs text-gray-600 mt-1 flex items-center gap-1">
+                      <Building2 className="inline w-3 h-3 flex-shrink-0" />
+                      <span className="truncate">{actividad.entidad}</span>
                     </p>
                   )}
                   {actividad.estadoAnterior && actividad.estadoNuevo && (
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-200 text-gray-700">
+                        {actividad.estadoAnterior}
+                      </span>
+                      <span className="text-gray-400">→</span>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                        {actividad.estadoNuevo}
+                      </span>
+                    </div>
+                  )}
+                  {actividad.usuario && (
                     <p className="text-xs text-gray-500 mt-1">
-                      {actividad.estadoAnterior} → {actividad.estadoNuevo}
+                      Por: {actividad.usuario}
                     </p>
                   )}
                   <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
                     <Clock className="w-3 h-3" />
-                    {new Date(actividad.fecha).toLocaleString('es-PE')}
+                    {new Date(actividad.fecha).toLocaleString('es-PE', { 
+                      day: '2-digit', 
+                      month: '2-digit', 
+                      year: '2-digit',
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    })}
                   </p>
                 </div>
               </div>

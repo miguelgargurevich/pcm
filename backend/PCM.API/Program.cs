@@ -25,8 +25,12 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
         // Permitir deserialización case-insensitive (acepta tanto PascalCase como camelCase)
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-        // Ignorar ciclos de referencia circular en las entidades con propiedades de navegación
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        // NO usar IgnoreCycles - causa problemas con arrays grandes
+        // En su lugar, asegurarse de que los DTOs no tengan referencias circulares
+        // options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        // Aumentar límites de serialización
+        options.JsonSerializerOptions.MaxDepth = 64;
+        options.JsonSerializerOptions.DefaultBufferSize = 16 * 1024; // 16KB
     });
 builder.Services.AddEndpointsApiExplorer();
 

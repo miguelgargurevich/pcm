@@ -527,9 +527,9 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
         _logger.LogInformation("🔍 ObtenerHistorialFiltradoAsync - Filtros: CompromisoId={CompromisoId}, EntidadId={EntidadId}, EstadoId={EstadoId}, FechaDesde={FechaDesde}, FechaHasta={FechaHasta}",
             filtro.CompromisoId, filtro.EntidadId, filtro.EstadoId, filtro.FechaDesde, filtro.FechaHasta);
         
+        // NO usar Include aquí porque genera INNER JOINs que filtran registros
+        // Las relaciones se cargarán manualmente en MapToResponseDtoAsync
         var query = _context.CumplimientosHistorial
-            .Include(h => h.Cumplimiento)
-            .Include(h => h.UsuarioResponsable)
             .AsQueryable();
 
         _logger.LogInformation("🔍 Total registros en cumplimiento_historial: {Total}", await _context.CumplimientosHistorial.CountAsync());
@@ -542,12 +542,22 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
 
         if (filtro.CompromisoId.HasValue)
         {
-            query = query.Where(h => h.Cumplimiento != null && h.Cumplimiento.CompromisoId == filtro.CompromisoId.Value);
+            // Usar subquery en lugar de Include para evitar INNER JOIN
+            var cumplimientoIds = await _context.CumplimientosNormativos
+                .Where(c => c.CompromisoId == filtro.CompromisoId.Value)
+                .Select(c => c.CumplimientoId)
+                .ToListAsync();
+            query = query.Where(h => cumplimientoIds.Contains(h.CumplimientoId));
         }
 
         if (filtro.EntidadId.HasValue)
         {
-            query = query.Where(h => h.Cumplimiento != null && h.Cumplimiento.EntidadId == filtro.EntidadId.Value);
+            // Usar subquery en lugar de Include para evitar INNER JOIN
+            var cumplimientoIds = await _context.CumplimientosNormativos
+                .Where(c => c.EntidadId == filtro.EntidadId.Value)
+                .Select(c => c.CumplimientoId)
+                .ToListAsync();
+            query = query.Where(h => cumplimientoIds.Contains(h.CumplimientoId));
         }
 
         if (filtro.EstadoId.HasValue)
@@ -582,41 +592,105 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
             .Take(filtro.PageSize)
             .ToListAsync();
 
-        return new CumplimientoHistorialPaginatedResponseDto
+        _logger.LogInformation("🔍 Historiales obtenidos de la BD: {Count}", historiales.Count);
+        
+        var mappedItems = await MapToResponseDtosAsync(historiales);
+        
+        _logger.LogInformation("🔍 Items mapeados: {Count}", mappedItems.Count);
+
+        var result = new CumplimientoHistorialPaginatedResponseDto
         {
-            Items = await MapToResponseDtosAsync(historiales),
+            Items = mappedItems,
             TotalItems = totalItems,
             Page = filtro.Page,
             PageSize = filtro.PageSize
         };
+        
+        _logger.LogInformation("🔍 Respuesta final - Items: {ItemsCount}, TotalItems: {TotalItems}, Page: {Page}, PageSize: {PageSize}", 
+            result.Items.Count, result.TotalItems, result.Page, result.PageSize);
+
+        return result;
     }
 
     public async Task<CumplimientoHistorialResponseDto?> ObtenerPorIdAsync(long historialId)
     {
         var historial = await _context.CumplimientosHistorial
-            .Include(h => h.Cumplimiento)
-                .ThenInclude(c => c!.Compromiso)
-            .Include(h => h.Cumplimiento)
-                .ThenInclude(c => c!.Entidad)
-            .Include(h => h.UsuarioResponsable)
             .FirstOrDefaultAsync(h => h.HistorialId == historialId);
 
         if (historial == null) return null;
 
-        return await MapToResponseDtoAsync(historial);
+        // Cargar relaciones manualmente
+        var cumplimiento = await _context.CumplimientosNormativos
+            .FirstOrDefaultAsync(c => c.CumplimientoId == historial.CumplimientoId);
+        
+        var usuario = await _context.Usuarios
+            .FirstOrDefaultAsync(u => u.UserId == historial.UsuarioResponsableId);
+
+        CompromisoGobiernoDigital? compromiso = null;
+        Entidad? entidad = null;
+        
+        if (cumplimiento != null)
+        {
+            compromiso = await _context.CompromisosGobiernoDigital
+                .FirstOrDefaultAsync(c => c.CompromisoId == cumplimiento.CompromisoId);
+            entidad = await _context.Entidades
+                .FirstOrDefaultAsync(e => e.EntidadId == cumplimiento.EntidadId);
+        }
+
+        return MapToResponseDtoSingle(historial, cumplimiento, usuario, compromiso, entidad);
     }
 
     private async Task<List<CumplimientoHistorialResponseDto>> MapToResponseDtosAsync(List<CumplimientoHistorial> historiales)
     {
+        // Cargar todas las relaciones necesarias en una sola consulta para evitar N+1
+        var cumplimientoIds = historiales.Select(h => h.CumplimientoId).Distinct().ToList();
+        var usuarioIds = historiales.Select(h => h.UsuarioResponsableId).Distinct().ToList();
+
+        var cumplimientos = await _context.CumplimientosNormativos
+            .Where(c => cumplimientoIds.Contains(c.CumplimientoId))
+            .ToDictionaryAsync(c => c.CumplimientoId);
+
+        var usuarios = await _context.Usuarios
+            .Where(u => usuarioIds.Contains(u.UserId))
+            .ToDictionaryAsync(u => u.UserId);
+
+        _logger.LogInformation("🔍 Usuarios cargados: {Count} de {Total} IDs únicos", usuarios.Count, usuarioIds.Count);
+        
+        // Log de usuarios no encontrados
+        var usuariosNoEncontrados = usuarioIds.Where(id => !usuarios.ContainsKey(id)).ToList();
+        if (usuariosNoEncontrados.Any())
+        {
+            _logger.LogWarning("⚠️ Usuarios NO encontrados en BD: {Count} - IDs: {Ids}", 
+                usuariosNoEncontrados.Count, 
+                string.Join(", ", usuariosNoEncontrados.Take(5)));
+        }
+
+        var compromisoIds = cumplimientos.Values.Select(c => c.CompromisoId).Distinct().ToList();
+        var entidadIds = cumplimientos.Values.Select(c => c.EntidadId).Distinct().ToList();
+
+        var compromisos = await _context.CompromisosGobiernoDigital
+            .Where(c => compromisoIds.Contains(c.CompromisoId))
+            .ToDictionaryAsync(c => c.CompromisoId);
+
+        var entidades = await _context.Entidades
+            .Where(e => entidadIds.Contains(e.EntidadId))
+            .ToDictionaryAsync(e => e.EntidadId);
+
+        // Mapear cada historial
         var result = new List<CumplimientoHistorialResponseDto>();
         foreach (var h in historiales)
         {
-            result.Add(await MapToResponseDtoAsync(h));
+            result.Add(MapToResponseDto(h, cumplimientos, usuarios, compromisos, entidades));
         }
         return result;
     }
 
-    private async Task<CumplimientoHistorialResponseDto> MapToResponseDtoAsync(CumplimientoHistorial historial)
+    private CumplimientoHistorialResponseDto MapToResponseDto(
+        CumplimientoHistorial historial,
+        Dictionary<long, CumplimientoNormativo> cumplimientos,
+        Dictionary<Guid, Usuario> usuarios,
+        Dictionary<long, CompromisoGobiernoDigital> compromisos,
+        Dictionary<Guid, Entidad> entidades)
     {
         object? datosSnapshotObj = null;
         if (!string.IsNullOrEmpty(historial.DatosSnapshot))
@@ -631,38 +705,32 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
             }
         }
 
-        // Cargar información adicional si no está incluida
+        // Obtener datos de las relaciones usando los diccionarios
         string? compromisoNombre = null;
         string? entidadNombre = null;
         long? compromisoId = null;
         Guid? entidadId = null;
+        string? usuarioNombre = "Sistema";
 
-        if (historial.Cumplimiento != null)
+        if (cumplimientos.TryGetValue(historial.CumplimientoId, out var cumplimiento))
         {
-            compromisoId = historial.Cumplimiento.CompromisoId;
-            entidadId = historial.Cumplimiento.EntidadId;
-            
-            if (historial.Cumplimiento.Compromiso != null)
+            compromisoId = cumplimiento.CompromisoId;
+            entidadId = cumplimiento.EntidadId;
+
+            if (compromisos.TryGetValue(cumplimiento.CompromisoId, out var compromiso))
             {
-                compromisoNombre = historial.Cumplimiento.Compromiso.NombreCompromiso;
-            }
-            else
-            {
-                var compromiso = await _context.CompromisosGobiernoDigital
-                    .FirstOrDefaultAsync(c => c.CompromisoId == historial.Cumplimiento.CompromisoId);
-                compromisoNombre = compromiso?.NombreCompromiso;
+                compromisoNombre = compromiso.NombreCompromiso;
             }
 
-            if (historial.Cumplimiento.Entidad != null)
+            if (entidades.TryGetValue(cumplimiento.EntidadId, out var entidad))
             {
-                entidadNombre = historial.Cumplimiento.Entidad.Nombre;
+                entidadNombre = entidad.Nombre;
             }
-            else
-            {
-                var entidad = await _context.Entidades
-                    .FirstOrDefaultAsync(e => e.EntidadId == historial.Cumplimiento.EntidadId);
-                entidadNombre = entidad?.Nombre;
-            }
+        }
+
+        if (usuarios.TryGetValue(historial.UsuarioResponsableId, out var usuario))
+        {
+            usuarioNombre = $"{usuario.Nombres} {usuario.ApePaterno}";
         }
 
         return new CumplimientoHistorialResponseDto
@@ -676,9 +744,57 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
             EstadoNuevoId = historial.EstadoNuevoId,
             EstadoNuevoNombre = EstadosNombres.GetValueOrDefault(historial.EstadoNuevoId, "DESCONOCIDO"),
             UsuarioResponsableId = historial.UsuarioResponsableId,
-            UsuarioResponsableNombre = historial.UsuarioResponsable != null 
-                ? $"{historial.UsuarioResponsable.Nombres} {historial.UsuarioResponsable.ApePaterno}" 
-                : string.Empty,
+            UsuarioResponsableNombre = usuarioNombre,
+            ObservacionSnapshot = historial.ObservacionSnapshot,
+            DatosSnapshot = datosSnapshotObj,
+            FechaCambio = historial.FechaCambio,
+            CompromisoId = compromisoId,
+            CompromisoNombre = compromisoNombre,
+            EntidadId = entidadId,
+            EntidadNombre = entidadNombre
+        };
+    }
+
+    private CumplimientoHistorialResponseDto MapToResponseDtoSingle(
+        CumplimientoHistorial historial,
+        CumplimientoNormativo? cumplimiento,
+        Usuario? usuario,
+        CompromisoGobiernoDigital? compromiso,
+        Entidad? entidad)
+    {
+        object? datosSnapshotObj = null;
+        if (!string.IsNullOrEmpty(historial.DatosSnapshot))
+        {
+            try
+            {
+                datosSnapshotObj = JsonSerializer.Deserialize<object>(historial.DatosSnapshot);
+            }
+            catch
+            {
+                datosSnapshotObj = historial.DatosSnapshot;
+            }
+        }
+
+        string? compromisoNombre = compromiso?.NombreCompromiso;
+        string? entidadNombre = entidad?.Nombre;
+        long? compromisoId = cumplimiento?.CompromisoId;
+        Guid? entidadId = cumplimiento?.EntidadId;
+        string usuarioNombre = usuario != null 
+            ? $"{usuario.Nombres} {usuario.ApePaterno}" 
+            : "Sistema";
+
+        return new CumplimientoHistorialResponseDto
+        {
+            HistorialId = historial.HistorialId,
+            CumplimientoId = historial.CumplimientoId,
+            EstadoAnteriorId = historial.EstadoAnteriorId,
+            EstadoAnteriorNombre = historial.EstadoAnteriorId.HasValue 
+                ? EstadosNombres.GetValueOrDefault(historial.EstadoAnteriorId.Value, "DESCONOCIDO") 
+                : null,
+            EstadoNuevoId = historial.EstadoNuevoId,
+            EstadoNuevoNombre = EstadosNombres.GetValueOrDefault(historial.EstadoNuevoId, "DESCONOCIDO"),
+            UsuarioResponsableId = historial.UsuarioResponsableId,
+            UsuarioResponsableNombre = usuarioNombre,
             ObservacionSnapshot = historial.ObservacionSnapshot,
             DatosSnapshot = datosSnapshotObj,
             FechaCambio = historial.FechaCambio,

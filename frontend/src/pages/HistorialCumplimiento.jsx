@@ -20,6 +20,21 @@ import {
 import apiService from '../services/api';
 import toast from 'react-hot-toast';
 
+// Función para obtener abreviatura de estado
+const getEstadoAbreviado = (estado) => {
+  const abreviaturas = {
+    'ACEPTADO': 'ACE',
+    'ENVIADO': 'ENV',
+    'EN REVISIÓN': 'REV',
+    'EN PROCESO': 'PRO',
+    'PENDIENTE': 'PEN',
+    'OBSERVADO': 'OBS',
+    'SIN REPORTAR': 'S/R',
+    'NO EXIGIBLE': 'N/E'
+  };
+  return abreviaturas[estado] || estado?.substring(0, 3)?.toUpperCase() || 'N/A';
+};
+
 // Badge para estados
 const EstadoBadge = ({ estado, esNuevo }) => {
   const getColor = (estado) => {
@@ -37,8 +52,11 @@ const EstadoBadge = ({ estado, esNuevo }) => {
   };
 
   return (
-    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getColor(estado)} ${esNuevo ? 'ring-2 ring-offset-1 ring-green-400' : ''}`}>
-      {estado || 'N/A'}
+    <span 
+      className={`px-2 py-1 text-xs font-medium rounded-full ${getColor(estado)} ${esNuevo ? 'ring-2 ring-offset-1 ring-green-400' : ''}`}
+      title={estado}
+    >
+      {getEstadoAbreviado(estado)}
     </span>
   );
 };
@@ -413,15 +431,21 @@ const HistorialCumplimiento = () => {
       const response = await apiService.get(`/CumplimientoHistorial?${params.toString()}`);
       console.log('📦 Respuesta completa del historial:', response);
       console.log('📦 response.data:', response.data);
+      console.log('📦 response.data.data:', response.data.data);
+      console.log('📦 Keys de response.data.data:', response.data.data ? Object.keys(response.data.data) : 'undefined');
       
       if (response.data?.success || response.data?.isSuccess) {
-        const items = response.data.data?.items || response.data.data || [];
-        console.log('✅ Items de historial:', items);
+        // Backend puede retornar Items (PascalCase) o items (camelCase)
+        const items = response.data.data?.Items || response.data.data?.items || [];
+        console.log('✅ Items extraídos:', items);
+        console.log('✅ Items.length:', items.length);
+        console.log('✅ Es un array?:', Array.isArray(items));
+        console.log('✅ Tipo de items:', typeof items);
         setHistorial(items);
         setPagination(prev => ({
           ...prev,
-          totalItems: response.data.data?.totalItems || items.length || 0,
-          totalPages: response.data.data?.totalPages || 1
+          totalItems: response.data.data?.TotalItems || response.data.data?.totalItems || items.length || 0,
+          totalPages: response.data.data?.TotalPages || response.data.data?.totalPages || 1
         }));
       } else {
         console.warn('⚠️ Respuesta sin éxito:', response.data);
@@ -624,6 +648,30 @@ const HistorialCumplimiento = () => {
         )}
       </div>
 
+      {/* Leyenda de estados */}
+      <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+        <p className="text-sm font-medium text-gray-700 mb-3">Leyenda de estados:</p>
+        <div className="flex flex-wrap gap-2">
+          {['ACEPTADO', 'ENVIADO', 'EN REVISIÓN', 'EN PROCESO', 'PENDIENTE', 'OBSERVADO', 'SIN REPORTAR', 'NO EXIGIBLE'].map((estado) => (
+            <span
+              key={estado}
+              className={`px-2 py-1 text-xs font-medium rounded-full ${
+                estado === 'ACEPTADO' ? 'bg-green-500 text-white' :
+                estado === 'ENVIADO' ? 'bg-blue-500 text-white' :
+                estado === 'EN REVISIÓN' ? 'bg-purple-500 text-white' :
+                estado === 'EN PROCESO' ? 'bg-yellow-500 text-white' :
+                estado === 'PENDIENTE' ? 'bg-orange-500 text-white' :
+                estado === 'OBSERVADO' ? 'bg-red-500 text-white' :
+                estado === 'SIN REPORTAR' ? 'bg-red-700 text-white' :
+                'bg-gray-400 text-white'
+              }`}
+            >
+              {getEstadoAbreviado(estado)} - {estado}
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* Tabla de historial */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         {loading ? (
@@ -642,25 +690,25 @@ const HistorialCumplimiento = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
                       #
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
                       Fecha
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Compromiso
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Entidad
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-56">
                       Cambio de Estado
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
                       Usuario
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
                       Acciones
                     </th>
                   </tr>
@@ -668,46 +716,48 @@ const HistorialCumplimiento = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {historial.map((item, index) => (
                     <tr key={item.historialId}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="px-2 py-3 text-center text-sm font-medium text-gray-900">
                         {(pagination.page - 1) * pagination.pageSize + index + 1}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        <div className="font-medium">
-                          {new Date(item.fechaCambio).toLocaleDateString('es-PE')}
+                      <td className="px-3 py-3 text-sm text-gray-900">
+                        <div className="font-medium text-xs leading-tight">
+                          {new Date(item.fechaCambio).toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: '2-digit' })}
                         </div>
                         <div className="text-gray-500 text-xs">
-                          {new Date(item.fechaCambio).toLocaleTimeString('es-PE')}
+                          {new Date(item.fechaCambio).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        <div className="flex items-center gap-2">
-                          <span className="px-2 py-1 bg-primary-100 text-primary-700 text-xs font-bold rounded">
+                      <td className="px-3 py-3 text-sm text-gray-900">
+                        <div className="flex items-start gap-1">
+                          <span className="px-1.5 py-0.5 bg-primary-100 text-primary-700 text-xs font-bold rounded flex-shrink-0">
                             C{item.compromisoId || '?'}
                           </span>
-                          <div className="font-medium max-w-xs truncate">
+                          <div className="font-medium text-xs leading-tight line-clamp-2">
                             {item.compromisoNombre || 'Sin nombre'}
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        <div className="max-w-xs truncate">
+                      <td className="px-3 py-3 text-sm text-gray-900">
+                        <div className="text-xs leading-tight line-clamp-2">
                           {item.entidadNombre || 'N/A'}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        <div className="flex items-center gap-2">
+                      <td className="px-3 py-3 text-sm text-gray-900">
+                        <div className="flex items-center gap-1.5">
                           <EstadoBadge estado={item.estadoAnteriorNombre} />
-                          <ArrowRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          <ArrowRight className="w-3 h-3 text-gray-400 flex-shrink-0" />
                           <EstadoBadge estado={item.estadoNuevoNombre} esNuevo />
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {item.usuarioResponsableNombre || 'Sistema'}
+                      <td className="px-3 py-3 text-sm text-gray-900">
+                        <div className="text-xs leading-tight line-clamp-2">
+                          {item.usuarioResponsableNombre || 'Sistema'}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <td className="px-3 py-3 text-center text-sm font-medium">
                         <button
                           onClick={() => setSelectedHistorial(item)}
-                          className="text-primary-600 hover:text-blue-900 flex items-center gap-1"
+                          className="text-primary-600 hover:text-blue-900 inline-flex items-center justify-center"
                           title="Ver snapshot"
                         >
                           <Eye size={16} />
