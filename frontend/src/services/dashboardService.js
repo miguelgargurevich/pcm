@@ -28,10 +28,43 @@ export const dashboardService = {
   
   async getCompromisosStats() {
     try {
-      const response = await api.get('/CumplimientoNormativo');
+      // Obtener el usuario del localStorage para extraer entidadId
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const entidadId = user.entidadId;
+      
+      console.log('📡 getCompromisosStats - Usuario:', user);
+      console.log('📡 getCompromisosStats - EntidadId:', entidadId);
+      
+      // Si el usuario tiene entidadId, filtramos por ese campo
+      const params = entidadId ? { entidadId } : {};
+      
+      console.log('📡 getCompromisosStats - Params:', params);
+      
+      const response = await api.get('/CumplimientoNormativo', { params });
+      console.log('📡 getCompromisosStats - Response:', response.data);
       return response.data;
     } catch (error) {
       console.error('Error al obtener estadísticas de compromisos:', error);
+      throw error;
+    }
+  },
+  
+  async getEntidadesStats() {
+    try {
+      const response = await api.get('/dashboard/entidades-stats');
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener estadísticas de entidades:', error);
+      throw error;
+    }
+  },
+
+  async getAllCompromisos() {
+    try {
+      const response = await api.get('/CompromisoGobiernoDigital');
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener todos los compromisos:', error);
       throw error;
     }
   }

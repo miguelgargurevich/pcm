@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PCM.Application.Features.Dashboard.Queries.GetDashboardStats;
+using PCM.Application.Features.Dashboard.Queries.GetEntidadesStats;
 
 namespace PCM.API.Controllers;
 
@@ -25,6 +26,13 @@ public class DashboardController : ControllerBase
         var perfilNombre = User.FindFirst("perfil_nombre")?.Value;
 
         var result = await _mediator.Send(new GetDashboardStatsQuery(entidadId, perfilNombre));
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpGet("entidades-stats")]
+    public async Task<IActionResult> GetEntidadesStats()
+    {
+        var result = await _mediator.Send(new GetEntidadesStatsQuery());
         return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

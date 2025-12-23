@@ -609,23 +609,23 @@ const EvaluacionCumplimiento = () => {
                 </button>
               </div>
             </div>
-
-            {/* Leyenda de estados */}
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <p className="text-sm font-medium text-gray-600 mb-2">Leyenda de estados:</p>
-              <div className="flex flex-wrap gap-2">
-                {estadosOptions.map((estado) => (
-                  <span
-                    key={estado}
-                    className={`px-2 py-1 text-xs font-semibold rounded-full ${getEstadoStyles(estado)}`}
-                  >
-                    {getEstadoAbreviado(estado)} - {estado}
-                  </span>
-                ))}
-              </div>
-            </div>
           </div>
         )}
+      </div>
+
+      {/* Leyenda de estados - Siempre visible */}
+      <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+        <p className="text-sm font-medium text-gray-700 mb-3">Leyenda de estados:</p>
+        <div className="flex flex-wrap gap-2">
+          {estadosOptions.map((estado) => (
+            <span
+              key={estado}
+              className={`px-2 py-1 text-xs font-semibold rounded-full ${getEstadoStyles(estado)}`}
+            >
+              {getEstadoAbreviado(estado)} - {estado}
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* Matriz de Evaluación */}
