@@ -393,7 +393,7 @@ const HistorialCumplimiento = () => {
       
       // Agregar filtros solo si tienen valor
       if (filtros.compromisoId && filtros.compromisoId !== '') {
-        params.append('compromisoId', filtros.compromisoId);
+        params.append('compromisoId', parseInt(filtros.compromisoId));
       }
       if (filtros.entidadId && filtros.entidadId !== '') {
         params.append('entidadId', filtros.entidadId);

@@ -711,12 +711,12 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
             _logger.LogInformation("🔵 Estados convertidos - AnteriorId={EstadoAnteriorId}, NuevoId={EstadoNuevoId}",
                 estadoAnteriorId, estadoNuevoId);
 
-            // Solo registrar si hay cambio real de estado
-            if (estadoAnteriorId == estadoNuevoId)
-            {
-                _logger.LogWarning("⚠️ No se registra historial, estado no cambió: {Estado}", estadoNuevo);
-                return 0;
-            }
+            // COMENTADO: Permitir registro incluso si el estado no cambió (para auditoría)
+            // if (estadoAnteriorId == estadoNuevoId)
+            // {
+            //     _logger.LogWarning("⚠️ No se registra historial, estado no cambió: {Estado}", estadoNuevo);
+            //     return 0;
+            // }
 
             // Buscar cumplimiento existente
             var cumplimiento = await _context.CumplimientosNormativos

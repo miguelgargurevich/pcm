@@ -310,9 +310,12 @@ public class EvaluacionController : ControllerBase
                 _ => "CAMBIO_ESTADO"
             };
 
+            _logger.LogInformation("🔵 Intentando registrar historial - CumplimientoId={CumplimientoId}, CompromisoId={CompromisoId}, EntidadId={EntidadId}, EstadoAnterior={EstadoAnterior}, EstadoNuevo={EstadoNuevo}, TipoAccion={TipoAccion}, OperadorId={OperadorId}",
+                cumplimientoId, compromisoId, entidadId, estadoAnteriorId, estadoId, tipoAccion, operadorId);
+
             try
             {
-                await _historialService.RegistrarCambioConSnapshotAsync(
+                var historialId = await _historialService.RegistrarCambioConSnapshotAsync(
                     cumplimientoId: cumplimientoId,
                     compromisoId: compromisoId,
                     entidadId: entidadId,
@@ -323,13 +326,14 @@ public class EvaluacionController : ControllerBase
                     tipoAccion: tipoAccion,
                     ipOrigen: HttpContext.Connection.RemoteIpAddress?.ToString()
                 );
-                _logger.LogInformation("Historial registrado para compromiso {CompromisoId}, entidad {EntidadId}, acción: {TipoAccion}", 
-                    compromisoId, entidadId, tipoAccion);
+                _logger.LogInformation("✅ Historial registrado exitosamente con ID={HistorialId} para compromiso {CompromisoId}, entidad {EntidadId}, acción: {TipoAccion}", 
+                    historialId, compromisoId, entidadId, tipoAccion);
             }
             catch (Exception histEx)
             {
-                // Log pero no fallar si el historial falla
-                _logger.LogWarning(histEx, "Error al registrar historial para compromiso {CompromisoId}", compromisoId);
+                // Log ERROR pero no fallar si el historial falla
+                _logger.LogError(histEx, "❌ ERROR al registrar historial para compromiso {CompromisoId}, entidad {EntidadId}. Detalles: {Message}", 
+                    compromisoId, entidadId, histEx.Message);
             }
 
             _logger.LogInformation("Estado actualizado y registrado en cumplimiento_normativo para compromiso {CompromisoId}, entidad {EntidadId}", 

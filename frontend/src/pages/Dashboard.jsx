@@ -21,79 +21,111 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [estadisticasCompromisos, setEstadisticasCompromisos] = useState(null);
   const [ultimasActividades, setUltimasActividades] = useState([]);
+  
+  // Determinar si es admin
+  const isAdmin = user?.perfilNombre?.toUpperCase() === 'ADMINISTRADOR' || 
+                  user?.perfilNombre?.toUpperCase() === 'ADMIN';
 
   const loadStats = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await dashboardService.getStats();
       
-      if (response.isSuccess || response.IsSuccess) {
-        const data = response.data || response.Data;
+      // Cargar todas las estadísticas en paralelo
+      const [statsResponse, activityResponse, compromisosResponse] = await Promise.all([
+        dashboardService.getStats(),
+        dashboardService.getRecentActivity().catch(() => ({ data: { items: [] } })),
+        dashboardService.getCompromisosStats().catch(() => ({ data: { items: [] } }))
+      ]);
+      
+      if (statsResponse.isSuccess || statsResponse.IsSuccess) {
+        const data = statsResponse.data || statsResponse.Data;
         
-        const statsData = [
-          {
-            title: 'Usuarios',
-            value: data.totalUsuarios.toString(),
-            icon: Users,
-            color: 'bg-blue-500',
-            subtitle: `${data.usuariosActivos} activos`,
-            trend: data.usuariosActivos > 0 ? '+' + Math.round((data.usuariosActivos / data.totalUsuarios) * 100) + '%' : '0%',
-            trendUp: true,
-          },
-          {
-            title: 'Entidades',
-            value: data.totalEntidades.toString(),
-            icon: Building2,
-            color: 'bg-green-500',
-            subtitle: `${data.entidadesActivas} activas`,
-            trend: data.entidadesActivas > 0 ? '+' + Math.round((data.entidadesActivas / data.totalEntidades) * 100) + '%' : '0%',
-            trendUp: true,
-          },
+        // Construir estadísticas según el rol
+        const statsData = [];
+        
+        // ADMIN: Muestra todas las estadísticas
+        if (isAdmin) {
+          statsData.push(
+            {
+              title: 'Usuarios',
+              value: data.totalUsuarios.toString(),
+              icon: Users,
+              color: 'bg-blue-500',
+              subtitle: `${data.usuariosActivos} activos`,
+              description: `${data.totalUsuarios - data.usuariosActivos} inactivos`,
+            },
+            {
+              title: 'Entidades',
+              value: data.totalEntidades.toString(),
+              icon: Building2,
+              color: 'bg-green-500',
+              subtitle: `${data.entidadesActivas} activas`,
+              description: `${data.totalEntidades - data.entidadesActivas} inactivas`,
+            }
+          );
+        }
+        
+        // TODOS: Marco normativo y compromisos
+        statsData.push(
           {
             title: 'Marco Normativo',
             value: data.totalMarcoNormativo.toString(),
             icon: FileText,
             color: 'bg-purple-500',
-            subtitle: 'Normas registradas',
-            trend: 'Actualizado',
-            trendUp: true,
+            subtitle: 'Normas vigentes',
+            description: 'Actualizado',
           },
           {
-            title: 'Compromisos',
+            title: isAdmin ? 'Compromisos Totales' : 'Mis Compromisos',
             value: data.totalCompromisos.toString(),
             icon: CheckSquare,
             color: 'bg-orange-500',
             subtitle: `${data.compromisosPendientes} pendientes`,
-            trend: data.compromisosPendientes > 0 ? Math.round((data.compromisosPendientes / data.totalCompromisos) * 100) + '% pendiente' : 'Al día',
-            trendUp: data.compromisosPendientes === 0,
-          },
-        ];
+            description: `${data.compromisosCompletados || 0} completados`,
+          }
+        );
         
         setStats(statsData);
 
-        // Calcular estadísticas de compromisos por estado
-        const totalReportados = data.totalCompromisos - data.compromisosPendientes;
+        // Procesar estadísticas de compromisos por estado desde datos reales
+        const compromisosData = compromisosResponse?.data?.items || [];
+        const estadosPorNombre = {};
+        
+        compromisosData.forEach(comp => {
+          const estadoNombre = comp.estadoNombre || 'SIN ESTADO';
+          estadosPorNombre[estadoNombre] = (estadosPorNombre[estadoNombre] || 0) + 1;
+        });
+        
+        // Calcular estadísticas generales
+        const completados = data.compromisosCompletados || 0;
+        const enProceso = estadosPorNombre['EN PROCESO'] || 0;
         setEstadisticasCompromisos({
           total: data.totalCompromisos,
           pendientes: data.compromisosPendientes,
-          reportados: totalReportados,
-          porcentajeCumplimiento: totalReportados > 0 ? Math.round((totalReportados / data.totalCompromisos) * 100) : 0,
+          enProceso: enProceso,
+          completados: completados,
+          porcentajeCumplimiento: data.totalCompromisos > 0 
+            ? Math.round((completados / data.totalCompromisos) * 100) 
+            : 0,
         });
 
-        // Simular últimas actividades (en producción, vendrían del backend)
-        setUltimasActividades([
+        // Procesar actividad reciente real
+        const historialItems = activityResponse?.data?.items || [];
+        const actividades = historialItems.slice(0, 5).map(item => ({
+          tipo: item.accion || 'ACTUALIZACION',
+          descripcion: `${item.accion || 'Cambio'} en ${item.compromisoNombre || 'compromiso'}`,
+          entidad: item.entidadNombre || 'Entidad',
+          fecha: item.fechaCambio || new Date().toISOString(),
+          estadoAnterior: item.estadoAnterior,
+          estadoNuevo: item.estadoNuevo,
+        }));
+        
+        setUltimasActividades(actividades.length > 0 ? actividades : [
           {
-            tipo: 'ACTUALIZACION',
-            descripcion: 'Actualización de compromiso C1 - Líder GTD',
-            entidad: 'Entidad de ejemplo',
+            tipo: 'SISTEMA',
+            descripcion: 'Sistema iniciado correctamente',
             fecha: new Date().toISOString(),
-            usuario: user?.nombreCompleto || 'Usuario',
-          },
-          {
-            tipo: 'NUEVA_ENTIDAD',
-            descripcion: `${data.entidadesActivas} entidades activas en el sistema`,
-            fecha: new Date(Date.now() - 3600000).toISOString(),
-          },
+          }
         ]);
       }
     } catch (error) {
@@ -101,7 +133,7 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [isAdmin]);
 
   useEffect(() => {
     loadStats();
@@ -122,8 +154,16 @@ const Dashboard = () => {
           Bienvenido, {user?.nombreCompleto}
         </h2>
         <p className="text-gray-600 mt-1">
-          Panel de control de la Plataforma de Cumplimiento Digital
+          {isAdmin 
+            ? 'Panel de control de la Plataforma de Cumplimiento Digital' 
+            : `Panel de control - ${user?.entidadNombre || 'Tu Entidad'}`
+          }{`grid grid-cols-1 md:grid-cols-2 ${isAdmin ? 'lg:grid-cols-4' : 'lg:grid-cols-2'} gap-6 mb-8`}
         </p>
+        {!isAdmin && (
+          <p className="text-sm text-gray-500 mt-1">
+            Vista de compromisos asignados a tu entidad
+          </p>
+        )}
       </div>
 
       {/* Estadísticas principales */}
@@ -141,13 +181,10 @@ const Dashboard = () => {
                   <Icon className="text-white" size={24} />
                 </div>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <p className="text-gray-500">{stat.subtitle}</p>
-                {stat.trend && (
-                  <div className={`flex items-center gap-1 ${stat.trendUp ? 'text-green-600' : 'text-red-600'}`}>
-                    {stat.trendUp ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
-                    <span className="font-medium">{stat.trend}</span>
-                  </div>
+              <div className="flex flex-col gap-1 text-sm">
+                <p className="text-gray-600 font-medium">{stat.subtitle}</p>
+                {stat.description && (
+                  <p className="text-gray-500 text-xs">{stat.description}</p>
                 )}
               </div>
             </div>
@@ -165,23 +202,31 @@ const Dashboard = () => {
                 <TrendingUp className="text-primary-600" size={24} />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">Estado de Compromisos</h3>
-                <p className="text-sm text-gray-500">Vista general del cumplimiento</p>
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {isAdmin ? 'Estado de Compromisos' : 'Estado de Mis Compromisos'}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {isAdmin ? 'Vista general del cumplimiento' : 'Progreso de tu entidad'}
+                </p>
               </div>
             </div>
             
-            <div className="grid grid-cols-3 gap-4 mb-4">
-              <div className="text-center p-4 bg-gray-50 rounded-lg">
-                <p className="text-3xl font-bold text-gray-800">{estadisticasCompromisos.total}</p>
-                <p className="text-sm text-gray-600 mt-1">Total</p>
+            <div className="grid grid-cols-4 gap-3 mb-4">
+              <div className="text-center p-3 bg-gray-50 rounded-lg">
+                <p className="text-2xl font-bold text-gray-800">{estadisticasCompromisos.total}</p>
+                <p className="text-xs text-gray-600 mt-1">Total</p>
               </div>
-              <div className="text-center p-4 bg-orange-50 rounded-lg">
-                <p className="text-3xl font-bold text-orange-600">{estadisticasCompromisos.pendientes}</p>
-                <p className="text-sm text-gray-600 mt-1">Pendientes</p>
+              <div className="text-center p-3 bg-orange-50 rounded-lg">
+                <p className="text-2xl font-bold text-orange-600">{estadisticasCompromisos.pendientes}</p>
+                <p className="text-xs text-gray-600 mt-1">Pendientes</p>
               </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <p className="text-3xl font-bold text-green-600">{estadisticasCompromisos.reportados}</p>
-                <p className="text-sm text-gray-600 mt-1">Reportados</p>
+              <div className="text-center p-3 bg-blue-50 rounded-lg">
+                <p className="text-2xl font-bold text-blue-600">{estadisticasCompromisos.enProceso}</p>
+                <p className="text-xs text-gray-600 mt-1">En Proceso</p>
+              </div>
+              <div className="text-center p-3 bg-green-50 rounded-lg">
+                <p className="text-2xl font-bold text-green-600">{estadisticasCompromisos.completados}</p>
+                <p className="text-xs text-gray-600 mt-1">Completados</p>
               </div>
             </div>
 
@@ -218,6 +263,8 @@ const Dashboard = () => {
               <div className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
                 <Clock className="text-orange-600 mt-0.5" size={18} />
                 <div>
+                    {isAdmin ? 'Requiere atención en el sistema' : 'Requiere atención de tu entidad'}
+                  
                   <p className="text-sm font-medium text-gray-800">
                     {estadisticasCompromisos.pendientes} {estadisticasCompromisos.pendientes === 1 ? 'compromiso pendiente' : 'compromisos pendientes'}
                   </p>
@@ -262,7 +309,9 @@ const Dashboard = () => {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-800">Actividad Reciente</h3>
-              <p className="text-sm text-gray-500">Últimas actualizaciones del sistema</p>
+              <p className="text-sm text-gray-500">
+                {isAdmin ? 'Últimas actualizaciones del sistema' : 'Últimos cambios en tus compromisos'}
+              </p>
             </div>
           </div>
 
@@ -270,10 +319,16 @@ const Dashboard = () => {
             {ultimasActividades.map((actividad, index) => (
               <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                 <div className={`p-2 rounded-lg ${
-                  actividad.tipo === 'ACTUALIZACION' ? 'bg-blue-100' : 'bg-green-100'
+                  actividad.tipo === 'ACTUALIZACION' || actividad.tipo === 'CAMBIO_ESTADO' 
+                    ? 'bg-blue-100' 
+                    : actividad.tipo === 'SISTEMA'
+                    ? 'bg-purple-100'
+                    : 'bg-green-100'
                 }`}>
-                  {actividad.tipo === 'ACTUALIZACION' ? (
-                    <FileText className={actividad.tipo === 'ACTUALIZACION' ? 'text-blue-600' : 'text-green-600'} size={18} />
+                  {actividad.tipo === 'ACTUALIZACION' || actividad.tipo === 'CAMBIO_ESTADO' ? (
+                    <Activity className="text-blue-600" size={18} />
+                  ) : actividad.tipo === 'SISTEMA' ? (
+                    <CheckSquare className="text-purple-600" size={18} />
                   ) : (
                     <Building2 className="text-green-600" size={18} />
                   )}
@@ -281,9 +336,18 @@ const Dashboard = () => {
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-800">{actividad.descripcion}</p>
                   {actividad.entidad && (
-                    <p className="text-xs text-gray-500 mt-1">{actividad.entidad}</p>
+                    <p className="text-xs text-gray-600 mt-1">
+                      <Building2 className="inline w-3 h-3 mr-1" />
+                      {actividad.entidad}
+                    </p>
                   )}
-                  <p className="text-xs text-gray-400 mt-1">
+                  {actividad.estadoAnterior && actividad.estadoNuevo && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {actividad.estadoAnterior} → {actividad.estadoNuevo}
+                    </p>
+                  )}
+                  <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
                     {new Date(actividad.fecha).toLocaleString('es-PE')}
                   </p>
                 </div>
