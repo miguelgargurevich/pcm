@@ -450,13 +450,13 @@ const SeguimientoPGDPP = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="sticky left-0 z-20 bg-gray-200 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[80px] min-w-[80px]">
+                <th className="sticky left-0 z-20 bg-gray-100 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[80px] min-w-[80px]">
                   #
                 </th>
-                <th className="sticky left-[80px] z-20 bg-gray-200 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[140px] min-w-[140px]">
+                <th className="sticky left-[80px] z-20 bg-gray-100 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[140px] min-w-[140px]">
                   Código
                 </th>
-                <th className="sticky left-[220px] z-20 bg-gray-200 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[350px] min-w-[350px]">
+                <th className="sticky left-[220px] z-20 bg-gray-100 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[350px] min-w-[350px]">
                   Nombre
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
