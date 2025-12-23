@@ -3,7 +3,7 @@ import api from './api';
 export const passwordService = {
   requestReset: async (email) => {
     try {
-      const response = await api.post('/api/auth/forgot-password', { email });
+      const response = await api.post('/auth/forgot-password', { email });
       return response.data;
     } catch (error) {
       console.error('Error al solicitar recuperación de contraseña:', error);
@@ -13,7 +13,7 @@ export const passwordService = {
 
   resetPassword: async (token, newPassword) => {
     try {
-      const response = await api.post('/api/auth/reset-password', {
+      const response = await api.post('/auth/reset-password', {
         token,
         newPassword,
       });
@@ -26,7 +26,7 @@ export const passwordService = {
 
   validateToken: async (token) => {
     try {
-      const response = await api.get(`/api/auth/validate-reset-token/${token}`);
+      const response = await api.get(`/auth/validate-reset-token/${token}`);
       return response.data;
     } catch (error) {
       console.error('Error al validar token:', error);
