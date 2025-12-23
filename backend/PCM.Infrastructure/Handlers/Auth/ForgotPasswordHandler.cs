@@ -65,6 +65,10 @@ public class ForgotPasswordHandler
                 : usuario.Email;
             
             // Enviar email de recuperación
+            _logger.LogInformation("📧 Intentando enviar email de recuperación a {Email}", usuario.Email);
+            _logger.LogInformation("🔗 Reset Password Link: {ResetLink}", resetLink);
+            _logger.LogInformation("👤 Nombre Usuario: {NombreUsuario}", nombreUsuario);
+            
             var emailEnviado = await _emailService.SendPasswordResetEmailAsync(
                 usuario.Email, 
                 nombreUsuario, 
@@ -73,17 +77,15 @@ public class ForgotPasswordHandler
 
             if (emailEnviado)
             {
-                _logger.LogInformation("Email de recuperación enviado a {Email}", usuario.Email);
+                _logger.LogInformation("✅ Email de recuperación enviado exitosamente a {Email}", usuario.Email);
             }
             else
             {
-                _logger.LogWarning("No se pudo enviar email de recuperación a {Email}", usuario.Email);
+                _logger.LogWarning("⚠️ No se pudo enviar email de recuperación a {Email}. Verifica la configuración de Resend.", usuario.Email);
             }
 
             // En desarrollo, también mostramos en consola
-            _logger.LogDebug("🔗 Reset Password Link: {ResetLink}", resetLink);
-            _logger.LogDebug("📧 Email: {Email}", usuario.Email);
-            _logger.LogDebug("⏰ Expira: {Expiry}", usuario.ResetPasswordExpiry);
+            _logger.LogInformation("⏰ Token expira: {Expiry}", usuario.ResetPasswordExpiry);
 
             return Result<string>.Success("Si el correo existe, recibirás un enlace de recuperación.");
         }

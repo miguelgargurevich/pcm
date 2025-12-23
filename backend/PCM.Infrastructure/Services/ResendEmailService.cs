@@ -56,26 +56,34 @@ public class ResendEmailService : IEmailService
 
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-            _logger.LogInformation("Enviando email a {To} con asunto: {Subject}", to, subject);
+            _logger.LogInformation("📤 Enviando email via Resend API");
+            _logger.LogInformation("   To: {To}", to);
+            _logger.LogInformation("   From: {FromName} <{FromEmail}>", _fromName, _fromEmail);
+            _logger.LogInformation("   Subject: {Subject}", subject);
 
             var response = await _httpClient.PostAsync(RESEND_API_URL, content);
             var responseBody = await response.Content.ReadAsStringAsync();
 
+            _logger.LogInformation("📨 Resend API Response Status: {StatusCode}", response.StatusCode);
+
             if (response.IsSuccessStatusCode)
             {
-                _logger.LogInformation("Email enviado exitosamente a {To}", to);
+                _logger.LogInformation("✅ Email enviado exitosamente a {To}", to);
+                _logger.LogDebug("Response Body: {ResponseBody}", responseBody);
                 return true;
             }
             else
             {
-                _logger.LogError("Error al enviar email. Status: {StatusCode}, Response: {Response}", 
-                    response.StatusCode, responseBody);
+                _logger.LogError("❌ Error al enviar email via Resend");
+                _logger.LogError("   Status Code: {StatusCode}", response.StatusCode);
+                _logger.LogError("   Response: {Response}", responseBody);
+                _logger.LogError("   API Key configurada: {HasApiKey}", !string.IsNullOrEmpty(_apiKey));
                 return false;
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al enviar email a {To}", to);
+            _logger.LogError(ex, "💥 Excepción al enviar email a {To}", to);
             return false;
         }
     }
