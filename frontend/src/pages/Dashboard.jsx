@@ -397,11 +397,6 @@ const Dashboard = () => {
     setModalAbierto(true);
   };
 
-  // Función para ver detalle de compromiso
-  const verDetalleCompromiso = (compromisoId) => {
-    navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromisoId}`);
-  };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
