@@ -359,8 +359,8 @@ const CumplimientoNormativo = () => {
                           >
                             <Eye size={18} />
                           </button>
-                          {/* Ocultar botón editar si el estado es Enviado (5) o Aceptado (8) */}
-                          {!(compromiso.estadoCumplimiento === 5 || compromiso.estadoCumplimiento === 8) && (
+                          {/* Ocultar botón editar si el estado es Enviado (5), En Revisión (6) o Aceptado (8) */}
+                          {!(compromiso.estadoCumplimiento === 5 || compromiso.estadoCumplimiento === 6 || compromiso.estadoCumplimiento === 8) && (
                             <button
                               onClick={() => {
                                 // Si existe cumplimiento, editar; si no, crear nuevo

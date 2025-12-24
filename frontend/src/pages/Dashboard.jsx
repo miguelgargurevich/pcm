@@ -937,8 +937,8 @@ const Dashboard = () => {
                           <Eye size={16} />
                           Ver
                         </button>
-                        {/* Mostrar botón Editar solo si NO está ACEPTADO/APROBADO (estadoId !== 8) */}
-                        {compromiso.estadoId !== 8 && (
+                        {/* Mostrar botón Editar solo si NO está ENVIADO (5), EN REVISIÓN (6) ni ACEPTADO (8) */}
+                        {compromiso.estadoId !== 5 && compromiso.estadoId !== 6 && compromiso.estadoId !== 8 && (
                           <button
                             onClick={() => navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`)}
                             className="px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm font-medium shadow-sm group-hover:shadow"

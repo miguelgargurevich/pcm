@@ -392,12 +392,30 @@ const EvaluacionCumplimiento = () => {
       
       if (success) {
         console.log('✅ Correo de evaluación enviado exitosamente a:', email);
-        const accionTexto = nuevoEstado === 'aceptado' ? 'aceptado' : 'observado';
-        showSuccessToast(`Compromiso ${compromisoSeleccionado} ${accionTexto} exitosamente. Correo de notificación enviado a ${email}`);
+        let accionTexto;
+        if (nuevoEstado === 'aceptado') {
+          accionTexto = 'aprobado';
+        } else if (nuevoEstado === 'en revisión') {
+          accionTexto = 'marcado en revisión';
+        } else if (nuevoEstado === 'observado') {
+          accionTexto = 'observado';
+        } else {
+          accionTexto = `actualizado a "${nuevoEstado}"`;
+        }
+        showSuccessToast(`✓ Compromiso ${compromisoSeleccionado} ${accionTexto} exitosamente. Correo enviado a ${email}`);
       } else {
         console.warn('⚠️ No se pudo enviar el correo de evaluación');
-        const accionTexto = nuevoEstado === 'aceptado' ? 'aprobado' : 'observado';
-        showSuccessToast(`Compromiso ${compromisoSeleccionado} ${accionTexto} exitosamente, pero no se pudo enviar el correo de notificación`);
+        let accionTexto;
+        if (nuevoEstado === 'aceptado') {
+          accionTexto = 'aprobado';
+        } else if (nuevoEstado === 'en revisión') {
+          accionTexto = 'marcado en revisión';
+        } else if (nuevoEstado === 'observado') {
+          accionTexto = 'observado';
+        } else {
+          accionTexto = `actualizado a "${nuevoEstado}"`;
+        }
+        showSuccessToast(`✓ Compromiso ${compromisoSeleccionado} ${accionTexto} exitosamente (notificación por correo pendiente)`);
       }
       
       console.log('📧 ===== FIN DEL PROCESO DE ENVÍO DE CORREO =====');
@@ -411,23 +429,48 @@ const EvaluacionCumplimiento = () => {
   const handleEvaluar = async (nuevoEstado, observaciones) => {
     if (!entidadSeleccionada || !compromisoSeleccionado) return;
 
+    // Determinar el tipo de acción
     const esAprobacion = nuevoEstado === 'aceptado';
-    const titulo = esAprobacion 
-      ? `¿Confirmar aprobación del Compromiso ${compromisoSeleccionado}?`
-      : `¿Confirmar observación del Compromiso ${compromisoSeleccionado}?`;
-    const mensaje = esAprobacion
-      ? `Se aprobará el cumplimiento para la entidad "${entidadSeleccionada.nombre}".`
-      : `Se marcará como observado y se notificará a la entidad "${entidadSeleccionada.nombre}".`;
+    const esEnRevision = nuevoEstado === 'en revisión';
+    const esObservacion = nuevoEstado === 'observado';
+    
+    // Configurar mensajes según el tipo de acción
+    let titulo, mensaje, confirmText, confirmButtonClass, loadingText;
+    
+    if (esAprobacion) {
+      titulo = `¿Aprobar el Compromiso ${compromisoSeleccionado}?`;
+      mensaje = `Se aprobará el cumplimiento para la entidad "${entidadSeleccionada.nombre}". Esta acción enviará una notificación por correo.`;
+      confirmText = 'Aprobar';
+      confirmButtonClass = 'px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors';
+      loadingText = 'Aprobando...';
+    } else if (esEnRevision) {
+      titulo = `¿Marcar como En Revisión?`;
+      mensaje = `El Compromiso ${compromisoSeleccionado} de "${entidadSeleccionada.nombre}" quedará marcado como "En Revisión". Esto indica que está siendo evaluado actualmente.`;
+      confirmText = 'Marcar en Revisión';
+      confirmButtonClass = 'px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors';
+      loadingText = 'Actualizando estado...';
+    } else if (esObservacion) {
+      titulo = `¿Observar el Compromiso ${compromisoSeleccionado}?`;
+      mensaje = `Se marcará como observado el Compromiso ${compromisoSeleccionado} de "${entidadSeleccionada.nombre}". La entidad será notificada por correo con las observaciones registradas.`;
+      confirmText = 'Observar';
+      confirmButtonClass = 'px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors';
+      loadingText = 'Registrando observación...';
+    } else {
+      // Estado genérico
+      titulo = `¿Cambiar estado del Compromiso ${compromisoSeleccionado}?`;
+      mensaje = `Se actualizará el estado a "${nuevoEstado}" para la entidad "${entidadSeleccionada.nombre}".`;
+      confirmText = 'Confirmar';
+      confirmButtonClass = 'px-3 py-1 text-sm bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors';
+      loadingText = 'Actualizando...';
+    }
 
     showConfirmToast({
       title: titulo,
       message: mensaje,
-      confirmText: esAprobacion ? 'Aprobar' : 'Observar',
+      confirmText: confirmText,
       cancelText: 'Cancelar',
-      loadingText: esAprobacion ? 'Aprobando...' : 'Registrando observación...',
-      confirmButtonClass: esAprobacion 
-        ? 'px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors'
-        : 'px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors',
+      loadingText: loadingText,
+      confirmButtonClass: confirmButtonClass,
       onConfirm: async () => {
         await ejecutarEvaluacion(nuevoEstado, observaciones);
       }

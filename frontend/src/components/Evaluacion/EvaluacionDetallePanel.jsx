@@ -195,6 +195,17 @@ const EvaluacionDetallePanel = ({
     }
   };
 
+  const handleEnRevision = async () => {
+    if (onEvaluar && !submitting) {
+      setSubmitting(true);
+      try {
+        await onEvaluar('en revisión', observaciones);
+      } finally {
+        setSubmitting(false);
+      }
+    }
+  };
+
   const handleObservar = async () => {
     if (onEvaluar && !submitting) {
       setSubmitting(true);
@@ -329,31 +340,48 @@ const EvaluacionDetallePanel = ({
             </div>
 
             {/* Botones de acción */}
-            <div className="flex gap-2">
+            <div className="space-y-2">
+              {/* Botón En Revisión */}
               <button
-                onClick={handleObservar}
+                onClick={handleEnRevision}
                 disabled={submitting}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting ? (
                   <Loader2 size={16} className="animate-spin" />
                 ) : (
-                  <XCircle size={16} />
+                  <Eye size={16} />
                 )}
-                OBSERVAR
+                EN REVISIÓN
               </button>
-              <button
-                onClick={handleAprobar}
-                disabled={submitting}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {submitting ? (
-                  <Loader2 size={16} className="animate-spin" />
-                ) : (
-                  <CheckCircle size={16} />
-                )}
-                APROBAR
-              </button>
+
+              {/* Botones Observar y Aprobar */}
+              <div className="flex gap-2">
+                <button
+                  onClick={handleObservar}
+                  disabled={submitting}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submitting ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <XCircle size={16} />
+                  )}
+                  OBSERVAR
+                </button>
+                <button
+                  onClick={handleAprobar}
+                  disabled={submitting}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submitting ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <CheckCircle size={16} />
+                  )}
+                  APROBAR
+                </button>
+              </div>
             </div>
 
             {/* Alerta informativa */}
