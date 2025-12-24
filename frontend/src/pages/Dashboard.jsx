@@ -13,7 +13,8 @@ import {
   ArrowDown,
   Clock,
   X,
-  Eye
+  Eye,
+  Edit2
 } from 'lucide-react';
 import { dashboardService } from '../services/dashboardService';
 import { useNavigate } from 'react-router-dom';
@@ -929,13 +930,27 @@ const Dashboard = () => {
                           </div>
                         </div>
                       </div>
-                      <button
-                        onClick={() => verDetalleCompromiso(compromiso.compromisoId)}
-                        className="ml-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm font-medium shadow-sm group-hover:shadow"
-                      >
-                        <Eye size={16} />
-                        Ver Detalle
-                      </button>
+                      <div className="ml-4 flex items-center gap-2">
+                        <button
+                          onClick={() => navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}&mode=view`)}
+                          className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2 text-sm font-medium"
+                          title="Ver en modo solo lectura"
+                        >
+                          <Eye size={16} />
+                          Ver
+                        </button>
+                        {/* Mostrar botón Editar solo si NO está ACEPTADO/APROBADO (estadoId !== 8) */}
+                        {compromiso.estadoId !== 8 && (
+                          <button
+                            onClick={() => navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`)}
+                            className="px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm font-medium shadow-sm group-hover:shadow"
+                            title="Editar compromiso"
+                          >
+                            <Edit2 size={16} />
+                            Editar
+                          </button>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
