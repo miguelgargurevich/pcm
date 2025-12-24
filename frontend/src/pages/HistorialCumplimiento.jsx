@@ -266,9 +266,374 @@ const SnapshotModal = ({ isOpen, onClose, historial }) => {
               {datosRelacionados && Object.keys(datosRelacionados).length > 0 && (
                 <div className="mt-4">
                   <h4 className="font-medium text-gray-700 mb-2">Datos Relacionados</h4>
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <pre className="text-xs overflow-x-auto">{JSON.stringify(datosRelacionados, null, 2)}</pre>
+                  
+                  {/* Resumen de totales */}
+                  <div className="grid grid-cols-3 gap-4 mb-4">
+                    {datosRelacionados.totalMiembros !== undefined && (
+                      <div className="bg-indigo-50 rounded-lg p-3 text-center">
+                        <div className="text-2xl font-bold text-indigo-600">{datosRelacionados.totalMiembros}</div>
+                        <div className="text-sm text-gray-600">Miembros</div>
+                      </div>
+                    )}
+                    {datosRelacionados.totalProyectos !== undefined && (
+                      <div className="bg-blue-50 rounded-lg p-3 text-center">
+                        <div className="text-2xl font-bold text-blue-600">{datosRelacionados.totalProyectos}</div>
+                        <div className="text-sm text-gray-600">Proyectos</div>
+                      </div>
+                    )}
+                    {datosRelacionados.totalObjetivos !== undefined && (
+                      <div className="bg-green-50 rounded-lg p-3 text-center">
+                        <div className="text-2xl font-bold text-green-600">{datosRelacionados.totalObjetivos}</div>
+                        <div className="text-sm text-gray-600">Objetivos</div>
+                      </div>
+                    )}
+                    {datosRelacionados.totalAcciones !== undefined && (
+                      <div className="bg-purple-50 rounded-lg p-3 text-center">
+                        <div className="text-2xl font-bold text-purple-600">{datosRelacionados.totalAcciones}</div>
+                        <div className="text-sm text-gray-600">Acciones</div>
+                      </div>
+                    )}
+                    {datosRelacionados.totalPersonalTI !== undefined && (
+                      <div className="bg-teal-50 rounded-lg p-3 text-center">
+                        <div className="text-2xl font-bold text-teal-600">{datosRelacionados.totalPersonalTI}</div>
+                        <div className="text-sm text-gray-600">Personal TI</div>
+                      </div>
+                    )}
+                    {datosRelacionados.totalSoftware !== undefined && (
+                      <div className="bg-cyan-50 rounded-lg p-3 text-center">
+                        <div className="text-2xl font-bold text-cyan-600">{datosRelacionados.totalSoftware}</div>
+                        <div className="text-sm text-gray-600">Software</div>
+                      </div>
+                    )}
+                    {datosRelacionados.totalSistemas !== undefined && (
+                      <div className="bg-sky-50 rounded-lg p-3 text-center">
+                        <div className="text-2xl font-bold text-sky-600">{datosRelacionados.totalSistemas}</div>
+                        <div className="text-sm text-gray-600">Sistemas</div>
+                      </div>
+                    )}
+                    {datosRelacionados.totalRedes !== undefined && (
+                      <div className="bg-pink-50 rounded-lg p-3 text-center">
+                        <div className="text-2xl font-bold text-pink-600">{datosRelacionados.totalRedes}</div>
+                        <div className="text-sm text-gray-600">Equipos Red</div>
+                      </div>
+                    )}
+                    {datosRelacionados.totalServidores !== undefined && (
+                      <div className="bg-amber-50 rounded-lg p-3 text-center">
+                        <div className="text-2xl font-bold text-amber-600">{datosRelacionados.totalServidores}</div>
+                        <div className="text-sm text-gray-600">Servidores</div>
+                      </div>
+                    )}
                   </div>
+
+                  {/* Miembros del Comité (Compromiso 2) */}
+                  {datosRelacionados.miembrosComite && datosRelacionados.miembrosComite.length > 0 && (
+                    <div className="mb-4">
+                      <h5 className="font-medium text-gray-700 mb-2 text-sm">Miembros del Comité ({datosRelacionados.miembrosComite.length})</h5>
+                      <div className="border rounded-lg overflow-hidden">
+                        <table className="min-w-full divide-y divide-gray-200 text-xs">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">DNI</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nombre Completo</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cargo</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Rol</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Teléfono</th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {datosRelacionados.miembrosComite.map((miembro, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50">
+                                <td className="px-3 py-2 font-mono">{miembro.Dni || miembro.dni}</td>
+                                <td className="px-3 py-2 font-medium">
+                                  {miembro.Nombre || miembro.nombre} {miembro.ApellidoPaterno || miembro.apellidoPaterno} {miembro.ApellidoMaterno || miembro.apellidoMaterno}
+                                </td>
+                                <td className="px-3 py-2 text-gray-600">{miembro.Cargo || miembro.cargo}</td>
+                                <td className="px-3 py-2 text-gray-600">{miembro.Rol || miembro.rol}</td>
+                                <td className="px-3 py-2 text-gray-600">{miembro.Email || miembro.email}</td>
+                                <td className="px-3 py-2 text-gray-600">{miembro.Telefono || miembro.telefono}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Personal TI (Compromiso 3) */}
+                  {datosRelacionados.personalTI && datosRelacionados.personalTI.length > 0 && (
+                    <div className="mb-4">
+                      <h5 className="font-medium text-gray-700 mb-2 text-sm">Personal TI ({datosRelacionados.personalTI.length})</h5>
+                      <div className="border rounded-lg overflow-hidden">
+                        <table className="min-w-full divide-y divide-gray-200 text-xs">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">DNI</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cargo</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Especialidad</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {datosRelacionados.personalTI.map((persona, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50">
+                                <td className="px-3 py-2 font-mono">{persona.Dni || persona.dni}</td>
+                                <td className="px-3 py-2 font-medium">{persona.NombrePersona || persona.nombrePersona}</td>
+                                <td className="px-3 py-2 text-gray-600">{persona.Cargo || persona.cargo}</td>
+                                <td className="px-3 py-2 text-gray-600">{persona.Especialidad || persona.especialidad}</td>
+                                <td className="px-3 py-2 text-gray-600">{persona.EmailPersonal || persona.emailPersonal}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Inventario de Software (Compromiso 3) */}
+                  {datosRelacionados.inventarioSoftware && datosRelacionados.inventarioSoftware.length > 0 && (
+                    <div className="mb-4">
+                      <h5 className="font-medium text-gray-700 mb-2 text-sm">Inventario de Software ({datosRelacionados.inventarioSoftware.length})</h5>
+                      <div className="border rounded-lg overflow-hidden">
+                        <table className="min-w-full divide-y divide-gray-200 text-xs">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Producto</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Versión</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
+                              <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">Licencias</th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {datosRelacionados.inventarioSoftware.map((software, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50">
+                                <td className="px-3 py-2 font-medium">{software.NombreProducto || software.nombreProducto}</td>
+                                <td className="px-3 py-2 text-gray-600">{software.Version || software.version}</td>
+                                <td className="px-3 py-2 text-gray-600">{software.TipoSoftware || software.tipoSoftware}</td>
+                                <td className="px-3 py-2 text-center">{software.CantidadLicencias || software.cantidadLicencias}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Inventario de Sistemas (Compromiso 3) */}
+                  {datosRelacionados.inventarioSistemas && datosRelacionados.inventarioSistemas.length > 0 && (
+                    <div className="mb-4">
+                      <h5 className="font-medium text-gray-700 mb-2 text-sm">Inventario de Sistemas de Información ({datosRelacionados.inventarioSistemas.length})</h5>
+                      <div className="border rounded-lg overflow-hidden">
+                        <table className="min-w-full divide-y divide-gray-200 text-xs">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Sistema</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {datosRelacionados.inventarioSistemas.map((sistema, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50">
+                                <td className="px-3 py-2 font-medium">{sistema.NombreSistema || sistema.nombreSistema}</td>
+                                <td className="px-3 py-2 text-gray-600">{sistema.TipoSistema || sistema.tipoSistema}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Inventario de Red (Compromiso 3) */}
+                  {datosRelacionados.inventarioRed && datosRelacionados.inventarioRed.length > 0 && (
+                    <div className="mb-4">
+                      <h5 className="font-medium text-gray-700 mb-2 text-sm">Inventario de Equipos de Red ({datosRelacionados.inventarioRed.length})</h5>
+                      <div className="border rounded-lg overflow-hidden">
+                        <table className="min-w-full divide-y divide-gray-200 text-xs">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tipo Equipo</th>
+                              <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">Cantidad</th>
+                              <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">Puertos Op.</th>
+                              <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">Puertos Inop.</th>
+                              <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">Total Puertos</th>
+                              <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">Costo Anual</th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {datosRelacionados.inventarioRed.map((red, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50">
+                                <td className="px-3 py-2 font-medium">{red.TipoEquipo || red.tipoEquipo || '-'}</td>
+                                <td className="px-3 py-2 text-center text-gray-600">{red.Cantidad || red.cantidad || '0'}</td>
+                                <td className="px-3 py-2 text-center text-green-600">{red.PuertosOperativos || red.puertosOperativos || '0'}</td>
+                                <td className="px-3 py-2 text-center text-red-600">{red.PuertosInoperativos || red.puertosInoperativos || '0'}</td>
+                                <td className="px-3 py-2 text-center text-gray-600">{red.TotalPuertos || red.totalPuertos || '0'}</td>
+                                <td className="px-3 py-2 text-right text-gray-600">S/ {(red.CostoMantenimientoAnual || red.costoMantenimientoAnual || 0).toFixed(2)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Inventario de Servidores (Compromiso 3) */}
+                  {datosRelacionados.inventarioServidores && datosRelacionados.inventarioServidores.length > 0 && (
+                    <div className="mb-4">
+                      <h5 className="font-medium text-gray-700 mb-2 text-sm">Inventario de Servidores ({datosRelacionados.inventarioServidores.length})</h5>
+                      <div className="border rounded-lg overflow-hidden">
+                        <table className="min-w-full divide-y divide-gray-200 text-xs">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
+                              <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">Estado</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Capa</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">CPU</th>
+                              <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">Velocidad</th>
+                              <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">Núcleos</th>
+                              <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">Memoria</th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {datosRelacionados.inventarioServidores.map((servidor, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50">
+                                <td className="px-3 py-2 font-medium">{servidor.NombreEquipo || servidor.nombreEquipo || '-'}</td>
+                                <td className="px-3 py-2 text-gray-600">{servidor.TipoEquipo || servidor.tipoEquipo || '-'}</td>
+                                <td className="px-3 py-2 text-center">
+                                  <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full ${
+                                    (servidor.Estado || servidor.estado) === 'Operativo' 
+                                      ? 'bg-green-100 text-green-800' 
+                                      : 'bg-red-100 text-red-800'
+                                  }`}>
+                                    {servidor.Estado || servidor.estado || '-'}
+                                  </span>
+                                </td>
+                                <td className="px-3 py-2 text-gray-600">{servidor.Capa || servidor.capa || '-'}</td>
+                                <td className="px-3 py-2 text-gray-600">
+                                  {servidor.MarcaCpu || servidor.marcaCpu || '-'} {servidor.ModeloCpu || servidor.modeloCpu || ''}
+                                </td>
+                                <td className="px-3 py-2 text-right text-gray-600">{servidor.VelocidadGhz || servidor.velocidadGhz || '0'} GHz</td>
+                                <td className="px-3 py-2 text-center text-gray-600">{servidor.Nucleos || servidor.nucleos || '0'}</td>
+                                <td className="px-3 py-2 text-right text-gray-600">{servidor.MemoriaGb || servidor.memoriaGb || '0'} GB</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Proyectos */}
+                  {datosRelacionados.proyectos && datosRelacionados.proyectos.length > 0 && (
+                    <div className="mb-4">
+                      <h5 className="font-medium text-gray-700 mb-2 text-sm">Proyectos ({datosRelacionados.proyectos.length})</h5>
+                      <div className="border rounded-lg overflow-hidden">
+                        <table className="min-w-full divide-y divide-gray-200 text-xs">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Código</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Alcance</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
+                              <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">% Avance</th>
+                              <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">Alineado PGD</th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {datosRelacionados.proyectos.map((proyecto, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50">
+                                <td className="px-3 py-2 font-mono text-primary-600">{proyecto.NumeracionProy || proyecto.numeracionProy || '-'}</td>
+                                <td className="px-3 py-2 font-medium">{proyecto.Nombre || proyecto.nombre}</td>
+                                <td className="px-3 py-2 text-gray-600">{proyecto.Alcance || proyecto.alcance}</td>
+                                <td className="px-3 py-2 text-gray-600">{proyecto.TipoProy || proyecto.tipoProy}</td>
+                                <td className="px-3 py-2 text-center">
+                                  <div className="flex items-center justify-center gap-2">
+                                    <div className="w-16 bg-gray-200 rounded-full h-1.5">
+                                      <div 
+                                        className="bg-blue-600 h-1.5 rounded-full" 
+                                        style={{ width: `${proyecto.PorcentajeAvance || proyecto.porcentajeAvance || 0}%` }}
+                                      ></div>
+                                    </div>
+                                    <span className="text-xs font-medium">{proyecto.PorcentajeAvance || proyecto.porcentajeAvance || 0}%</span>
+                                  </div>
+                                </td>
+                                <td className="px-3 py-2 text-center">
+                                  {(proyecto.AlineadoPgd || proyecto.alineadoPgd) === 'Si' || (proyecto.AlineadoPgd || proyecto.alineadoPgd) === true ? (
+                                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">✓ Sí</span>
+                                  ) : (
+                                    <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">✗ No</span>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Objetivos */}
+                  {datosRelacionados.objetivos && datosRelacionados.objetivos.length > 0 && (
+                    <div className="mb-4">
+                      <h5 className="font-medium text-gray-700 mb-2 text-sm">Objetivos ({datosRelacionados.objetivos.length})</h5>
+                      <div className="border rounded-lg overflow-hidden">
+                        <table className="min-w-full divide-y divide-gray-200 text-xs">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Descripción</th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {datosRelacionados.objetivos.map((objetivo, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50">
+                                <td className="px-3 py-2">{typeof objetivo === 'string' ? objetivo : objetivo.Descripcion || objetivo.descripcion || JSON.stringify(objetivo)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Acciones */}
+                  {datosRelacionados.acciones && datosRelacionados.acciones.length > 0 && (
+                    <div className="mb-4">
+                      <h5 className="font-medium text-gray-700 mb-2 text-sm">Acciones ({datosRelacionados.acciones.length})</h5>
+                      <div className="border rounded-lg overflow-hidden">
+                        <table className="min-w-full divide-y divide-gray-200 text-xs">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Descripción</th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {datosRelacionados.acciones.map((accion, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50">
+                                <td className="px-3 py-2">{typeof accion === 'string' ? accion : accion.Descripcion || accion.descripcion || JSON.stringify(accion)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mensaje si no hay datos relacionados */}
+                  {(!datosRelacionados.miembrosComite || datosRelacionados.miembrosComite.length === 0) &&
+                   (!datosRelacionados.personalTI || datosRelacionados.personalTI.length === 0) &&
+                   (!datosRelacionados.inventarioSoftware || datosRelacionados.inventarioSoftware.length === 0) &&
+                   (!datosRelacionados.inventarioSistemas || datosRelacionados.inventarioSistemas.length === 0) &&
+                   (!datosRelacionados.inventarioRed || datosRelacionados.inventarioRed.length === 0) &&
+                   (!datosRelacionados.inventarioServidores || datosRelacionados.inventarioServidores.length === 0) &&
+                   (!datosRelacionados.proyectos || datosRelacionados.proyectos.length === 0) &&
+                   (!datosRelacionados.objetivos || datosRelacionados.objetivos.length === 0) &&
+                   (!datosRelacionados.acciones || datosRelacionados.acciones.length === 0) && (
+                    <div className="text-center py-4 text-gray-500 bg-gray-50 rounded-lg">
+                      <p className="text-sm">No hay datos relacionados registrados</p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

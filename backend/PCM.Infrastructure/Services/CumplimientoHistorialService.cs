@@ -439,7 +439,9 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
                         datos["totalSoftware"] = software.Count;
                         datos["inventarioSistemas"] = sistemas.Select(s => new { s.NombreSistema, s.TipoSistema }).ToList();
                         datos["totalSistemas"] = sistemas.Count;
+                        datos["inventarioRed"] = redes.Select(r => new { r.TipoEquipo, r.Cantidad, r.PuertosOperativos, r.PuertosInoperativos, r.TotalPuertos, r.CostoMantenimientoAnual }).ToList();
                         datos["totalRedes"] = redes.Count;
+                        datos["inventarioServidores"] = servidores.Select(s => new { s.NombreEquipo, s.TipoEquipo, s.Estado, s.Capa, s.Propiedad, s.MarcaCpu, s.ModeloCpu, s.VelocidadGhz, s.Nucleos, s.MemoriaGb }).ToList();
                         datos["totalServidores"] = servidores.Count;
                     }
                     break;
