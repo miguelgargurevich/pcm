@@ -634,7 +634,10 @@ const HistorialCumplimiento = () => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 mt-4">
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                Mostrando {historial.length} de {pagination.totalItems} registros
+              </div>
               <button
                 onClick={limpiarFiltros}
                 className="btn-secondary flex items-center gap-2 px-4 py-2"

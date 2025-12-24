@@ -229,7 +229,7 @@ public class EvaluacionController : ControllerBase
         try
         {
             // Obtener el ID del operador logueado desde el JWT
-            var userIdClaim = User.FindFirst("UserId")?.Value;
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             Guid? operadorId = null;
             if (!string.IsNullOrEmpty(userIdClaim) && Guid.TryParse(userIdClaim, out var parsedUserId))
             {

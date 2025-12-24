@@ -70,6 +70,8 @@ const Reportes = () => {
   const [tipoReporteActivo, setTipoReporteActivo] = useState('avance-global');
   const [loading, setLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [paginaObservaciones, setPaginaObservaciones] = useState(1);
+  const itemsPorPaginaObservaciones = 10;
   
   // Filtros globales
   const [filtros, setFiltros] = useState({
@@ -645,7 +647,12 @@ const Reportes = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {entidadesConObservaciones.slice(0, 20).map((entidad, idx) => (
+                    {entidadesConObservaciones
+                      .slice(
+                        (paginaObservaciones - 1) * itemsPorPaginaObservaciones,
+                        paginaObservaciones * itemsPorPaginaObservaciones
+                      )
+                      .map((entidad, idx) => (
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-4 py-3 text-sm text-gray-900">
                           {entidad.nombre}
@@ -686,6 +693,35 @@ const Reportes = () => {
                   </div>
                 )}
               </div>
+
+              {/* Paginación */}
+              {entidadesConObservaciones.length > itemsPorPaginaObservaciones && (
+                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-gray-50">
+                  <div className="text-sm text-gray-600">
+                    Mostrando {((paginaObservaciones - 1) * itemsPorPaginaObservaciones) + 1} - {Math.min(paginaObservaciones * itemsPorPaginaObservaciones, entidadesConObservaciones.length)} de {entidadesConObservaciones.length} registros
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setPaginaObservaciones(prev => Math.max(prev - 1, 1))}
+                      disabled={paginaObservaciones === 1}
+                      className="px-3 py-1 text-sm text-gray-600 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                    >
+                      Anterior
+                    </button>
+                    <span className="px-3 py-1 text-sm bg-primary-600 text-white rounded-lg">
+                      {paginaObservaciones}
+                    </span>
+                    <span className="text-sm text-gray-600">de {Math.ceil(entidadesConObservaciones.length / itemsPorPaginaObservaciones)}</span>
+                    <button
+                      onClick={() => setPaginaObservaciones(prev => Math.min(prev + 1, Math.ceil(entidadesConObservaciones.length / itemsPorPaginaObservaciones)))}
+                      disabled={paginaObservaciones === Math.ceil(entidadesConObservaciones.length / itemsPorPaginaObservaciones)}
+                      className="px-3 py-1 text-sm text-gray-600 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                    >
+                      Siguiente
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </>
         )}

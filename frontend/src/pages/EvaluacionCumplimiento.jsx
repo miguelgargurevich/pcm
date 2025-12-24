@@ -603,6 +603,12 @@ const EvaluacionCumplimiento = () => {
                 </button>
               </div>
             </div>
+
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                Mostrando {entidades.length} de {pagination.totalItems} registros
+              </div>
+            </div>
           </div>
         )}
       </div>

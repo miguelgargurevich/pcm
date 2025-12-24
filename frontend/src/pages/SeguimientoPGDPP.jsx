@@ -412,17 +412,9 @@ const SeguimientoPGDPP = () => {
               </div>
             </div>
 
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm text-gray-600 mr-2">Etapas:</span>
-                {etapasOptions.map((etapa) => (
-                  <span
-                    key={etapa}
-                    className={`px-2 py-1 text-xs font-semibold rounded-full ${getEtapaBadgeClass(etapa)}`}
-                  >
-                    {etapa}
-                  </span>
-                ))}
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                Mostrando {proyectosPaginados.length} de {proyectosFiltrados.length} registros
               </div>
               <button
                 onClick={limpiarFiltros}
@@ -435,6 +427,21 @@ const SeguimientoPGDPP = () => {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Leyenda de etapas - Siempre visible */}
+      <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+        <p className="text-sm font-medium text-gray-700 mb-3">Leyenda de etapas:</p>
+        <div className="flex flex-wrap gap-2">
+          {etapasOptions.map((etapa) => (
+            <span
+              key={etapa}
+              className={`px-2 py-1 text-xs font-semibold rounded-full ${getEtapaBadgeClass(etapa)}`}
+            >
+              {etapa}
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* Panel de Lista - Portafolio de Proyectos */}
