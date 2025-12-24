@@ -4,6 +4,17 @@ import { FilterX, X, Save, FolderKanban, TrendingUp, Edit2, Filter, ChevronDown,
 import { useAuth } from '../hooks/useAuth';
 import com3EPGDService from '../services/com3EPGDService';
 
+// Función auxiliar para formatear fecha a YYYY-MM-DD para inputs de tipo date
+const formatDateForInput = (dateString) => {
+  if (!dateString) return '';
+  // Si ya está en formato YYYY-MM-DD, devolverlo tal cual
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString;
+  // Si es un objeto Date o string ISO, convertir
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '';
+  return date.toISOString().split('T')[0];
+};
+
 // Datos de ejemplo eliminados - ahora se cargan desde la API
 
 // Opciones para los selects
@@ -171,10 +182,10 @@ const SeguimientoPGDPP = () => {
       nombre: proyecto.nombre || '',
       tipoProyecto: proyecto.tipoProyecto || '',
       tipoBeneficiario: proyecto.tipoBeneficiario || '',
-      fechaInicioProg: proyecto.fechaInicioProg || '',
-      fechaFinProg: proyecto.fechaFinProg || '',
-      fechaInicioReal: proyecto.fechaInicioReal || '',
-      fechaFinReal: proyecto.fechaFinReal || '',
+      fechaInicioProg: formatDateForInput(proyecto.fechaInicioProg),
+      fechaFinProg: formatDateForInput(proyecto.fechaFinProg),
+      fechaInicioReal: formatDateForInput(proyecto.fechaInicioReal),
+      fechaFinReal: formatDateForInput(proyecto.fechaFinReal),
       etapa: proyecto.etapa || '',
       porcentajeAvance: proyecto.porcentajeAvance || 0,
       informeAvance: proyecto.informeAvance || false,
