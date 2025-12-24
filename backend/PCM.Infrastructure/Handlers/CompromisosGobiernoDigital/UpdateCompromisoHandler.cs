@@ -136,12 +136,52 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
                 }
             }
 
-            // Update criterios de evaluacion - remove old ones and add new ones
-            _context.CriteriosEvaluacion.RemoveRange(compromiso.CriteriosEvaluacion);
+            // Update criterios de evaluacion - update/add/deactivate intelligently
+            // NO eliminar criterios que tienen respuestas asociadas (foreign key constraint)
+            var existingCriteriosIds = compromiso.CriteriosEvaluacion.Select(c => c.CriterioEvaluacionId).ToList();
+            var newCriteriosIds = request.CriteriosEvaluacion?
+                .Where(c => c.CriterioEvaluacionId.HasValue && c.CriterioEvaluacionId.Value > 0)
+                .Select(c => c.CriterioEvaluacionId.Value)
+                .ToList() ?? new List<int>();
 
-            if (request.CriteriosEvaluacion != null && request.CriteriosEvaluacion.Any())
+            // 1. Desactivar criterios que ya no están en la petición SOLO si no tienen respuestas
+            var criteriosToRemove = compromiso.CriteriosEvaluacion.Where(c => !newCriteriosIds.Contains(c.CriterioEvaluacionId)).ToList();
+            foreach (var criterio in criteriosToRemove)
             {
-                foreach (var criterioDto in request.CriteriosEvaluacion)
+                // Verificar si tiene respuestas asociadas
+                var tieneRespuestas = await _context.EvaluacionRespuestasEntidad
+                    .AnyAsync(r => r.CriterioEvaluacionId == criterio.CriterioEvaluacionId, cancellationToken);
+
+                if (tieneRespuestas)
+                {
+                    // Si tiene respuestas, solo desactivarlo
+                    _logger.LogWarning("Criterio {CriterioId} tiene respuestas asociadas. Se desactiva en lugar de eliminar.", criterio.CriterioEvaluacionId);
+                    criterio.Activo = false;
+                    criterio.UpdatedAt = DateTime.UtcNow;
+                }
+                else
+                {
+                    // Si no tiene respuestas, se puede eliminar
+                    _context.CriteriosEvaluacion.Remove(criterio);
+                }
+            }
+
+            // 2. Actualizar criterios existentes
+            if (request.CriteriosEvaluacion != null)
+            {
+                foreach (var criterioDto in request.CriteriosEvaluacion.Where(c => c.CriterioEvaluacionId.HasValue && c.CriterioEvaluacionId.Value > 0))
+                {
+                    var existingCriterio = compromiso.CriteriosEvaluacion.FirstOrDefault(c => c.CriterioEvaluacionId == criterioDto.CriterioEvaluacionId.Value);
+                    if (existingCriterio != null)
+                    {
+                        existingCriterio.Descripcion = criterioDto.Descripcion;
+                        existingCriterio.Activo = criterioDto.Activo;
+                        existingCriterio.UpdatedAt = DateTime.UtcNow;
+                    }
+                }
+
+                // 3. Agregar nuevos criterios (los que no tienen ID o tienen ID = 0 o null)
+                foreach (var criterioDto in request.CriteriosEvaluacion.Where(c => !c.CriterioEvaluacionId.HasValue || c.CriterioEvaluacionId.Value == 0))
                 {
                     var criterio = new CriterioEvaluacion
                     {
@@ -150,7 +190,7 @@ public class UpdateCompromisoHandler : IRequestHandler<UpdateCompromisoCommand, 
                         IdEstado = 1, // Default pendiente
                         Activo = criterioDto.Activo,
                         CreatedAt = DateTime.UtcNow,
-                        UpdatedAt = null  // Explicitly set to null to avoid unspecified DateTime
+                        UpdatedAt = null
                     };
                     _context.CriteriosEvaluacion.Add(criterio);
                 }
