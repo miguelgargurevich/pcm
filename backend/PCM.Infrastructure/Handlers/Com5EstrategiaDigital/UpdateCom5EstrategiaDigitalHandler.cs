@@ -85,7 +85,7 @@ public class UpdateCom5EstrategiaDigitalHandler
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: command.Estado,
-                    usuarioId: command.UserId,
+                    usuarioId: command.UsuarioRegistra,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

@@ -77,7 +77,7 @@ public class UpdateCom6MigracionGobPeHandler : IRequestHandler<UpdateCom6Migraci
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: request.UserId,
+                    usuarioId: request.UsuarioRegistra,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

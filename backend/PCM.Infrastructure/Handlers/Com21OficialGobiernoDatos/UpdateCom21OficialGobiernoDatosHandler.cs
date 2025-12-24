@@ -87,7 +87,7 @@ public class UpdateCom21OficialGobiernoDatosHandler : IRequestHandler<UpdateCom2
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: request.UserId,
+                    usuarioId: request.UsuarioRegistra,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

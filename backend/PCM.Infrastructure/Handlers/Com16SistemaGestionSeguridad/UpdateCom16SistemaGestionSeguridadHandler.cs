@@ -92,7 +92,7 @@ public class UpdateCom16SistemaGestionSeguridadHandler : IRequestHandler<UpdateC
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: request.UserId,
+                    usuarioId: request.UsuarioRegistra,
                     observacion: null,
                     tipoAccion: tipoAccion);
 
