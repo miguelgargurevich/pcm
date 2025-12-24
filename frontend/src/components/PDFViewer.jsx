@@ -1,4 +1,4 @@
-import { X, Loader2, FileText } from 'lucide-react';
+import { X, Loader2, FileText, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -24,12 +24,24 @@ const PDFViewer = ({ pdfUrl, onClose, title = 'Vista Previa del Documento' }) =>
               <p className="text-sm text-white/80">Documento PDF</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <a
+              href={pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+              title="Abrir en nueva pestaña"
+            >
+              <ExternalLink className="w-5 h-5" />
+            </a>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+              title="Cerrar"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
         
         {/* Content */}
@@ -55,24 +67,6 @@ const PDFViewer = ({ pdfUrl, onClose, title = 'Vista Previa del Documento' }) =>
               setIsLoading(false);
             }}
           />
-        </div>
-        
-        {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-6 border-t bg-gray-50 rounded-b-xl">
-          <a
-            href={pdfUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-          >
-            Abrir en nueva pestaña
-          </a>
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
-          >
-            Cerrar
-          </button>
         </div>
       </div>
     </div>
