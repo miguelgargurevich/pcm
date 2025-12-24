@@ -457,13 +457,13 @@ const SeguimientoPGDPP = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="sticky left-0 z-20 bg-gray-100 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[80px] min-w-[80px]">
+                <th className="sticky left-0 z-20 bg-gray-50 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[80px] min-w-[80px]">
                   #
                 </th>
-                <th className="sticky left-[80px] z-20 bg-gray-100 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[140px] min-w-[140px]">
+                <th className="sticky left-[80px] z-20 bg-gray-50 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[140px] min-w-[140px]">
                   Código
                 </th>
-                <th className="sticky left-[220px] z-20 bg-gray-100 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[350px] min-w-[350px]">
+                <th className="sticky left-[220px] z-20 bg-gray-50 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[350px] min-w-[350px]">
                   Nombre
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -508,13 +508,13 @@ const SeguimientoPGDPP = () => {
                   className="hover:bg-gray-50 cursor-pointer group"
                   onClick={() => handleRowClick(proyecto)}
                 >
-                  <td className="sticky left-0 z-10 bg-gray-200 group-hover:bg-gray-100 px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-[80px] min-w-[80px]">
+                  <td className="sticky left-0 z-10 bg-gray-50 group-hover:bg-gray-100 px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-[80px] min-w-[80px]">
                     {proyecto.id}
                   </td>
-                  <td className="sticky left-[80px] z-10 bg-gray-200 group-hover:bg-gray-100 px-6 py-4 whitespace-nowrap text-sm font-medium text-primary w-[140px] min-w-[140px]">
+                  <td className="sticky left-[80px] z-10 bg-gray-50 group-hover:bg-gray-100 px-6 py-4 whitespace-nowrap text-sm font-medium text-primary w-[140px] min-w-[140px]">
                     {proyecto.codigo}
                   </td>
-                  <td className="sticky left-[220px] z-10 bg-gray-200 group-hover:bg-gray-100 px-6 py-4 text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer w-[350px] min-w-[350px]">
+                  <td className="sticky left-[220px] z-10 bg-gray-50 group-hover:bg-gray-100 px-6 py-4 text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer w-[350px] min-w-[350px]">
                     {proyecto.nombre}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
