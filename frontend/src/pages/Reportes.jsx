@@ -1,22 +1,16 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { 
-  BarChart3, 
-  FileText, 
-  AlertTriangle, 
-  FolderKanban, 
-  Download, 
-  Filter, 
-  FilterX,
-  TrendingUp,
-  Building2,
-  ChevronDown,
-  ChevronUp,
-  ChevronRight,
-  Calendar,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  AlertCircle
+  Database, 
+  Building2, 
+  CheckCircle2, 
+  XCircle, 
+  AlertCircle,
+  Download,
+  RefreshCw,
+  ExternalLink,
+  FileText,
+  Users,
+  Link as LinkIcon
 } from 'lucide-react';
 import {
   BarChart,
@@ -25,935 +19,484 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell,
-  LineChart,
-  Line
+  Cell
 } from 'recharts';
-import evaluacionService from '../services/evaluacionService';
-import { entidadesService } from '../services/entidadesService';
+import com10DatosAbiertosService from '../services/com10DatosAbiertosService';
+import toast from 'react-hot-toast';
 
-// Colores para los estados
-const ESTADO_COLORS = {
-  'aceptado': '#22c55e',
-  'enviado': '#3b82f6',
-  'en revisión': '#a855f7',
-  'en proceso': '#eab308',
-  'pendiente': '#f97316',
-  'observado': '#ef4444',
-  'sin reportar': '#b91c1c',
-  'no exigible': '#9ca3af'
+const COLORS = {
+  alto: '#22c55e',
+  medio: '#eab308',
+  bajo: '#ef4444'
 };
 
-// Colores para etapas de proyectos
-const ETAPA_COLORS = {
-  'SIN INICIAR': '#ef4444',
-  'PLANIFICACIÓN': '#eab308',
-  'EJECUCIÓN': '#3b82f6',
-  'CERRADO': '#6b7280'
-};
-
-// Colores para gráficos de pie
-const PIE_COLORS = ['#22c55e', '#3b82f6', '#a855f7', '#eab308', '#f97316', '#ef4444', '#b91c1c', '#9ca3af'];
-
-// Tipos de reportes
-const TIPOS_REPORTE = [
-  { id: 'avance-global', nombre: 'Avance Global de Cumplimiento', icon: BarChart3, color: 'bg-blue-500' },
-  { id: 'observaciones', nombre: 'Entidades con Observaciones', icon: AlertTriangle, color: 'bg-orange-500' },
-  { id: 'portafolio', nombre: 'Portafolio de Proyectos', icon: FolderKanban, color: 'bg-purple-500' }
-];
+const PIE_COLORS = ['#22c55e', '#eab308', '#ef4444'];
 
 const Reportes = () => {
-  const [tipoReporteActivo, setTipoReporteActivo] = useState('avance-global');
-  const [loading, setLoading] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
-  const [paginaObservaciones, setPaginaObservaciones] = useState(1);
-  const itemsPorPaginaObservaciones = 10;
-  
-  // Filtros globales
-  const [filtros, setFiltros] = useState({
-    sectorId: '',
-    clasificacionId: '',
-    entidadId: '',
-    periodo: ''
+  const [loading, setLoading] = useState(true);
+  const [datosEntidades, setDatosEntidades] = useState([]);
+  const [estadisticas, setEstadisticas] = useState({
+    total: 0,
+    conResponsable: 0,
+    conUrl: 0,
+    conNorma: 0,
+    totalDatasets: 0,
+    avanceAlto: 0,
+    avanceMedio: 0,
+    avanceBajo: 0
   });
-  
-  // Datos
-  const [sectores, setSectores] = useState([]);
-  const [clasificaciones, setClasificaciones] = useState([]);
-  const [entidades, setEntidades] = useState([]);
-  const [datosEvaluacion, setDatosEvaluacion] = useState([]);
-  const [proyectosData, setProyectosData] = useState([]);
-  
-  // Cargar datos iniciales
+
   useEffect(() => {
-    const cargarDatosIniciales = async () => {
-      try {
-        setLoading(true);
-        const [sectoresRes, clasificacionesRes, entidadesRes] = await Promise.all([
-          evaluacionService.getSectores(),
-          evaluacionService.getClasificaciones(),
-          entidadesService.getAll()
-        ]);
-        
-        if (sectoresRes.isSuccess) setSectores(sectoresRes.data || []);
-        if (clasificacionesRes.isSuccess) setClasificaciones(clasificacionesRes.data || []);
-        if (entidadesRes.isSuccess || entidadesRes.IsSuccess) {
-          setEntidades(entidadesRes.data || entidadesRes.Data || []);
-        }
-        
-        // Cargar datos de evaluación inicial
-        try {
-          const response = await evaluacionService.getMatriz({
-            page: 1,
-            pageSize: 1000
-          });
-          
-          if (response.isSuccess) {
-            console.log('Datos de evaluación cargados:', response.data?.length || 0, 'entidades');
-            setDatosEvaluacion(response.data || []);
-          } else {
-            console.warn('No se pudieron cargar datos de evaluación');
-          }
-        } catch (error) {
-          console.error('Error al cargar datos de evaluación:', error);
-        }
-        
-        // Cargar proyectos para el reporte de portafolio
-        try {
-          const proyectosRes = await evaluacionService.getProyectos();
-          if (proyectosRes.isSuccess) {
-            console.log('Proyectos cargados:', proyectosRes.data?.length || 0, 'proyectos');
-            setProyectosData(proyectosRes.data || []);
-          } else {
-            console.warn('No se pudieron cargar proyectos');
-          }
-        } catch (error) {
-          console.error('Error al cargar proyectos:', error);
-        }
-      } catch (error) {
-        console.error('Error al cargar datos:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    cargarDatosIniciales();
+    cargarDatos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Recargar datos cuando cambian los filtros
-  useEffect(() => {
-    const cargarDatosConFiltros = async () => {
-      try {
-        // Cargar datos de evaluación (para reportes que no son portafolio)
-        if (tipoReporteActivo !== 'portafolio') {
-          const response = await evaluacionService.getMatriz({
-            page: 1,
-            pageSize: 1000,
-            ...filtros
-          });
-          
-          if (response.isSuccess) {
-            setDatosEvaluacion(response.data || []);
-          }
-        }
-        
-        // Cargar proyectos para el reporte de portafolio
-        if (tipoReporteActivo === 'portafolio') {
-          const proyectosRes = await evaluacionService.getProyectos({
-            sectorId: filtros.sectorId || undefined,
-            clasificacionId: filtros.clasificacionId || undefined
-          });
-          if (proyectosRes.isSuccess) {
-            setProyectosData(proyectosRes.data || []);
-          }
-        }
-      } catch (error) {
-        console.error('Error al cargar datos:', error);
+  const cargarDatos = async () => {
+    try {
+      setLoading(true);
+      const response = await com10DatosAbiertosService.getAll();
+      
+      if (response.isSuccess) {
+        const datos = response.data || [];
+        setDatosEntidades(datos);
+        calcularEstadisticas(datos);
+      } else {
+        toast.error('Error al cargar datos de Datos Abiertos');
       }
-    };
-    
-    cargarDatosConFiltros();
-  }, [filtros, tipoReporteActivo]);
-
-  const handleFiltroChange = (e) => {
-    const { name, value } = e.target;
-    setFiltros(prev => ({ ...prev, [name]: value }));
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Error al cargar datos');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const limpiarFiltros = () => {
-    setFiltros({ sectorId: '', clasificacionId: '', entidadId: '', periodo: '' });
+  const calcularEstadisticas = (datos) => {
+    const stats = {
+      total: datos.length,
+      conResponsable: datos.filter(d => d.tieneResponsable).length,
+      conUrl: datos.filter(d => d.tieneUrlPnda).length,
+      conNorma: datos.filter(d => d.tieneNormaAprobacion).length,
+      totalDatasets: datos.reduce((sum, d) => sum + (d.totalDatasets || 0), 0),
+      avanceAlto: 0,
+      avanceMedio: 0,
+      avanceBajo: 0
+    };
+
+    // Calcular nivel de avance
+    datos.forEach(d => {
+      const nivel = calcularNivelAvance(d);
+      if (nivel === 'alto') stats.avanceAlto++;
+      else if (nivel === 'medio') stats.avanceMedio++;
+      else stats.avanceBajo++;
+    });
+
+    setEstadisticas(stats);
   };
 
-  // Datos procesados para gráficos
-  const datosAvanceGlobal = useMemo(() => {
-    if (!datosEvaluacion.length) return [];
-    
-    // Crear datos por compromiso (1-21)
-    const compromisosData = Array.from({ length: 21 }, (_, i) => {
-      const compromisoNum = i + 1;
-      const estadosCont = {};
-      
-      datosEvaluacion.forEach(entidad => {
-        if (entidad.compromisos && entidad.compromisos[i]) {
-          const estado = entidad.compromisos[i];
-          estadosCont[estado] = (estadosCont[estado] || 0) + 1;
-        }
-      });
-      
-      return {
-        compromiso: `C${compromisoNum}`,
-        nombre: `Compromiso ${compromisoNum}`,
-        ...estadosCont,
-        total: datosEvaluacion.length
-      };
-    });
-    
-    return compromisosData;
-  }, [datosEvaluacion]);
-
-  const datosResumenEstados = useMemo(() => {
-    if (!datosEvaluacion.length) return [];
-    
-    const conteoEstados = {};
-    datosEvaluacion.forEach(entidad => {
-      if (entidad.compromisos) {
-        entidad.compromisos.forEach(estado => {
-          conteoEstados[estado] = (conteoEstados[estado] || 0) + 1;
-        });
-      }
-    });
-    
-    return Object.entries(conteoEstados).map(([estado, cantidad]) => ({
-      name: estado,
-      value: cantidad,
-      color: ESTADO_COLORS[estado] || '#9ca3af'
-    }));
-  }, [datosEvaluacion]);
-
-  const entidadesConObservaciones = useMemo(() => {
-    return datosEvaluacion.filter(entidad => {
-      if (!entidad.compromisos) return false;
-      return entidad.compromisos.some(estado => 
-        estado === 'observado' || estado === 'pendiente' || estado === 'sin reportar'
-      );
-    }).map(entidad => ({
-      ...entidad,
-      compromisosObservados: entidad.compromisos?.filter(e => e === 'observado').length || 0,
-      compromisosPendientes: entidad.compromisos?.filter(e => e === 'pendiente').length || 0,
-      compromisosSinReportar: entidad.compromisos?.filter(e => e === 'sin reportar').length || 0,
-      criticidad: (entidad.compromisos?.filter(e => e === 'observado').length || 0) * 3 +
-                  (entidad.compromisos?.filter(e => e === 'sin reportar').length || 0) * 2 +
-                  (entidad.compromisos?.filter(e => e === 'pendiente').length || 0)
-    })).sort((a, b) => b.criticidad - a.criticidad);
-  }, [datosEvaluacion]);
-
-  const datosPortafolio = useMemo(() => {
-    const porEtapa = {};
-    const porTipo = {};
-    const proyectosConRetraso = [];
-    
-    proyectosData.forEach(p => {
-      const etapa = p.etapa?.toUpperCase() || 'SIN DEFINIR';
-      const tipo = p.tipoProyecto || 'OTROS';
-      
-      // Por etapa
-      porEtapa[etapa] = (porEtapa[etapa] || 0) + 1;
-      
-      // Por tipo
-      porTipo[tipo] = (porTipo[tipo] || { cantidad: 0 });
-      porTipo[tipo].cantidad++;
-      
-      // Proyectos con retraso
-      if (p.fechaFinProg && p.fechaFinReal) {
-        const fechaProg = new Date(p.fechaFinProg);
-        const fechaReal = new Date(p.fechaFinReal);
-        if (fechaReal > fechaProg) {
-          const diasRetraso = Math.ceil((fechaReal - fechaProg) / (1000 * 60 * 60 * 24));
-          proyectosConRetraso.push({ ...p, diasRetraso });
-        }
-      } else if (p.fechaFinProg && etapa !== 'CERRADO' && etapa !== 'SIN INICIAR') {
-        const fechaProg = new Date(p.fechaFinProg);
-        const hoy = new Date();
-        if (hoy > fechaProg) {
-          const diasRetraso = Math.ceil((hoy - fechaProg) / (1000 * 60 * 60 * 24));
-          proyectosConRetraso.push({ ...p, diasRetraso });
-        }
-      }
-    });
-    
-    return {
-      porEtapa: Object.entries(porEtapa).map(([etapa, cantidad]) => ({
-        name: etapa,
-        value: cantidad,
-        color: ETAPA_COLORS[etapa] || '#9ca3af'
-      })),
-      porTipo: Object.entries(porTipo).map(([tipo, data]) => ({
-        tipo,
-        cantidad: data.cantidad
-      })),
-      totalProyectos: proyectosData.length,
-      proyectosConRetraso: proyectosConRetraso.sort((a, b) => b.diasRetraso - a.diasRetraso)
+  const calcularNivelAvance = (entidad) => {
+    const criterios = {
+      responsable: entidad.tieneResponsable,
+      url: entidad.tieneUrlPnda,
+      norma: entidad.tieneNormaAprobacion,
+      datasets: entidad.totalDatasets >= 12,
+      estado: entidad.estadoPCM?.toLowerCase() === 'aceptado'
     };
-  }, [proyectosData]);
+
+    const cumplidos = Object.values(criterios).filter(Boolean).length;
+
+    if (cumplidos >= 4) return 'alto';
+    if (cumplidos >= 2) return 'medio';
+    return 'bajo';
+  };
+
+  const calcularPorcentajeAvance = (entidad) => {
+    const criterios = {
+      responsable: entidad.tieneResponsable,
+      url: entidad.tieneUrlPnda,
+      norma: entidad.tieneNormaAprobacion,
+      datasets: entidad.totalDatasets >= 12,
+      evidencia: entidad.tienePdfEvidencia
+    };
+
+    const cumplidos = Object.values(criterios).filter(Boolean).length;
+    return Math.round((cumplidos / 5) * 100);
+  };
+
+  const exportarCSV = () => {
+    const headers = ['Entidad', 'RUC', 'Responsable PNDA', 'URL PNDA', 'Datasets', 'Norma Aprobación', 'Nivel Avance', 'Estado PCM'];
+    const rows = datosEntidades.map(d => [
+      d.entidadNombre,
+      d.entidadRuc,
+      d.tieneResponsable ? 'Sí' : 'No',
+      d.tieneUrlPnda ? 'Sí' : 'No',
+      d.totalDatasets || 0,
+      d.tieneNormaAprobacion ? 'Sí' : 'No',
+      calcularNivelAvance(d).toUpperCase(),
+      d.estadoPCM || 'N/A'
+    ]);
+
+    const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `reporte-datos-abiertos-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const datosGraficoDistribucion = [
+    { name: 'Avance Alto', value: estadisticas.avanceAlto, color: COLORS.alto },
+    { name: 'Avance Medio', value: estadisticas.avanceMedio, color: COLORS.medio },
+    { name: 'Avance Bajo', value: estadisticas.avanceBajo, color: COLORS.bajo }
+  ];
+
+  const datosGraficoCriterios = [
+    { criterio: 'Con Responsable', cantidad: estadisticas.conResponsable },
+    { criterio: 'Con URL PNDA', cantidad: estadisticas.conUrl },
+    { criterio: 'Con Norma', cantidad: estadisticas.conNorma }
+  ];
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="flex items-center justify-center min-h-screen">
+        <RefreshCw className="w-8 h-8 text-primary-600 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="mb-6">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-primary-100 rounded-xl">
-            <BarChart3 className="w-8 h-8 text-primary-600" />
+          <div className="p-3 bg-blue-100 rounded-xl">
+            <Database className="w-8 h-8 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-800">Reportes</h1>
-            <p className="text-gray-600 mt-1">Panel de reportes y análisis de cumplimiento</p>
+            <h1 className="text-2xl font-bold text-gray-800">
+              Indicadores del Eje de Datos Abiertos
+            </h1>
+            <p className="text-gray-600">
+              Seguimiento del cumplimiento del Compromiso 10 - PNDA
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={cargarDatos}
+            className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            Actualizar
+          </button>
+          <button
+            onClick={exportarCSV}
+            className="flex items-center gap-2 px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            Exportar CSV
+          </button>
+        </div>
+      </div>
+
+      {/* Métricas Principales */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-blue-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Total Entidades</p>
+              <p className="text-2xl font-bold text-gray-900">{estadisticas.total}</p>
+            </div>
+            <Building2 className="w-8 h-8 text-blue-500" />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-green-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Con Responsable</p>
+              <p className="text-2xl font-bold text-gray-900">{estadisticas.conResponsable}</p>
+              <p className="text-xs text-gray-500">
+                {estadisticas.total > 0 ? ((estadisticas.conResponsable / estadisticas.total) * 100).toFixed(0) : 0}%
+              </p>
+            </div>
+            <Users className="w-8 h-8 text-green-500" />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-purple-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Con URL PNDA</p>
+              <p className="text-2xl font-bold text-gray-900">{estadisticas.conUrl}</p>
+              <p className="text-xs text-gray-500">
+                {estadisticas.total > 0 ? ((estadisticas.conUrl / estadisticas.total) * 100).toFixed(0) : 0}%
+              </p>
+            </div>
+            <LinkIcon className="w-8 h-8 text-purple-500" />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-orange-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Con Norma</p>
+              <p className="text-2xl font-bold text-gray-900">{estadisticas.conNorma}</p>
+              <p className="text-xs text-gray-500">
+                {estadisticas.total > 0 ? ((estadisticas.conNorma / estadisticas.total) * 100).toFixed(0) : 0}%
+              </p>
+            </div>
+            <FileText className="w-8 h-8 text-orange-500" />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-indigo-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Total Datasets</p>
+              <p className="text-2xl font-bold text-gray-900">{estadisticas.totalDatasets}</p>
+              <p className="text-xs text-gray-500">Acumulados</p>
+            </div>
+            <Database className="w-8 h-8 text-indigo-500" />
           </div>
         </div>
       </div>
 
-      {/* Selector de Tipo de Reporte */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {TIPOS_REPORTE.map((tipo) => {
-          const Icon = tipo.icon;
-          const isActive = tipoReporteActivo === tipo.id;
-          return (
-            <button
-              key={tipo.id}
-              onClick={() => setTipoReporteActivo(tipo.id)}
-              className={`p-4 rounded-lg border-2 transition-all ${
-                isActive 
-                  ? 'border-primary bg-primary/5 shadow-md' 
-                  : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`${tipo.color} p-2 rounded-lg`}>
-                  <Icon className="text-white" size={20} />
-                </div>
-                <span className={`font-medium text-sm ${isActive ? 'text-primary' : 'text-gray-700'}`}>
-                  {tipo.nombre}
-                </span>
-              </div>
-            </button>
-          );
-        })}
+      {/* Gráficos */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Distribución de Avance */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            Panorama General de Avance
+          </h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={datosGraficoDistribucion}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, percent }) => `${name.split(' ')[1]}: ${(percent * 100).toFixed(0)}%`}
+                outerRadius={100}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {datosGraficoDistribucion.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={PIE_COLORS[index]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="flex justify-center gap-4 mt-4">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              <span className="text-sm text-gray-600">Alto ({estadisticas.avanceAlto})</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <span className="text-sm text-gray-600">Medio ({estadisticas.avanceMedio})</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <span className="text-sm text-gray-600">Bajo ({estadisticas.avanceBajo})</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Cumplimiento por Criterio */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            Cumplimiento por Criterio
+          </h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={datosGraficoCriterios}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="criterio" tick={{ fontSize: 12 }} />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="cantidad" fill="#3b82f6" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
-      {/* Filtros (excepto para portafolio) */}
-      {tipoReporteActivo !== 'portafolio' && (
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="w-full flex items-center justify-between text-left hover:bg-gray-50 -m-4 p-4 rounded-lg transition-colors"
-          >
-            <div className="flex items-center gap-2">
-              <Filter size={18} className="text-gray-500" />
-              <span className="font-medium text-gray-700">Filtros</span>
-              {(filtros.sectorId || filtros.clasificacionId || filtros.entidadId) && (
-                <span className="ml-2 px-2 py-0.5 text-xs bg-primary-100 text-primary-700 rounded-full font-medium">
-                  Activos
-                </span>
-              )}
-            </div>
-            {showFilters ? <ChevronUp size={20} className="text-gray-400" /> : <ChevronDown size={20} className="text-gray-400" />}
-          </button>
-
-          {showFilters && (
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Sector</label>
-                  <select
-                    name="sectorId"
-                    value={filtros.sectorId}
-                    onChange={handleFiltroChange}
-                    className="input-field"
-                  >
-                    <option value="">Todos los sectores</option>
-                    {sectores.map((sector) => (
-                      <option key={sector.sectorId} value={sector.sectorId}>
-                        {sector.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Clasificación</label>
-                  <select
-                    name="clasificacionId"
-                    value={filtros.clasificacionId}
-                    onChange={handleFiltroChange}
-                    className="input-field"
-                  >
-                    <option value="">Todas las clasificaciones</option>
-                    {clasificaciones.map((clas) => (
-                      <option key={clas.clasificacionId} value={clas.clasificacionId}>
-                        {clas.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {tipoReporteActivo === 'cumplimiento-entidad' && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Entidad</label>
-                    <select
-                      name="entidadId"
-                      value={filtros.entidadId}
-                      onChange={handleFiltroChange}
-                      className="input-field"
-                    >
-                      <option value="">Todas las entidades</option>
-                      {entidades.map((ent) => (
-                        <option key={ent.entidadId} value={ent.entidadId}>
-                          {ent.nombre}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-                <div className="flex items-end">
-                  <button
-                    onClick={limpiarFiltros}
-                    className="btn-secondary flex items-center gap-2 px-4 py-2"
-                  >
-                    <FilterX size={18} />
-                    Limpiar
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+      {/* Tabla de Entidades */}
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div className="p-4 border-b">
+          <h3 className="text-lg font-semibold text-gray-800">
+            Detalle por Entidad
+          </h3>
+          <p className="text-sm text-gray-600 mt-1">
+            Criterios: Responsable PNDA | URL PNDA | Norma Aprobación | 12+ Datasets | Estado Aceptado
+          </p>
         </div>
-      )}
-
-      {/* Contenido del Reporte */}
-      <div className="space-y-6">
-        {/* ==================== REPORTE 1: AVANCE GLOBAL ==================== */}
-        {tipoReporteActivo === 'avance-global' && (
-          <>
-            {/* KPIs Resumen */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-white rounded-lg shadow-sm p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">Total Entidades</p>
-                    <p className="text-2xl font-bold text-gray-800">{datosEvaluacion.length}</p>
-                  </div>
-                  <Building2 className="text-blue-500" size={32} />
-                </div>
-              </div>
-              <div className="bg-white rounded-lg shadow-sm p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">Compromisos Aceptados</p>
-                    <p className="text-2xl font-bold text-green-600">
-                      {datosResumenEstados.find(e => e.name === 'aceptado')?.value || 0}
-                    </p>
-                  </div>
-                  <CheckCircle2 className="text-green-500" size={32} />
-                </div>
-              </div>
-              <div className="bg-white rounded-lg shadow-sm p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">Compromisos Observados</p>
-                    <p className="text-2xl font-bold text-red-600">
-                      {datosResumenEstados.find(e => e.name === 'observado')?.value || 0}
-                    </p>
-                  </div>
-                  <XCircle className="text-red-500" size={32} />
-                </div>
-              </div>
-              <div className="bg-white rounded-lg shadow-sm p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">Sin Reportar</p>
-                    <p className="text-2xl font-bold text-orange-600">
-                      {datosResumenEstados.find(e => e.name === 'sin reportar')?.value || 0}
-                    </p>
-                  </div>
-                  <AlertCircle className="text-orange-500" size={32} />
-                </div>
-              </div>
-            </div>
-
-            {/* Gráfico de Barras - Avance por Compromiso */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                Estado de Cumplimiento por Compromiso
-              </h3>
-              {datosAvanceGlobal.length > 0 ? (
-                <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={datosAvanceGlobal} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="compromiso" tick={{ fontSize: 12 }} />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="aceptado" stackId="a" fill={ESTADO_COLORS['aceptado']} name="Aceptado" />
-                    <Bar dataKey="enviado" stackId="a" fill={ESTADO_COLORS['enviado']} name="Enviado" />
-                    <Bar dataKey="en revisión" stackId="a" fill={ESTADO_COLORS['en revisión']} name="En Revisión" />
-                    <Bar dataKey="en proceso" stackId="a" fill={ESTADO_COLORS['en proceso']} name="En Proceso" />
-                    <Bar dataKey="pendiente" stackId="a" fill={ESTADO_COLORS['pendiente']} name="Pendiente" />
-                    <Bar dataKey="observado" stackId="a" fill={ESTADO_COLORS['observado']} name="Observado" />
-                    <Bar dataKey="sin reportar" stackId="a" fill={ESTADO_COLORS['sin reportar']} name="Sin Reportar" />
-                    <Bar dataKey="no exigible" stackId="a" fill={ESTADO_COLORS['no exigible']} name="No Exigible" />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="text-center py-12 text-gray-500">
-                  <BarChart3 size={48} className="mx-auto mb-4 text-gray-300" />
-                  <p>No hay datos disponibles para mostrar</p>
-                </div>
-              )}
-            </div>
-
-            {/* Gráfico de Pie - Distribución de Estados */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                  Distribución Global de Estados
-                </h3>
-                {datosResumenEstados.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={datosResumenEstados}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                        outerRadius={100}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {datosResumenEstados.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <div className="text-center py-12 text-gray-500">
-                    <p>No hay datos disponibles</p>
-                  </div>
-                )}
-              </div>
-              
-              {/* Leyenda de Estados */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                  Leyenda de Estados
-                </h3>
-                <div className="space-y-3">
-                  {datosResumenEstados.map((estado, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span 
-                          className="w-4 h-4 rounded-full" 
-                          style={{ backgroundColor: estado.color }}
-                        ></span>
-                        <span className="text-sm text-gray-700 capitalize">{estado.name}</span>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Entidad
+                </th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Responsable
+                </th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  URL PNDA
+                </th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Norma
+                </th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Datasets
+                </th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Estado PCM
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Nivel de Avance
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {datosEntidades.map((entidad) => {
+                const nivel = calcularNivelAvance(entidad);
+                const porcentaje = calcularPorcentajeAvance(entidad);
+                
+                return (
+                  <tr key={entidad.entidadId} className="hover:bg-gray-50">
+                    <td className="px-4 py-3">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {entidad.entidadNombre}
+                        </p>
+                        <p className="text-xs text-gray-500">RUC: {entidad.entidadRuc}</p>
                       </div>
-                      <span className="text-sm font-semibold text-gray-900">{estado.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </>
-        )}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {entidad.tieneResponsable ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-500 mx-auto" />
+                      ) : (
+                        <XCircle className="w-5 h-5 text-red-500 mx-auto" />
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {entidad.tieneUrlPnda ? (
+                        entidad.urlDatosAbiertos ? (
+                          <a 
+                            href={entidad.urlDatosAbiertos} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center text-blue-600 hover:text-blue-800"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        ) : (
+                          <CheckCircle2 className="w-5 h-5 text-green-500 mx-auto" />
+                        )
+                      ) : (
+                        <XCircle className="w-5 h-5 text-red-500 mx-auto" />
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {entidad.tieneNormaAprobacion ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-500 mx-auto" />
+                      ) : (
+                        <XCircle className="w-5 h-5 text-red-500 mx-auto" />
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        entidad.totalDatasets >= 12 
+                          ? 'bg-green-100 text-green-800' 
+                          : entidad.totalDatasets >= 6
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {entidad.totalDatasets || 0}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        entidad.estadoPCM?.toLowerCase() === 'aceptado' 
+                          ? 'bg-green-100 text-green-800' 
+                          : entidad.estadoPCM?.toLowerCase() === 'enviado'
+                          ? 'bg-blue-100 text-blue-800'
+                          : entidad.estadoPCM?.toLowerCase() === 'observado'
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {entidad.estadoPCM || 'Sin estado'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 bg-gray-200 rounded-full h-2">
+                          <div
+                            className={`h-2 rounded-full ${
+                              nivel === 'alto' ? 'bg-green-500' :
+                              nivel === 'medio' ? 'bg-yellow-500' :
+                              'bg-red-500'
+                            }`}
+                            style={{ width: `${porcentaje}%` }}
+                          ></div>
+                        </div>
+                        <span className={`text-xs font-medium uppercase ${
+                          nivel === 'alto' ? 'text-green-600' :
+                          nivel === 'medio' ? 'text-yellow-600' :
+                          'text-red-600'
+                        }`}>
+                          {nivel}
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-        {/* ==================== REPORTE 2: ENTIDADES CON OBSERVACIONES ==================== */}
-        {tipoReporteActivo === 'observaciones' && (
-          <>
-            {/* KPIs de Alertas */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-red-500">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">Entidades con Observaciones</p>
-                    <p className="text-2xl font-bold text-red-600">
-                      {entidadesConObservaciones.filter(e => e.compromisosObservados > 0).length}
-                    </p>
-                  </div>
-                  <XCircle className="text-red-500" size={32} />
-                </div>
-              </div>
-              <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-orange-500">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">Entidades Pendientes</p>
-                    <p className="text-2xl font-bold text-orange-600">
-                      {entidadesConObservaciones.filter(e => e.compromisosPendientes > 0).length}
-                    </p>
-                  </div>
-                  <Clock className="text-orange-500" size={32} />
-                </div>
-              </div>
-              <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-red-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">Entidades Sin Reportar</p>
-                    <p className="text-2xl font-bold text-red-700">
-                      {entidadesConObservaciones.filter(e => e.compromisosSinReportar > 0).length}
-                    </p>
-                  </div>
-                  <AlertTriangle className="text-red-700" size={32} />
-                </div>
-              </div>
-            </div>
-
-            {/* Tabla de Entidades con Problemas */}
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Entidades con Observaciones o Pendientes ({entidadesConObservaciones.length})
-                </h3>
-                <p className="text-sm text-gray-500 mt-1">Ordenadas por criticidad (mayor a menor)</p>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Entidad
-                      </th>
-                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Observados
-                      </th>
-                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Pendientes
-                      </th>
-                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Sin Reportar
-                      </th>
-                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Criticidad
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {entidadesConObservaciones
-                      .slice(
-                        (paginaObservaciones - 1) * itemsPorPaginaObservaciones,
-                        paginaObservaciones * itemsPorPaginaObservaciones
-                      )
-                      .map((entidad, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm text-gray-900">
-                          {entidad.nombre}
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                            {entidad.compromisosObservados}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">
-                            {entidad.compromisosPendientes}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-200 text-red-900">
-                            {entidad.compromisosSinReportar}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                            entidad.criticidad > 10 ? 'bg-red-500 text-white' :
-                            entidad.criticidad > 5 ? 'bg-orange-500 text-white' :
-                            'bg-yellow-500 text-white'
-                          }`}>
-                            {entidad.criticidad}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                {entidadesConObservaciones.length === 0 && (
-                  <div className="text-center py-12 text-gray-500">
-                    <CheckCircle2 size={48} className="mx-auto mb-4 text-green-300" />
-                    <p>¡Excelente! No hay entidades con observaciones pendientes</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Paginación */}
-              {entidadesConObservaciones.length > itemsPorPaginaObservaciones && (
-                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-gray-50">
-                  <div className="text-sm text-gray-600">
-                    Mostrando {((paginaObservaciones - 1) * itemsPorPaginaObservaciones) + 1} - {Math.min(paginaObservaciones * itemsPorPaginaObservaciones, entidadesConObservaciones.length)} de {entidadesConObservaciones.length} registros
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setPaginaObservaciones(prev => Math.max(prev - 1, 1))}
-                      disabled={paginaObservaciones === 1}
-                      className="px-3 py-1 text-sm text-gray-600 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
-                    >
-                      Anterior
-                    </button>
-                    <span className="px-3 py-1 text-sm bg-primary-600 text-white rounded-lg">
-                      {paginaObservaciones}
-                    </span>
-                    <span className="text-sm text-gray-600">de {Math.ceil(entidadesConObservaciones.length / itemsPorPaginaObservaciones)}</span>
-                    <button
-                      onClick={() => setPaginaObservaciones(prev => Math.min(prev + 1, Math.ceil(entidadesConObservaciones.length / itemsPorPaginaObservaciones)))}
-                      disabled={paginaObservaciones === Math.ceil(entidadesConObservaciones.length / itemsPorPaginaObservaciones)}
-                      className="px-3 py-1 text-sm text-gray-600 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
-                    >
-                      Siguiente
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </>
-        )}
-
-        {/* ==================== REPORTE 4: PORTAFOLIO DE PROYECTOS ==================== */}
-        {tipoReporteActivo === 'portafolio' && (
-          <>
-            {/* KPIs de Proyectos */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-white rounded-lg shadow-sm p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">Total Proyectos</p>
-                    <p className="text-2xl font-bold text-gray-800">{proyectosData.length}</p>
-                  </div>
-                  <FolderKanban className="text-purple-500" size={32} />
-                </div>
-              </div>
-              <div className="bg-white rounded-lg shadow-sm p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">Cerrados</p>
-                    <p className="text-2xl font-bold text-green-600">
-                      {datosPortafolio.porEtapa.find(e => e.name === 'CERRADO')?.value || 0}
-                    </p>
-                  </div>
-                  <CheckCircle2 className="text-green-500" size={32} />
-                </div>
-              </div>
-              <div className="bg-white rounded-lg shadow-sm p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">En Ejecución</p>
-                    <p className="text-2xl font-bold text-blue-600">
-                      {datosPortafolio.porEtapa.find(e => e.name === 'EJECUCIÓN')?.value || 0}
-                    </p>
-                  </div>
-                  <TrendingUp className="text-blue-500" size={32} />
-                </div>
-              </div>
-              <div className="bg-white rounded-lg shadow-sm p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">Con Retraso</p>
-                    <p className="text-2xl font-bold text-red-600">
-                      {datosPortafolio.proyectosConRetraso.length}
-                    </p>
-                  </div>
-                  <AlertTriangle className="text-red-500" size={32} />
-                </div>
-              </div>
-            </div>
-
-            {/* Gráficos de Proyectos */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Proyectos por Etapa */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                  Proyectos por Etapa
-                </h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={datosPortafolio.porEtapa}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, value }) => `${name}: ${value}`}
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {datosPortafolio.porEtapa.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Proyectos por Tipo */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                  Proyectos por Tipo
-                </h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart 
-                    data={datosPortafolio.porTipo} 
-                    layout="vertical"
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis dataKey="tipo" type="category" width={150} tick={{ fontSize: 11 }} />
-                    <Tooltip />
-                    <Bar dataKey="cantidad" fill="#8b5cf6" name="Cantidad" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* Proyectos con Retraso */}
-            {datosPortafolio.proyectosConRetraso.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-200 bg-red-50">
-                  <h3 className="text-lg font-semibold text-red-800 flex items-center gap-2">
-                    <AlertTriangle size={20} />
-                    Proyectos con Retraso ({datosPortafolio.proyectosConRetraso.length})
-                  </h3>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Código
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Nombre
-                        </th>
-                        <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Fecha Fin Prog.
-                        </th>
-                        <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Fecha Fin Real
-                        </th>
-                        <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Días de Retraso
-                        </th>
-                        <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Etapa
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {datosPortafolio.proyectosConRetraso.map((proyecto) => (
-                        <tr key={proyecto.id} className="hover:bg-red-50">
-                          <td className="px-4 py-3 text-sm font-medium text-primary">
-                            {proyecto.codigo}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-gray-900">
-                            {proyecto.nombre}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-center text-gray-500">
-                            {new Date(proyecto.fechaFinProg).toLocaleDateString('es-PE')}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-center text-gray-500">
-                            {proyecto.fechaFinReal 
-                              ? new Date(proyecto.fechaFinReal).toLocaleDateString('es-PE')
-                              : 'En curso'
-                            }
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                              {proyecto.diasRetraso} días
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <span 
-                              className="px-2 py-1 text-xs font-semibold rounded-full"
-                              style={{ 
-                                backgroundColor: `${ETAPA_COLORS[proyecto.etapa]}20`,
-                                color: ETAPA_COLORS[proyecto.etapa]
-                              }}
-                            >
-                              {proyecto.etapa}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* Tabla Resumen por Tipo */}
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Resumen por Tipo de Proyecto
-                </h3>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Tipo de Proyecto
-                      </th>
-                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Cantidad
-                      </th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        % del Total
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {datosPortafolio.porTipo.map((tipo, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm text-gray-900">
-                          {tipo.tipo}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-center text-gray-500">
-                          {tipo.cantidad}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-right text-gray-500">
-                          {proyectosData.length > 0 ? ((tipo.cantidad / proyectosData.length) * 100).toFixed(1) : 0}%
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                  <tfoot className="bg-gray-100">
-                    <tr>
-                      <td className="px-4 py-3 text-sm font-semibold text-gray-900">
-                        TOTAL
-                      </td>
-                      <td className="px-4 py-3 text-sm text-center font-semibold text-gray-900">
-                        {proyectosData.length}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-right font-semibold text-gray-900">
-                        100%
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </div>
-          </>
-        )}
+      {/* Leyenda de Criterios */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+          <AlertCircle className="w-5 h-5" />
+          Criterios de Evaluación
+        </h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-blue-800">
+          <div>
+            <span className="font-semibold">Avance Alto (4-5 criterios):</span>
+            <ul className="list-disc list-inside mt-1 text-xs">
+              <li>Estado Aceptado por PCM</li>
+              <li>Responsable PNDA designado</li>
+              <li>URL PNDA registrada</li>
+              <li>Norma de aprobación vigente</li>
+              <li>12 o más datasets publicados</li>
+            </ul>
+          </div>
+          <div>
+            <span className="font-semibold">Avance Medio (2-3 criterios):</span>
+            <ul className="list-disc list-inside mt-1 text-xs">
+              <li>Proceso en curso</li>
+              <li>Entre 6-11 datasets</li>
+              <li>Algunos criterios pendientes</li>
+            </ul>
+          </div>
+          <div>
+            <span className="font-semibold">Avance Bajo (0-1 criterios):</span>
+            <ul className="list-disc list-inside mt-1 text-xs">
+              <li>Sin responsable o sin URL</li>
+              <li>Menos de 6 datasets</li>
+              <li>Mayoría de criterios sin cumplir</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );

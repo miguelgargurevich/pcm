@@ -3,6 +3,29 @@ import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5164/api';
 
 const com10DatosAbiertosService = {
+  getAll: async () => {
+    try {
+      console.log('📞 com10DatosAbiertosService.getAll llamado');
+      const token = localStorage.getItem('token');
+      const response = await axios.get(
+        `${API_URL}/Com10DatosAbiertos`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log('✅ Respuesta getAll Com10:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('❌ Error en getAll Com10:', error);
+      return {
+        isSuccess: false,
+        message: error.response?.data?.message || 'Error al obtener datos de Com10',
+      };
+    }
+  },
+
   getByEntidad: async (compromisoId, entidadId) => {
     try {
       console.log('📞 com10DatosAbiertosService.getByEntidad llamado con:', { compromisoId, entidadId });

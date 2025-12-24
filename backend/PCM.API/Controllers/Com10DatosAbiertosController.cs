@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PCM.Application.Features.Com10DatosAbiertos.Commands.CreateCom10DatosAbiertos;
 using PCM.Application.Features.Com10DatosAbiertos.Commands.UpdateCom10DatosAbiertos;
 using PCM.Application.Features.Com10DatosAbiertos.Queries.GetCom10DatosAbiertos;
+using PCM.Application.Features.Com10DatosAbiertos.Queries.GetAllCom10DatosAbiertos;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -19,6 +20,20 @@ namespace PCM.API.Controllers
         public Com10DatosAbiertosController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var query = new GetAllCom10DatosAbiertosQuery();
+            var result = await _mediator.Send(query);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
         }
 
         [HttpGet("{compromisoId}/entidad/{entidadId}")]
