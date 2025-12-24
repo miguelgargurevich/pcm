@@ -88,6 +88,36 @@ const CumplimientoNormativoDetalle = () => {
   const [compromisoSeleccionado, setCompromisoSeleccionado] = useState(null);
   const [datosDBCargados, setDatosDBCargados] = useState(false); // Flag para evitar sobrescribir datos cargados de BD
   const datosDBCargadosRef = useRef(false); // Ref para acceder al valor actual en closures
+
+  // Función para obtener la clase CSS del badge según el estado
+  const getEstadoBadgeClass = (estadoId) => {
+    const classes = {
+      1: 'bg-orange-500 text-white',    // PENDIENTE
+      2: 'bg-red-700 text-white',       // SIN REPORTAR
+      3: 'bg-gray-400 text-white',      // NO EXIGIBLE
+      4: 'bg-yellow-500 text-white',    // EN PROCESO
+      5: 'bg-blue-500 text-white',      // ENVIADO
+      6: 'bg-purple-500 text-white',    // EN REVISIÓN
+      7: 'bg-red-500 text-white',       // OBSERVADO
+      8: 'bg-green-500 text-white',     // ACEPTADO
+    };
+    return classes[estadoId] || 'bg-gray-300 text-gray-700';
+  };
+
+  // Función para obtener el nombre del estado
+  const getEstadoNombre = (estadoId) => {
+    const nombres = {
+      1: 'PENDIENTE',
+      2: 'SIN REPORTAR',
+      3: 'NO EXIGIBLE',
+      4: 'EN PROCESO',
+      5: 'ENVIADO',
+      6: 'EN REVISIÓN',
+      7: 'OBSERVADO',
+      8: 'ACEPTADO',
+    };
+    return nombres[estadoId] || 'Desconocido';
+  };
   const [pdfUrl, setPdfUrl] = useState(null); // PDF principal (Paso 1)
   const [pdfUrlPaso2, setPdfUrlPaso2] = useState(null); // PDF para Paso 2 (cumplimiento normativo)
   const [pdfAyudaUrl, setPdfAyudaUrl] = useState(null); // PDF de ayuda para llenar el compromiso
@@ -4217,9 +4247,16 @@ const CumplimientoNormativoDetalle = () => {
           <div className="mt-3 p-4 bg-primary/5 border-l-4 border-primary rounded-r-lg flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Compromiso seleccionado:</p>
-              <p className="text-base font-semibold text-primary">
-                Compromiso {compromisoSeleccionado.compromisoId}: {compromisoSeleccionado.nombreCompromiso}
-              </p>
+              <div className="flex items-center gap-3">
+                <p className="text-base font-semibold text-primary">
+                  Compromiso {compromisoSeleccionado.compromisoId}: {compromisoSeleccionado.nombreCompromiso}
+                </p>
+                {compromisoSeleccionado.estadoCumplimiento && (
+                  <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getEstadoBadgeClass(compromisoSeleccionado.estadoCumplimiento)}`}>
+                    {getEstadoNombre(compromisoSeleccionado.estadoCumplimiento)}
+                  </span>
+                )}
+              </div>
             </div>
             {pdfAyudaUrl && (
               <button

@@ -295,9 +295,28 @@ const EvaluacionCumplimiento = () => {
       
       // Construir HTML del correo
       const esAprobado = nuevoEstado === 'aceptado';
-      const estadoTexto = esAprobado ? 'APROBADO' : 'OBSERVADO';
-      const colorEstado = esAprobado ? '#10b981' : '#ef4444';
-      const iconoEstado = esAprobado ? '✅' : '⚠️';
+      const esEnRevision = nuevoEstado === 'en revisión';
+      const esObservado = nuevoEstado === 'observado';
+      
+      let estadoTexto, colorEstado, iconoEstado;
+      if (esAprobado) {
+        estadoTexto = 'APROBADO';
+        colorEstado = '#10b981'; // verde
+        iconoEstado = '✅';
+      } else if (esEnRevision) {
+        estadoTexto = 'EN REVISIÓN';
+        colorEstado = '#9333ea'; // morado
+        iconoEstado = '👁️';
+      } else if (esObservado) {
+        estadoTexto = 'OBSERVADO';
+        colorEstado = '#ef4444'; // rojo
+        iconoEstado = '⚠️';
+      } else {
+        // Estado desconocido o genérico
+        estadoTexto = nuevoEstado.toUpperCase();
+        colorEstado = '#6b7280'; // gris
+        iconoEstado = 'ℹ️';
+      }
       
       const htmlContent = `
         <!DOCTYPE html>
@@ -362,7 +381,11 @@ const EvaluacionCumplimiento = () => {
               <p style="margin-top: 30px;">
                 ${esAprobado 
                   ? 'Felicitaciones, su cumplimiento ha sido aprobado satisfactoriamente.' 
-                  : 'Por favor, revise las observaciones y realice las correcciones necesarias para volver a enviar su cumplimiento.'}
+                  : esEnRevision
+                    ? 'Su cumplimiento está siendo revisado por nuestro equipo. Le notificaremos cuando se complete la evaluación.'
+                    : esObservado
+                      ? 'Por favor, revise las observaciones y realice las correcciones necesarias para volver a enviar su cumplimiento.'
+                      : 'Su cumplimiento ha sido actualizado. Revise los detalles en la plataforma.'}
               </p>
               
               <p>Para más detalles, ingrese a la Plataforma de Cumplimiento Digital.</p>
