@@ -14,7 +14,8 @@ import {
   Clock,
   X,
   Eye,
-  Edit2
+  Edit2,
+  BarChart3
 } from 'lucide-react';
 import { dashboardService } from '../services/dashboardService';
 import { useNavigate } from 'react-router-dom';
@@ -342,12 +343,14 @@ const Dashboard = () => {
           const estadoAnt = item.estadoAnteriorNombre || 'N/A';
           const estadoNew = item.estadoNuevoNombre || 'N/A';
           const usuario = item.usuarioResponsableNombre || 'Sistema';
+          const perfil = item.usuarioResponsablePerfil || null;
           
           return {
             tipo: 'CAMBIO_ESTADO',
             descripcion: `C${compromisoId}: ${compromisoNombre}`,
             entidad: item.entidadNombre || 'Entidad',
             usuario: usuario,
+            perfil: perfil,
             fecha: item.fechaCambio || new Date().toISOString(),
             estadoAnterior: estadoAnt,
             estadoNuevo: estadoNew,
@@ -635,13 +638,13 @@ const Dashboard = () => {
           <div className="card">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-primary-100 rounded-lg">
-                <Building2 className="text-primary-600" size={24} />
+                <BarChart3 className="text-primary-600" size={24} />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">
+                <h3 className="text-base font-semibold text-gray-800">
                   {isAdmin ? 'Estado de Todas las Entidades' : 'Estado de Entidades Asignadas'}
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="text-xs text-gray-500">
                   Progreso de cumplimiento por entidad
                 </p>
               </div>
@@ -675,29 +678,29 @@ const Dashboard = () => {
                         </td>
                         <td className="px-3 py-3">
                           <div>
-                            <p className="font-medium text-gray-800">{entidad.nombre}</p>
-                            <p className="text-xs text-gray-500">{entidad.ruc}</p>
+                            <p className="text-sm font-medium text-gray-800">{entidad.nombre}</p>
+                            <p className="text-[10px] text-gray-500">{entidad.ruc}</p>
                           </div>
                         </td>
                         <td className="px-3 py-3 text-center">
-                          <span className="font-semibold text-gray-800">{entidad.totalCompromisos}</span>
+                          <span className="text-sm font-semibold text-gray-800">{entidad.totalCompromisos}</span>
                         </td>
                         <td className="px-3 py-3 text-center">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          <span className={`px-2 py-1 rounded-full text-[10px] font-medium ${
                             sinIniciar > 0 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'
                           }`}>
                             {sinIniciar}
                           </span>
                         </td>
                         <td className="px-3 py-3 text-center">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          <span className={`px-2 py-1 rounded-full text-[10px] font-medium ${
                             enTrabajo > 0 ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
                           }`}>
                             {enTrabajo}
                           </span>
                         </td>
                         <td className="px-3 py-3 text-center">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          <span className={`px-2 py-1 rounded-full text-[10px] font-medium ${
                             entidad.aceptados > 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
                           }`}>
                             {entidad.aceptados}
@@ -715,7 +718,7 @@ const Dashboard = () => {
                                 style={{ width: `${entidad.porcentajeCumplimiento}%` }}
                               ></div>
                             </div>
-                            <span className="font-semibold text-gray-700 text-xs w-10 text-right">
+                            <span className="font-semibold text-gray-700 text-[10px] w-10 text-right">
                               {entidad.porcentajeCumplimiento}%
                             </span>
                           </div>
@@ -840,7 +843,7 @@ const Dashboard = () => {
                   )}
                   {actividad.usuario && (
                     <p className="text-xs text-gray-500 mt-1">
-                      Por: {actividad.usuario}
+                      Por: {actividad.usuario}{actividad.perfil && ` - ${actividad.perfil}`}
                     </p>
                   )}
                   <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">

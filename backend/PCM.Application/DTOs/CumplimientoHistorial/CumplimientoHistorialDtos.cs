@@ -16,6 +16,7 @@ public class CumplimientoHistorialResponseDto
     public string EstadoNuevoNombre { get; set; } = string.Empty;
     public Guid UsuarioResponsableId { get; set; }
     public string UsuarioResponsableNombre { get; set; } = string.Empty;
+    public string? UsuarioResponsablePerfil { get; set; }
     public string? ObservacionSnapshot { get; set; }
     public object? DatosSnapshot { get; set; } // Se deserializa el JSON para enviar como objeto
     public DateTime FechaCambio { get; set; }

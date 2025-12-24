@@ -633,6 +633,13 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
         var usuario = await _context.Usuarios
             .FirstOrDefaultAsync(u => u.UserId == historial.UsuarioResponsableId);
 
+        Perfil? perfil = null;
+        if (usuario != null)
+        {
+            perfil = await _context.Perfiles
+                .FirstOrDefaultAsync(p => p.PerfilId == usuario.PerfilId);
+        }
+
         CompromisoGobiernoDigital? compromiso = null;
         Entidad? entidad = null;
         
@@ -644,7 +651,7 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
                 .FirstOrDefaultAsync(e => e.EntidadId == cumplimiento.EntidadId);
         }
 
-        return MapToResponseDtoSingle(historial, cumplimiento, usuario, compromiso, entidad);
+        return MapToResponseDtoSingle(historial, cumplimiento, usuario, perfil, compromiso, entidad);
     }
 
     private async Task<List<CumplimientoHistorialResponseDto>> MapToResponseDtosAsync(List<CumplimientoHistorial> historiales)
@@ -660,6 +667,25 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
         var usuarios = await _context.Usuarios
             .Where(u => usuarioIds.Contains(u.UserId))
             .ToDictionaryAsync(u => u.UserId);
+
+        _logger.LogInformation("👥 Usuarios cargados: {Count}, PerfilIds: {PerfilIds}", 
+            usuarios.Count, 
+            string.Join(", ", usuarios.Values.Select(u => u.PerfilId)));
+
+        // Cargar perfiles de usuarios usando PerfilId
+        var perfilIds = usuarios.Values.Select(u => u.PerfilId).Distinct().ToList();
+        
+        _logger.LogInformation("🔍 Intentando cargar {Count} perfiles con IDs: {PerfilIds}", 
+            perfilIds.Count, 
+            string.Join(", ", perfilIds));
+            
+        var perfiles = await _context.Perfiles
+            .Where(p => perfilIds.Contains(p.PerfilId))
+            .ToDictionaryAsync(p => p.PerfilId);
+
+        _logger.LogInformation("✅ Perfiles cargados: {Count} - {Perfiles}", 
+            perfiles.Count,
+            string.Join(", ", perfiles.Select(p => $"[{p.Key}: {p.Value.Nombre}]")));
 
         _logger.LogInformation("🔍 Usuarios cargados: {Count} de {Total} IDs únicos", usuarios.Count, usuarioIds.Count);
         
@@ -687,7 +713,7 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
         var result = new List<CumplimientoHistorialResponseDto>();
         foreach (var h in historiales)
         {
-            result.Add(MapToResponseDto(h, cumplimientos, usuarios, compromisos, entidades));
+            result.Add(MapToResponseDto(h, cumplimientos, usuarios, perfiles, compromisos, entidades));
         }
         return result;
     }
@@ -696,6 +722,7 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
         CumplimientoHistorial historial,
         Dictionary<long, CumplimientoNormativo> cumplimientos,
         Dictionary<Guid, Usuario> usuarios,
+        Dictionary<int, Perfil> perfiles,
         Dictionary<long, CompromisoGobiernoDigital> compromisos,
         Dictionary<Guid, Entidad> entidades)
     {
@@ -718,6 +745,7 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
         long? compromisoId = null;
         Guid? entidadId = null;
         string? usuarioNombre = "Sistema";
+        string? usuarioPerfil = null;
 
         if (cumplimientos.TryGetValue(historial.CumplimientoId, out var cumplimiento))
         {
@@ -738,9 +766,27 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
         if (usuarios.TryGetValue(historial.UsuarioResponsableId, out var usuario))
         {
             usuarioNombre = $"{usuario.Nombres} {usuario.ApePaterno}";
+            
+            _logger.LogInformation("🔍 Usuario encontrado: {UserId}, PerfilId: {PerfilId}", 
+                historial.UsuarioResponsableId, usuario.PerfilId);
+            
+            // Obtener el perfil del usuario usando su PerfilId
+            if (perfiles.TryGetValue(usuario.PerfilId, out var perfil))
+            {
+                usuarioPerfil = perfil.Nombre;
+                _logger.LogInformation("✅ Perfil encontrado para usuario: {PerfilNombre}", perfil.Nombre);
+            }
+            else
+            {
+                _logger.LogWarning("⚠️ Perfil NO encontrado para PerfilId: {PerfilId}", usuario.PerfilId);
+            }
+        }
+        else
+        {
+            _logger.LogWarning("⚠️ Usuario NO encontrado: {UserId}", historial.UsuarioResponsableId);
         }
 
-        return new CumplimientoHistorialResponseDto
+        var dto = new CumplimientoHistorialResponseDto
         {
             HistorialId = historial.HistorialId,
             CumplimientoId = historial.CumplimientoId,
@@ -752,6 +798,7 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
             EstadoNuevoNombre = EstadosNombres.GetValueOrDefault(historial.EstadoNuevoId, "DESCONOCIDO"),
             UsuarioResponsableId = historial.UsuarioResponsableId,
             UsuarioResponsableNombre = usuarioNombre,
+            UsuarioResponsablePerfil = usuarioPerfil,
             ObservacionSnapshot = historial.ObservacionSnapshot,
             DatosSnapshot = datosSnapshotObj,
             FechaCambio = historial.FechaCambio,
@@ -760,12 +807,19 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
             EntidadId = entidadId,
             EntidadNombre = entidadNombre
         };
+        
+        _logger.LogInformation("📤 DTO creado - Usuario: {Usuario}, Perfil: {Perfil}", 
+            dto.UsuarioResponsableNombre, 
+            dto.UsuarioResponsablePerfil ?? "NULL");
+            
+        return dto;
     }
 
     private CumplimientoHistorialResponseDto MapToResponseDtoSingle(
         CumplimientoHistorial historial,
         CumplimientoNormativo? cumplimiento,
         Usuario? usuario,
+        Perfil? perfil,
         CompromisoGobiernoDigital? compromiso,
         Entidad? entidad)
     {
@@ -789,6 +843,7 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
         string usuarioNombre = usuario != null 
             ? $"{usuario.Nombres} {usuario.ApePaterno}" 
             : "Sistema";
+        string? usuarioPerfil = perfil?.Nombre;
 
         return new CumplimientoHistorialResponseDto
         {
@@ -802,6 +857,7 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
             EstadoNuevoNombre = EstadosNombres.GetValueOrDefault(historial.EstadoNuevoId, "DESCONOCIDO"),
             UsuarioResponsableId = historial.UsuarioResponsableId,
             UsuarioResponsableNombre = usuarioNombre,
+            UsuarioResponsablePerfil = usuarioPerfil,
             ObservacionSnapshot = historial.ObservacionSnapshot,
             DatosSnapshot = datosSnapshotObj,
             FechaCambio = historial.FechaCambio,

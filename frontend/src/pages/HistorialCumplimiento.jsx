@@ -65,6 +65,12 @@ const EstadoBadge = ({ estado, esNuevo }) => {
 const SnapshotModal = ({ isOpen, onClose, historial }) => {
   if (!isOpen || !historial) return null;
 
+  console.log('📸 Snapshot Modal - Historial completo:', historial);
+  console.log('👤 Usuario y Perfil:', {
+    usuarioNombre: historial.usuarioResponsableNombre,
+    usuarioPerfil: historial.usuarioResponsablePerfil
+  });
+
   const snapshot = historial.datosSnapshot;
   
   // Backend envía PascalCase (DatosFormulario), convertir a camelCase para el frontend
@@ -124,7 +130,10 @@ const SnapshotModal = ({ isOpen, onClose, historial }) => {
               </div>
               <div>
                 <span className="text-gray-500 block">Usuario</span>
-                <span className="font-medium">{historial.usuarioResponsableNombre || 'Sistema'}</span>
+                <span className="font-medium">
+                  {historial.usuarioResponsableNombre || 'Sistema'}
+                  {historial.usuarioResponsablePerfil && ` - ${historial.usuarioResponsablePerfil}`}
+                </span>
               </div>
             </div>
           </div>
@@ -795,6 +804,10 @@ const HistorialCumplimiento = () => {
       console.log('🔍 Filtros actuales:', filtros);
       const response = await apiService.get(`/CumplimientoHistorial?${params.toString()}`);
       console.log('📦 Respuesta completa del historial:', response);
+      console.log('👥 Primer item - Usuario y Perfil:', response?.data?.items?.[0] ? {
+        usuario: response.data.items[0].usuarioResponsableNombre,
+        perfil: response.data.items[0].usuarioResponsablePerfil
+      } : 'No hay items');
       console.log('📦 response.data:', response.data);
       console.log('📦 response.data.data:', response.data.data);
       console.log('📦 Keys de response.data.data:', response.data.data ? Object.keys(response.data.data) : 'undefined');
