@@ -753,15 +753,32 @@ const MarcoNormativo = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     URL del Documento
                   </label>
-                  <input
-                    type="url"
-                    name="url"
-                    value={formData.url}
-                    onChange={handleInputChange}
-                    disabled={isReadOnly}
-                    className="input-field"
-                    placeholder="https://..."
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="url"
+                      name="url"
+                      value={formData.url}
+                      onChange={handleInputChange}
+                      disabled={isReadOnly}
+                      className="input-field flex-1"
+                      placeholder="https://..."
+                    />
+                    {formData.url && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPdfUrl(formData.url);
+                          setPdfTitle(formData.nombreNorma || 'Documento');
+                          setShowPdfModal(true);
+                        }}
+                        className="btn-secondary px-4 py-2 flex items-center gap-2 whitespace-nowrap"
+                        title="Ver documento"
+                      >
+                        <Eye size={18} />
+                        Ver PDF
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 

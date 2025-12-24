@@ -355,26 +355,45 @@ const EvaluacionCompromiso10 = ({ data, activeTab, criterios = [], onVerDocument
 
                     {/* Contenido del modal */}
                     <div className="p-6 space-y-4">
-                      {/* Observaciones */}
-                      {detalleIndicador.observaciones && (
+                      {/* Estado del indicador */}
+                      {detalleIndicador.estadoIndicador && (
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Observaciones
+                            Estado
                           </label>
-                          <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-900">
-                            {detalleIndicador.observaciones}
+                          <div className="flex items-center gap-2">
+                            {getEstadoIcon(detalleIndicador.estadoIndicador)}
+                            <span className={`px-3 py-1 text-sm font-medium rounded border ${getEstadoBadgeClass(detalleIndicador.estadoIndicador)}`}>
+                              {detalleIndicador.estadoIndicador}
+                            </span>
                           </div>
                         </div>
                       )}
 
-                      {/* Evidencia */}
-                      {detalleIndicador.evidencia && (
+                      {/* Número de Resolución */}
+                      {detalleIndicador.numeroResolucion && (
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Evidencia
+                            Número de Resolución
+                          </label>
+                          <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-900 font-mono">
+                            {detalleIndicador.numeroResolucion}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Fecha de Resolución */}
+                      {detalleIndicador.fechaResolucion && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Fecha de Resolución
                           </label>
                           <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-900">
-                            {detalleIndicador.evidencia}
+                            {new Date(detalleIndicador.fechaResolucion).toLocaleDateString('es-PE', {
+                              day: '2-digit',
+                              month: 'long',
+                              year: 'numeric'
+                            })}
                           </div>
                         </div>
                       )}
@@ -385,31 +404,64 @@ const EvaluacionCompromiso10 = ({ data, activeTab, criterios = [], onVerDocument
                           <label className="block text-sm font-medium text-gray-700 mb-2">
                             URL de Evidencia
                           </label>
-                          <a
-                            href={detalleIndicador.urlEvidencia}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 underline text-sm"
-                          >
-                            {detalleIndicador.urlEvidencia}
-                          </a>
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={detalleIndicador.urlEvidencia}
+                              readOnly
+                              className="flex-1 bg-gray-50 rounded-lg p-3 text-sm text-gray-900 border border-gray-200"
+                            />
+                            <a
+                              href={detalleIndicador.urlEvidencia}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 whitespace-nowrap"
+                            >
+                              <FileText size={18} />
+                              Ver PDF
+                            </a>
+                          </div>
                         </div>
                       )}
 
-                      {/* Fecha de evaluación */}
-                      {detalleIndicador.fechaEvaluacion && (
+                      {/* Criterios de evaluación */}
+                      {detalleIndicador.criterios && detalleIndicador.criterios.length > 0 && (
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Fecha de Evaluación
+                          <label className="block text-sm font-medium text-gray-700 mb-3">
+                            Criterios de Evaluación
                           </label>
-                          <div className="text-sm text-gray-900">
-                            {new Date(detalleIndicador.fechaEvaluacion).toLocaleString('es-PE')}
+                          <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                            {detalleIndicador.criterios.map((criterio) => (
+                              <div key={criterio.criterioId} className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                                <div className="flex-shrink-0 mt-0.5">
+                                  {criterio.cumpleCriterio ? (
+                                    <CheckCircle className="text-green-600" size={20} />
+                                  ) : (
+                                    <XCircle className="text-red-600" size={20} />
+                                  )}
+                                </div>
+                                <div className="flex-1">
+                                  <p className="text-sm text-gray-900">{criterio.descripcionCriterio}</p>
+                                </div>
+                                <span className={`text-xs font-medium px-2 py-1 rounded ${
+                                  criterio.cumpleCriterio 
+                                    ? 'bg-green-100 text-green-800' 
+                                    : 'bg-red-100 text-red-800'
+                                }`}>
+                                  {criterio.cumpleCriterio ? 'Cumple' : 'No cumple'}
+                                </span>
+                              </div>
+                            ))}
                           </div>
                         </div>
                       )}
 
                       {/* Mensaje si no hay datos */}
-                      {!detalleIndicador.observaciones && !detalleIndicador.evidencia && !detalleIndicador.urlEvidencia && (
+                      {!detalleIndicador.estadoIndicador && 
+                       !detalleIndicador.numeroResolucion && 
+                       !detalleIndicador.fechaResolucion && 
+                       !detalleIndicador.urlEvidencia && 
+                       (!detalleIndicador.criterios || detalleIndicador.criterios.length === 0) && (
                         <div className="text-center py-8 text-gray-500">
                           <AlertCircle className="w-12 h-12 mx-auto mb-3 text-gray-300" />
                           <p>No hay información detallada registrada para este indicador</p>
