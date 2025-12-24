@@ -239,14 +239,6 @@ const EvaluacionCumplimiento = () => {
           // Actualizar el estado seleccionado para el panel de detalle
           setEstadoSeleccionado(nuevoEstado);
           
-          if (nuevoEstado === 'aceptado') {
-            showSuccessToast(`Compromiso ${compromisoSeleccionado} aprobado exitosamente`);
-          } else if (nuevoEstado === 'observado') {
-            showSuccessToast(`Compromiso ${compromisoSeleccionado} observado. Se notificará a la entidad.`);
-          } else {
-            showSuccessToast(`Estado actualizado a "${nuevoEstado}"`);
-          }
-          
           // Enviar correo de notificación
           await enviarCorreoEvaluacion(nuevoEstado, observaciones);
           
@@ -400,10 +392,12 @@ const EvaluacionCumplimiento = () => {
       
       if (success) {
         console.log('✅ Correo de evaluación enviado exitosamente a:', email);
-        showSuccessToast(`Correo de evaluación enviado a ${email}`);
+        const accionTexto = nuevoEstado === 'aceptado' ? 'aceptado' : 'observado';
+        showSuccessToast(`Compromiso ${compromisoSeleccionado} ${accionTexto} exitosamente. Correo de notificación enviado a ${email}`);
       } else {
         console.warn('⚠️ No se pudo enviar el correo de evaluación');
-        showErrorToast('No se pudo enviar el correo de notificación');
+        const accionTexto = nuevoEstado === 'aceptado' ? 'aprobado' : 'observado';
+        showSuccessToast(`Compromiso ${compromisoSeleccionado} ${accionTexto} exitosamente, pero no se pudo enviar el correo de notificación`);
       }
       
       console.log('📧 ===== FIN DEL PROCESO DE ENVÍO DE CORREO =====');
