@@ -119,11 +119,17 @@ const EvaluacionDetallePanel = ({
     cargarDetalleCompromiso();
   }, [compromisoId, entidad.id]);
 
-  const tabs = [
+  // Pestañas base para todos los compromisos
+  const baseTabs = [
     { id: 'general', label: 'Datos Generales' },
     { id: 'normativa', label: 'Normativa' },
     { id: 'veracidad', label: 'Veracidad' }
   ];
+
+  // Para el compromiso 10, agregar pestaña de Indicadores CEDA
+  const tabs = compromisoId === 10 
+    ? [...baseTabs, { id: 'indicadores', label: 'Indicadores CEDA' }]
+    : baseTabs;
 
   // Renderizar el componente específico según el compromiso
   const renderCompromisoContent = () => {

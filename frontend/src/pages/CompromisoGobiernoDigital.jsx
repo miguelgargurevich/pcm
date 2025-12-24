@@ -113,8 +113,9 @@ const CompromisoGobiernoDigital = () => {
     }
 
     if (filtros.alcance) {
+      const alcanceFiltro = parseInt(filtros.alcance);
       filtered = filtered.filter((c) =>
-        c.alcances?.includes(filtros.alcance)
+        c.alcances?.some(alcance => parseInt(alcance) === alcanceFiltro)
       );
     }
 
@@ -561,8 +562,8 @@ const CompromisoGobiernoDigital = () => {
                   className="input-field"
                 >
                   <option value="">Todos</option>
-                  {clasificaciones.map((clasificacion) => (
-                    <option key={clasificacion.clasificacionId} value={clasificacion.clasificacionId}>{clasificacion.nombre}</option>
+                  {subclasificaciones.map((subclasificacion) => (
+                    <option key={subclasificacion.subclasificacionId} value={subclasificacion.subclasificacionId}>{subclasificacion.nombre}</option>
                   ))}
                 </select>
               </div>

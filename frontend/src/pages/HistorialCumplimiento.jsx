@@ -1085,10 +1085,10 @@ const HistorialCumplimiento = () => {
                     <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Compromiso
                     </th>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[250px]">
                       Entidad
                     </th>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-56">
+                    <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-56">
                       Cambio de Estado
                     </th>
                     <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
@@ -1132,13 +1132,13 @@ const HistorialCumplimiento = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-3 py-3 text-sm text-gray-900">
+                      <td className="px-3 py-3 text-sm text-gray-900 min-w-[250px]">
                         <div className="text-xs leading-tight line-clamp-2">
                           {item.entidadNombre || 'N/A'}
                         </div>
                       </td>
                       <td className="px-3 py-3 text-sm text-gray-900">
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center justify-center gap-1.5">
                           <EstadoBadge estado={item.estadoAnteriorNombre} />
                           <ArrowRight className="w-3 h-3 text-gray-400 flex-shrink-0" />
                           <EstadoBadge estado={item.estadoNuevoNombre} esNuevo />
