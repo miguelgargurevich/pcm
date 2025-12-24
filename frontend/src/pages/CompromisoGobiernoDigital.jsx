@@ -648,7 +648,14 @@ const CompromisoGobiernoDigital = () => {
                         <div className="text-sm font-medium text-gray-900">{compromiso.nombreCompromiso}</div>
                         {compromiso.alcances && compromiso.alcances.length > 0 && (
                           <div className="text-xs text-gray-500 mt-1">
-                            Alcance: {compromiso.alcances.join(', ')}
+                            Alcance: {compromiso.alcances
+                              .map(alcanceId => {
+                                const sub = subclasificaciones.find(s => s.subclasificacionId === parseInt(alcanceId));
+                                return sub?.nombre || `ID ${alcanceId}`;
+                              })
+                              .slice(0, 3)
+                              .join(', ')}
+                            {compromiso.alcances.length > 3 && ` (+${compromiso.alcances.length - 3} más)`}
                           </div>
                         )}
                       </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import cumplimientoService from '../services/cumplimientoService';
 import { compromisosService } from '../services/compromisosService';
+import { catalogosService } from '../services/catalogosService';
 import { FilterX, Edit2, Eye, FileText, FileCheck, Calendar, Search, ClipboardCheck, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 
 const CumplimientoNormativo = () => {
@@ -23,10 +24,12 @@ const CumplimientoNormativo = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   const [estados, setEstados] = useState([]);
+  const [subclasificaciones, setSubclasificaciones] = useState([]);
 
   useEffect(() => {
     loadData();
     loadEstados();
+    loadSubclasificaciones();
   }, []);
 
   const loadEstados = async () => {
@@ -35,6 +38,17 @@ const CumplimientoNormativo = () => {
       setEstados(estadosData);
     } catch (error) {
       console.error('Error al cargar estados:', error);
+    }
+  };
+
+  const loadSubclasificaciones = async () => {
+    try {
+      const response = await catalogosService.getSubclasificaciones();
+      if (response.isSuccess) {
+        setSubclasificaciones(response.data || []);
+      }
+    } catch (error) {
+      console.error('Error al cargar subclasificaciones:', error);
     }
   };
 
@@ -280,9 +294,6 @@ const CumplimientoNormativo = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Estado
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Fecha
-                  </th>
                   <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Acciones
                   </th>
@@ -309,7 +320,13 @@ const CumplimientoNormativo = () => {
                             </div>
                             <div className="text-xs text-gray-500 mt-1">
                               {compromiso.alcances && compromiso.alcances.length > 0
-                                ? `Alcance: ${compromiso.alcances.join(', ')}`
+                                ? `Alcance: ${compromiso.alcances
+                                    .map(alcanceId => {
+                                      const sub = subclasificaciones.find(s => s.subclasificacionId === parseInt(alcanceId));
+                                      return sub?.nombre || `ID ${alcanceId}`;
+                                    })
+                                    .slice(0, 3)
+                                    .join(', ')}${compromiso.alcances.length > 3 ? ` (+${compromiso.alcances.length - 3} más)` : ''}`
                                 : 'Sin alcance definido'}
                             </div>
                           </div>
@@ -325,15 +342,6 @@ const CumplimientoNormativo = () => {
                             Sin registrar
                           </span>
                         )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {compromiso.fechaRegistroCumplimiento ? (
-                          new Date(compromiso.fechaRegistroCumplimiento).toLocaleDateString('es-PE', { 
-                            day: '2-digit', 
-                            month: '2-digit', 
-                            year: 'numeric' 
-                          })
-                        ) : '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                         <div className="flex justify-center gap-2">

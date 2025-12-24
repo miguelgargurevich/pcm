@@ -405,9 +405,9 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
             Descripcion = compromiso.Descripcion,
             Alcances = compromiso.AlcancesCompromisos?
                 .Where(ac => ac.Activo)
-                .Select(ac => ac.Clasificacion?.Clasificacion?.Nombre ?? ac.Clasificacion?.Nombre ?? string.Empty) // Mostrar nombre de clasificación padre o subclasificación
-                .Where(nombre => !string.IsNullOrEmpty(nombre))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Select(ac => ac.ClasificacionId.ToString()) // Devolver subclasificacion_id directamente
+                .Where(id => !string.IsNullOrEmpty(id))
+                .Distinct()
                 .ToList() ?? new List<string>(),
             FechaInicio = compromiso.FechaInicio,
             FechaFin = compromiso.FechaFin,
