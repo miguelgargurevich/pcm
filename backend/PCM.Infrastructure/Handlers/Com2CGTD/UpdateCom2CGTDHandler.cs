@@ -55,29 +55,6 @@ public class UpdateCom2CGTDHandler : IRequestHandler<UpdateCom2CGTDCommand, Resu
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            // Registrar en historial si el estado cambió
-            if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
-            {
-                string tipoAccion = request.Estado.ToLower() switch
-                {
-                    "enviado" or "publicado" => "ENVIO",
-                    "en_proceso" or "borrador" => "BORRADOR",
-                    _ => "CAMBIO_ESTADO"
-                };
-
-                await _historialService.RegistrarCambioDesdeFormularioAsync(
-                    compromisoId: entity.CompromisoId,
-                    entidadId: entity.EntidadId,
-                    estadoAnterior: estadoAnterior,
-                    estadoNuevo: request.Estado,
-                    usuarioId: request.UsuarioRegistra,
-                    observacion: null,
-                    tipoAccion: tipoAccion);
-
-                _logger.LogInformation("Historial registrado para Com2CGTD, entidad {EntidadId}, acción: {TipoAccion}", 
-                    entity.EntidadId, tipoAccion);
-            }
-
             // Gestionar miembros del comité
             var miembrosResponse = new List<ComiteMiembroDto>();
             if (request.Miembros != null)
@@ -178,6 +155,29 @@ public class UpdateCom2CGTDHandler : IRequestHandler<UpdateCom2CGTDCommand, Resu
                 }
 
                 await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            // Registrar en historial si el estado cambió (DESPUÉS de actualizar miembros)
+            if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
+            {
+                string tipoAccion = request.Estado.ToLower() switch
+                {
+                    "enviado" or "publicado" => "ENVIO",
+                    "en_proceso" or "borrador" => "BORRADOR",
+                    _ => "CAMBIO_ESTADO"
+                };
+
+                await _historialService.RegistrarCambioDesdeFormularioAsync(
+                    compromisoId: entity.CompromisoId,
+                    entidadId: entity.EntidadId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: request.Estado,
+                    usuarioId: request.UserId,
+                    observacion: null,
+                    tipoAccion: tipoAccion);
+
+                _logger.LogInformation("Historial registrado para Com2CGTD, entidad {EntidadId}, acción: {TipoAccion}", 
+                    entity.EntidadId, tipoAccion);
             }
 
             var response = new Com2CGTDResponse

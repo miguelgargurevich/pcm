@@ -80,7 +80,7 @@ public class UpdateCom11AportacionGeoPeruHandler : IRequestHandler<UpdateCom11Ap
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: request.UsuarioRegistra,
+                    usuarioId: request.UsuarioRegistra ?? Guid.Empty,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

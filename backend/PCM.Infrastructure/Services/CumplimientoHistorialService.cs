@@ -433,6 +433,19 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
                             .Where(s => s.ComEntidadId == com3.ComepgdEntId)
                             .ToListAsync();
 
+                        var objetivos = await _context.ObjetivosEntidades
+                            .Where(o => o.ComEntidadId == com3.ComepgdEntId)
+                            .ToListAsync();
+
+                        var accionesIds = objetivos.Select(o => o.ObjEntId).ToList();
+                        var acciones = await _context.AccionesObjetivosEntidades
+                            .Where(a => accionesIds.Contains(a.ObjEntId))
+                            .ToListAsync();
+                        
+                        var proyectos = await _context.ProyectosEntidades
+                            .Where(p => p.ComEntidadId == com3.ComepgdEntId)
+                            .ToListAsync();
+
                         datos["personalTI"] = personalTI.Select(p => new { p.NombrePersona, p.Dni, p.Cargo, p.Especialidad, p.EmailPersonal }).ToList();
                         datos["totalPersonalTI"] = personalTI.Count;
                         datos["inventarioSoftware"] = software.Select(s => new { s.NombreProducto, s.Version, s.TipoSoftware, s.CantidadLicencias }).ToList();
@@ -443,6 +456,12 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
                         datos["totalRedes"] = redes.Count;
                         datos["inventarioServidores"] = servidores.Select(s => new { s.NombreEquipo, s.TipoEquipo, s.Estado, s.Capa, s.Propiedad, s.MarcaCpu, s.ModeloCpu, s.VelocidadGhz, s.Nucleos, s.MemoriaGb }).ToList();
                         datos["totalServidores"] = servidores.Count;
+                        datos["objetivos"] = objetivos.Select(o => new { o.ObjEntId, o.TipoObj, o.NumeracionObj, o.DescripcionObjetivo }).ToList();
+                        datos["totalObjetivos"] = objetivos.Count;
+                        datos["acciones"] = acciones.Select(a => new { a.AccObjEntId, a.ObjEntId, a.NumeracionAcc, a.DescripcionAccion }).ToList();
+                        datos["totalAcciones"] = acciones.Count;
+                        datos["proyectos"] = proyectos.Select(p => new { p.ProyEntId, p.NumeracionProy, p.Nombre, p.Alcance, p.TipoProy, p.PorcentajeAvance }).ToList();
+                        datos["totalProyectos"] = proyectos.Count;
                     }
                     break;
 

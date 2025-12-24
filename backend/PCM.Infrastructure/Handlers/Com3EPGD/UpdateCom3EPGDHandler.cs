@@ -71,29 +71,6 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
             _context.Com3EPGD.Update(entity);
             await _context.SaveChangesAsync(cancellationToken);
 
-            // Registrar en historial si el estado cambió
-            if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
-            {
-                string tipoAccion = request.Estado.ToLower() switch
-                {
-                    "enviado" or "publicado" => "ENVIO",
-                    "en_proceso" or "borrador" => "BORRADOR",
-                    _ => "CAMBIO_ESTADO"
-                };
-
-                await _historialService.RegistrarCambioDesdeFormularioAsync(
-                    compromisoId: entity.CompromisoId,
-                    entidadId: entity.EntidadId,
-                    estadoAnterior: estadoAnterior,
-                    estadoNuevo: request.Estado,
-                    usuarioId: request.UsuarioRegistra,
-                    observacion: null,
-                    tipoAccion: tipoAccion);
-
-                _logger.LogInformation("Historial registrado para Com3EPGD, entidad {EntidadId}, acción: {TipoAccion}", 
-                    entity.EntidadId, tipoAccion);
-            }
-
             // Actualizar Personal TI
             await UpdatePersonalTI(entity.ComepgdEntId, request.PersonalTI, cancellationToken);
 
@@ -117,6 +94,29 @@ public class UpdateCom3EPGDHandler : IRequestHandler<UpdateCom3EPGDCommand, Resu
 
             // Actualizar Proyectos
             await UpdateProyectos(entity.ComepgdEntId, request.Proyectos, cancellationToken);
+
+            // Registrar en historial DESPUÉS de actualizar todos los datos relacionados
+            if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
+            {
+                string tipoAccion = request.Estado.ToLower() switch
+                {
+                    "enviado" or "publicado" => "ENVIO",
+                    "en_proceso" or "borrador" => "BORRADOR",
+                    _ => "CAMBIO_ESTADO"
+                };
+
+                await _historialService.RegistrarCambioDesdeFormularioAsync(
+                    compromisoId: entity.CompromisoId,
+                    entidadId: entity.EntidadId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: request.Estado,
+                    usuarioId: request.UsuarioRegistra ?? Guid.Empty,
+                    observacion: null,
+                    tipoAccion: tipoAccion);
+
+                _logger.LogInformation("Historial registrado para Com3EPGD con todos los datos relacionados actualizados, entidad {EntidadId}, acción: {TipoAccion}", 
+                    entity.EntidadId, tipoAccion);
+            }
 
             var response = await BuildResponse(entity, cancellationToken);
 

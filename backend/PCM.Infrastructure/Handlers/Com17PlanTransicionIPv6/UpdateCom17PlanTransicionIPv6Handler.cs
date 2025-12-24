@@ -87,7 +87,7 @@ public class UpdateCom17PlanTransicionIPv6Handler : IRequestHandler<UpdateCom17P
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: request.UsuarioRegistra,
+                    usuarioId: request.UsuarioRegistra ?? Guid.Empty,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

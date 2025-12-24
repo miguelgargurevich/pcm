@@ -112,7 +112,7 @@ public class UpdateCom1LiderGTDHandler : IRequestHandler<UpdateCom1LiderGTDComma
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: request.UsuarioRegistra,
+                    usuarioId: request.UserId,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

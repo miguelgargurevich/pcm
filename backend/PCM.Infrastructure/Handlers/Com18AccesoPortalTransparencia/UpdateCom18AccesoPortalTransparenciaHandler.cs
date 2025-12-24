@@ -87,7 +87,7 @@ public class UpdateCom18AccesoPortalTransparenciaHandler : IRequestHandler<Updat
                     entidadId: entity.EntidadId,
                     estadoAnterior: estadoAnterior,
                     estadoNuevo: request.Estado,
-                    usuarioId: request.UsuarioRegistra,
+                    usuarioId: request.UsuarioRegistra ?? Guid.Empty,
                     observacion: null,
                     tipoAccion: tipoAccion);
 

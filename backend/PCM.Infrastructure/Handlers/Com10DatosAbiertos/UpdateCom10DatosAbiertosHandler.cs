@@ -87,7 +87,7 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                         entidadId: registro.EntidadId,
                         estadoAnterior: estadoAnterior,
                         estadoNuevo: request.Estado,
-                        usuarioId: request.UsuarioRegistra,
+                        usuarioId: request.UsuarioRegistra ?? Guid.Empty,
                         observacion: null,
                         tipoAccion: tipoAccion);
 
