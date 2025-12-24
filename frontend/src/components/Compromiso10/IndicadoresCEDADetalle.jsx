@@ -28,6 +28,7 @@ const IndicadoresCEDADetalle = ({ compndaEntId, indicador, onBack, onSaved }) =>
     if (indicador && compndaEntId) {
       cargarDetalle();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [indicador, compndaEntId]);
 
   const cargarDetalle = async () => {
@@ -221,7 +222,7 @@ const IndicadoresCEDADetalle = ({ compndaEntId, indicador, onBack, onSaved }) =>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2 items-center gap-2">
                   <LinkIcon size={16} />
                   URL Evidencia
                 </label>

@@ -8115,13 +8115,13 @@ const CumplimientoNormativoDetalle = () => {
             ) : parseInt(formData.compromisoId) === 18 ? (
               // COMPROMISO 18: Acceso al Portal de Transparencia Estándar (PTE)
               <>
-                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos del Acceso al Portal de Transparencia Estándar (PTE)</h2>
+                <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos del Coordinador de Accesibilidad</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Responsable */}
+                  {/* Coordinador de Accesibilidad */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Responsable <span className="text-red-500">*</span>
+                      Coordinador de Accesibilidad <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -8191,10 +8191,10 @@ const CumplimientoNormativoDetalle = () => {
                     />
                   </div>
 
-                  {/* Nº de oficio de solicitud */}
+                  {/* Nro Documento de Designación */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nº de oficio de solicitud <span className="text-red-500">*</span>
+                      Nro Documento de Designación <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -8210,10 +8210,10 @@ const CumplimientoNormativoDetalle = () => {
                     )}
                   </div>
 
-                  {/* Fecha de solicitud */}
+                  {/* Fecha de Comunicación */}
                   <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de solicitud <span className="text-red-500">*</span>
+                      Fecha de Comunicación <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="date"
@@ -8228,48 +8228,10 @@ const CumplimientoNormativoDetalle = () => {
                     )}
                   </div>
 
-                  {/* Fecha de concesión de acceso */}
-                  <div className="">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de concesión de acceso
-                    </label>
-                    <input
-                      type="date"
-                      name="fechaAccesoPte"
-                      value={formData.fechaAccesoPte || ''}
-                      onChange={handleInputChange}
-                      className="input-field"
-                      disabled={viewMode}
-                    />
-                  </div>
-
-                  {/* Estado del acceso */}
-                  <div className="">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Estado del acceso <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      name="estadoAccesoPte"
-                      value={formData.estadoAccesoPte || ''}
-                      onChange={handleInputChange}
-                      className={`input-field ${errores.estadoAccesoPte ? 'border-red-500' : ''}`}
-                      disabled={viewMode}
-                    >
-                      <option value="">Seleccione estado</option>
-                      <option value="Solicitado">Solicitado</option>
-                      <option value="En trámite">En trámite</option>
-                      <option value="Concedido">Concedido</option>
-                      <option value="Denegado">Denegado</option>
-                    </select>
-                    {errores.estadoAccesoPte && (
-                      <p className="text-red-500 text-xs mt-1">{errores.estadoAccesoPte}</p>
-                    )}
-                  </div>
-
-                  {/* Enlace del portal */}
+                  {/* Enlace del Servicio y/o Plataforma Accesible */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Enlace del portal
+                      Enlace del Servicio y/o Plataforma Accesible
                     </label>
                     <input
                       type="url"

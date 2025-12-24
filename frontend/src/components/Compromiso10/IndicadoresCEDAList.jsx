@@ -15,6 +15,7 @@ const IndicadoresCEDAList = ({ compndaEntId, onSelectIndicador }) => {
     if (compndaEntId) {
       cargarIndicadores();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [compndaEntId]);
 
   const cargarIndicadores = async () => {
