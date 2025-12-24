@@ -465,7 +465,7 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
                     }
                     break;
 
-                case 4: // PEI - obtener objetivos, acciones y proyectos
+                case 4: // PEI - obtener objetivos y acciones (SIN proyectos, los proyectos son del Compromiso 3)
                     var com4 = await _context.Com4PEI
                         .Where(c => c.EntidadId == entidadId && c.Activo)
                         .OrderByDescending(c => c.CreatedAt)
@@ -481,26 +481,12 @@ public class CumplimientoHistorialService : ICumplimientoHistorialService
                         var acciones = await _context.AccionesObjetivosEntidades
                             .Where(a => accionesIds.Contains(a.ObjEntId))
                             .ToListAsync();
-                        
-                        var proyectos = await _context.ProyectosEntidades
-                            .Where(p => p.ComEntidadId == com4.ComtdpeiEntId)
-                            .ToListAsync();
 
                         datos["objetivos"] = objetivos.Select(o => new { o.ObjEntId, o.TipoObj, o.NumeracionObj, o.DescripcionObjetivo }).ToList();
                         datos["totalObjetivos"] = objetivos.Count;
                         datos["acciones"] = acciones.Select(a => new { a.AccObjEntId, a.ObjEntId, a.NumeracionAcc, a.DescripcionAccion }).ToList();
                         datos["totalAcciones"] = acciones.Count;
-                        datos["proyectos"] = proyectos.Select(p => new { 
-                            p.ProyEntId, 
-                            p.NumeracionProy,
-                            p.Nombre, 
-                            p.Alcance,
-                            p.TipoProy,
-                            p.PorcentajeAvance, 
-                            p.AlineadoPgd,
-                            p.EstadoProyecto
-                        }).ToList();
-                        datos["totalProyectos"] = proyectos.Count;
+                        // NOTA: Los proyectos NO se incluyen aquí, pertenecen al Compromiso 3 (Portafolio de Proyectos)
                     }
                     break;
             }

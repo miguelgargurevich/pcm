@@ -351,20 +351,23 @@ const CumplimientoNormativo = () => {
                           >
                             <Eye size={18} />
                           </button>
-                          <button
-                            onClick={() => {
-                              // Si existe cumplimiento, editar; si no, crear nuevo
-                              if (cumplimiento) {
-                                handleEditar(cumplimiento.cumplimientoId, compromiso.compromisoId);
-                              } else {
-                                navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`);
-                              }
-                            }}
-                            className="text-primary hover:text-primary-dark"
-                            title="Editar"
-                          >
-                            <Edit2 size={18} />
-                          </button>
+                          {/* Ocultar botón editar si el estado es Enviado (5) o Aceptado (8) */}
+                          {!(compromiso.estadoCumplimiento === 5 || compromiso.estadoCumplimiento === 8) && (
+                            <button
+                              onClick={() => {
+                                // Si existe cumplimiento, editar; si no, crear nuevo
+                                if (cumplimiento) {
+                                  handleEditar(cumplimiento.cumplimientoId, compromiso.compromisoId);
+                                } else {
+                                  navigate(`/dashboard/cumplimiento/nuevo?compromiso=${compromiso.compromisoId}`);
+                                }
+                              }}
+                              className="text-primary hover:text-primary-dark"
+                              title="Editar"
+                            >
+                              <Edit2 size={18} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

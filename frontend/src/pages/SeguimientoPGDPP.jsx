@@ -1,90 +1,10 @@
-import { useState, useMemo } from 'react';
-import { showSuccessToast } from '../utils/toast.jsx';
+import { useState, useEffect, useMemo } from 'react';
+import { showSuccessToast, showErrorToast } from '../utils/toast.jsx';
 import { FilterX, X, Save, FolderKanban, TrendingUp, Edit2, Filter, ChevronDown, ChevronUp } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
+import com3EPGDService from '../services/com3EPGDService';
 
-// Datos de ejemplo para el portafolio de proyectos
-const proyectosIniciales = [
-  {
-    id: 1,
-    codigo: 'PROY-001',
-    nombre: 'Implementación de la Agencia Digital',
-    tipoProyecto: 'SOFTWARE O APLICACIONES',
-    tipoBeneficiario: 'EXTERNO',
-    fechaInicioProg: '2024-02-29',
-    fechaFinProg: '2024-09-29',
-    fechaInicioReal: '2024-03-04',
-    fechaFinReal: '2024-10-14',
-    etapa: 'CERRADO',
-    porcentajeAvance: 100,
-    informeAvance: true,
-    montoInversion: 450000,
-    ambito: 'LOCAL'
-  },
-  {
-    id: 2,
-    codigo: 'PROY-002',
-    nombre: 'Sistema de Gestión Documental',
-    tipoProyecto: 'SOFTWARE O APLICACIONES',
-    tipoBeneficiario: 'INTERNO',
-    fechaInicioProg: '2024-05-31',
-    fechaFinProg: '2024-12-30',
-    fechaInicioReal: '2024-06-14',
-    fechaFinReal: null,
-    etapa: 'EJECUCIÓN',
-    porcentajeAvance: 65,
-    informeAvance: true,
-    montoInversion: 280000,
-    ambito: 'LOCAL'
-  },
-  {
-    id: 3,
-    codigo: 'PROY-003',
-    nombre: 'Renovación de Infraestructura TI',
-    tipoProyecto: 'RENOVACIÓN TECNOLÓGICA y/o INFRAESTRUCTURA',
-    tipoBeneficiario: 'INTERNO',
-    fechaInicioProg: '2025-01-14',
-    fechaFinProg: '2025-06-29',
-    fechaInicioReal: null,
-    fechaFinReal: null,
-    etapa: 'SIN INICIAR',
-    porcentajeAvance: 0,
-    informeAvance: false,
-    montoInversion: 650000,
-    ambito: 'LOCAL'
-  },
-  {
-    id: 4,
-    codigo: 'PROY-004',
-    nombre: 'Plataforma de Servicios Ciudadanos',
-    tipoProyecto: 'SOFTWARE O APLICACIONES',
-    tipoBeneficiario: 'EXTERNO',
-    fechaInicioProg: '2024-07-31',
-    fechaFinProg: '2025-02-27',
-    fechaInicioReal: '2024-08-09',
-    fechaFinReal: null,
-    etapa: 'PLANIFICACIÓN',
-    porcentajeAvance: 25,
-    informeAvance: true,
-    montoInversion: 320000,
-    ambito: 'REGIONAL'
-  },
-  {
-    id: 5,
-    codigo: 'PROY-005',
-    nombre: 'Implementación de Metodología Ágil',
-    tipoProyecto: 'IMPLEMENTACIÓN DE METODOLOGÍA',
-    tipoBeneficiario: 'INTERNO',
-    fechaInicioProg: '2024-09-30',
-    fechaFinProg: '2025-03-30',
-    fechaInicioReal: '2024-10-04',
-    fechaFinReal: null,
-    etapa: 'EJECUCIÓN',
-    porcentajeAvance: 40,
-    informeAvance: false,
-    montoInversion: 180000,
-    ambito: 'LOCAL'
-  }
-];
+// Datos de ejemplo eliminados - ahora se cargan desde la API
 
 // Opciones para los selects
 const etapasOptions = [
@@ -106,8 +26,9 @@ const tiposBeneficiarioOptions = ['INTERNO', 'EXTERNO'];
 const ambitosOptions = ['LOCAL', 'REGIONAL', 'NACIONAL'];
 
 const SeguimientoPGDPP = () => {
-  const [proyectos, setProyectos] = useState(proyectosIniciales);
-  const [loading] = useState(false);
+  const { user } = useAuth();
+  const [proyectos, setProyectos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingProyecto, setEditingProyecto] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
@@ -141,6 +62,52 @@ const SeguimientoPGDPP = () => {
     montoInversion: 0,
     ambito: ''
   });
+
+  // Cargar proyectos desde la API
+  useEffect(() => {
+    const loadProyectos = async () => {
+      if (!user?.entidadId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const response = await com3EPGDService.getByEntidad(user.entidadId);
+        
+        if (response.isSuccess && response.data) {
+          const data = response.data;
+          
+          // Mapear proyectos desde la BD al formato de la vista
+          const proyectosMapeados = (data.proyectos || []).map(p => ({
+            id: p.proyectoId,
+            codigo: p.numeracionProy,
+            nombre: p.nombre,
+            tipoProyecto: p.tipoProy,
+            tipoBeneficiario: p.tipoBeneficiario,
+            fechaInicioProg: p.fecIniProg,
+            fechaFinProg: p.fecFinProg,
+            fechaInicioReal: p.fecIniReal,
+            fechaFinReal: p.fecFinReal,
+            etapa: p.etapaProyecto,
+            porcentajeAvance: p.porcentajeAvance || 0,
+            informeAvance: p.informeAvance || false,
+            montoInversion: p.montoInversion || 0,
+            ambito: p.ambitoProyecto
+          }));
+
+          setProyectos(proyectosMapeados);
+        }
+      } catch (error) {
+        console.error('Error al cargar proyectos:', error);
+        showErrorToast('Error al cargar los proyectos del portafolio');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProyectos();
+  }, [user]);
 
   // Aplicar filtros
   const proyectosFiltrados = useMemo(() => {
@@ -225,25 +192,76 @@ const SeguimientoPGDPP = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Actualizar el proyecto
-    const proyectosActualizados = proyectos.map(p => {
-      if (p.id === editingProyecto.id) {
-        return {
-          ...p,
-          ...formData,
-          porcentajeAvance: parseInt(formData.porcentajeAvance) || 0,
-          montoInversion: parseFloat(formData.montoInversion) || 0
-        };
-      }
-      return p;
-    });
+    try {
+      // Actualizar el proyecto en el estado local
+      const proyectosActualizados = proyectos.map(p => {
+        if (p.id === editingProyecto.id) {
+          return {
+            ...p,
+            ...formData,
+            porcentajeAvance: parseInt(formData.porcentajeAvance) || 0,
+            montoInversion: parseFloat(formData.montoInversion) || 0
+          };
+        }
+        return p;
+      });
 
-    setProyectos(proyectosActualizados);
-    setShowModal(false);
-    showSuccessToast('Proyecto actualizado exitosamente');
+      // Obtener el compromiso completo actual desde la API
+      const compromisoResponse = await com3EPGDService.getByEntidad(user.entidadId);
+      
+      if (!compromisoResponse.isSuccess || !compromisoResponse.data) {
+        showErrorToast('No se pudo obtener los datos del compromiso');
+        return;
+      }
+
+      const compromiso = compromisoResponse.data;
+
+      // Preparar los proyectos para enviar al backend (mapear de vista a BD)
+      const proyectosParaBackend = proyectosActualizados.map(p => ({
+        proyectoId: p.id,
+        numeracionProy: p.codigo,
+        nombre: p.nombre,
+        tipoProy: p.tipoProyecto,
+        tipoBeneficiario: p.tipoBeneficiario,
+        fecIniProg: p.fechaInicioProg,
+        fecFinProg: p.fechaFinProg,
+        fecIniReal: p.fechaInicioReal,
+        fecFinReal: p.fechaFinReal,
+        etapaProyecto: p.etapa,
+        porcentajeAvance: p.porcentajeAvance,
+        informeAvance: p.informeAvance,
+        montoInversion: p.montoInversion,
+        ambitoProyecto: p.ambito,
+        estadoProyecto: true,
+        alineadoPgd: '',
+        accEst: '',
+        activo: true
+      }));
+
+      // Actualizar el compromiso completo con los proyectos modificados
+      const updateData = {
+        ...compromiso,
+        proyectos: proyectosParaBackend
+      };
+
+      const updateResponse = await com3EPGDService.update(compromiso.comepgdEntId, updateData);
+      
+      if (!updateResponse.isSuccess) {
+        showErrorToast('Error al guardar los cambios en la base de datos');
+        return;
+      }
+
+      // Actualizar el estado local
+      setProyectos(proyectosActualizados);
+      setShowModal(false);
+      showSuccessToast('Proyecto actualizado exitosamente');
+    } catch (error) {
+      console.error('Error al actualizar proyecto:', error);
+      showErrorToast('Error al guardar los cambios');
+    }
   };
 
   const formatDate = (dateString) => {
@@ -502,14 +520,14 @@ const SeguimientoPGDPP = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {proyectosPaginados.map((proyecto) => (
+              {proyectosPaginados.map((proyecto, index) => (
                 <tr 
                   key={proyecto.id} 
                   className="hover:bg-gray-50 cursor-pointer group"
                   onClick={() => handleRowClick(proyecto)}
                 >
                   <td className="sticky left-0 z-10 bg-gray-50 group-hover:bg-gray-100 px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-[80px] min-w-[80px]">
-                    {proyecto.id}
+                    {((paginaActual - 1) * itemsPorPagina) + index + 1}
                   </td>
                   <td className="sticky left-[80px] z-10 bg-gray-50 group-hover:bg-gray-100 px-6 py-4 whitespace-nowrap text-sm font-medium text-primary w-[140px] min-w-[140px]">
                     {proyecto.codigo}

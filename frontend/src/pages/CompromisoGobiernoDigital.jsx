@@ -3,9 +3,11 @@ import { compromisosService } from '../services/compromisosService';
 import { marcoNormativoService } from '../services/marcoNormativoService';
 import { catalogosService } from '../services/catalogosService';
 import { showConfirmToast, showSuccessToast, showErrorToast } from '../utils/toast.jsx';
-import { Plus, Edit2, Trash2, X, Save, Filter, FilterX, Search, FileCheck, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, Filter, FilterX, Search, FileCheck, Calendar, ChevronDown, ChevronUp, Eye } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 const CompromisoGobiernoDigital = () => {
+  const { user } = useAuth();
   const [compromisos, setCompromisos] = useState([]);
   const [compromisosFiltrados, setCompromisosFiltrados] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,10 +20,21 @@ const CompromisoGobiernoDigital = () => {
   const [normaSearchTerm, setNormaSearchTerm] = useState('');
   const [paginaNormas, setPaginaNormas] = useState(1);
   const normasPorPagina = 5;
+  
+  // Solo lectura para entidades
+  const isReadOnly = user?.nombrePerfil === 'Entidad';
+  
+  // Debug: verificar el perfil del usuario
+  useEffect(() => {
+    console.log('👤 CompromisoGD - Usuario:', user);
+    console.log('👤 CompromisoGD - nombrePerfil:', user?.nombrePerfil);
+    console.log('🔒 CompromisoGD - isReadOnly:', isReadOnly);
+  }, [user, isReadOnly]);
 
   // Catálogos dinámicos
   const [tiposNorma, setTiposNorma] = useState([]);
-  const [alcances, setAlcances] = useState([]);
+  const [clasificaciones, setClasificaciones] = useState([]);
+  const [subclasificaciones, setSubclasificaciones] = useState([]);
   
   // Filtros
   const [filtros, setFiltros] = useState({
@@ -68,16 +81,20 @@ const CompromisoGobiernoDigital = () => {
 
   const loadCatalogos = async () => {
     try {
-      const [tiposResponse, alcancesResponse] = await Promise.all([
+      const [tiposResponse, clasificacionesResponse, subclasificacionesResponse] = await Promise.all([
         catalogosService.getTiposNorma(),
-        catalogosService.getAlcances()
+        catalogosService.getClasificaciones(),
+        catalogosService.getSubclasificaciones()
       ]);
 
       if (tiposResponse.isSuccess) {
         setTiposNorma(tiposResponse.data || []);
       }
-      if (alcancesResponse.isSuccess) {
-        setAlcances(alcancesResponse.data || []);
+      if (clasificacionesResponse.isSuccess) {
+        setClasificaciones(clasificacionesResponse.data || []);
+      }
+      if (subclasificacionesResponse.isSuccess) {
+        setSubclasificaciones(subclasificacionesResponse.data || []);
       }
     } catch (error) {
       console.error('Error al cargar catálogos:', error);
@@ -160,24 +177,44 @@ const CompromisoGobiernoDigital = () => {
     console.log('🔍 Compromiso recibido para editar:', compromiso);
     console.log('📝 Descripción del compromiso:', compromiso.descripcion);
     console.log('📝 Alcances recibidos:', compromiso.alcances);
+    console.log('📝 Tipo de alcances:', typeof compromiso.alcances, Array.isArray(compromiso.alcances));
+    console.log('📝 Subclasificaciones disponibles:', subclasificaciones.length, subclasificaciones);
     setEditingCompromiso(compromiso);
     
-    // Convertir nombres de alcances a IDs para que funcionen los checkboxes
-    let alcanceIds = [];
+    // Convertir alcances (pueden venir como IDs o nombres) a IDs de subclasificación
+    let subclasificacionIds = [];
     if (compromiso.alcances && compromiso.alcances.length > 0) {
-      alcanceIds = compromiso.alcances
-        .map(nombreAlcance => {
-          const alcance = alcances.find(a => a.nombre.toLowerCase() === nombreAlcance.toLowerCase());
-          return alcance ? alcance.clasificacionId : null;
+      console.log('🔄 Procesando alcances...');
+      subclasificacionIds = compromiso.alcances
+        .map((alcance, index) => {
+          console.log(`  Procesando alcance [${index}]:`, alcance, 'tipo:', typeof alcance);
+          
+          // Si es un número o string numérico, asumir que es un ID
+          const alcanceNum = Number(alcance);
+          if (!isNaN(alcanceNum) && alcanceNum > 0) {
+            // Verificar que el ID existe en subclasificaciones
+            const exists = subclasificaciones.find(s => s.subclasificacionId === alcanceNum);
+            console.log(`  ✓ ID ${alcanceNum} existe:`, !!exists, exists?.nombre);
+            return exists ? alcanceNum : null;
+          }
+          
+          // Si es un string no numérico, buscar por nombre
+          const subclasificacion = subclasificaciones.find(s => s.nombre.toLowerCase() === String(alcance).toLowerCase());
+          console.log(`  ✓ Búsqueda por nombre "${alcance}":`, !!subclasificacion, subclasificacion?.subclasificacionId);
+          return subclasificacion ? subclasificacion.subclasificacionId : null;
         })
-        .filter(id => id !== null);
+        .filter(id => {
+          const isValid = id !== null;
+          if (!isValid) console.warn('  ⚠️ ID nulo filtrado');
+          return isValid;
+        });
     }
-    console.log('📝 Alcance IDs mapeados:', alcanceIds);
+    console.log('✅ Subclasificación IDs mapeados:', subclasificacionIds);
     
     const newFormData = {
       nombreCompromiso: compromiso.nombreCompromiso || '',
       descripcion: compromiso.descripcion || '',
-      alcances: alcanceIds,
+      alcances: subclasificacionIds,
       fechaInicio: compromiso.fechaInicio ? compromiso.fechaInicio.split('T')[0] : '',
       fechaFin: compromiso.fechaFin ? compromiso.fechaFin.split('T')[0] : '',
       activo: compromiso.activo !== undefined ? compromiso.activo : true,
@@ -194,6 +231,11 @@ const CompromisoGobiernoDigital = () => {
   };
 
   const handleDelete = async (id) => {
+    if (isReadOnly) {
+      console.log('⛔ Acción bloqueada: usuario en modo solo lectura');
+      showErrorToast('No tiene permisos para eliminar registros');
+      return;
+    }
     showConfirmToast({
       title: '¿Está seguro de eliminar este compromiso?',
       message: 'Esta acción no se puede deshacer.',
@@ -432,6 +474,13 @@ const CompromisoGobiernoDigital = () => {
 
   return (
     <div className="p-6">
+      {isReadOnly && (
+        <div className="mb-6 bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg flex items-center gap-2">
+          <FileCheck size={20} />
+          <span className="font-medium">Modo solo lectura - No tiene permisos para editar</span>
+        </div>
+      )}
+      
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -439,14 +488,16 @@ const CompromisoGobiernoDigital = () => {
               <FileCheck className="w-8 h-8 text-primary-600" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-800">Compromisos de Gobierno Digital</h1>
+              <h1 className="text-xl font-bold text-gray-800">Gestionar Compromisos de Gobierno Digital</h1>
               <p className="text-gray-600 mt-1">Administración de compromisos y metas digitales</p>
             </div>
           </div>
-          <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
-            <Plus size={20} />
-            Nuevo Compromiso
-          </button>
+          {!isReadOnly && (
+            <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
+              <Plus size={20} />
+              Nuevo Compromiso
+            </button>
+          )}
         </div>
       </div>
 
@@ -510,8 +561,8 @@ const CompromisoGobiernoDigital = () => {
                   className="input-field"
                 >
                   <option value="">Todos</option>
-                  {alcances.map((alcance) => (
-                    <option key={alcance.clasificacionId} value={alcance.clasificacionId}>{alcance.nombre}</option>
+                  {clasificaciones.map((clasificacion) => (
+                    <option key={clasificacion.clasificacionId} value={clasificacion.clasificacionId}>{clasificacion.nombre}</option>
                   ))}
                 </select>
               </div>
@@ -621,20 +672,32 @@ const CompromisoGobiernoDigital = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <button
-                      onClick={() => handleEdit(compromiso)}
-                      className="text-primary hover:text-primary-dark"
-                      title="Editar"
-                    >
-                      <Edit2 size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(compromiso.compromisoId)}
-                      className="text-red-600 hover:text-red-800"
-                      title="Eliminar"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                    {isReadOnly ? (
+                      <button
+                        onClick={() => handleEdit(compromiso)}
+                        className="text-primary hover:text-primary-dark"
+                        title="Ver"
+                      >
+                        <Eye size={18} />
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => handleEdit(compromiso)}
+                          className="text-primary hover:text-primary-dark"
+                          title="Editar"
+                        >
+                          <Edit2 size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(compromiso.compromisoId)}
+                          className="text-red-600 hover:text-red-800"
+                          title="Eliminar"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -688,8 +751,8 @@ const CompromisoGobiernoDigital = () => {
               <div className="flex items-center gap-3">
                 <FileCheck className="w-6 h-6" />
                 <div>
-                  <h2 className="text-lg font-semibold">{editingCompromiso ? 'Editar Compromiso' : 'Nuevo Compromiso'}</h2>
-                  <p className="text-sm text-white/80">Compromisos de gobierno digital</p>
+                  <h2 className="text-lg font-semibold">{isReadOnly ? 'Ver Compromiso' : editingCompromiso ? 'Editar Compromiso' : 'Nuevo Compromiso'}</h2>
+                  <p className="text-sm text-white/80">{isReadOnly ? 'Modo solo lectura' : 'Compromisos de gobierno digital'}</p>
                 </div>
               </div>
               <button
@@ -701,116 +764,171 @@ const CompromisoGobiernoDigital = () => {
             </div>
 
             {/* Content */}
-            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
-              {/* Información básica */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nombre Compromiso <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="nombreCompromiso"
-                    value={formData.nombreCompromiso}
-                    onChange={handleInputChange}
-                    required
-                    className="input-field"
-                    placeholder="Nombre del compromiso"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Alcance <span className="text-red-500">*</span>
-                  </label>
-                  <div className="grid grid-cols-2 gap-2 p-3 border border-gray-300 rounded-lg">
-                    {alcances.map((alcance) => (
-                      <label key={alcance.clasificacionId} className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          checked={formData.alcances.includes(alcance.clasificacionId)}
-                          onChange={() => handleAlcanceToggle(alcance.clasificacionId)}
-                          className="rounded border-gray-300 text-primary focus:ring-primary"
-                        />
-                        <span className="text-sm text-gray-700">{alcance.nombre}</span>
-                      </label>
-                    ))}
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
+              {/* Sección: Información General */}
+              <div className="bg-gradient-to-r from-primary-50 to-blue-50 rounded-lg p-5 border border-primary-200">
+                <h3 className="text-lg font-semibold text-primary-800 mb-4 flex items-center gap-2">
+                  <FileCheck className="w-5 h-5" />
+                  Información General
+                </h3>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  {/* Nombre del Compromiso */}
+                  <div className="lg:col-span-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nombre Compromiso <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="nombreCompromiso"
+                      value={formData.nombreCompromiso}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isReadOnly}
+                      className="input-field"
+                      placeholder="Ej: Compromiso 1 - Conformación del Comité de Transformación Digital"
+                    />
                   </div>
-                </div>
 
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Descripción
-                  </label>
-                  <textarea
-                    name="descripcion"
-                    value={formData.descripcion}
-                    onChange={handleInputChange}
-                    rows="3"
-                    className="input-field"
-                    placeholder="Descripción del compromiso"
-                  />
-                </div>
+                  {/* Descripción */}
+                  <div className="lg:col-span-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Descripción
+                    </label>
+                    <textarea
+                      name="descripcion"
+                      value={formData.descripcion}
+                      onChange={handleInputChange}
+                      rows="3"
+                      disabled={isReadOnly}
+                      className="input-field"
+                      placeholder="Descripción detallada del compromiso..."
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fecha Inicio <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    name="fechaInicio"
-                    value={formData.fechaInicio}
-                    onChange={handleInputChange}
-                    required
-                    className="input-field"
-                  />
-                </div>
+                  {/* Fechas */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha Inicio <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaInicio"
+                      value={formData.fechaInicio}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isReadOnly}
+                      className="input-field"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fecha Fin <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    name="fechaFin"
-                    value={formData.fechaFin}
-                    onChange={handleInputChange}
-                    required
-                    className="input-field"
-                  />
-                </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha Fin <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="fechaFin"
+                      value={formData.fechaFin}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isReadOnly}
+                      className="input-field"
+                    />
+                  </div>
 
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Estado <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="activo"
-                    value={formData.activo ? 'true' : 'false'}
-                    onChange={(e) => setFormData({ ...formData, activo: e.target.value === 'true' })}
-                    required
-                    className="input-field"
-                  >
-                    <option value="true">Activo</option>
-                    <option value="false">Inactivo</option>
-                  </select>
+                  {/* Estado */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Estado <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="activo"
+                      value={formData.activo ? 'true' : 'false'}
+                      onChange={(e) => setFormData({ ...formData, activo: e.target.value === 'true' })}
+                      required
+                      disabled={isReadOnly}
+                      className="input-field"
+                    >
+                      <option value="true">✓ Activo</option>
+                      <option value="false">✗ Inactivo</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
-              {/* NORMATIVA */}
-              <div className="border-t pt-6">
-                <h4 className="text-md font-semibold text-gray-800 mb-4">NORMATIVA</h4>
+              {/* Sección: Alcance */}
+              <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                <h3 className="text-base font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  <Filter className="w-4 h-4 text-primary-600" />
+                  Alcance del Compromiso <span className="text-red-500 text-sm">*</span>
+                </h3>
                 
-                <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+                <div className="bg-gray-50 p-3 border border-gray-200 rounded-lg max-h-96 overflow-y-auto space-y-3">
+                  {clasificaciones
+                    .filter(clasificacion => 
+                      subclasificaciones.some(sub => sub.clasificacionId === clasificacion.clasificacionId)
+                    )
+                    .map((clasificacion) => {
+                      const subclasificacionesGrupo = subclasificaciones.filter(
+                        sub => sub.clasificacionId === clasificacion.clasificacionId
+                      );
+                      
+                      if (subclasificacionesGrupo.length === 0) return null;
+                      
+                      return (
+                        <div key={clasificacion.clasificacionId} className="bg-white rounded-lg p-2.5 shadow-sm">
+                          <h4 className="text-xs font-semibold text-primary-700 mb-2 pb-1.5 border-b border-primary-200 flex items-center gap-1.5">
+                            <div className="w-1.5 h-1.5 bg-primary-500 rounded-full"></div>
+                            {clasificacion.nombre}
+                          </h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1.5 pl-3">
+                            {subclasificacionesGrupo.map((subclasificacion) => (
+                              <label 
+                                key={subclasificacion.subclasificacionId} 
+                                className="flex items-center space-x-1.5 p-1.5 hover:bg-primary-50 rounded transition-colors cursor-pointer"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={formData.alcances.includes(subclasificacion.subclasificacionId)}
+                                  onChange={() => handleAlcanceToggle(subclasificacion.subclasificacionId)}
+                                  disabled={isReadOnly}
+                                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 focus:ring-2"
+                                />
+                                <span className="text-xs text-gray-700">{subclasificacion.nombre}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+                
+                {/* Contador de seleccionados */}
+                <div className="mt-2 text-xs text-gray-600 bg-blue-50 p-2 rounded border border-blue-200">
+                  <span className="font-medium">{formData.alcances.length}</span> alcance(s) seleccionado(s)
+                </div>
+              </div>
+
+              {/* Sección: NORMATIVA */}
+              <div className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                  <FileCheck className="w-5 h-5 text-green-600" />
+                  Marco Normativo
+                </h3>
+                
+                {!isReadOnly && (
+                  <div className="bg-green-50 p-4 rounded-lg mb-4 border border-green-200">
+                  <p className="text-sm text-green-800 mb-3 font-medium">Agregar Nueva Normativa</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
                         Tipo de Norma
                       </label>
                       <select
                         value={nuevaNormativa.tipoNormaId}
                         onChange={(e) => setNuevaNormativa(prev => ({ ...prev, tipoNormaId: e.target.value }))}
-                        className="input-field"
+                        className="input-field text-sm"
                       >
                         <option value="">Seleccione...</option>
                         {tiposNorma.map((tipo) => (
@@ -820,27 +938,27 @@ const CompromisoGobiernoDigital = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
                         Número de Norma
                       </label>
                       <input
                         type="text"
                         value={nuevaNormativa.numero}
                         onChange={(e) => setNuevaNormativa(prev => ({ ...prev, numero: e.target.value }))}
-                        className="input-field"
+                        className="input-field text-sm"
                         placeholder="Ej: 123-2024"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
                         Nombre de la Norma
                       </label>
                       <input
                         type="text"
                         value={nuevaNormativa.nombreNorma}
                         onChange={(e) => setNuevaNormativa(prev => ({ ...prev, nombreNorma: e.target.value }))}
-                        className="input-field"
+                        className="input-field text-sm bg-gray-50"
                         placeholder="Seleccione mediante búsqueda"
                         readOnly
                       />
@@ -850,87 +968,102 @@ const CompromisoGobiernoDigital = () => {
                       <button
                         type="button"
                         onClick={handleBuscarNorma}
-                        className="btn-secondary flex items-center gap-2 flex-1"
+                        className="btn-secondary flex items-center justify-center gap-2 flex-1 text-sm py-2"
                       >
-                        <Search size={18} />
+                        <Search size={16} />
                         Buscar
                       </button>
                       <button
                         type="button"
                         onClick={handleAgregarNormativa}
-                        className="btn-primary flex items-center gap-2 flex-1"
+                        className="btn-primary flex items-center justify-center gap-2 flex-1 text-sm py-2"
                       >
-                        <Plus size={18} />
+                        <Plus size={16} />
                         Agregar
                       </button>
                     </div>
                   </div>
                 </div>
+                )}
 
                 {/* Tabla de normativas */}
-                {formData.normativas.length > 0 && (
-                  <div className="overflow-x-auto">
+                {formData.normativas.length > 0 ? (
+                  <div className="overflow-x-auto border border-gray-200 rounded-lg">
                     <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
+                      <thead className="bg-gray-100">
                         <tr>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tipo de Norma</th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nombre de Norma</th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nivel de Norma</th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Sector</th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tipo</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nombre</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nivel</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Sector</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fecha</th>
+                          {!isReadOnly && (
+                            <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Acciones</th>
+                          )}
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {formData.normativas.map((normativa, index) => (
-                          <tr key={normativa.normaId || index}>
-                            <td className="px-4 py-2 text-sm text-gray-900">
-                              {tiposNorma.find(t => t.tipoNormaId === parseInt(normativa.tipoNormaId))?.nombre}
+                          <tr key={normativa.normaId || index} className="hover:bg-gray-50 transition-colors">
+                            <td className="px-4 py-3 text-sm text-gray-900">
+                              {tiposNorma.find(t => t.tipoNormaId === parseInt(normativa.tipoNormaId))?.nombre || '-'}
                             </td>
-                            <td className="px-4 py-2 text-sm text-gray-900">{normativa.nombreNorma}</td>
-                            <td className="px-4 py-2 text-sm text-gray-900">{normativa.nivelGobierno || '-'}</td>
-                            <td className="px-4 py-2 text-sm text-gray-900">{normativa.sector || '-'}</td>
-                            <td className="px-4 py-2 text-sm text-gray-900">
+                            <td className="px-4 py-3 text-sm text-gray-900">{normativa.nombreNorma}</td>
+                            <td className="px-4 py-3 text-sm text-gray-600">{normativa.nivelGobierno || '-'}</td>
+                            <td className="px-4 py-3 text-sm text-gray-600">{normativa.sector || '-'}</td>
+                            <td className="px-4 py-3 text-sm text-gray-600">
                               {normativa.fechaPublicacion ? new Date(normativa.fechaPublicacion).toLocaleDateString('es-PE') : '-'}
                             </td>
-                            <td className="px-4 py-2">
-                              <button
-                                type="button"
-                                onClick={() => handleEliminarNormativa(index)}
-                                className="text-red-600 hover:text-red-800"
-                                title="Eliminar"
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </td>
+                            {!isReadOnly && (
+                              <td className="px-4 py-3 text-center">
+                                <button
+                                  type="button"
+                                  onClick={() => handleEliminarNormativa(index)}
+                                  className="text-red-600 hover:text-red-800 p-1 hover:bg-red-50 rounded transition-colors"
+                                  title="Eliminar"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </td>
+                            )}
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
+                ) : (
+                  <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                    <FileCheck className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                    <p className="text-gray-500 text-sm">No hay normativas agregadas</p>
+                  </div>
                 )}
               </div>
 
-              {/* CRITERIO DE EVALUACIÓN */}
-              <div className="border-t pt-6">
-                <h4 className="text-md font-semibold text-gray-800 mb-4">CRITERIO DE EVALUACIÓN</h4>
+              {/* Sección: CRITERIO DE EVALUACIÓN */}
+              <div className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-purple-600" />
+                  Criterios de Evaluación
+                </h3>
                 
-                <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                  <div className="grid grid-cols-1 gap-3 mb-3">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                {!isReadOnly && (
+                  <div className="bg-purple-50 p-4 rounded-lg mb-4 border border-purple-200">
+                  <p className="text-sm text-purple-800 mb-3 font-medium">Agregar Nuevo Criterio</p>
+                  <div className="flex gap-3">
+                    <div className="flex-1">
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
                         Descripción
                       </label>
                       <input
                         type="text"
                         value={nuevoCriterio.descripcion}
                         onChange={(e) => setNuevoCriterio(prev => ({ ...prev, descripcion: e.target.value }))}
-                        className="input-field"
-                        placeholder="Descripción del criterio"
+                        className="input-field text-sm"
+                        placeholder="Descripción del criterio de evaluación..."
                       />
                     </div>
                     
-                    <div className="flex justify-end gap-2">
+                    <div className="flex items-end gap-2">
                       {editingCriterioIndex !== null && (
                         <button
                           type="button"
@@ -938,90 +1071,103 @@ const CompromisoGobiernoDigital = () => {
                             setNuevoCriterio({ descripcion: '', activo: true });
                             setEditingCriterioIndex(null);
                           }}
-                          className="btn-secondary flex items-center gap-2"
+                          className="btn-secondary flex items-center gap-2 text-sm py-2"
                         >
-                          <X size={18} />
+                          <X size={16} />
                           Cancelar
                         </button>
                       )}
                       <button
                         type="button"
                         onClick={handleAgregarCriterio}
-                        className="btn-primary flex items-center gap-2"
+                        className="btn-primary flex items-center gap-2 text-sm py-2"
                       >
-                        <Plus size={18} />
+                        <Plus size={16} />
                         {editingCriterioIndex !== null ? 'Actualizar' : 'Agregar'}
                       </button>
                     </div>
                   </div>
                 </div>
+                )}
 
                 {/* Tabla de criterios */}
-                {formData.criteriosEvaluacion.length > 0 && (
-                  <div className="overflow-x-auto">
+                {formData.criteriosEvaluacion.length > 0 ? (
+                  <div className="overflow-x-auto border border-gray-200 rounded-lg">
                     <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
+                      <thead className="bg-gray-100">
                         <tr>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">#</th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Descripción</th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-16">#</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Descripción</th>
+                          <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">Estado</th>
+                          {!isReadOnly && (
+                            <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-28">Acciones</th>
+                          )}
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {formData.criteriosEvaluacion.map((criterio, index) => {
                           return (
-                            <tr key={criterio.id || index}>
-                              <td className="px-4 py-2 text-sm text-gray-700">{index + 1}</td>
-                              <td className="px-4 py-2 text-sm text-gray-900">{criterio.descripcion}</td>
-                              <td className="px-4 py-2">
-                                <span className={criterio.activo ? 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold' : 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold'}>
-                                  {criterio.activo ? 'Activo' : 'Inactivo'}
+                            <tr key={criterio.id || index} className="hover:bg-gray-50 transition-colors">
+                              <td className="px-4 py-3 text-sm text-gray-700 font-medium">{index + 1}</td>
+                              <td className="px-4 py-3 text-sm text-gray-900">{criterio.descripcion}</td>
+                              <td className="px-4 py-3 text-center">
+                                <span className={`${criterio.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} px-3 py-1 rounded-full text-xs font-semibold`}>
+                                  {criterio.activo ? '✓ Activo' : '✗ Inactivo'}
                                 </span>
                               </td>
-                              <td className="px-4 py-2 space-x-2">
-                                <button
-                                  type="button"
-                                  onClick={() => handleEditarCriterio(index)}
-                                  className="text-primary hover:text-primary-dark"
-                                  title="Editar"
-                                >
-                                  <Edit2 size={16} />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => handleEliminarCriterio(index)}
-                                  className="text-red-600 hover:text-red-800"
-                                  title="Eliminar"
-                                >
-                                  <Trash2 size={16} />
-                                </button>
-                              </td>
+                              {!isReadOnly && (
+                                <td className="px-4 py-3 text-center space-x-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleEditarCriterio(index)}
+                                    className="text-primary hover:text-primary-dark p-1 hover:bg-primary-50 rounded transition-colors"
+                                    title="Editar"
+                                  >
+                                    <Edit2 size={16} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleEliminarCriterio(index)}
+                                    className="text-red-600 hover:text-red-800 p-1 hover:bg-red-50 rounded transition-colors"
+                                    title="Eliminar"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                </td>
+                              )}
                             </tr>
                           );
                         })}
                       </tbody>
                     </table>
                   </div>
+                ) : (
+                  <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                    <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                    <p className="text-gray-500 text-sm">No hay criterios de evaluación agregados</p>
+                  </div>
                 )}
               </div>
 
               {/* Botones de acción */}
-              <div className="flex justify-end gap-3 pt-4 border-t">
+              <div className="sticky bottom-0 bg-white border-t-2 border-gray-200 pt-4 pb-2 flex justify-between items-center shadow-lg -mx-6 px-6 -mb-6">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="btn-secondary"
+                  className="btn-secondary flex items-center gap-2"
                 >
-                  Cerrar
+                  <X size={18} />
+                  {isReadOnly ? 'Cerrar' : 'Cancelar'}
                 </button>
-                <button
-                  type="submit"
-                  className="btn-primary flex items-center gap-2"
-                >
-                  <Save size={18} />
-                  {editingCompromiso ? 'Actualizar Compromiso' : 'Registrar Compromiso'}
-                </button>
+                {!isReadOnly && (
+                  <button
+                    type="submit"
+                    className="btn-primary flex items-center gap-2 px-6"
+                  >
+                    <Save size={18} />
+                    {editingCompromiso ? 'Actualizar Compromiso' : 'Registrar Compromiso'}
+                  </button>
+                )}
               </div>
             </form>
           </div>

@@ -874,7 +874,12 @@ const HistorialCumplimiento = () => {
               <History className="w-8 h-8 text-primary-600" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-800">Historial de Cumplimiento</h1>
+              <h1 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                Historial de Cumplimiento
+                <span className="px-2 py-0.5 text-[10px] font-bold bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900 rounded-full shadow-sm animate-pulse">
+                  BETA
+                </span>
+              </h1>
               <p className="text-gray-600 mt-1">Visualiza todos los cambios de estado y snapshots de datos</p>
             </div>
           </div>

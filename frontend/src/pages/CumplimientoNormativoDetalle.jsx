@@ -29,6 +29,7 @@ import { getCatalogoOptions, getConfigValue } from '../services/catalogoService'
 import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
 import PDFViewer from '../components/PDFViewer';
 import Compromiso3Paso1 from '../components/Compromiso3/Compromiso3Paso1';
+import { Compromiso10Tabs } from '../components/Compromiso10';
 import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save, Eye, ExternalLink, Plus, Trash2, Edit2, HelpCircle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import emailService from '../services/emailService';
@@ -5805,8 +5806,8 @@ const CumplimientoNormativoDetalle = () => {
                 </div>
               </>
             ) : parseInt(formData.compromisoId) === 10 ? (
-              // COMPROMISO 10: Datos Abiertos
-              <>
+              // COMPROMISO 10: Datos Abiertos con pestañas
+              <Compromiso10Tabs compndaEntId={com10RecordId}>
                 <h2 className="text-base font-semibold text-gray-800 mb-3">Paso 1: Datos Abiertos Publicados en el Portal Nacional (PNDA)</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -6068,7 +6069,7 @@ const CumplimientoNormativoDetalle = () => {
                     </p>
                   </div>
                 </div>
-              </>
+              </Compromiso10Tabs>
             ) : parseInt(formData.compromisoId) === 11 ? (
               // COMPROMISO 11: Aportación de Información Geoespacial al Proyecto GeoPerú
               <>

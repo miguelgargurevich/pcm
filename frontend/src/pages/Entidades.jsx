@@ -650,7 +650,7 @@ const Entidades = () => {
                 <Building2 className="w-8 h-8 text-primary-600" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-800">Gestión de Entidades</h1>
+                <h1 className="text-xl font-bold text-gray-800">Módulo de Gestión de Entidades</h1>
                 <p className="text-gray-600 mt-1">Administración de entidades del Estado</p>
               </div>
             </div>

@@ -3,8 +3,10 @@ import { marcoNormativoService } from '../services/marcoNormativoService';
 import { catalogosService } from '../services/catalogosService';
 import { showConfirmToast, showSuccessToast, showErrorToast } from '../utils/toast.jsx';
 import { Plus, Edit2, Trash2, X, Save, Filter, FilterX, Search, FileText, ExternalLink, Eye, ChevronDown, ChevronUp } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 const MarcoNormativo = () => {
+  const { user } = useAuth();
   const [normas, setNormas] = useState([]);
   const [normasFiltradas, setNormasFiltradas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,6 +17,16 @@ const MarcoNormativo = () => {
   const [showPdfModal, setShowPdfModal] = useState(false);
   const [pdfUrl, setPdfUrl] = useState('');
   const [pdfTitle, setPdfTitle] = useState('');
+  
+  // Solo lectura para entidades
+  const isReadOnly = user?.nombrePerfil === 'Entidad';
+  
+  // Debug: verificar el perfil del usuario
+  useEffect(() => {
+    console.log('👤 MarcoNormativo - Usuario:', user);
+    console.log('👤 MarcoNormativo - nombrePerfil:', user?.nombrePerfil);
+    console.log('🔒 MarcoNormativo - isReadOnly:', isReadOnly);
+  }, [user, isReadOnly]);
 
   // Catálogos dinámicos
   const [tiposNorma, setTiposNorma] = useState([]);
@@ -163,6 +175,11 @@ const MarcoNormativo = () => {
   };
 
   const handleDelete = async (id) => {
+    if (isReadOnly) {
+      console.log('⛔ Acción bloqueada: usuario en modo solo lectura');
+      showErrorToast('No tiene permisos para eliminar registros');
+      return;
+    }
     showConfirmToast({
       title: '¿Está seguro de eliminar esta norma?',
       message: 'Esta acción desactivará la norma.',
@@ -284,6 +301,13 @@ const MarcoNormativo = () => {
 
   return (
     <div className="p-6">
+      {isReadOnly && (
+        <div className="mb-6 bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg flex items-center gap-2">
+          <FileText size={20} />
+          <span className="font-medium">Modo solo lectura - No tiene permisos para editar</span>
+        </div>
+      )}
+      
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -291,14 +315,16 @@ const MarcoNormativo = () => {
               <FileText className="w-8 h-8 text-primary-600" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-800">Marco Normativo</h1>
+              <h1 className="text-xl font-bold text-gray-800">Módulo de Marco Normativo</h1>
               <p className="text-gray-600 mt-1">Administración de normas y documentos legales</p>
             </div>
           </div>
-          <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
-            <Plus size={20} />
-            Nueva Norma
-          </button>
+          {!isReadOnly && (
+            <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
+              <Plus size={20} />
+              Nueva Norma
+            </button>
+          )}
         </div>
       </div>
 
@@ -510,20 +536,32 @@ const MarcoNormativo = () => {
                     {norma.sector}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <button
-                      onClick={() => handleEdit(norma)}
-                      className="text-primary hover:text-primary-dark"
-                      title="Editar"
-                    >
-                      <Edit2 size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(norma.normaId)}
-                      className="text-red-600 hover:text-red-800"
-                      title="Eliminar"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                    {isReadOnly ? (
+                      <button
+                        onClick={() => handleEdit(norma)}
+                        className="text-primary hover:text-primary-dark"
+                        title="Ver"
+                      >
+                        <Eye size={18} />
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => handleEdit(norma)}
+                          className="text-primary hover:text-primary-dark"
+                          title="Editar"
+                        >
+                          <Edit2 size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(norma.normaId)}
+                          className="text-red-600 hover:text-red-800"
+                          title="Eliminar"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -577,8 +615,8 @@ const MarcoNormativo = () => {
               <div className="flex items-center gap-3">
                 <FileText className="w-6 h-6" />
                 <div>
-                  <h2 className="text-lg font-semibold">{editingNorma ? 'Editar Norma' : 'Nueva Norma'}</h2>
-                  <p className="text-sm text-white/80">Marco normativo del gobierno digital</p>
+                  <h2 className="text-lg font-semibold">{isReadOnly ? 'Ver Norma' : editingNorma ? 'Editar Norma' : 'Nueva Norma'}</h2>
+                  <p className="text-sm text-white/80">{isReadOnly ? 'Modo solo lectura' : 'Marco normativo del gobierno digital'}</p>
                 </div>
               </div>
               <button
@@ -602,6 +640,7 @@ const MarcoNormativo = () => {
                     value={formData.nombreNorma}
                     onChange={handleInputChange}
                     required
+                    disabled={isReadOnly}
                     className="input-field"
                     placeholder="Nombre completo de la norma"
                   />
@@ -617,6 +656,7 @@ const MarcoNormativo = () => {
                     value={formData.numero}
                     onChange={handleInputChange}
                     required
+                    disabled={isReadOnly}
                     className="input-field"
                     placeholder="Ej: 123-2024-PCM"
                   />
@@ -631,6 +671,7 @@ const MarcoNormativo = () => {
                     value={formData.tipoNormaId}
                     onChange={handleInputChange}
                     required
+                    disabled={isReadOnly}
                     className="input-field"
                   >
                     <option value="">Seleccione...</option>
@@ -650,6 +691,7 @@ const MarcoNormativo = () => {
                     value={formData.fechaPublicacion}
                     onChange={handleInputChange}
                     required
+                    disabled={isReadOnly}
                     className="input-field"
                   />
                 </div>
@@ -663,6 +705,7 @@ const MarcoNormativo = () => {
                     value={formData.nivelGobiernoId}
                     onChange={handleInputChange}
                     required
+                    disabled={isReadOnly}
                     className="input-field"
                   >
                     <option value="">Seleccione...</option>
@@ -681,6 +724,7 @@ const MarcoNormativo = () => {
                     value={formData.sectorId}
                     onChange={handleInputChange}
                     required
+                    disabled={isReadOnly}
                     className="input-field"
                   >
                     <option value="">Seleccione...</option>
@@ -699,6 +743,7 @@ const MarcoNormativo = () => {
                     value={formData.descripcion}
                     onChange={handleInputChange}
                     rows="3"
+                    disabled={isReadOnly}
                     className="input-field"
                     placeholder="Descripción o resumen de la norma"
                   />
@@ -713,6 +758,7 @@ const MarcoNormativo = () => {
                     name="url"
                     value={formData.url}
                     onChange={handleInputChange}
+                    disabled={isReadOnly}
                     className="input-field"
                     placeholder="https://..."
                   />
@@ -725,15 +771,17 @@ const MarcoNormativo = () => {
                   onClick={() => setShowModal(false)}
                   className="btn-secondary"
                 >
-                  Cancelar
+                  {isReadOnly ? 'Cerrar' : 'Cancelar'}
                 </button>
-                <button
-                  type="submit"
-                  className="btn-primary flex items-center gap-2"
-                >
-                  <Save size={18} />
-                  {editingNorma ? 'Actualizar' : 'Crear'}
-                </button>
+                {!isReadOnly && (
+                  <button
+                    type="submit"
+                    className="btn-primary flex items-center gap-2"
+                  >
+                    <Save size={18} />
+                    {editingNorma ? 'Actualizar' : 'Crear'}
+                  </button>
+                )}
               </div>
             </form>
           </div>
