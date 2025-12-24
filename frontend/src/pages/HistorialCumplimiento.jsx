@@ -1100,7 +1100,16 @@ const HistorialCumplimiento = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {historial.map((item, index) => (
+                  {historial.map((item, index) => {
+                    // Log para cada item
+                    console.log(`🔍 Item #${index + 1}:`, {
+                      historialId: item.historialId,
+                      usuarioNombre: item.usuarioResponsableNombre,
+                      usuarioPerfil: item.usuarioResponsablePerfil,
+                      keys: Object.keys(item)
+                    });
+                    
+                    return (
                     <tr key={item.historialId}>
                       <td className="px-2 py-3 text-center text-sm font-medium text-gray-900">
                         {(pagination.page - 1) * pagination.pageSize + index + 1}
@@ -1138,6 +1147,9 @@ const HistorialCumplimiento = () => {
                       <td className="px-3 py-3 text-sm text-gray-900">
                         <div className="text-xs leading-tight line-clamp-2">
                           {item.usuarioResponsableNombre || 'Sistema'}
+                          {item.usuarioResponsablePerfil && (
+                            <span className="text-gray-500"> - {item.usuarioResponsablePerfil}</span>
+                          )}
                         </div>
                       </td>
                       <td className="px-3 py-3 text-center text-sm font-medium">
@@ -1150,7 +1162,8 @@ const HistorialCumplimiento = () => {
                         </button>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

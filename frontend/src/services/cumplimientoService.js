@@ -5,6 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5164/api';
 // Crear instancia de axios con configuración base
 const apiClient = axios.create({
   baseURL: API_URL,
+  timeout: 60000, // 60 segundos para free tier
   headers: {
     'Content-Type': 'application/json',
   },
