@@ -69,8 +69,7 @@ const SeguimientoPGDPP = () => {
     fechaFinReal: '',
     etapa: '',
     porcentajeAvance: 0,
-    informeAvance: false,
-    montoInversion: 0,
+    informoAvance: false,
     ambito: ''
   });
 
@@ -89,23 +88,29 @@ const SeguimientoPGDPP = () => {
         if (response.isSuccess && response.data) {
           const data = response.data;
           
+          console.log('📦 Proyectos recibidos del backend:', data.proyectos);
+          
           // Mapear proyectos desde la BD al formato de la vista
-          const proyectosMapeados = (data.proyectos || []).map(p => ({
-            id: p.proyectoId,
-            codigo: p.numeracionProy,
-            nombre: p.nombre,
-            tipoProyecto: p.tipoProy,
-            tipoBeneficiario: p.tipoBeneficiario,
-            fechaInicioProg: p.fecIniProg,
-            fechaFinProg: p.fecFinProg,
-            fechaInicioReal: p.fecIniReal,
-            fechaFinReal: p.fecFinReal,
-            etapa: p.etapaProyecto,
-            porcentajeAvance: p.porcentajeAvance || 0,
-            informeAvance: p.informeAvance || false,
-            montoInversion: p.montoInversion || 0,
-            ambito: p.ambitoProyecto
-          }));
+          const proyectosMapeados = (data.proyectos || []).map((p, index) => {
+            const proyecto = {
+              id: p.proyectoId || p.proyEntId || index, // Usar proyEntId como ID principal
+              codigo: p.numeracionProy,
+              nombre: p.nombre,
+              tipoProyecto: p.tipoProy,
+              tipoBeneficiario: p.tipoBeneficiario,
+              fechaInicioProg: p.fecIniProg,
+              fechaFinProg: p.fecFinProg,
+              fechaInicioReal: p.fecIniReal,
+              fechaFinReal: p.fecFinReal,
+              etapa: p.etapaProyecto,
+              porcentajeAvance: p.porcentajeAvance || 0,
+              informoAvance: p.informoAvance || false,
+              ambito: p.ambitoProyecto
+            };
+            
+            console.log(`Proyecto ${index}:`, proyecto);
+            return proyecto;
+          });
 
           setProyectos(proyectosMapeados);
         }
@@ -188,8 +193,7 @@ const SeguimientoPGDPP = () => {
       fechaFinReal: formatDateForInput(proyecto.fechaFinReal),
       etapa: proyecto.etapa || '',
       porcentajeAvance: proyecto.porcentajeAvance || 0,
-      informeAvance: proyecto.informeAvance || false,
-      montoInversion: proyecto.montoInversion || 0,
+      informoAvance: proyecto.informoAvance || false,
       ambito: proyecto.ambito || ''
     });
     setShowModal(true);
@@ -207,15 +211,26 @@ const SeguimientoPGDPP = () => {
     e.preventDefault();
     
     try {
+      console.log('📝 FormData antes de guardar:', formData);
+      console.log('📊 Porcentaje avance:', formData.porcentajeAvance, 'Tipo:', typeof formData.porcentajeAvance);
+      console.log('� Informó avance:', formData.informoAvance, 'Tipo:', typeof formData.informoAvance);
+      console.log('🔑 Proyecto en edición:', editingProyecto);
+      
       // Actualizar el proyecto en el estado local
       const proyectosActualizados = proyectos.map(p => {
-        if (p.id === editingProyecto.id) {
-          return {
+        // Comparar por ID o por código si el ID no existe
+        const esElMismo = (p.id && editingProyecto.id && p.id === editingProyecto.id) || 
+                          (p.codigo === editingProyecto.codigo);
+        
+        if (esElMismo) {
+          const proyectoActualizado = {
             ...p,
             ...formData,
-            porcentajeAvance: parseInt(formData.porcentajeAvance) || 0,
-            montoInversion: parseFloat(formData.montoInversion) || 0
+            porcentajeAvance: Number(formData.porcentajeAvance) || 0,
+            informoAvance: Boolean(formData.informoAvance)
           };
+          console.log('✅ Proyecto actualizado localmente:', proyectoActualizado);
+          return proyectoActualizado;
         }
         return p;
       });
@@ -231,32 +246,40 @@ const SeguimientoPGDPP = () => {
       const compromiso = compromisoResponse.data;
 
       // Preparar los proyectos para enviar al backend (mapear de vista a BD)
-      const proyectosParaBackend = proyectosActualizados.map(p => ({
-        proyectoId: p.id,
-        numeracionProy: p.codigo,
-        nombre: p.nombre,
-        tipoProy: p.tipoProyecto,
-        tipoBeneficiario: p.tipoBeneficiario,
-        fecIniProg: p.fechaInicioProg,
-        fecFinProg: p.fechaFinProg,
-        fecIniReal: p.fechaInicioReal,
-        fecFinReal: p.fechaFinReal,
-        etapaProyecto: p.etapa,
-        porcentajeAvance: p.porcentajeAvance,
-        informeAvance: p.informeAvance,
-        montoInversion: p.montoInversion,
-        ambitoProyecto: p.ambito,
-        estadoProyecto: true,
-        alineadoPgd: '',
-        accEst: '',
-        activo: true
-      }));
+      const proyectosParaBackend = proyectosActualizados.map(p => {
+        const proyectoBackend = {
+          proyEntId: p.id && typeof p.id === 'number' ? p.id : null, // Usar proyEntId según la entidad del backend
+          numeracionProy: p.codigo,
+          nombre: p.nombre,
+          tipoProy: p.tipoProyecto,
+          tipoBeneficiario: p.tipoBeneficiario,
+          fecIniProg: p.fechaInicioProg,
+          fecFinProg: p.fechaFinProg,
+          fecIniReal: p.fechaInicioReal,
+          fecFinReal: p.fechaFinReal,
+          etapaProyecto: p.etapa,
+          porcentajeAvance: Number(p.porcentajeAvance) || 0,
+          informoAvance: Boolean(p.informoAvance),
+          ambitoProyecto: p.ambito,
+          estadoProyecto: true,
+          alineadoPgd: '',
+          accEst: ''
+        };
+        
+        if (p.codigo === editingProyecto.codigo) {
+          console.log('🚀 Proyecto a enviar al backend:', proyectoBackend);
+        }
+        
+        return proyectoBackend;
+      });
 
       // Actualizar el compromiso completo con los proyectos modificados
       const updateData = {
         ...compromiso,
         proyectos: proyectosParaBackend
       };
+      
+      console.log('📤 Datos completos a enviar:', updateData);
 
       const updateResponse = await com3EPGDService.update(compromiso.comepgdEntId, updateData);
       
@@ -279,13 +302,6 @@ const SeguimientoPGDPP = () => {
     if (!dateString) return '-';
     const date = new Date(dateString);
     return date.toLocaleDateString('es-PE');
-  };
-
-  const formatMoney = (amount) => {
-    return new Intl.NumberFormat('es-PE', {
-      style: 'currency',
-      currency: 'PEN'
-    }).format(amount);
   };
 
   const getEtapaBadgeClass = (etapa) => {
@@ -520,10 +536,7 @@ const SeguimientoPGDPP = () => {
                   % Avance
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Informe Avance
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Monto Inversión
+                  Informó Avance
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Ámbito
@@ -581,12 +594,9 @@ const SeguimientoPGDPP = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${proyecto.informeAvance ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                      {proyecto.informeAvance ? 'SI' : 'NO'}
+                    <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${proyecto.informoAvance ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                      {proyecto.informoAvance ? 'SI' : 'NO'}
                     </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {formatMoney(proyecto.montoInversion)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {proyecto.ambito}
@@ -844,15 +854,15 @@ const SeguimientoPGDPP = () => {
                     {/* Informe Avance */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Informe de Avance
+                        Informó Avance
                       </label>
                       <div className="flex items-center gap-6">
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
                             type="radio"
-                            name="informeAvance"
-                            checked={formData.informeAvance === true}
-                            onChange={() => setFormData(prev => ({ ...prev, informeAvance: true }))}
+                            name="informoAvance"
+                            checked={formData.informoAvance === true}
+                            onChange={() => setFormData(prev => ({ ...prev, informoAvance: true }))}
                             className="w-4 h-4 text-primary accent-primary"
                           />
                           <span className="text-sm">Sí</span>
@@ -860,32 +870,13 @@ const SeguimientoPGDPP = () => {
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
                             type="radio"
-                            name="informeAvance"
-                            checked={formData.informeAvance === false}
-                            onChange={() => setFormData(prev => ({ ...prev, informeAvance: false }))}
+                            name="informoAvance"
+                            checked={formData.informoAvance === false}
+                            onChange={() => setFormData(prev => ({ ...prev, informoAvance: false }))}
                             className="w-4 h-4 text-primary accent-primary"
                           />
                           <span className="text-sm">No</span>
                         </label>
-                      </div>
-                    </div>
-
-                    {/* Monto Inversión */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Monto de Inversión
-                      </label>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">S/</span>
-                        <input
-                          type="number"
-                          name="montoInversion"
-                          value={formData.montoInversion}
-                          onChange={handleInputChange}
-                          className="input-field pl-8"
-                          min="0"
-                          step="0.01"
-                        />
                       </div>
                     </div>
                   </div>
