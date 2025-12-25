@@ -15,7 +15,15 @@ import {
   X,
   Eye,
   Edit2,
-  BarChart3
+  BarChart3,
+  CircleDot,
+  PlayCircle,
+  Loader,
+  Send,
+  SearchCheck,
+  AlertTriangle,
+  CheckCircle2,
+  Layers
 } from 'lucide-react';
 import { dashboardService } from '../services/dashboardService';
 import { useNavigate } from 'react-router-dom';
@@ -533,6 +541,7 @@ const Dashboard = () => {
                 }}
                 className="text-center p-3 bg-gray-50 rounded-lg border-2 border-gray-200 hover:border-gray-400 hover:shadow-md transition-all cursor-pointer"
               >
+
                 <p className="text-2xl font-bold text-gray-800">{estadisticasCompromisos.total}</p>
                 <p className="text-xs text-gray-600 mt-1">Total Activos</p>
               </button>
@@ -540,6 +549,7 @@ const Dashboard = () => {
                 onClick={() => abrirModalCompromisosMultiple([1, 2], 'Compromisos Sin Iniciar')}
                 className="text-center p-3 bg-red-50 rounded-lg border-2 border-red-200 hover:border-red-400 hover:shadow-md transition-all cursor-pointer"
               >
+
                 <p className="text-2xl font-bold text-red-600">{estadisticasCompromisos.pendientes}</p>
                 <p className="text-xs text-gray-600 mt-1">Sin Iniciar</p>
               </button>
@@ -547,6 +557,7 @@ const Dashboard = () => {
                 onClick={() => abrirModalCompromisosMultiple([4, 5, 6, 7], 'Compromisos En Trabajo')}
                 className="text-center p-3 bg-blue-50 rounded-lg border-2 border-blue-200 hover:border-blue-400 hover:shadow-md transition-all cursor-pointer"
               >
+
                 <p className="text-2xl font-bold text-blue-600">{estadisticasCompromisos.enProceso}</p>
                 <p className="text-xs text-gray-600 mt-1">En Trabajo</p>
               </button>
@@ -554,6 +565,7 @@ const Dashboard = () => {
                 onClick={() => abrirModalCompromisos(8, 'Compromisos Aceptados')}
                 className="text-center p-3 bg-green-50 rounded-lg border-2 border-green-200 hover:border-green-400 hover:shadow-md transition-all cursor-pointer"
               >
+
                 <p className="text-2xl font-bold text-green-600">{estadisticasCompromisos.completados}</p>
                 <p className="text-xs text-gray-600 mt-1">Aceptados</p>
               </button>
@@ -568,49 +580,70 @@ const Dashboard = () => {
                     onClick={() => abrirModalCompromisos(1, 'Compromisos Pendientes')}
                     className="flex items-center justify-between p-2 bg-white rounded border border-gray-200 hover:border-gray-400 hover:shadow-sm transition-all cursor-pointer"
                   >
-                    <span className="text-gray-600">Pendientes:</span>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-orange-400" />
+                      <span className="text-gray-600">Pendientes:</span>
+                    </div>
                     <span className="font-semibold text-gray-800">{estadisticasCompromisos.desglose.pendientes}</span>
                   </button>
                   <button 
                     onClick={() => abrirModalCompromisos(2, 'Compromisos Sin Reportar')}
                     className="flex items-center justify-between p-2 bg-white rounded border border-gray-200 hover:border-gray-400 hover:shadow-sm transition-all cursor-pointer"
                   >
-                    <span className="text-gray-600">Sin Reportar:</span>
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-red-400" />
+                      <span className="text-gray-600">Sin Reportar:</span>
+                    </div>
                     <span className="font-semibold text-gray-800">{estadisticasCompromisos.desglose.sinReportar}</span>
                   </button>
                   <button 
                     onClick={() => abrirModalCompromisos(4, 'Compromisos En Proceso')}
                     className="flex items-center justify-between p-2 bg-white rounded border border-blue-200 hover:border-blue-400 hover:shadow-sm transition-all cursor-pointer"
                   >
-                    <span className="text-gray-600">En Proceso:</span>
+                    <div className="flex items-center gap-2">
+                      <PlayCircle className="w-4 h-4 text-yellow-500" />
+                      <span className="text-gray-600">En Proceso:</span>
+                    </div>
                     <span className="font-semibold text-blue-600">{estadisticasCompromisos.desglose.enProceso}</span>
                   </button>
                   <button 
                     onClick={() => abrirModalCompromisos(5, 'Compromisos Enviados')}
                     className="flex items-center justify-between p-2 bg-white rounded border border-blue-200 hover:border-blue-400 hover:shadow-sm transition-all cursor-pointer"
                   >
-                    <span className="text-gray-600">Enviados:</span>
+                    <div className="flex items-center gap-2">
+                      <Send className="w-4 h-4 text-blue-500" />
+                      <span className="text-gray-600">Enviados:</span>
+                    </div>
                     <span className="font-semibold text-blue-600">{estadisticasCompromisos.desglose.enviados}</span>
                   </button>
                   <button 
                     onClick={() => abrirModalCompromisos(6, 'Compromisos En Revisión')}
                     className="flex items-center justify-between p-2 bg-white rounded border border-blue-200 hover:border-blue-400 hover:shadow-sm transition-all cursor-pointer"
                   >
-                    <span className="text-gray-600">En Revisión:</span>
+                    <div className="flex items-center gap-2">
+                      <SearchCheck className="w-4 h-4 text-purple-500" />
+                      <span className="text-gray-600">En Revisión:</span>
+                    </div>
                     <span className="font-semibold text-blue-600">{estadisticasCompromisos.desglose.enRevision}</span>
                   </button>
                   <button 
                     onClick={() => abrirModalCompromisos(7, 'Compromisos Observados')}
                     className="flex items-center justify-between p-2 bg-white rounded border border-orange-200 hover:border-orange-400 hover:shadow-sm transition-all cursor-pointer"
                   >
-                    <span className="text-gray-600">Observados:</span>
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 text-orange-500" />
+                      <span className="text-gray-600">Observados:</span>
+                    </div>
                     <span className="font-semibold text-orange-600">{estadisticasCompromisos.desglose.observados}</span>
                   </button>
                   <button 
                     onClick={() => abrirModalCompromisos(8, 'Compromisos Aceptados')}
                     className="flex items-center justify-between p-2 bg-white rounded border border-green-200 hover:border-green-400 hover:shadow-sm transition-all cursor-pointer"
                   >
-                    <span className="text-gray-600">Aceptados:</span>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      <span className="text-gray-600">Aceptados:</span>
+                    </div>
                     <span className="font-semibold text-green-600">{estadisticasCompromisos.desglose.aceptados}</span>
                   </button>
                 </div>
