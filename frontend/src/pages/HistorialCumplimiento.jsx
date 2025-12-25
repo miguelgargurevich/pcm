@@ -591,15 +591,37 @@ const SnapshotModal = ({ isOpen, onClose, historial }) => {
                         <table className="min-w-full divide-y divide-gray-200 text-xs">
                           <thead className="bg-gray-50">
                             <tr>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Código</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
                               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Descripción</th>
                             </tr>
                           </thead>
                           <tbody className="bg-white divide-y divide-gray-200">
-                            {datosRelacionados.objetivos.map((objetivo, idx) => (
-                              <tr key={idx} className="hover:bg-gray-50">
-                                <td className="px-3 py-2">{typeof objetivo === 'string' ? objetivo : objetivo.Descripcion || objetivo.descripcion || JSON.stringify(objetivo)}</td>
-                              </tr>
-                            ))}
+                            {datosRelacionados.objetivos.map((objetivo, idx) => {
+                              if (typeof objetivo === 'string') {
+                                return (
+                                  <tr key={idx} className="hover:bg-gray-50">
+                                    <td className="px-3 py-2" colSpan="3">{objetivo}</td>
+                                  </tr>
+                                );
+                              }
+                              const codigo = objetivo.NumeracionObj || objetivo.numeracionObj || '-';
+                              const tipo = objetivo.TipoObj === 'E' ? 'Estratégico' : objetivo.TipoObj === 'G' ? 'GD' : objetivo.TipoObj || '-';
+                              const descripcion = objetivo.DescripcionObjetivo || objetivo.descripcionObjetivo || objetivo.Descripcion || objetivo.descripcion || '-';
+                              return (
+                                <tr key={idx} className="hover:bg-gray-50">
+                                  <td className="px-3 py-2 font-mono text-xs">{codigo}</td>
+                                  <td className="px-3 py-2">
+                                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                      tipo === 'Estratégico' ? 'bg-blue-100 text-blue-800' : 
+                                      tipo === 'GD' ? 'bg-purple-100 text-purple-800' : 
+                                      'bg-gray-100 text-gray-800'
+                                    }`}>{tipo}</span>
+                                  </td>
+                                  <td className="px-3 py-2">{descripcion}</td>
+                                </tr>
+                              );
+                            })}
                           </tbody>
                         </table>
                       </div>
@@ -614,15 +636,28 @@ const SnapshotModal = ({ isOpen, onClose, historial }) => {
                         <table className="min-w-full divide-y divide-gray-200 text-xs">
                           <thead className="bg-gray-50">
                             <tr>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Código</th>
                               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Descripción</th>
                             </tr>
                           </thead>
                           <tbody className="bg-white divide-y divide-gray-200">
-                            {datosRelacionados.acciones.map((accion, idx) => (
-                              <tr key={idx} className="hover:bg-gray-50">
-                                <td className="px-3 py-2">{typeof accion === 'string' ? accion : accion.Descripcion || accion.descripcion || JSON.stringify(accion)}</td>
-                              </tr>
-                            ))}
+                            {datosRelacionados.acciones.map((accion, idx) => {
+                              if (typeof accion === 'string') {
+                                return (
+                                  <tr key={idx} className="hover:bg-gray-50">
+                                    <td className="px-3 py-2" colSpan="2">{accion}</td>
+                                  </tr>
+                                );
+                              }
+                              const codigo = accion.NumeracionAcc || accion.numeracionAcc || '-';
+                              const descripcion = accion.DescripcionAccion || accion.descripcionAccion || accion.Descripcion || accion.descripcion || '-';
+                              return (
+                                <tr key={idx} className="hover:bg-gray-50">
+                                  <td className="px-3 py-2 font-mono text-xs">{codigo}</td>
+                                  <td className="px-3 py-2">{descripcion}</td>
+                                </tr>
+                              );
+                            })}
                           </tbody>
                         </table>
                       </div>
