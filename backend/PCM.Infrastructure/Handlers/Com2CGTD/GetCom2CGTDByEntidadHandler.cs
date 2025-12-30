@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Common;
 using PCM.Application.Features.Com2CGTD.Queries.GetCom2CGTDByEntidad;
+using PCM.Application.Features.Com2CGTD.DTOs;
 using PCM.Infrastructure.Data;
 
 namespace PCM.Infrastructure.Handlers.Com2CGTD;

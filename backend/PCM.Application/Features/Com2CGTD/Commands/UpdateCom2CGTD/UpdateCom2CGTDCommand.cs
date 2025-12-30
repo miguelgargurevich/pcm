@@ -1,4 +1,5 @@
 using PCM.Application.Common;
+using PCM.Application.Features.Com2CGTD.DTOs;
 using MediatR;
 using System.Text.Json.Serialization;
 
@@ -45,19 +46,4 @@ public class Com2CGTDResponse
     public string? CriteriosEvaluados { get; set; }
     
     public List<ComiteMiembroDto>? Miembros { get; set; }
-}
-
-public class ComiteMiembroDto
-{
-    public long? MiembroId { get; set; }
-    public string? Dni { get; set; }
-    public string? Nombre { get; set; }
-    public string? ApellidoPaterno { get; set; }
-    public string? ApellidoMaterno { get; set; }
-    public string? Cargo { get; set; }
-    public string? Email { get; set; }
-    public string? Telefono { get; set; }
-    public string? Rol { get; set; }
-    public DateTime? FechaInicio { get; set; }
-    public bool? Activo { get; set; }
 }

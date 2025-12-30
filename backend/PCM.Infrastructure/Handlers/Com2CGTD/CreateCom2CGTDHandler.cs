@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Common;
 using PCM.Application.Features.Com2CGTD.Commands.CreateCom2CGTD;
+using PCM.Application.Features.Com2CGTD.DTOs;
 using PCM.Infrastructure.Data;
 using Com2CGTDEntity = PCM.Domain.Entities.Com2CGTD;
 using ComiteMiembroEntity = PCM.Domain.Entities.ComiteMiembro;

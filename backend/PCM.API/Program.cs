@@ -97,8 +97,24 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<ICumplimientoHistorialService, CumplimientoHistorialService>();
 builder.Services.AddHttpClient<IReCaptchaService, ReCaptchaService>();
-builder.Services.AddHttpClient<IEmailService, ResendEmailService>();
 builder.Services.AddHttpClient<ISunatService, SunatService>();
+
+// Configuración de Email Service (SMTP o Resend según configuración)
+var useSmtp = !string.IsNullOrEmpty(builder.Configuration["Smtp:Host"]);
+if (useSmtp)
+{
+    builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+    Console.WriteLine("📧 Email Service: SMTP");
+}
+else
+{
+    builder.Services.AddHttpClient<IEmailService, ResendEmailService>();
+    Console.WriteLine("📧 Email Service: Resend");
+}
+
+// Configuración de File Storage Service
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+Console.WriteLine("📁 File Storage: Local");
 
 // Registro de handlers de Auth
 builder.Services.AddScoped<PCM.Infrastructure.Handlers.Auth.ForgotPasswordHandler>();

@@ -87,7 +87,12 @@ const EvaluacionDetallePanel = ({
   // Función para mostrar documento en el visor
   const handleVerDocumento = (url) => {
     if (url) {
-      setPdfUrl(url);
+      // Si la URL ya es absoluta (empieza con http), usarla tal cual
+      // Si es relativa, construir URL absoluta con el host del backend (sin /api)
+      const fullUrl = url.startsWith('http') 
+        ? url 
+        : `http://localhost:5164${url}`;
+      setPdfUrl(fullUrl);
     }
   };
 

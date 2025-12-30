@@ -1,0 +1,92 @@
+# ================================================
+# Docker Compose para Pruebas Locales - PCM
+# ================================================
+# Uso: docker-compose -f docker-compose.local.yml up --build
+# ================================================
+
+version: '3.8'
+
+services:
+  # ============================================
+  # PostgreSQL Database (COMENTADO - Usar BD externa)
+  # ============================================
+  # Usar tu PostgreSQL local en localhost:5433
+  # O en producción: 101.44.10.71:5432
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: pcm-postgres-local
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: pcm_user
+  #     POSTGRES_PASSWORD: pcm_pass_2025
+  #     POSTGRES_DB: pcm_db
+  #   ports:
+  #     - "5433:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #     - ./db:/docker-entrypoint-initdb.d:ro
+  #   networks:
+  #     - pcm-network
+
+  # ============================================
+  # MailHog (COMENTADO - Usar SMTP institucional)
+  # ============================================
+  # En producción se usará SMTP de PCM
+  # mailhog:
+  #   image: mailhog/mailhog:latest
+  #   container_name: pcm-mailhog
+  #   restart: unless-stopped
+  #   ports:
+  #     - "1025:1025"
+  #     - "8025:8025"
+  #   networks:
+  #     - pcm-network
+
+  # ============================================
+  # Backend API (.NET 9)
+  # ============================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    container_name: pcm-backend-local
+    restart: unless-stopped
+    ports:
+      - "5164:5164"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5164
+    volumes:
+      - storage_data:/app/storage  # Volumen para archivos
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Para conectar a servicios del host
+    networks:
+      - pcm-network
+
+  # ============================================
+  # Frontend (React + Vite)
+  # ============================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: pcm-frontend-local
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:5164/api
+    depends_on:
+      - backend
+    networks:
+      - pcm-network
+
+volumes:
+  postgres_data:
+    driver: local
+  storage_data:
+  # postgres_data:  # No se necesita si usas BD externa
+  #
+networks:
+  pcm-network:
+    driver: bridge

@@ -6,6 +6,7 @@ using PCM.Application.Features.CumplimientoNormativo.Commands.CreateCumplimiento
 using PCM.Application.Features.CumplimientoNormativo.Commands.UpdateCumplimiento;
 using PCM.Application.Features.CumplimientoNormativo.Queries.GetAllCumplimientos;
 using PCM.Application.Features.CumplimientoNormativo.Queries.GetCumplimientoById;
+using PCM.Application.Interfaces;
 
 namespace PCM.API.Controllers;
 
@@ -16,11 +17,16 @@ public class CumplimientoNormativoController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly ILogger<CumplimientoNormativoController> _logger;
+    private readonly IFileStorageService _fileStorageService;
 
-    public CumplimientoNormativoController(IMediator mediator, ILogger<CumplimientoNormativoController> logger)
+    public CumplimientoNormativoController(
+        IMediator mediator, 
+        ILogger<CumplimientoNormativoController> logger,
+        IFileStorageService fileStorageService)
     {
         _mediator = mediator;
         _logger = logger;
+        _fileStorageService = fileStorageService;
     }
 
     /// <summary>
@@ -177,10 +183,11 @@ public class CumplimientoNormativoController : ControllerBase
     }
 
     /// <summary>
-    /// Sube un documento PDF a Supabase Storage
+    /// Sube un documento PDF al almacenamiento local
     /// </summary>
     [HttpPost("upload")]
-    public async Task<IActionResult> UploadDocument([FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadDocument(IFormFile file)
     {
         try
         {
@@ -201,53 +208,32 @@ public class CumplimientoNormativoController : ControllerBase
                 return BadRequest(new { isSuccess = false, message = "El archivo no puede superar los 10MB" });
             }
 
-            // Generar nombre único para el archivo y sanitizar el nombre
-            var originalFileName = Path.GetFileName(file.FileName);
-            var sanitizedFileName = System.Text.RegularExpressions.Regex.Replace(originalFileName, @"[^a-zA-Z0-9._-]", "_");
-            var fileName = $"{Guid.NewGuid()}_{sanitizedFileName}";
-            var bucketName = Environment.GetEnvironmentVariable("SUPABASE_S3_BUCKET_NAME") ?? "cumplimiento-documentos";
-            var supabaseUrl = "https://amzwfwfhllwhjffkqxhn.supabase.co";
-            var supabaseKey = Environment.GetEnvironmentVariable("SUPABASE_SERVICE_KEY") ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtendmd2ZobGx3aGpmZmtxeGhuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjM4ODIyOSwiZXhwIjoyMDc3OTY0MjI5fQ.VZSvk3sxYB9mRjHaAu5McySAGQurO7c-eJIl6ET_MCQ";
+            // Subir archivo usando el servicio de almacenamiento local
+            using var stream = file.OpenReadStream();
+            var result = await _fileStorageService.UploadFileAsync(
+                stream, 
+                file.FileName, 
+                file.ContentType, 
+                "documentos"  // Carpeta para documentos de cumplimiento
+            );
 
-            // Subir archivo usando Supabase Storage REST API
-            using var httpClient = new HttpClient();
-            
-            // Convertir IFormFile a byte array
-            using var memoryStream = new MemoryStream();
-            await file.CopyToAsync(memoryStream);
-            var fileBytes = memoryStream.ToArray();
-            
-            var content = new ByteArrayContent(fileBytes);
-            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
-
-            // Configurar headers de autenticación
-            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {supabaseKey}");
-            httpClient.DefaultRequestHeaders.Add("apikey", supabaseKey);
-
-            // Subir archivo (usar POST sin multipart)
-            var uploadUrl = $"{supabaseUrl}/storage/v1/object/{bucketName}/{fileName}";
-            var response = await httpClient.PostAsync(uploadUrl, content);
-
-            if (!response.IsSuccessStatusCode)
+            if (!result.Success)
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Error uploading to Supabase: {response.StatusCode} - {errorContent}");
+                _logger.LogError("Error al subir documento: {Error}", result.ErrorMessage);
+                return StatusCode(500, new { isSuccess = false, message = result.ErrorMessage });
             }
 
-            // Construir URL pública del archivo
-            var publicUrl = $"{supabaseUrl}/storage/v1/object/public/{bucketName}/{fileName}";
-
-            _logger.LogInformation("Documento subido exitosamente: {FileName}", fileName);
+            _logger.LogInformation("Documento subido exitosamente: {FileName}", result.FileName);
 
             return Ok(new
             {
                 isSuccess = true,
                 data = new
                 {
-                    url = publicUrl,
+                    url = result.Url,
                     nombre = file.FileName,
-                    tamano = file.Length,
-                    tipo = file.ContentType
+                    tamano = result.Size,
+                    tipo = result.ContentType
                 },
                 message = "Documento subido exitosamente"
             });
