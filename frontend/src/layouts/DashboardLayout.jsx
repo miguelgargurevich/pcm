@@ -15,7 +15,7 @@ import {
   Menu,
   X,
   Shield,
-  History,
+  // History,
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -32,7 +32,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     { icon: TrendingUp, label: 'Seguimiento PGD-PP', path: '/dashboard/seguimiento' },
     { icon: BarChart3, label: 'Evaluación & Cumplimiento', path: '/dashboard/evaluacion' },
     { icon: Search, label: 'Consultas & Reportes', path: '/dashboard/reportes' },
-    { icon: History, label: 'Historial de Cambios', path: '/dashboard/historial' },
+    // { icon: History, label: 'Historial de Cambios', path: '/dashboard/historial' },
   ];
 
   // Filtrar menú según permisos del usuario
@@ -110,11 +110,11 @@ const Sidebar = ({ isOpen, onClose }) => {
                       <Icon size={18} className="text-gray-100 group-hover:text-white" />
                     </div>
                     <span className="text-sm font-medium flex-1">{item.label}</span>
-                    {/* {isHistorial && (
+                    {/* isHistorial && (
                       <span className="px-2 py-0.5 text-[10px] font-bold bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900 rounded-full shadow-sm animate-pulse">
                         BETA
                       </span>
-                    )} */}
+                    ) */}
                   </Link>
                 );
               })}
