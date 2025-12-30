@@ -96,7 +96,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             <div className="space-y-2">
               {menuItems.map((item, index) => {
                 const Icon = item.icon;
-                // const isHistorial = item.path === '/dashboard/historial';
+               
                 return (
                   <Link
                     key={index}
@@ -110,7 +110,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                       <Icon size={18} className="text-gray-100 group-hover:text-white" />
                     </div>
                     <span className="text-sm font-medium flex-1">{item.label}</span>
-                    
+                   
                   </Link>
                 );
               })}
