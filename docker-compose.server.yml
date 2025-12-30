@@ -1,0 +1,63 @@
+# ================================================
+# Docker Compose para Servidor Linux Cliente
+# ================================================
+# Uso en servidor Linux x86_64/amd64:
+# docker-compose -f docker-compose.server.yml up -d --build
+# ================================================
+
+version: '3.8'
+
+services:
+  # ============================================
+  # Backend API (.NET 9)
+  # ============================================
+  backend:
+    platform: linux/amd64  # Forzar arquitectura x86_64
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+      platforms:
+        - linux/amd64
+    container_name: pcm-backend-server
+    restart: unless-stopped
+    ports:
+      - "5164:5164"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5164
+    volumes:
+      - storage_data:/app/storage  # Volumen para archivos
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - pcm-network
+
+  # ============================================
+  # Frontend (React + Vite + Nginx)
+  # ============================================
+  frontend:
+    platform: linux/amd64  # Forzar arquitectura x86_64
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
+      args:
+        - VITE_API_URL=http://101.44.10.71:5164/api
+        - VITE_RECAPTCHA_SITE_KEY=6Lc2mgEsAAAAAMAsjyD9M0MsqCJxpYHS0-prSm9J
+    container_name: pcm-frontend-server
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - pcm-network
+
+volumes:
+  storage_data:
+    driver: local
+
+networks:
+  pcm-network:
+    driver: bridge
