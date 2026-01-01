@@ -70,12 +70,13 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:5164/api
+        - VITE_RECAPTCHA_SITE_KEY=6Lc2mgEsAAAAAMAsjyD9M0MsqCJxpYHS0-prSm9J
     container_name: pcm-frontend-local
     restart: unless-stopped
     ports:
       - "3000:80"
-    environment:
-      - VITE_API_BASE_URL=http://localhost:5164/api
     depends_on:
       - backend
     networks:

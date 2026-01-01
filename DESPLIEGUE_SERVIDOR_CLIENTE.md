@@ -80,15 +80,13 @@ Verifica que el archivo tenga la configuración correcta:
     "Audience": "PCM_Client",
     "ExpireMinutes": 480
   },
-  "EmailSettings": {
-    "Provider": "Smtp",
-    "SmtpHost": "smtp.gmail.com",
-    "SmtpPort": 587,
-    "SmtpUsername": "tu-email@gmail.com",
-    "SmtpPassword": "tu-contraseña-app",
-    "FromEmail": "notificaciones@pcm.gob.pe",
-    "FromName": "Plataforma PCM",
-    "UseSsl": true
+  "Aws": {
+    "AccessKeyId": "AKIA4TCYZV3ZROYMAUWM",
+    "SecretAccessKey": "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",
+    "Region": "us-east-1",
+    "SesFromEmail": "notificaciones@plataformacumplimientodigital.servicios.gob.pe",
+    "SesFromName": "Plataforma de Cumplimiento Digital - PCM",
+    "FrontendUrl": "http://101.44.10.71:3000"
   },
   "FileStorageSettings": {
     "Provider": "Local",
@@ -475,7 +473,7 @@ echo ""
 - **Arquitectura**: Este despliegue está optimizado para servidores Linux x86_64/amd64
 - **Base de datos**: Se usa la base de datos PostgreSQL externa (101.44.10.71:5432)
 - **Storage**: Los archivos se guardan localmente en volumen Docker
-- **Email**: Configurar SMTP real antes de producción
+- **Email**: AWS SES configurado con dominio plataformacumplimientodigital.servicios.gob.pe
 - **Producción**: Para producción real, considerar usar Kubernetes, nginx proxy, SSL/TLS, etc.
 
 ---

@@ -99,9 +99,16 @@ builder.Services.AddScoped<ICumplimientoHistorialService, CumplimientoHistorialS
 builder.Services.AddHttpClient<IReCaptchaService, ReCaptchaService>();
 builder.Services.AddHttpClient<ISunatService, SunatService>();
 
-// Configuración de Email Service (SMTP o Resend según configuración)
+// Configuración de Email Service (AWS SES, SMTP o Resend según configuración)
+var useAwsSes = !string.IsNullOrEmpty(builder.Configuration["Aws:AccessKeyId"]);
 var useSmtp = !string.IsNullOrEmpty(builder.Configuration["Smtp:Host"]);
-if (useSmtp)
+
+if (useAwsSes)
+{
+    builder.Services.AddScoped<IEmailService, AwsSesEmailService>();
+    Console.WriteLine("📧 Email Service: AWS SES (Amazon Simple Email Service)");
+}
+else if (useSmtp)
 {
     builder.Services.AddScoped<IEmailService, SmtpEmailService>();
     Console.WriteLine("📧 Email Service: SMTP");
