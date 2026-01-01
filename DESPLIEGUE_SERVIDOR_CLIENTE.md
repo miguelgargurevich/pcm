@@ -6,6 +6,17 @@ Esta guía describe cómo desplegar la aplicación PCM en el servidor Linux del 
 
 ## 📋 Requisitos Previos
 
+### Información del Servidor
+
+| Parámetro | Valor |
+|-----------|-------|
+| **Servidor de Aplicación** | ecs-cumplimiento-web |
+| **IP Aplicación** | 101.44.1.6 |
+| **Tipo de Instancia** | t6.large.2 |
+| **Servidor de Base de Datos** | ecs-cumplimiento-db |
+| **IP Base de Datos** | 101.44.10.71 |
+| **Arquitectura** | x86_64 / amd64 |
+
 ### En el Servidor Linux del Cliente
 
 1. **Docker y Docker Compose instalados**
@@ -86,7 +97,7 @@ Verifica que el archivo tenga la configuración correcta:
     "Region": "us-east-1",
     "SesFromEmail": "notificaciones@plataformacumplimientodigital.servicios.gob.pe",
     "SesFromName": "Plataforma de Cumplimiento Digital - PCM",
-    "FrontendUrl": "http://101.44.10.71:3000"
+    "FrontendUrl": "http://101.44.1.6:3000"
   },
   "FileStorageSettings": {
     "Provider": "Local",
@@ -96,8 +107,8 @@ Verifica que el archivo tenga la configuración correcta:
   "Cors": {
     "AllowedOrigins": [
       "http://localhost:3000",
-      "http://101.44.10.71:3000",
-      "http://101.44.10.71",
+      "http://101.44.1.6:3000",
+      "http://101.44.1.6",
       "http://localhost:5173"
     ]
   }
@@ -108,7 +119,7 @@ Verifica que el archivo tenga la configuración correcta:
 
 ```bash
 # Backend API en el servidor
-VITE_API_URL=http://101.44.10.71:5164/api
+VITE_API_URL=http://101.44.1.6:5164/api
 
 # reCAPTCHA
 VITE_RECAPTCHA_SITE_KEY=6Lc2mgEsAAAAAMAsjyD9M0MsqCJxpYHS0-prSm9J
@@ -169,14 +180,14 @@ curl http://localhost:5164/health
 # {"status":"healthy","database":"connected"}
 
 # Verificar desde otro equipo (reemplaza IP)
-curl http://101.44.10.71:5164/health
+curl http://101.44.1.6:5164/health
 ```
 
 ### 2. Verificar el Frontend
 
 ```bash
 # Abrir en navegador:
-# http://101.44.10.71:3000
+# http://101.44.1.6:3000
 
 # O verificar con curl
 curl -I http://localhost:3000
@@ -198,7 +209,7 @@ docker-compose -f docker-compose.server.yml logs -f
 ### 4. Probar Login
 
 ```bash
-# Acceder a: http://101.44.10.71:3000
+# Acceder a: http://101.44.1.6:3000
 # Usuario: admin@pcm.gob.pe
 # Password: Admin2024!
 ```
