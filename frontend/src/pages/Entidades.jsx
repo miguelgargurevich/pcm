@@ -360,6 +360,30 @@ const Entidades = () => {
   const handleEdit = async (entidad) => {
     setEditingEntidad(entidad);
     
+    // Primero cargar las subclasificaciones ANTES de establecer formData
+    let subclasificacionesLoaded = [];
+    
+    // Buscar la clasificación de la subclasificación seleccionada
+    if (entidad.clasificacionId) {
+      // Buscar en subclasificaciones para obtener su clasificacion padre
+      const subclasificacion = subclasificaciones.find(
+        s => s.subclasificacionId === entidad.clasificacionId
+      );
+      if (subclasificacion && subclasificacion.clasificacionId) {
+        setSelectedClasificacion(String(subclasificacion.clasificacionId));
+        // Cargar subclasificaciones de esa clasificación PRIMERO
+        try {
+          const subResponse = await catalogosService.getSubclasificacionesByClasificacion(subclasificacion.clasificacionId);
+          if (subResponse.isSuccess || subResponse.IsSuccess) {
+            subclasificacionesLoaded = subResponse.data || subResponse.Data || [];
+            setSubclasificacionesModal(subclasificacionesLoaded);
+          }
+        } catch (error) {
+          console.error('Error al cargar subclasificaciones:', error);
+        }
+      }
+    }
+    
     // Si tiene ubigeoId, cargar los datos de ubicación
     if (entidad.ubigeoId) {
       setSelectedDepartamento(entidad.departamento || '');
@@ -390,26 +414,21 @@ const Entidades = () => {
         }
       }
     }
-
-    // Buscar la clasificación de la subclasificación seleccionada
-    if (entidad.clasificacionId) {
-      // Buscar en subclasificaciones para obtener su clasificacion padre
-      const subclasificacion = subclasificaciones.find(
-        s => s.subclasificacionId === entidad.clasificacionId
-      );
-      if (subclasificacion && subclasificacion.clasificacionId) {
-        setSelectedClasificacion(String(subclasificacion.clasificacionId));
-        // Cargar subclasificaciones de esa clasificación
-        try {
-          const subResponse = await catalogosService.getSubclasificacionesByClasificacion(subclasificacion.clasificacionId);
-          if (subResponse.isSuccess || subResponse.IsSuccess) {
-            setSubclasificacionesModal(subResponse.data || subResponse.Data || []);
-          }
-        } catch (error) {
-          console.error('Error al cargar subclasificaciones:', error);
-        }
-      }
-    }
+    
+    // Ahora establecer formData con el valor correcto para clasificacionId
+    // Verificar que la subclasificación existe en las opciones cargadas
+    const clasificacionIdValue = entidad.clasificacionId && 
+      subclasificacionesLoaded.length > 0 &&
+      subclasificacionesLoaded.some(s => s.subclasificacionId === entidad.clasificacionId)
+      ? String(entidad.clasificacionId) 
+      : '';
+    
+    console.log('🔍 handleEdit - Valores de clasificación:', {
+      entidadClasificacionId: entidad.clasificacionId,
+      subclasificacionesLoaded: subclasificacionesLoaded.length,
+      clasificacionIdValue,
+      subclasificacionExiste: subclasificacionesLoaded.some(s => s.subclasificacionId === entidad.clasificacionId)
+    });
     
     setFormData({
       ruc: entidad.ruc || '',
@@ -421,7 +440,7 @@ const Entidades = () => {
       ubigeoId: entidad.ubigeoId || '',
       nivelGobiernoId: entidad.nivelGobiernoId ? String(entidad.nivelGobiernoId) : '',
       sectorId: entidad.sectorId ? String(entidad.sectorId) : '',
-      clasificacionId: entidad.clasificacionId ? String(entidad.clasificacionId) : '',
+      clasificacionId: clasificacionIdValue,
       nombreAlcalde: entidad.nombreAlcalde || '',
       apePatAlcalde: entidad.apePatAlcalde || '',
       apeMatAlcalde: entidad.apeMatAlcalde || '',
