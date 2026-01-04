@@ -3353,6 +3353,8 @@ const CumplimientoNormativoDetalle = () => {
           const com10Data = {
             CompromisoId: 10,
             EntidadId: getUserEntityIdForData(),
+            Estado: 'en_proceso',
+            EstadoPCM: 'En Proceso',
             UrlDatosAbiertos: formData.urlDatosAbiertos || null,
             TotalDatasets: formData.totalDatasets ? parseInt(formData.totalDatasets) : null,
             FechaUltimaActualizacionDa: formData.fechaUltimaActualizacionDa || null,

@@ -31,6 +31,8 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                 {
                     CompromisoId = request.CompromisoId,
                     EntidadId = request.EntidadId,
+                    EstadoPCM = request.EstadoPCM ?? "En Proceso",
+                    ObservacionesPCM = request.ObservacionesPCM ?? "",
                     UrlDatosAbiertos = request.UrlDatosAbiertos,
                     TotalDatasets = request.TotalDatasets,
                     FechaUltimaActualizacionDa = request.FechaUltimaActualizacionDa.HasValue 
@@ -50,7 +52,7 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                     CheckDdjj = request.CheckDdjj,
                     UsuarioRegistra = request.UsuarioRegistra,
                     EtapaFormulario = request.EtapaFormulario ?? "",
-                    Estado = "pendiente",
+                    Estado = request.Estado,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };

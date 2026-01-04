@@ -8,6 +8,9 @@ namespace PCM.Application.Features.Com9ModeloGestionDocumental.Commands.CreateCo
     {
         public long CompromisoId { get; set; }
         public Guid EntidadId { get; set; }
+        public string Estado { get; set; } = "pendiente";
+        public string? EstadoPCM { get; set; }
+        public string? ObservacionesPCM { get; set; }
         public DateTime? FechaAprobacionMgd { get; set; }
         public string? NumeroResolucionMgd { get; set; }
         public string? ResponsableMgd { get; set; }
