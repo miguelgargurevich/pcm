@@ -3,6 +3,7 @@ import { entidadesService } from '../services/entidadesService';
 import { catalogosService } from '../services/catalogosService';
 import { ubigeoService } from '../services/ubigeoService';
 import { showConfirmToast, showSuccessToast, showErrorToast, showInfoToast } from '../utils/toast.jsx';
+import { TableSkeleton } from '../components/Skeleton';
 import { Plus, Edit2, Trash2, X, Save, Filter, FilterX, Search, Building2, ChevronDown, ChevronUp } from 'lucide-react';
 
 const Entidades = () => {
@@ -653,8 +654,12 @@ const Entidades = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="p-6">
+        <div className="mb-6">
+          <div className="h-8 bg-gray-200 rounded w-48 animate-pulse mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-80 animate-pulse"></div>
+        </div>
+        <TableSkeleton rows={8} columns={6} />
       </div>
     );
   }

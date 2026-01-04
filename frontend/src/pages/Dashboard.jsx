@@ -26,6 +26,7 @@ import {
   Layers
 } from 'lucide-react';
 import { dashboardService } from '../services/dashboardService';
+import { DashboardSkeleton } from '../components/Skeleton';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
@@ -411,11 +412,7 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import cumplimientoService from '../services/cumplimientoService';
 import { compromisosService } from '../services/compromisosService';
 import { catalogosService } from '../services/catalogosService';
+import { CardSkeleton } from '../components/Skeleton';
 import { FilterX, Edit2, Eye, FileText, FileCheck, Calendar, Search, ClipboardCheck, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 
 const CumplimientoNormativo = () => {
@@ -158,8 +159,14 @@ const CumplimientoNormativo = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="p-6">
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-8 bg-gray-200 rounded w-64 animate-pulse"></div>
+          </div>
+          <div className="h-4 bg-gray-200 rounded w-96 animate-pulse"></div>
+        </div>
+        <CardSkeleton count={6} />
       </div>
     );
   }

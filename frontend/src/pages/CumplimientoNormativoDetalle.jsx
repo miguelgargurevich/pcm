@@ -30,6 +30,7 @@ import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toa
 import PDFViewer from '../components/PDFViewer';
 import Compromiso3Paso1 from '../components/Compromiso3/Compromiso3Paso1';
 import { Compromiso10Tabs } from '../components/Compromiso10';
+import { FormSkeleton } from '../components/Skeleton';
 import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save, Eye, ExternalLink, Plus, Trash2, Edit2, HelpCircle, Users } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import emailService from '../services/emailService';
@@ -472,7 +473,7 @@ const CumplimientoNormativoDetalle = () => {
       console.log('📥 useEffect: Cargando criterios desde DB para compromiso', compromisoIdNum);
       
       try {
-        const criteriosDB = await loadCriteriosFromDB(user.entidadId, compromisoIdNum);
+        const criteriosDB = await loadCriteriosFromDB(user.EntidadId, compromisoIdNum);
         
         if (criteriosDB && criteriosDB.length > 0) {
           console.log('✅ Criterios cargados desde DB:', criteriosDB);
@@ -577,8 +578,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 1: Líder GTD (Usar tabla com1_liderg_td)
       if (compromisoId === 1 && user?.entidadId) {
-        console.log('📞 Llamando Com1LiderGTD.getByEntidad con:', 1, user.entidadId);
-        const response = await com1LiderGTDService.getByEntidad(1, user.entidadId);
+        console.log('📞 Llamando Com1LiderGTD.getByEntidad con:', 1, user.EntidadId);
+        const response = await com1LiderGTDService.getByEntidad(1, user.EntidadId);
         console.log('📦 Respuesta de Com1 getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -656,8 +657,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 2: Comité GTD (Usar tabla com2_cgtd para Paso 1)
       if (compromisoId === 2 && user?.entidadId) {
-        console.log('📞 Llamando Com2CGTD.getByEntidad con:', 2, user.entidadId);
-        const response = await com2CGTDService.getByEntidad(2, user.entidadId);
+        console.log('📞 Llamando Com2CGTD.getByEntidad con:', 2, user.EntidadId);
+        const response = await com2CGTDService.getByEntidad(2, user.EntidadId);
         console.log('📦 Respuesta de Com2 getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -744,9 +745,9 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 3: Plan de Gobierno Digital (Usar tabla com3_epgd)
       if (compromisoId === 3 && user?.entidadId) {
-        console.log('📞 Llamando Com3EPGD.getByEntidad con:', user.entidadId);
+        console.log('📞 Llamando Com3EPGD.getByEntidad con:', user.EntidadId);
         try {
-          const response = await com3EPGDService.getByEntidad(user.entidadId);
+          const response = await com3EPGDService.getByEntidad(user.EntidadId);
           console.log('📦 Respuesta de Com3 getByEntidad:', response);
           
           if (response.isSuccess || response.success) {
@@ -819,8 +820,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 4: Incorporar TD en el PEI
       if (compromisoId === 4 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 4, user.entidadId);
-        const response = await com4PEIService.getByEntidad(4, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 4, user.EntidadId);
+        const response = await com4PEIService.getByEntidad(4, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -882,8 +883,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 5: Estrategia Digital
       if (compromisoId === 5 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 5, user.entidadId);
-        const response = await com5EstrategiaDigitalService.getByEntidad(5, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 5, user.EntidadId);
+        const response = await com5EstrategiaDigitalService.getByEntidad(5, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -942,8 +943,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 6: Migración GOB.PE
       if (compromisoId === 6 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 6, user.entidadId);
-        const response = await com6MigracionGobPeService.getByEntidad(6, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 6, user.EntidadId);
+        const response = await com6MigracionGobPeService.getByEntidad(6, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         console.log('🔍 CHECKPOINT 1 - Antes del if (response.isSuccess || response.success)');
         console.log('🔍 response.isSuccess:', response.isSuccess);
@@ -1023,8 +1024,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 7: Implementación MPD
       if (compromisoId === 7 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 7, user.entidadId);
-        const response = await com7ImplementacionMPDService.getByEntidad(7, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 7, user.EntidadId);
+        const response = await com7ImplementacionMPDService.getByEntidad(7, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1084,8 +1085,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 8: Publicación TUPA
       if (compromisoId === 8 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 8, user.entidadId);
-        const response = await com8PublicacionTUPAService.getByEntidad(8, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 8, user.EntidadId);
+        const response = await com8PublicacionTUPAService.getByEntidad(8, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1145,8 +1146,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 9: Modelo de Gestión Documental
       if (compromisoId === 9 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 9, user.entidadId);
-        const response = await com9ModeloGestionDocumentalService.getByEntidad(9, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 9, user.EntidadId);
+        const response = await com9ModeloGestionDocumentalService.getByEntidad(9, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1207,8 +1208,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 10: Datos Abiertos
       if (compromisoId === 10 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 10, user.entidadId);
-        const response = await com10DatosAbiertosService.getByEntidad(10, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 10, user.EntidadId);
+        const response = await com10DatosAbiertosService.getByEntidad(10, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1269,8 +1270,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 11: AportacionGeoPeru
       if (compromisoId === 11 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 11, user.entidadId);
-        const response = await com11AportacionGeoPeruService.getByEntidad(11, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 11, user.EntidadId);
+        const response = await com11AportacionGeoPeruService.getByEntidad(11, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1334,8 +1335,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 12: ResponsableSoftwarePublico
       if (compromisoId === 12 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 12, user.entidadId);
-        const response = await com12ResponsableSoftwarePublicoService.getByEntidad(12, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 12, user.EntidadId);
+        const response = await com12ResponsableSoftwarePublicoService.getByEntidad(12, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1395,8 +1396,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 13: InteroperabilidadPIDE
       if (compromisoId === 13 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 13, user.entidadId);
-        const response = await com13InteroperabilidadPIDEService.getByEntidad(13, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 13, user.EntidadId);
+        const response = await com13InteroperabilidadPIDEService.getByEntidad(13, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1459,8 +1460,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 14: OficialSeguridadDigital
       if (compromisoId === 14 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 14, user.entidadId);
-        const response = await com14OficialSeguridadDigitalService.getByEntidad(14, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 14, user.EntidadId);
+        const response = await com14OficialSeguridadDigitalService.getByEntidad(14, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1521,8 +1522,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 15: CSIRTInstitucional
       if (compromisoId === 15 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 15, user.entidadId);
-        const response = await com15CSIRTInstitucionalService.getByEntidad(15, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 15, user.EntidadId);
+        const response = await com15CSIRTInstitucionalService.getByEntidad(15, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1583,8 +1584,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 16: SistemaGestionSeguridad
       if (compromisoId === 16 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 16, user.entidadId);
-        const response = await com16SistemaGestionSeguridadService.getByEntidad(16, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 16, user.EntidadId);
+        const response = await com16SistemaGestionSeguridadService.getByEntidad(16, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1646,8 +1647,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 17: PlanTransicionIPv6
       if (compromisoId === 17 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 17, user.entidadId);
-        const response = await com17PlanTransicionIPv6Service.getByEntidad(17, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 17, user.EntidadId);
+        const response = await com17PlanTransicionIPv6Service.getByEntidad(17, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1709,8 +1710,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 18: AccesoPortalTransparencia
       if (compromisoId === 18 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 18, user.entidadId);
-        const response = await com18AccesoPortalTransparenciaService.getByEntidad(18, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 18, user.EntidadId);
+        const response = await com18AccesoPortalTransparenciaService.getByEntidad(18, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1772,8 +1773,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 19: EncuestaNacionalGobDigital
       if (compromisoId === 19 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 19, user.entidadId);
-        const response = await com19EncuestaNacionalGobDigitalService.getByEntidad(19, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 19, user.EntidadId);
+        const response = await com19EncuestaNacionalGobDigitalService.getByEntidad(19, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1833,8 +1834,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 20: DigitalizacionServiciosFacilita
       if (compromisoId === 20 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 20, user.entidadId);
-        const response = await com20DigitalizacionServiciosFacilitaService.getByEntidad(20, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 20, user.EntidadId);
+        const response = await com20DigitalizacionServiciosFacilitaService.getByEntidad(20, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1894,8 +1895,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 21: OficialGobiernoDatos (OGD)
       if (compromisoId === 21 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 21, user.entidadId);
-        const response = await com21OficialGobiernoDatosService.getByEntidad(21, user.entidadId);
+        console.log('📞 Llamando getByEntidad con:', 21, user.EntidadId);
+        const response = await com21OficialGobiernoDatosService.getByEntidad(21, user.EntidadId);
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -2655,9 +2656,15 @@ const CumplimientoNormativoDetalle = () => {
       if (parseInt(formData.compromisoId) === 1 && pasoActual === 1) {
         console.log('🔄 Compromiso 1 - Guardando datos del líder en com1_liderg_td');
         
+        // Validar que tenemos el UserId del usuario autenticado
+        if (!user?.UserId) {
+          showErrorToast('Error: No se pudo obtener la información del usuario. Por favor, refresque la página.');
+          return;
+        }
+        
         const com1Data = {
-          compromisoId: 1,
-          entidadId: user.entidadId,
+          CompromisoId: 1,
+          EntidadId: user.EntidadId,
           dniLider: formData.nroDni,
           nombreLider: formData.nombres,
           apePatLider: formData.apellidoPaterno,
@@ -2669,7 +2676,7 @@ const CumplimientoNormativoDetalle = () => {
           fecIniLider: formData.fechaInicio,
           checkPrivacidad: false,
           checkDdjj: false,
-          usuarioRegistra: user.usuarioId,
+          UsuarioRegistra: user.UserId,
           etapaFormulario: 'paso1',
           estado: 'en_proceso'
         };
@@ -2710,13 +2717,19 @@ const CumplimientoNormativoDetalle = () => {
           Activo: true
         }));
         
+        // Validar que tenemos el UserId del usuario autenticado
+        if (!user?.UserId) {
+          showErrorToast('Error: No se pudo obtener la información del usuario. Por favor, refresque la página.');
+          return;
+        }
+        
         const com2Data = {
           CompromisoId: 2,
-          EntidadId: user.entidadId,
+          EntidadId: user.EntidadId,
           Miembros: miembrosTransformados,
           CheckPrivacidad: false,
           CheckDdjj: false,
-          UsuarioRegistra: user.usuarioId,
+          UsuarioRegistra: user.UserId,
           EtapaFormulario: 'paso1',
           Estado: 'en_proceso'
         };
@@ -2856,7 +2869,7 @@ const CumplimientoNormativoDetalle = () => {
           console.log('📋 Paso 1 Com4 - documentoUrl final:', documentoUrl);
           const com4Data = {
             CompromisoId: 4,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             AnioInicioPei: parseInt(formData.anioInicio) || null,
             AnioFinPei: parseInt(formData.anioFin) || null,
             FechaAprobacionPei: formData.fechaAprobacion || null,
@@ -2864,7 +2877,7 @@ const CumplimientoNormativoDetalle = () => {
             DescripcionPei: formData.descripcionIncorporacion || null,
             AlineadoPgd: formData.alineadoPgd || false,
             RutaPdfPei: documentoUrl || null,
-            UsuarioRegistra: user.userId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1'
           };
           
@@ -2932,7 +2945,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com5Data = {
             CompromisoId: 5,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             NombreEstrategia: formData.nombreEstrategia || null,
             PeriodoInicioEstrategia: parseInt(formData.anioInicio) || null,
             PeriodoFinEstrategia: parseInt(formData.anioFin) || null,
@@ -2942,7 +2955,7 @@ const CumplimientoNormativoDetalle = () => {
             AlineadoPgdEstrategia: formData.alineadoPgd || false,
             EstadoImplementacionEstrategia: formData.estadoImplementacion || null,
             RutaPdfEstrategia: documentoUrl || null,
-            UsuarioRegistra: user.userId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1'
           };
           
@@ -2997,7 +3010,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com6Data = {
             CompromisoId: 6,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             UrlGobpe: formData.urlPortalGobPe || null,
             FechaMigracionGobpe: formData.fechaMigracion || null,
             FechaActualizacionGobpe: formData.fechaUltimaActualizacion || null,
@@ -3007,7 +3020,7 @@ const CumplimientoNormativoDetalle = () => {
             TipoMigracionGobpe: formData.tipoMigracion || null,
             ObservacionGobpe: formData.observacionesMigracion || null,
             RutaPdfGobpe: documentoUrl || null,
-            UsuarioRegistra: user.userId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1'
           };
           
@@ -3058,7 +3071,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com7Data = {
             CompromisoId: 7,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             UrlMpd: formData.urlMpd || null,
             FechaImplementacionMpd: formData.fechaImplementacionMpd || null,
             ResponsableMpd: formData.responsableMpd || null,
@@ -3069,7 +3082,7 @@ const CumplimientoNormativoDetalle = () => {
             InteroperabilidadMpd: formData.interoperabilidadMpd || false,
             ObservacionMpd: formData.observacionMpd || null,
             RutaPdfMpd: documentoUrl || null,
-            UsuarioRegistra: user.userId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1'
           };
           
@@ -3120,7 +3133,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com8Data = {
             CompromisoId: 8,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             UrlTupa: formData.urlTupa || null,
             NumeroResolucionTupa: formData.numeroResolucionTupa || null,
             FechaAprobacionTupa: formData.fechaAprobacionTupa || null,
@@ -3131,7 +3144,7 @@ const CumplimientoNormativoDetalle = () => {
             ActualizadoTupa: formData.actualizadoTupa || false,
             ObservacionTupa: formData.observacionesTupa || null,
             RutaPdfTupa: documentoUrl || null,
-            UsuarioRegistra: user.userId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1'
           };
           
@@ -3182,7 +3195,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com9Data = {
             CompromisoId: 9,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             FechaAprobacionMgd: formData.fechaAprobacionMgd || null,
             NumeroResolucionMgd: formData.numeroResolucionMgd || null,
             ResponsableMgd: formData.responsableMgd || null,
@@ -3194,7 +3207,7 @@ const CumplimientoNormativoDetalle = () => {
             InteroperaSistemasMgd: formData.interoperaSistemasMgd || false,
             ObservacionMgd: formData.observacionesMgd || null,
             RutaPdfMgd: documentoUrl || null,
-            UsuarioRegistra: user.usuarioId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1'
           };
           
@@ -3245,7 +3258,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com10Data = {
             CompromisoId: 10,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             UrlDatosAbiertos: formData.urlDatosAbiertos || null,
             TotalDatasets: formData.totalDatasets ? parseInt(formData.totalDatasets) : null,
             FechaUltimaActualizacionDa: formData.fechaUltimaActualizacionDa || null,
@@ -3257,7 +3270,7 @@ const CumplimientoNormativoDetalle = () => {
             FechaAprobacionDa: formData.fechaAprobacionDa || null,
             ObservacionDa: formData.observacionesDa || null,
             RutaPdfDa: documentoUrl || null,
-            UsuarioRegistra: user.usuarioId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1'
           };
           
@@ -3309,7 +3322,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoParaGuardar === 1) {
           const com11Data = {
             CompromisoId: 11,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             // Campos específicos de GeoPeru
             UrlGeo: formData.urlGeo || null,
             TipoInformacionGeo: formData.tipoInformacionGeo || null,
@@ -3324,7 +3337,7 @@ const CumplimientoNormativoDetalle = () => {
             InteroperabilidadGeo: formData.interoperabilidadGeo || false,
             ObservacionGeo: formData.observacionGeo || null,
             RutaPdfGeo: documentoUrl || formData.rutaPdfGeo || null,
-            UsuarioRegistra: user.usuarioId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3377,7 +3390,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com12Data = {
             CompromisoId: 12,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             DniRsp: formData.dniRsp || null,
             NombreRsp: formData.nombreRsp || null,
             ApePatRsp: formData.apePatRsp || null,
@@ -3389,7 +3402,7 @@ const CumplimientoNormativoDetalle = () => {
             NumeroResolucionRsp: formData.numeroResolucionRsp || null,
             ObservacionRsp: formData.observacionRsp || null,
             RutaPdfRsp: documentoUrl || formData.rutaPdfRsp || null,
-            UsuarioRegistra: user.usuarioId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3442,7 +3455,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com13Data = {
             CompromisoId: 13,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             TipoIntegracionPide: formData.tipoIntegracionPide || null,
             NombreServicioPide: formData.nombreServicioPide || null,
             DescripcionServicioPide: formData.descripcionServicioPide || null,
@@ -3457,7 +3470,7 @@ const CumplimientoNormativoDetalle = () => {
             InteroperabilidadPide: formData.interoperabilidadPide || false,
             ObservacionPide: formData.observacionPide || null,
             RutaPdfPide: documentoUrl || formData.rutaPdfPide || null,
-            UsuarioRegistra: user.usuarioId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3513,7 +3526,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com14Data = {
             CompromisoId: 14,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             DniOscd: formData.dniOscd || null,
             NombreOscd: formData.nombreOscd || null,
             ApePatOscd: formData.apePatOscd || null,
@@ -3526,7 +3539,7 @@ const CumplimientoNormativoDetalle = () => {
             ComunicadoPcmOscd: formData.comunicadoPcmOscd || false,
             ObservacionOscd: formData.observacionOscd || null,
             RutaPdfOscd: documentoUrl || formData.rutaPdfOscd || null,
-            UsuarioRegistra: user.usuarioId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3579,7 +3592,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com15Data = {
             CompromisoId: 15,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             NombreCsirt: formData.nombreCsirt || null,
             FechaConformacionCsirt: formData.fechaConformacionCsirt || null,
             NumeroResolucionCsirt: formData.numeroResolucionCsirt || null,
@@ -3591,7 +3604,7 @@ const CumplimientoNormativoDetalle = () => {
             ComunicadoPcmCsirt: formData.comunicadoPcmCsirt || false,
             ObservacionCsirt: formData.observacionCsirt || null,
             RutaPdfCsirt: documentoUrl || formData.rutaPdfCsirt || null,
-            UsuarioRegistra: user.usuarioId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3644,7 +3657,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com16Data = {
             CompromisoId: 16,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             ResponsableSgsi: formData.responsableSgsi || null,
             CargoResponsableSgsi: formData.cargoResponsableSgsi || null,
             CorreoSgsi: formData.correoSgsi || null,
@@ -3658,7 +3671,7 @@ const CumplimientoNormativoDetalle = () => {
             RutaPdfPoliticasSgsi: documentoUrl || formData.rutaPdfPoliticasSgsi || null,
             RutaPdfCertificadoSgsi: formData.rutaPdfCertificadoSgsi || null,
             ObservacionSgsi: formData.observacionSgsi || null,
-            UsuarioRegistra: user.usuarioId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3711,7 +3724,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com17Data = {
             CompromisoId: 17,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             ResponsableIpv6: formData.responsableIpv6 || null,
             CargoResponsableIpv6: formData.cargoResponsableIpv6 || null,
             CorreoIpv6: formData.correoIpv6 || null,
@@ -3724,7 +3737,7 @@ const CumplimientoNormativoDetalle = () => {
             DescripcionPlanIpv6: formData.descripcionPlanIpv6 || null,
             RutaPdfPlanIpv6: documentoUrl || formData.rutaPdfPlanIpv6 || null,
             ObservacionIpv6: formData.observacionIpv6 || null,
-            UsuarioRegistra: user.usuarioId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3777,7 +3790,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com18Data = {
             CompromisoId: 18,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             ResponsablePte: formData.responsablePte || null,
             CargoResponsablePte: formData.cargoResponsablePte || null,
             CorreoPte: formData.correoPte || null,
@@ -3790,7 +3803,7 @@ const CumplimientoNormativoDetalle = () => {
             DescripcionPte: formData.descripcionPte || null,
             RutaPdfPte: documentoUrl || formData.rutaPdfPte || null,
             ObservacionPte: formData.observacionPte || null,
-            UsuarioRegistra: user.usuarioId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3843,7 +3856,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com19Data = {
             CompromisoId: 19,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             AnioEnad: formData.anioEnad ? parseInt(formData.anioEnad) : null,
             ResponsableEnad: formData.responsableEnad || null,
             CargoResponsableEnad: formData.cargoResponsableEnad || null,
@@ -3854,7 +3867,7 @@ const CumplimientoNormativoDetalle = () => {
             EnlaceFormularioEnad: formData.enlaceFormularioEnad || null,
             ObservacionEnad: formData.observacionEnad || null,
             RutaPdfEnad: documentoUrl || formData.rutaPdfEnad || null,
-            UsuarioRegistra: user.usuarioId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3907,7 +3920,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com20Data = {
             CompromisoId: 20,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             ResponsableFacilita: formData.responsableFacilita || null,
             CargoResponsableFacilita: formData.cargoResponsableFacilita || null,
             CorreoFacilita: formData.correoFacilita || null,
@@ -3918,7 +3931,7 @@ const CumplimientoNormativoDetalle = () => {
             TotalServiciosDigitalizados: formData.totalServiciosDigitalizados ? parseInt(formData.totalServiciosDigitalizados) : null,
             RutaPdfFacilita: documentoUrl || formData.rutaPdfFacilita || null,
             ObservacionFacilita: formData.observacionFacilita || null,
-            UsuarioRegistra: user.usuarioId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3971,7 +3984,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com21Data = {
             CompromisoId: 21,
-            EntidadId: user.entidadId,
+            EntidadId: user.EntidadId,
             DniOgd: formData.dniOgd || null,
             NombreOgd: formData.nombreOgd || null,
             ApePatOgd: formData.apePatOgd || null,
@@ -3984,7 +3997,7 @@ const CumplimientoNormativoDetalle = () => {
             ComunicadoPcmOgd: formData.comunicadoPcmOgd || false,
             RutaPdfOgd: documentoUrl || null,
             ObservacionOgd: formData.observacionOgd || null,
-            UsuarioRegistra: user.usuarioId,
+            UsuarioRegistra: user.UserId,
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -4040,7 +4053,7 @@ const CumplimientoNormativoDetalle = () => {
           
           try {
             const criteriosGuardados = await saveCriteriosToDB(
-              user.entidadId, 
+              user.EntidadId, 
               parseInt(formData.compromisoId), 
               formData.criteriosEvaluados
             );
@@ -4083,8 +4096,8 @@ const CumplimientoNormativoDetalle = () => {
    */
   const getCorreoLiderGTD = async () => {
     try {
-      console.log('🔍 Obteniendo correo del líder GTD para entidad:', user.entidadId);
-      const response = await com1LiderGTDService.getByEntidad(1, user.entidadId);
+      console.log('🔍 Obteniendo correo del líder GTD para entidad:', user.EntidadId);
+      const response = await com1LiderGTDService.getByEntidad(1, user.EntidadId);
       console.log('🔍 Respuesta completa getCorreoLiderGTD:', response);
       
       if (response.isSuccess && response.data) {
@@ -4230,12 +4243,8 @@ const CumplimientoNormativoDetalle = () => {
     navigate('/dashboard/cumplimiento');
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
+  if (loading || loadingCatalogos) {
+    return <FormSkeleton showSteps={true} showHeader={true} />;
   }
 
   return (
@@ -4962,7 +4971,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoResponsable}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoResponsable ? 'border-red-500' : ''}`}
-                      placeholder="correo@entidad.gob.pe"
+                      placeholder="correo@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoResponsable && (
@@ -5109,7 +5118,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.urlMpd}
                       onChange={handleInputChange}
                       className={`input-field ${errores.urlMpd ? 'border-red-500' : ''}`}
-                      placeholder="https://mesadepartes.entidad.gob.pe"
+                      placeholder="https://mesadepartes.entidad.com"
                       disabled={viewMode}
                     />
                     {errores.urlMpd && (
@@ -5228,7 +5237,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoResponsableMpd}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoResponsableMpd ? 'border-red-500' : ''}`}
-                      placeholder="correo@entidad.gob.pe"
+                      placeholder="correo@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoResponsableMpd && (
@@ -5353,7 +5362,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.urlTupa}
                       onChange={handleInputChange}
                       className={`input-field ${errores.urlTupa ? 'border-red-500' : ''}`}
-                      placeholder="https://www.entidad.gob.pe/tupa"
+                      placeholder="https://www.entidad.com/tupa"
                       disabled={viewMode}
                     />
                     {errores.urlTupa && (
@@ -5452,7 +5461,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoResponsableTupa}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoResponsableTupa ? 'border-red-500' : ''}`}
-                      placeholder="correo@entidad.gob.pe"
+                      placeholder="correo@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoResponsableTupa && (
@@ -5674,7 +5683,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoResponsableMgd}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoResponsableMgd ? 'border-red-500' : ''}`}
-                      placeholder="correo@entidad.gob.pe"
+                      placeholder="correo@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoResponsableMgd && (
@@ -5960,7 +5969,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoDa}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoDa ? 'border-red-500' : ''}`}
-                      placeholder="correo@entidad.gob.pe"
+                      placeholder="correo@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoDa && (
@@ -6251,7 +6260,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoResponsableGeo || ''}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoResponsableGeo ? 'border-red-500' : ''}`}
-                      placeholder="correo@entidad.gob.pe"
+                      placeholder="correo@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoResponsableGeo && (
@@ -6529,7 +6538,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoRsp || ''}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoRsp ? 'border-red-500' : ''}`}
-                      placeholder="correo@entidad.gob.pe"
+                      placeholder="correo@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoRsp && (
@@ -6836,7 +6845,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoResponsablePide || ''}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoResponsablePide ? 'border-red-500' : ''}`}
-                      placeholder="correo@entidad.gob.pe"
+                      placeholder="correo@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoResponsablePide && (
@@ -7109,7 +7118,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoOscd || ''}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoOscd ? 'border-red-500' : ''}`}
-                      placeholder="correo@entidad.gob.pe"
+                      placeholder="correo@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoOscd && (
@@ -7386,7 +7395,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoCsirt || ''}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoCsirt ? 'border-red-500' : ''}`}
-                      placeholder="csirt@entidad.gob.pe"
+                      placeholder="csirt@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoCsirt && (
@@ -7585,7 +7594,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoSgsi || ''}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoSgsi ? 'border-red-500' : ''}`}
-                      placeholder="correo@entidad.gob.pe"
+                      placeholder="correo@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoSgsi && (
@@ -7935,7 +7944,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoIpv6 || ''}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoIpv6 ? 'border-red-500' : ''}`}
-                      placeholder="correo@entidad.gob.pe"
+                      placeholder="correo@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoIpv6 && (
@@ -8205,7 +8214,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoPte || ''}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoPte ? 'border-red-500' : ''}`}
-                      placeholder="correo@entidad.gob.pe"
+                      placeholder="correo@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoPte && (
@@ -8443,7 +8452,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoEnad || ''}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoEnad ? 'border-red-500' : ''}`}
-                      placeholder="correo@entidad.gob.pe"
+                      placeholder="correo@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoEnad && (
@@ -8663,7 +8672,7 @@ const CumplimientoNormativoDetalle = () => {
                       value={formData.correoFacilita || ''}
                       onChange={handleInputChange}
                       className={`input-field ${errores.correoFacilita ? 'border-red-500' : ''}`}
-                      placeholder="correo@entidad.gob.pe"
+                      placeholder="correo@entidad.com"
                       disabled={viewMode}
                     />
                     {errores.correoFacilita && (
@@ -9212,7 +9221,7 @@ const CumplimientoNormativoDetalle = () => {
                   value={formData.correoElectronico}
                   onChange={handleInputChange}
                   className={`input-field ${errores.correoElectronico ? 'border-red-500' : ''}`}
-                  placeholder="ejemplo@gob.pe"
+                  placeholder="ejemplo@correo.com"
                   disabled={viewMode}
                 />
                 {errores.correoElectronico && (
@@ -9727,11 +9736,8 @@ const CumplimientoNormativoDetalle = () => {
                   value={miembroActual.email}
                   onChange={(e) => setMiembroActual({ ...miembroActual, email: e.target.value })}
                   className="input-field"
-                  placeholder="ejemplo@gob.pe"
+                  placeholder="ejemplo@correo.com"
                 />
-                {miembroActual.email && !miembroActual.email.endsWith('@gob.pe') && (
-                  <p className="text-xs text-red-500 mt-1">El correo debe ser del dominio @gob.pe</p>
-                )}
               </div>
 
               <div>
@@ -9772,12 +9778,6 @@ const CumplimientoNormativoDetalle = () => {
                   // Validar DNI: exactamente 8 dígitos numéricos
                   if (!/^\d{8}$/.test(miembroActual.dni)) {
                     showErrorToast('El DNI debe contener exactamente 8 dígitos numéricos');
-                    return;
-                  }
-
-                  // Validar email dominio @gob.pe
-                  if (!miembroActual.email.endsWith('@gob.pe')) {
-                    showErrorToast('El correo debe ser del dominio @gob.pe');
                     return;
                   }
 
