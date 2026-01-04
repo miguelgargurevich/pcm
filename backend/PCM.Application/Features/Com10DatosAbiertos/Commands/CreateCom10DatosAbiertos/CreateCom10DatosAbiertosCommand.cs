@@ -9,8 +9,8 @@ namespace PCM.Application.Features.Com10DatosAbiertos.Commands.CreateCom10DatosA
         public long CompromisoId { get; set; }
         public Guid EntidadId { get; set; }
         public string Estado { get; set; } = "pendiente";
-        public string? EstadoPCM { get; set; }
-        public string? ObservacionesPCM { get; set; }
+        public string EstadoPCM { get; set; } = "En Proceso";
+        public string ObservacionesPCM { get; set; } = "";
         public string? UrlDatosAbiertos { get; set; }
         public long? TotalDatasets { get; set; }
         public DateTime? FechaUltimaActualizacionDa { get; set; }
@@ -33,6 +33,8 @@ namespace PCM.Application.Features.Com10DatosAbiertos.Commands.CreateCom10DatosA
         public long ComdaEntId { get; set; }
         public long CompromisoId { get; set; }
         public Guid EntidadId { get; set; }
+        public string EstadoPCM { get; set; } = "En Proceso";
+        public string ObservacionesPCM { get; set; } = "";
         public string? UrlDatosAbiertos { get; set; }
         public long? TotalDatasets { get; set; }
         public DateTime? FechaUltimaActualizacionDa { get; set; }

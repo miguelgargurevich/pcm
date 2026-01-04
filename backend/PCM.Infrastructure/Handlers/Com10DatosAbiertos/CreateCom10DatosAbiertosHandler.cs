@@ -26,13 +26,20 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
             try
             {
                 _logger.LogInformation($"Creando nuevo registro Com10 Datos Abiertos para Entidad {request.EntidadId}");
+                _logger.LogInformation($"Request EstadoPCM: '{request.EstadoPCM}', ObservacionesPCM: '{request.ObservacionesPCM}'");
+
+                // Asegurar valores por defecto para campos requeridos
+                var estadoPCM = string.IsNullOrWhiteSpace(request.EstadoPCM) ? "En Proceso" : request.EstadoPCM;
+                var observacionesPCM = string.IsNullOrWhiteSpace(request.ObservacionesPCM) ? "" : request.ObservacionesPCM;
+                
+                _logger.LogInformation($"Valores finales EstadoPCM: '{estadoPCM}', ObservacionesPCM: '{observacionesPCM}'");
 
                 var nuevoRegistro = new Com10Entity
                 {
                     CompromisoId = request.CompromisoId,
                     EntidadId = request.EntidadId,
-                    EstadoPCM = request.EstadoPCM ?? "En Proceso",
-                    ObservacionesPCM = request.ObservacionesPCM ?? "",
+                    EstadoPCM = estadoPCM,
+                    ObservacionesPCM = observacionesPCM,
                     UrlDatosAbiertos = request.UrlDatosAbiertos,
                     TotalDatasets = request.TotalDatasets,
                     FechaUltimaActualizacionDa = request.FechaUltimaActualizacionDa.HasValue 
@@ -67,6 +74,8 @@ namespace PCM.Infrastructure.Handlers.Com10DatosAbiertos
                     ComdaEntId = nuevoRegistro.ComdaEntId,
                     CompromisoId = nuevoRegistro.CompromisoId,
                     EntidadId = nuevoRegistro.EntidadId,
+                    EstadoPCM = estadoPCM,
+                    ObservacionesPCM = observacionesPCM,
                     UrlDatosAbiertos = nuevoRegistro.UrlDatosAbiertos,
                     TotalDatasets = nuevoRegistro.TotalDatasets,
                     FechaUltimaActualizacionDa = nuevoRegistro.FechaUltimaActualizacionDa,

@@ -38,11 +38,11 @@ public class Com10DatosAbiertos
 
     [Column("estado_PCM")]
     [MaxLength(50)]
-    public string? EstadoPCM { get; set; }
+    public string EstadoPCM { get; set; } = "En Proceso";
 
     [Column("observaciones_PCM")]
     [MaxLength(500)]
-    public string? ObservacionesPCM { get; set; }
+    public string ObservacionesPCM { get; set; } = "";
 
     [Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
