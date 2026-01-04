@@ -898,7 +898,7 @@ const Entidades = () => {
                   Sector
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
-                  Clase
+                  Sub Clasificación
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">
                   Estado
