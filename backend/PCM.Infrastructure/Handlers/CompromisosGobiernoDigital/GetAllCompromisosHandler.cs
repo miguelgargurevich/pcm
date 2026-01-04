@@ -406,8 +406,13 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                 "OBLIGATORIO" => 1,  // PENDIENTE
                 "OPCIONAL" => 2,     // SIN REPORTAR
                 "NO_EXIGIBLE" => 3,  // NO EXIGIBLE
-                _ => null
+                _ => 1  // Por defecto OBLIGATORIO (PENDIENTE)
             };
+        }
+        // PRIORIDAD 4: Si no hay exigibilidad configurada, por defecto es OBLIGATORIO (PENDIENTE)
+        else
+        {
+            estadoCumplimiento = 1; // PENDIENTE
         }
         
         return new CompromisoResponseDto

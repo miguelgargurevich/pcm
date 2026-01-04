@@ -655,13 +655,13 @@ public class EvaluacionController : ControllerBase
                     "OBLIGATORIO" => "pendiente",    // PENDIENTE
                     "OPCIONAL" => "sin reportar",    // SIN REPORTAR
                     "NO_EXIGIBLE" => "no exigible",  // NO EXIGIBLE
-                    _ => "sin reportar"
+                    _ => "pendiente"  // Por defecto OBLIGATORIO (PENDIENTE)
                 };
             }
         }
 
-        // Valor por defecto
-        return "sin reportar";
+        // PRIORIDAD 4: Si no hay exigibilidad configurada, por defecto es OBLIGATORIO (PENDIENTE)
+        return "pendiente";
     }
 
     private string ObtenerEstadoCompromiso(
