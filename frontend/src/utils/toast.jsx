@@ -70,7 +70,7 @@ export const showSuccessToast = (titleOrMessage, message) => {
   if (message) {
     // Si hay dos parámetros, mostrar toast personalizado con título y mensaje
     toast.success(
-      (t) => (
+      () => (
         <div className="flex flex-col gap-1">
           <p className="font-semibold text-white">{titleOrMessage}</p>
           <p className="text-sm text-white">{message}</p>

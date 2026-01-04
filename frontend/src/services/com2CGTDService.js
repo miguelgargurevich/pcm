@@ -55,9 +55,13 @@ const com2CGTDService = {
         data: error.response?.data,
         message: error.message
       });
+      // Log específico de validación
+      if (error.response?.data) {
+        console.error('🔍 Detalles de validación del backend:', error.response.data);
+      }
       return {
         isSuccess: false,
-        message: error.response?.data?.message || 'Error al crear el registro'
+        message: error.response?.data?.message || error.response?.data?.title || 'Error al crear el registro'
       };
     }
   },

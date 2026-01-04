@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import cumplimientoService from '../services/cumplimientoService'; // Solo para uploadDocument
 import com1LiderGTDService from '../services/com1LiderGTDService';
@@ -50,7 +49,7 @@ const CumplimientoNormativoDetalle = () => {
   const [pasoActual, setPasoActual] = useState(1);
   const [com2RecordId, setCom2RecordId] = useState(null); // ID del registro en com2_cgtd
   const [com3RecordId, setCom3RecordId] = useState(null); // ID del registro en com3_epgd
-  const [com3Data, setCom3Data] = useState(null); // Datos del formulario de Compromiso 3
+  const [_com3Data, setCom3Data] = useState(null); // Datos del formulario de Compromiso 3
   const [com4RecordId, setCom4RecordId] = useState(null); // ID del registro en com4_pei
   const [com5RecordId, setCom5RecordId] = useState(null); // ID del registro en com5_estrategia_digital
   const [com6RecordId, setCom6RecordId] = useState(null); // ID del registro en com6_mpgobpe
@@ -87,8 +86,9 @@ const CumplimientoNormativoDetalle = () => {
   
   const [_compromisos, setCompromisos] = useState([]);
   const [compromisoSeleccionado, setCompromisoSeleccionado] = useState(null);
-  const [datosDBCargados, setDatosDBCargados] = useState(false); // Flag para evitar sobrescribir datos cargados de BD
+  const [_datosDBCargados, setDatosDBCargados] = useState(false); // Flag para evitar sobrescribir datos cargados de BD
   const datosDBCargadosRef = useRef(false); // Ref para acceder al valor actual en closures
+  const formDataRef = useRef(); // Ref para acceder al valor actual de formData
 
   // Función para obtener la clase CSS del badge según el estado
   const getEstadoBadgeClass = (estadoId) => {
@@ -309,10 +309,88 @@ const CumplimientoNormativoDetalle = () => {
 
   const [errores, setErrores] = useState({});
 
+  // Definir funciones useCallback antes de los useEffect que las usan
+  const loadCompromisos = useCallback(async () => {
+    try {
+      const response = await compromisosService.getAll();
+      if (response.isSuccess || response.IsSuccess) {
+        const data = response.data || response.Data || [];
+        const compromisosArray = Array.isArray(data) ? data : [];
+        setCompromisos(compromisosArray);
+        
+        // Si viene compromisoId por URL, pre-seleccionarlo
+        if (compromisoIdFromUrl) {
+          console.log('🔧 Estableciendo compromisoId desde URL:', compromisoIdFromUrl);
+          const compromiso = compromisosArray.find(c => c.compromisoId === parseInt(compromisoIdFromUrl));
+          console.log('🔍 Compromiso encontrado:', compromiso);
+          if (compromiso) {
+            setCompromisoSeleccionado(compromiso);
+            // NO sobrescribir formData si ya se cargaron datos desde la BD (usar ref para valor actual)
+            setFormData(prev => {
+              if (datosDBCargadosRef.current) {
+                console.log('⏭️ datosDBCargadosRef.current=true, no sobrescribir formData');
+                return prev;
+              }
+              // Si no hay datos de BD pero ya tiene compromisoId correcto, no sobrescribir
+              if (prev.compromisoId === compromisoIdFromUrl) {
+                console.log('⏭️ formData ya tiene compromisoId correcto');
+                return prev;
+              }
+              console.log('🔧 Estado anterior de formData:', prev);
+              const newData = { ...prev, compromisoId: compromisoIdFromUrl };
+              console.log('🔧 Nuevo estado de formData:', newData);
+              return newData;
+            });
+          }
+        }
+        
+        // Si está editando, establecer el compromiso seleccionado desde formData
+        if (isEdit && formDataRef.current?.compromisoId) {
+          const compromiso = compromisosArray.find(c => c.compromisoId === parseInt(formDataRef.current.compromisoId));
+          if (compromiso) {
+            setCompromisoSeleccionado(compromiso);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error al cargar compromisos:', error);
+      showErrorToast('Error al cargar compromisos');
+    }
+  }, [compromisoIdFromUrl, isEdit]);
+
+  // Función loadCumplimiento declarada más adelante debido a su extensión
+  const loadCumplimientoRef = useRef();
+
+  // Helper function para obtener el ID de entidad del usuario de forma consistente
+  const getUserEntityId = useCallback(() => {
+    const entityId = user?.entidadId || user?.EntidadId || user?.entity_id || user?.id_entidad;
+    console.log('🔍 getUserEntityId - user:', user, 'entityId:', entityId);
+    return entityId;
+  }, [user]);
+
+  const getUserId = useCallback(() => {
+    const userId = user?.userId || user?.UserId || user?.user_id || user?.id;
+    console.log('🔍 getUserId - user:', user, 'userId:', userId);
+    return userId;
+  }, [user]);
+
+  const getUserEntityIdForData = useCallback(() => {
+    const entityId = user?.EntidadId || user?.entidadId || user?.entity_id || user?.id_entidad;
+    console.log('🔍 getUserEntityIdForData - user:', user, 'entityId:', entityId);
+    return entityId;
+  }, [user]);
+
   // Cargar catálogos y configuración al montar el componente
   useEffect(() => {
     const loadCatalogos = async () => {
       try {
+        // Verificar que las funciones de estado estén disponibles
+        if (!setLoadingCatalogos || !setRolesFuncionario || !setRolesComite || !setPoliticaPrivacidadUrl || !setDeclaracionJuradaUrl) {
+          console.warn('⚠️ Estado no completamente inicializado, reintentando...');
+          setTimeout(loadCatalogos, 100);
+          return;
+        }
+        
         setLoadingCatalogos(true);
         const [funcionario, comite, urlPolitica, urlDeclaracion] = await Promise.all([
           getCatalogoOptions('ROL_FUNCIONARIO'),
@@ -320,33 +398,67 @@ const CumplimientoNormativoDetalle = () => {
           getConfigValue('CONFIG_DOCUMENTOS', 'URL_POL_PRIVACIDAD'),
           getConfigValue('CONFIG_DOCUMENTOS', 'URL_DECL_JURADA')
         ]);
-        setRolesFuncionario(funcionario);
-        setRolesComite(comite);
-        setPoliticaPrivacidadUrl(urlPolitica || '');
-        setDeclaracionJuradaUrl(urlDeclaracion || '');
+        
+        // Verificar que las respuestas sean válidas antes de actualizar el estado
+        if (setRolesFuncionario && Array.isArray(funcionario)) {
+          setRolesFuncionario(funcionario);
+        }
+        if (setRolesComite && Array.isArray(comite)) {
+          setRolesComite(comite);
+        }
+        if (setPoliticaPrivacidadUrl) {
+          setPoliticaPrivacidadUrl(urlPolitica || '');
+        }
+        if (setDeclaracionJuradaUrl) {
+          setDeclaracionJuradaUrl(urlDeclaracion || '');
+        }
       } catch (error) {
         console.error('Error cargando catálogos:', error);
-        showErrorToast('Error al cargar catálogos de roles');
+        // Verificar si es un error de reCAPTCHA y no mostrar toast para ese caso
+        if (error.message && !error.message.includes('sitekey') && !error.message.includes('grecaptcha')) {
+          showErrorToast('Error al cargar catálogos de roles');
+        }
       } finally {
-        setLoadingCatalogos(false);
+        // Asegurar que se establece como false incluso si hay errores
+        if (setLoadingCatalogos) {
+          setLoadingCatalogos(false);
+        }
       }
     };
     
-    loadCatalogos();
+    // Ejecutar loadCatalogos con manejo de errores
+    try {
+      loadCatalogos();
+    } catch (initError) {
+      console.error('Error inicializando carga de catálogos:', initError);
+    }
   }, []);
+
+  // Sincronizar ref con formData
+  useEffect(() => {
+    formDataRef.current = formData;
+  }, [formData]);
+
+  // Establecer compromisoId inmediatamente cuando viene por URL
+  useEffect(() => {
+    if (compromisoIdFromUrl && (!formData.compromisoId || formData.compromisoId !== compromisoIdFromUrl)) {
+      console.log('🚀 Estableciendo compromisoId inicial desde URL:', compromisoIdFromUrl);
+      setFormData(prev => ({ ...prev, compromisoId: compromisoIdFromUrl }));
+    }
+  }, [compromisoIdFromUrl, formData.compromisoId]);
 
   useEffect(() => {
     console.log('🔄 useEffect principal ejecutándose - user?.entidadId:', user?.entidadId, 'compromisoIdFromUrl:', compromisoIdFromUrl);
-    loadCompromisos();
+    if (loadCompromisos) loadCompromisos();
     // Cargar datos si está editando O si es Compromiso 1-21 (que usan tablas especiales)
-    if (isEdit || (['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'].includes(compromisoIdFromUrl) && user?.entidadId)) {
+    const userEntityId = getUserEntityId();
+    if (isEdit || (['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'].includes(compromisoIdFromUrl) && userEntityId)) {
       console.log('✅ Condición cumplida, llamando loadCumplimiento()');
-      loadCumplimiento();
+      if (loadCumplimientoRef.current) loadCumplimientoRef.current();
     } else {
-      console.log('❌ Condición NO cumplida para loadCumplimiento - isEdit:', isEdit, 'compromisoIdFromUrl:', compromisoIdFromUrl, 'user?.entidadId:', user?.entidadId);
+      console.log('❌ Condición NO cumplida para loadCumplimiento - isEdit:', isEdit, 'compromisoIdFromUrl:', compromisoIdFromUrl, 'userEntityId:', userEntityId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, user?.entidadId]);
+  }, [id, user?.entidadId, compromisoIdFromUrl, isEdit, loadCompromisos, getUserEntityId]);
 
   // Establecer compromiso seleccionado cuando ambos datos estén disponibles
   useEffect(() => {
@@ -394,54 +506,6 @@ const CumplimientoNormativoDetalle = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Array vacío para que solo se ejecute al desmontar
 
-  const loadCompromisos = async () => {
-    try {
-      const response = await compromisosService.getAll();
-      if (response.isSuccess || response.IsSuccess) {
-        const data = response.data || response.Data || [];
-        const compromisosArray = Array.isArray(data) ? data : [];
-        setCompromisos(compromisosArray);
-        
-        // Si viene compromisoId por URL, pre-seleccionarlo
-        if (compromisoIdFromUrl) {
-          console.log('🔧 Estableciendo compromisoId desde URL:', compromisoIdFromUrl);
-          const compromiso = compromisosArray.find(c => c.compromisoId === parseInt(compromisoIdFromUrl));
-          console.log('🔍 Compromiso encontrado:', compromiso);
-          if (compromiso) {
-            setCompromisoSeleccionado(compromiso);
-            // NO sobrescribir formData si ya se cargaron datos desde la BD (usar ref para valor actual)
-            setFormData(prev => {
-              if (datosDBCargadosRef.current) {
-                console.log('⏭️ datosDBCargadosRef.current=true, no sobrescribir formData');
-                return prev;
-              }
-              // Si no hay datos de BD pero ya tiene compromisoId correcto, no sobrescribir
-              if (prev.compromisoId === compromisoIdFromUrl) {
-                console.log('⏭️ formData ya tiene compromisoId correcto');
-                return prev;
-              }
-              console.log('🔧 Estado anterior de formData:', prev);
-              const newData = { ...prev, compromisoId: compromisoIdFromUrl };
-              console.log('🔧 Nuevo estado de formData:', newData);
-              return newData;
-            });
-          }
-        }
-        
-        // Si está editando, establecer el compromiso seleccionado desde formData
-        if (isEdit && formData.compromisoId) {
-          const compromiso = compromisosArray.find(c => c.compromisoId === parseInt(formData.compromisoId));
-          if (compromiso) {
-            setCompromisoSeleccionado(compromiso);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error al cargar compromisos:', error);
-      showErrorToast('Error al cargar compromisos');
-    }
-  };
-
   // useEffect para actualizar haVistoPolitica y haVistoDeclaracion cuando ya están aceptados
   useEffect(() => {
     if (formData.aceptaPoliticaPrivacidad && !haVistoPolitica) {
@@ -461,7 +525,9 @@ const CumplimientoNormativoDetalle = () => {
   useEffect(() => {
     const cargarCriteriosDesdeDB = async () => {
       // Solo cargar si tenemos compromisoId, entidadId y ya no estamos cargando
-      if (!formData.compromisoId || !user?.entidadId || loading) {
+      const userEntityId = getUserEntityId();
+      if (!formData.compromisoId || !userEntityId || loading) {
+        console.log('🚫 No se pueden cargar criterios - compromisoId:', formData.compromisoId, 'entidadId:', userEntityId, 'loading:', loading);
         return;
       }
       
@@ -473,7 +539,8 @@ const CumplimientoNormativoDetalle = () => {
       console.log('📥 useEffect: Cargando criterios desde DB para compromiso', compromisoIdNum);
       
       try {
-        const criteriosDB = await loadCriteriosFromDB(user.EntidadId, compromisoIdNum);
+        const userEntityId = getUserEntityId();
+        const criteriosDB = await loadCriteriosFromDB(userEntityId, compromisoIdNum);
         
         if (criteriosDB && criteriosDB.length > 0) {
           console.log('✅ Criterios cargados desde DB:', criteriosDB);
@@ -490,7 +557,7 @@ const CumplimientoNormativoDetalle = () => {
     };
     
     cargarCriteriosDesdeDB();
-  }, [formData.compromisoId, user?.entidadId, loading]);
+  }, [formData.compromisoId, user, loading, getUserEntityId]);
   // =========================================================================
 
   // Función auxiliar para cargar datos de Paso 2 y 3 desde las tablas comX
@@ -523,6 +590,13 @@ const CumplimientoNormativoDetalle = () => {
   const loadCriteriosFromDB = async (entidadId, compromisoId) => {
     try {
       console.log(`📥 Cargando criterios desde DB para entidad ${entidadId}, compromiso ${compromisoId}`);
+      
+      // Validar que entidadId no sea undefined
+      if (!entidadId || entidadId === 'undefined' || entidadId === '00000000-0000-0000-0000-000000000000') {
+        console.error('❌ entidadId es undefined o null GUID, no se puede cargar criterios');
+        throw new Error('ID de entidad no válido');
+      }
+      
       const response = await evaluacionCriteriosService.getCriterios(entidadId, compromisoId);
       
       if (response.success && response.data?.criterios) {
@@ -551,6 +625,12 @@ const CumplimientoNormativoDetalle = () => {
       console.log(`📤 Guardando criterios en DB para entidad ${entidadId}, compromiso ${compromisoId}`);
       console.log('📋 Criterios a guardar:', criteriosEvaluados);
       
+      // Validar que entidadId no sea undefined o null GUID
+      if (!entidadId || entidadId === 'undefined' || entidadId === '00000000-0000-0000-0000-000000000000') {
+        console.error('❌ entidadId es undefined o null GUID, no se puede guardar criterios');
+        throw new Error('ID de entidad no válido');
+      }
+      
       const response = await evaluacionCriteriosService.saveCriterios(entidadId, compromisoId, criteriosEvaluados);
       
       if (response.success) {
@@ -566,20 +646,21 @@ const CumplimientoNormativoDetalle = () => {
     }
   };
 
-  const loadCumplimiento = async () => {
+  const loadCumplimiento = useCallback(async () => {
     try {
       setLoading(true);
       
       // Si es Compromiso 1 o 2 y tenemos entidadId, usar API específica
-      const compromisoId = parseInt(compromisoIdFromUrl || formData.compromisoId);
+      const compromisoId = parseInt(compromisoIdFromUrl || formDataRef.current?.compromisoId);
       console.log('🔍 loadCumplimiento - compromisoId:', compromisoId);
       console.log('🔍 loadCumplimiento - user:', user);
       console.log('🔍 loadCumplimiento - compromisoIdFromUrl:', compromisoIdFromUrl);
       
       // COMPROMISO 1: Líder GTD (Usar tabla com1_liderg_td)
-      if (compromisoId === 1 && user?.entidadId) {
-        console.log('📞 Llamando Com1LiderGTD.getByEntidad con:', 1, user.EntidadId);
-        const response = await com1LiderGTDService.getByEntidad(1, user.EntidadId);
+      const userEntityId = getUserEntityId();
+      if (compromisoId === 1 && userEntityId) {
+        console.log('📞 Llamando Com1LiderGTD.getByEntidad con:', 1, userEntityId);
+        const response = await com1LiderGTDService.getByEntidad(1, userEntityId);
         console.log('📦 Respuesta de Com1 getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -647,8 +728,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '1' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -656,9 +737,9 @@ const CumplimientoNormativoDetalle = () => {
       }
       
       // COMPROMISO 2: Comité GTD (Usar tabla com2_cgtd para Paso 1)
-      if (compromisoId === 2 && user?.entidadId) {
-        console.log('📞 Llamando Com2CGTD.getByEntidad con:', 2, user.EntidadId);
-        const response = await com2CGTDService.getByEntidad(2, user.EntidadId);
+      if (compromisoId === 2 && userEntityId) {
+        console.log('📞 Llamando Com2CGTD.getByEntidad con:', 2, userEntityId);
+        const response = await com2CGTDService.getByEntidad(2, userEntityId);
         console.log('📦 Respuesta de Com2 getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -734,8 +815,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '2' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
             setMiembrosComite([]);
           }
           setLoading(false);
@@ -785,8 +866,8 @@ const CumplimientoNormativoDetalle = () => {
               datosDBCargadosRef.current = true;
               setDatosDBCargados(true);
             } else {
-              // No existe registro, inicializar
-              setFormData(prev => ({ ...prev, compromisoId: '3' }));
+              // No existe registro, inicializar con el compromisoId correcto
+              setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
               setCom3Data({
                 objetivosEstrategicos: [],
                 objetivosGobiernoDigital: [],
@@ -795,8 +876,8 @@ const CumplimientoNormativoDetalle = () => {
               });
             }
           } else {
-            // Error o no encontrado, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '3' }));
+            // Error o no encontrado, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
             setCom3Data({
               objetivosEstrategicos: [],
               objetivosGobiernoDigital: [],
@@ -806,7 +887,7 @@ const CumplimientoNormativoDetalle = () => {
           }
         } catch (error) {
           console.error('❌ Error cargando datos Com3:', error);
-          setFormData(prev => ({ ...prev, compromisoId: '3' }));
+          setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           setCom3Data({
             objetivosEstrategicos: [],
             objetivosGobiernoDigital: [],
@@ -873,8 +954,8 @@ const CumplimientoNormativoDetalle = () => {
               console.log('⚠️ Claves disponibles en data:', Object.keys(data));
             }
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '4' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -933,8 +1014,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '5' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1014,8 +1095,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '6' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1075,8 +1156,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '7' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1136,8 +1217,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '8' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1198,8 +1279,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '9' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1260,8 +1341,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '10' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1325,8 +1406,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '11' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1386,8 +1467,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '12' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1450,8 +1531,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '13' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1512,8 +1593,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '14' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1574,8 +1655,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '15' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1637,8 +1718,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '16' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1700,8 +1781,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '17' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1763,8 +1844,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '18' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1824,8 +1905,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '19' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1885,8 +1966,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '20' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1947,8 +2028,8 @@ const CumplimientoNormativoDetalle = () => {
             datosDBCargadosRef.current = true;
             setDatosDBCargados(true);
           } else {
-            // No existe registro, inicializar
-            setFormData(prev => ({ ...prev, compromisoId: '21' }));
+            // No existe registro, inicializar con el compromisoId correcto
+            setFormData(prev => ({ ...prev, compromisoId: compromisoId.toString() }));
           }
           setLoading(false);
           return;
@@ -1965,7 +2046,10 @@ const CumplimientoNormativoDetalle = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, compromisoIdFromUrl, navigate, getUserEntityId]);
+
+  // Asignar loadCumplimiento al ref para que esté disponible en useEffect
+  loadCumplimientoRef.current = loadCumplimiento;
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -2657,14 +2741,16 @@ const CumplimientoNormativoDetalle = () => {
         console.log('🔄 Compromiso 1 - Guardando datos del líder en com1_liderg_td');
         
         // Validar que tenemos el UserId del usuario autenticado
-        if (!user?.UserId) {
+        const userId = getUserId();
+        const entityId = getUserEntityIdForData();
+        if (!userId || !entityId) {
           showErrorToast('Error: No se pudo obtener la información del usuario. Por favor, refresque la página.');
           return;
         }
         
         const com1Data = {
           CompromisoId: 1,
-          EntidadId: user.EntidadId,
+          EntidadId: entityId,
           dniLider: formData.nroDni,
           nombreLider: formData.nombres,
           apePatLider: formData.apellidoPaterno,
@@ -2676,7 +2762,7 @@ const CumplimientoNormativoDetalle = () => {
           fecIniLider: formData.fechaInicio,
           checkPrivacidad: false,
           checkDdjj: false,
-          UsuarioRegistra: user.UserId,
+          UsuarioRegistra: userId,
           etapaFormulario: 'paso1',
           estado: 'en_proceso'
         };
@@ -2705,35 +2791,41 @@ const CumplimientoNormativoDetalle = () => {
         
         // Transform miembros array to PascalCase for backend
         const miembrosTransformados = miembrosComite.map(m => ({
-          MiembroId: m.miembroId,
-          Dni: m.dni,
-          Nombre: m.nombre,
-          ApellidoPaterno: m.apellidoPaterno,
-          ApellidoMaterno: m.apellidoMaterno,
-          Cargo: m.cargo,
-          Email: m.email,
-          Telefono: m.telefono,
-          Rol: m.rol,
+          MiembroId: (m.miembroId && !m.miembroId.toString().startsWith('temp_')) ? m.miembroId : null, // Set null for temp IDs
+          Dni: m.dni?.toString() || '',
+          Nombre: m.nombre?.toString() || '',
+          ApellidoPaterno: m.apellidoPaterno?.toString() || '',
+          ApellidoMaterno: m.apellidoMaterno?.toString() || '',
+          Cargo: m.cargo?.toString() || '',
+          Email: m.email?.toString() || '',
+          Telefono: m.telefono?.toString() || '',
+          Rol: m.rol?.toString() || '',
           Activo: true
         }));
         
         // Validar que tenemos el UserId del usuario autenticado
-        if (!user?.UserId) {
+        const userId = getUserId();
+        const entityId = getUserEntityIdForData();
+        console.log('🔍 Debug - userId:', userId, 'entityId:', entityId);
+        console.log('🔍 Debug - user object:', user);
+        if (!userId || !entityId) {
           showErrorToast('Error: No se pudo obtener la información del usuario. Por favor, refresque la página.');
           return;
         }
         
         const com2Data = {
           CompromisoId: 2,
-          EntidadId: user.EntidadId,
+          EntidadId: entityId,
           Miembros: miembrosTransformados,
           CheckPrivacidad: false,
           CheckDdjj: false,
-          UsuarioRegistra: user.UserId,
+          UsuarioRegistra: userId,
           EtapaFormulario: 'paso1',
           Estado: 'en_proceso'
         };
         
+        console.log('🔍 Debug - miembrosComite:', miembrosComite);
+        console.log('🔍 Debug - miembrosTransformados:', miembrosTransformados);
         console.log('Datos Com2 (miembros) a enviar:', com2Data);
         
         if (com2RecordId) {
@@ -4052,8 +4144,17 @@ const CumplimientoNormativoDetalle = () => {
           console.log('📝 Criterios a guardar:', formData.criteriosEvaluados);
           
           try {
+            const entityId = getUserEntityIdForData();
+            console.log('🔍 Debug - entityId para criterios:', entityId);
+            
+            if (!entityId) {
+              console.error('❌ No se pudo obtener el ID de entidad para guardar criterios');
+              showErrorToast('Error: No se pudo obtener la información de la entidad. Por favor, refresque la página.');
+              return;
+            }
+            
             const criteriosGuardados = await saveCriteriosToDB(
-              user.EntidadId, 
+              entityId, 
               parseInt(formData.compromisoId), 
               formData.criteriosEvaluados
             );
@@ -4094,11 +4195,11 @@ const CumplimientoNormativoDetalle = () => {
   /**
    * Obtiene el correo del líder GTD (Compromiso 1) para enviar notificaciones
    */
-  const getCorreoLiderGTD = async () => {
+  const _getCorreoLiderGTD = async () => {
     try {
       console.log('🔍 Obteniendo correo del líder GTD para entidad:', user.EntidadId);
       const response = await com1LiderGTDService.getByEntidad(1, user.EntidadId);
-      console.log('🔍 Respuesta completa getCorreoLiderGTD:', response);
+      console.log('🔍 Respuesta completa _getCorreoLiderGTD:', response);
       
       if (response.isSuccess && response.data) {
         console.log('🔍 Datos del líder:', response.data);
