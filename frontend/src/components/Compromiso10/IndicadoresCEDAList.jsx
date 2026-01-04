@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { CheckCircle, XCircle, AlertCircle, MinusCircle } from 'lucide-react';
 import com10IndicadoresCEDAService from '../../services/com10IndicadoresCEDAService';
-import { showErrorToast } from '../../utils/toast';
+import { showErrorToast } from '../../utils/toast.jsx';
 
 /**
  * Componente para mostrar la lista de indicadores CEDA del Compromiso 10

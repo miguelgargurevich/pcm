@@ -5,7 +5,7 @@ import ObjetivosGobiernoDigital from './ObjetivosGobiernoDigital';
 import SituacionActualGD from './SituacionActualGD';
 import PortafolioProyectos from './PortafolioProyectos';
 import com3EPGDService from '../../services/com3EPGDService';
-import { showErrorToast } from '../../utils/toast';
+import { showErrorToast } from '../../utils/toast.jsx';
 
 /**
  * Componente principal para el Paso 1 del Compromiso 3

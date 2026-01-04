@@ -25,7 +25,7 @@ import com21OficialGobiernoDatosService from '../services/com21OficialGobiernoDa
 import evaluacionCriteriosService from '../services/evaluacionCriteriosService';
 import { compromisosService } from '../services/compromisosService';
 import { getCatalogoOptions, getConfigValue } from '../services/catalogoService';
-import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast';
+import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast.jsx';
 import PDFViewer from '../components/PDFViewer';
 import Compromiso3Paso1 from '../components/Compromiso3/Compromiso3Paso1';
 import { Compromiso10Tabs } from '../components/Compromiso10';
@@ -826,9 +826,9 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 3: Plan de Gobierno Digital (Usar tabla com3_epgd)
       if (compromisoId === 3 && user?.entidadId) {
-        console.log('📞 Llamando Com3EPGD.getByEntidad con:', user.EntidadId);
+        console.log('📞 Llamando Com3EPGD.getByEntidad con:', getUserEntityId());
         try {
-          const response = await com3EPGDService.getByEntidad(user.EntidadId);
+          const response = await com3EPGDService.getByEntidad(getUserEntityId());
           console.log('📦 Respuesta de Com3 getByEntidad:', response);
           
           if (response.isSuccess || response.success) {
@@ -901,8 +901,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 4: Incorporar TD en el PEI
       if (compromisoId === 4 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 4, user.EntidadId);
-        const response = await com4PEIService.getByEntidad(4, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 4, getUserEntityId());
+        const response = await com4PEIService.getByEntidad(4, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -964,8 +964,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 5: Estrategia Digital
       if (compromisoId === 5 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 5, user.EntidadId);
-        const response = await com5EstrategiaDigitalService.getByEntidad(5, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 5, getUserEntityId());
+        const response = await com5EstrategiaDigitalService.getByEntidad(5, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1024,8 +1024,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 6: Migración GOB.PE
       if (compromisoId === 6 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 6, user.EntidadId);
-        const response = await com6MigracionGobPeService.getByEntidad(6, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 6, getUserEntityId());
+        const response = await com6MigracionGobPeService.getByEntidad(6, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         console.log('🔍 CHECKPOINT 1 - Antes del if (response.isSuccess || response.success)');
         console.log('🔍 response.isSuccess:', response.isSuccess);
@@ -1105,8 +1105,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 7: Implementación MPD
       if (compromisoId === 7 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 7, user.EntidadId);
-        const response = await com7ImplementacionMPDService.getByEntidad(7, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 7, getUserEntityId());
+        const response = await com7ImplementacionMPDService.getByEntidad(7, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1166,8 +1166,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 8: Publicación TUPA
       if (compromisoId === 8 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 8, user.EntidadId);
-        const response = await com8PublicacionTUPAService.getByEntidad(8, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 8, getUserEntityId());
+        const response = await com8PublicacionTUPAService.getByEntidad(8, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1227,8 +1227,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 9: Modelo de Gestión Documental
       if (compromisoId === 9 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 9, user.EntidadId);
-        const response = await com9ModeloGestionDocumentalService.getByEntidad(9, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 9, getUserEntityId());
+        const response = await com9ModeloGestionDocumentalService.getByEntidad(9, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1289,8 +1289,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 10: Datos Abiertos
       if (compromisoId === 10 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 10, user.EntidadId);
-        const response = await com10DatosAbiertosService.getByEntidad(10, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 10, getUserEntityId());
+        const response = await com10DatosAbiertosService.getByEntidad(10, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1351,8 +1351,8 @@ const CumplimientoNormativoDetalle = () => {
       
       // COMPROMISO 11: AportacionGeoPeru
       if (compromisoId === 11 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 11, user.EntidadId);
-        const response = await com11AportacionGeoPeruService.getByEntidad(11, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 11, getUserEntityId());
+        const response = await com11AportacionGeoPeruService.getByEntidad(11, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1416,8 +1416,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 12: ResponsableSoftwarePublico
       if (compromisoId === 12 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 12, user.EntidadId);
-        const response = await com12ResponsableSoftwarePublicoService.getByEntidad(12, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 12, getUserEntityId());
+        const response = await com12ResponsableSoftwarePublicoService.getByEntidad(12, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1477,8 +1477,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 13: InteroperabilidadPIDE
       if (compromisoId === 13 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 13, user.EntidadId);
-        const response = await com13InteroperabilidadPIDEService.getByEntidad(13, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 13, getUserEntityId());
+        const response = await com13InteroperabilidadPIDEService.getByEntidad(13, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1541,8 +1541,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 14: OficialSeguridadDigital
       if (compromisoId === 14 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 14, user.EntidadId);
-        const response = await com14OficialSeguridadDigitalService.getByEntidad(14, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 14, getUserEntityId());
+        const response = await com14OficialSeguridadDigitalService.getByEntidad(14, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1603,8 +1603,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 15: CSIRTInstitucional
       if (compromisoId === 15 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 15, user.EntidadId);
-        const response = await com15CSIRTInstitucionalService.getByEntidad(15, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 15, getUserEntityId());
+        const response = await com15CSIRTInstitucionalService.getByEntidad(15, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1665,8 +1665,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 16: SistemaGestionSeguridad
       if (compromisoId === 16 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 16, user.EntidadId);
-        const response = await com16SistemaGestionSeguridadService.getByEntidad(16, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 16, getUserEntityId());
+        const response = await com16SistemaGestionSeguridadService.getByEntidad(16, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1728,8 +1728,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 17: PlanTransicionIPv6
       if (compromisoId === 17 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 17, user.EntidadId);
-        const response = await com17PlanTransicionIPv6Service.getByEntidad(17, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 17, getUserEntityId());
+        const response = await com17PlanTransicionIPv6Service.getByEntidad(17, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1791,8 +1791,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 18: AccesoPortalTransparencia
       if (compromisoId === 18 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 18, user.EntidadId);
-        const response = await com18AccesoPortalTransparenciaService.getByEntidad(18, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 18, getUserEntityId());
+        const response = await com18AccesoPortalTransparenciaService.getByEntidad(18, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1854,8 +1854,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 19: EncuestaNacionalGobDigital
       if (compromisoId === 19 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 19, user.EntidadId);
-        const response = await com19EncuestaNacionalGobDigitalService.getByEntidad(19, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 19, getUserEntityId());
+        const response = await com19EncuestaNacionalGobDigitalService.getByEntidad(19, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1915,8 +1915,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 20: DigitalizacionServiciosFacilita
       if (compromisoId === 20 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 20, user.EntidadId);
-        const response = await com20DigitalizacionServiciosFacilitaService.getByEntidad(20, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 20, getUserEntityId());
+        const response = await com20DigitalizacionServiciosFacilitaService.getByEntidad(20, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -1976,8 +1976,8 @@ const CumplimientoNormativoDetalle = () => {
 
       // COMPROMISO 21: OficialGobiernoDatos (OGD)
       if (compromisoId === 21 && user?.entidadId) {
-        console.log('📞 Llamando getByEntidad con:', 21, user.EntidadId);
-        const response = await com21OficialGobiernoDatosService.getByEntidad(21, user.EntidadId);
+        console.log('📞 Llamando getByEntidad con:', 21, getUserEntityId());
+        const response = await com21OficialGobiernoDatosService.getByEntidad(21, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
         
         if (response.isSuccess || response.success) {
@@ -2961,7 +2961,7 @@ const CumplimientoNormativoDetalle = () => {
           console.log('📋 Paso 1 Com4 - documentoUrl final:', documentoUrl);
           const com4Data = {
             CompromisoId: 4,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             AnioInicioPei: parseInt(formData.anioInicio) || null,
             AnioFinPei: parseInt(formData.anioFin) || null,
             FechaAprobacionPei: formData.fechaAprobacion || null,
@@ -4197,8 +4197,8 @@ const CumplimientoNormativoDetalle = () => {
    */
   const _getCorreoLiderGTD = async () => {
     try {
-      console.log('🔍 Obteniendo correo del líder GTD para entidad:', user.EntidadId);
-      const response = await com1LiderGTDService.getByEntidad(1, user.EntidadId);
+      console.log('🔍 Obteniendo correo del líder GTD para entidad:', getUserEntityIdForData());
+      const response = await com1LiderGTDService.getByEntidad(1, getUserEntityIdForData());
       console.log('🔍 Respuesta completa _getCorreoLiderGTD:', response);
       
       if (response.isSuccess && response.data) {

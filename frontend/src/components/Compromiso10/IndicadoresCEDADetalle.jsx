@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ChevronLeft, Save, FileText, Calendar, Link as LinkIcon } from 'lucide-react';
 import com10IndicadoresCEDAService from '../../services/com10IndicadoresCEDAService';
-import { showSuccessToast, showErrorToast } from '../../utils/toast';
+import { showSuccessToast, showErrorToast } from '../../utils/toast.jsx';
 import PDFViewer from '../PDFViewer';
 
 /**
