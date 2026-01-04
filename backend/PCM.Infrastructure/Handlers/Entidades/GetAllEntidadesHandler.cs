@@ -96,11 +96,11 @@ public class GetAllEntidadesHandler : IRequestHandler<GetAllEntidadesQuery, Resu
                         .Where(s => s.SectorId == e.SectorId)
                         .Select(s => s.Nombre)
                         .FirstOrDefault() ?? "",
-                    // ClasificacionId devuelve el ID de la clasificación PADRE para el filtro del frontend
-                    ClasificacionId = e.Clasificacion != null ? e.Clasificacion.ClasificacionId : 0,
-                    NombreClasificacion = e.Clasificacion != null && e.Clasificacion.Clasificacion != null 
-                        ? e.Clasificacion.Clasificacion.Nombre 
-                        : (e.Clasificacion != null ? e.Clasificacion.Nombre : ""),
+                    // ClasificacionId debe devolver la SUBCLASIFICACION_ID (e.ClasificacionId)
+                    // NO la clasificación padre (e.Clasificacion.ClasificacionId)
+                    ClasificacionId = e.ClasificacionId,
+                    // NombreClasificacion muestra el nombre de la subclasificación
+                    NombreClasificacion = e.Clasificacion != null ? e.Clasificacion.Nombre : "",
                     Email = e.Email ?? "",
                     Telefono = e.Telefono ?? "",
                     Web = e.Web,
