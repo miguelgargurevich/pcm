@@ -21,8 +21,10 @@ const CompromisoGobiernoDigital = () => {
   const [paginaNormas, setPaginaNormas] = useState(1);
   const normasPorPagina = 5;
   
-  // Solo lectura para entidades
-  const isReadOnly = user?.nombrePerfil === 'Entidad';
+  // Solo lectura para entidades y operadores
+  const isReadOnly = user?.nombrePerfil === 'Entidad' || 
+                     user?.nombrePerfil === 'Operador' || 
+                     user?.nombrePerfil === 'Operador PCM';
   
   // Debug: verificar el perfil del usuario
   useEffect(() => {

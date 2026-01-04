@@ -20,8 +20,11 @@ import {
 
 const Sidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const { permisos, loading } = usePermissions();
+
+  // Verificar si es perfil operador
+  const isOperador = user?.nombrePerfil === 'Operador' || user?.nombrePerfil === 'Operador PCM';
 
   const allMenuItems = [
     { icon: Users, label: 'Módulo de Gestión de Usuarios', path: '/dashboard/usuarios' },
@@ -29,7 +32,8 @@ const Sidebar = ({ isOpen, onClose }) => {
     { icon: FileText, label: 'Módulo del Marco Regulatorio', path: '/dashboard/marco-normativo' },
     { icon: CheckSquare, label: 'Gestionar Compromisos GD', path: '/dashboard/compromisos' },
     { icon: ClipboardCheck, label: 'Módulo de Cumplimiento Normativo', path: '/dashboard/cumplimiento' },
-    { icon: TrendingUp, label: 'Seguimiento PGD-PP', path: '/dashboard/seguimiento' },
+    // Ocultar Seguimiento PGD-PP para operadores
+    ...(!isOperador ? [{ icon: TrendingUp, label: 'Seguimiento PGD-PP', path: '/dashboard/seguimiento' }] : []),
     { icon: BarChart3, label: 'Evaluación & Cumplimiento', path: '/dashboard/evaluacion' },
     { icon: Search, label: 'Consultas & Reportes', path: '/dashboard/reportes' },
     // { icon: History, label: 'Historial de Cambios', path: '/dashboard/historial' },
@@ -46,7 +50,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       return permiso && permiso.tipoAcceso !== 'N';
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [permisos, loading]);
+  }, [permisos, loading, isOperador]);
 
   const handleLogout = async () => {
     await logout();
