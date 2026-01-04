@@ -158,6 +158,37 @@ public class UpdateCom2CGTDHandler : IRequestHandler<UpdateCom2CGTDCommand, Resu
                 await _context.SaveChangesAsync(cancellationToken);
             }
 
+            // Actualizar también el estado en cumplimiento_normativo para que el dashboard refleje el estado correcto
+            if (!string.IsNullOrEmpty(request.Estado))
+            {
+                var estadoId = MapEstadoToId(request.Estado);
+                var cumplimientoExistente = await _context.CumplimientosNormativos
+                    .FirstOrDefaultAsync(c => c.EntidadId == entity.EntidadId && c.CompromisoId == entity.CompromisoId, cancellationToken);
+                
+                if (cumplimientoExistente != null)
+                {
+                    cumplimientoExistente.EstadoId = estadoId;
+                    cumplimientoExistente.UpdatedAt = DateTime.UtcNow;
+                    await _context.SaveChangesAsync(cancellationToken);
+                    _logger.LogInformation("Cumplimiento normativo actualizado para Compromiso {CompromisoId}, Entidad {EntidadId} con EstadoId {EstadoId}", 
+                        entity.CompromisoId, entity.EntidadId, estadoId);
+                }
+                else
+                {
+                    var nuevoCumplimiento = new Domain.Entities.CumplimientoNormativo
+                    {
+                        CompromisoId = entity.CompromisoId,
+                        EntidadId = entity.EntidadId,
+                        EstadoId = estadoId,
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    _context.CumplimientosNormativos.Add(nuevoCumplimiento);
+                    await _context.SaveChangesAsync(cancellationToken);
+                    _logger.LogInformation("Nuevo cumplimiento normativo creado para Compromiso {CompromisoId}, Entidad {EntidadId} con EstadoId {EstadoId}", 
+                        entity.CompromisoId, entity.EntidadId, estadoId);
+                }
+            }
+
             // Registrar en historial si el estado cambió (DESPUÉS de actualizar miembros)
             if (!string.IsNullOrEmpty(request.Estado) && request.Estado != estadoAnterior)
             {
@@ -208,5 +239,25 @@ public class UpdateCom2CGTDHandler : IRequestHandler<UpdateCom2CGTDCommand, Resu
             _logger.LogError(ex, "Error al actualizar Com2CGTD");
             return Result<Com2CGTDResponse>.Failure($"Error al actualizar el registro: {ex.Message}");
         }
+    }
+    
+    /// <summary>
+    /// Convierte el estado string a su ID correspondiente en la tabla estado_cumplimiento
+    /// </summary>
+    private int MapEstadoToId(string? estado)
+    {
+        return estado?.ToLower() switch
+        {
+            "pendiente" => 1,       // PENDIENTE
+            "sin_reportar" => 2,    // SIN REPORTAR
+            "no_exigible" => 3,     // NO EXIGIBLE
+            "en_proceso" => 4,      // EN PROCESO
+            "bandeja" => 5,         // BANDEJA (equivale a ENVIADO)
+            "enviado" => 5,         // ENVIADO
+            "en_revision" => 6,     // EN REVISIÓN
+            "observado" => 7,       // OBSERVADO
+            "aceptado" => 8,        // ACEPTADO
+            _ => 4                  // Por defecto EN PROCESO si no se especifica
+        };
     }
 }

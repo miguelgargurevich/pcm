@@ -2671,7 +2671,7 @@ const CumplimientoNormativoDetalle = () => {
           checkDdjj: false,
           usuarioRegistra: user.usuarioId,
           etapaFormulario: 'paso1',
-          estado: 'pendiente'
+          estado: 'en_proceso'
         };
         
         console.log('Datos Com1 (líder) a enviar:', com1Data);
@@ -2718,7 +2718,7 @@ const CumplimientoNormativoDetalle = () => {
           CheckDdjj: false,
           UsuarioRegistra: user.usuarioId,
           EtapaFormulario: 'paso1',
-          Estado: 'pendiente'
+          Estado: 'en_proceso'
         };
         
         console.log('Datos Com2 (miembros) a enviar:', com2Data);

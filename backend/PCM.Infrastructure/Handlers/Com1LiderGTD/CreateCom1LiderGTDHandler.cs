@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Features.Com1LiderGTD.Commands.CreateCom1LiderGTD;
 using PCM.Application.Common;
@@ -56,6 +57,35 @@ public class CreateCom1LiderGTDHandler : IRequestHandler<CreateCom1LiderGTDComma
             };
 
             _context.Com1LiderGTD.Add(entity);
+            
+            // Crear o actualizar el registro en cumplimiento_normativo para que el dashboard refleje el estado correcto
+            var estadoId = MapEstadoToId(request.Estado);
+            var cumplimientoExistente = await _context.CumplimientosNormativos
+                .FirstOrDefaultAsync(c => c.EntidadId == request.EntidadId && c.CompromisoId == request.CompromisoId, cancellationToken);
+            
+            if (cumplimientoExistente != null)
+            {
+                // Actualizar el estado existente
+                cumplimientoExistente.EstadoId = estadoId;
+                cumplimientoExistente.UpdatedAt = DateTime.UtcNow;
+                _logger.LogInformation("Actualizando cumplimiento normativo existente para Compromiso {CompromisoId}, Entidad {EntidadId} con EstadoId {EstadoId}", 
+                    request.CompromisoId, request.EntidadId, estadoId);
+            }
+            else
+            {
+                // Crear nuevo registro en cumplimiento_normativo
+                var nuevoCumplimiento = new Domain.Entities.CumplimientoNormativo
+                {
+                    CompromisoId = request.CompromisoId,
+                    EntidadId = request.EntidadId,
+                    EstadoId = estadoId,
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.CumplimientosNormativos.Add(nuevoCumplimiento);
+                _logger.LogInformation("Creando nuevo cumplimiento normativo para Compromiso {CompromisoId}, Entidad {EntidadId} con EstadoId {EstadoId}", 
+                    request.CompromisoId, request.EntidadId, estadoId);
+            }
+            
             await _context.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Registro Com1LiderGTD creado exitosamente con ID {Id}", entity.ComlgtdEntId);
@@ -94,5 +124,25 @@ public class CreateCom1LiderGTDHandler : IRequestHandler<CreateCom1LiderGTDComma
             _logger.LogError(ex, "Error al crear Com1LiderGTD");
             return Result<Com1LiderGTDResponse>.Failure($"Error al crear el registro: {ex.Message}");
         }
+    }
+    
+    /// <summary>
+    /// Convierte el estado string a su ID correspondiente en la tabla estado_cumplimiento
+    /// </summary>
+    private int MapEstadoToId(string? estado)
+    {
+        return estado?.ToLower() switch
+        {
+            "pendiente" => 1,       // PENDIENTE
+            "sin_reportar" => 2,    // SIN REPORTAR
+            "no_exigible" => 3,     // NO EXIGIBLE
+            "en_proceso" => 4,      // EN PROCESO
+            "bandeja" => 5,         // BANDEJA (equivale a ENVIADO)
+            "enviado" => 5,         // ENVIADO
+            "en_revision" => 6,     // EN REVISIÓN
+            "observado" => 7,       // OBSERVADO
+            "aceptado" => 8,        // ACEPTADO
+            _ => 4                  // Por defecto EN PROCESO si no se especifica
+        };
     }
 }

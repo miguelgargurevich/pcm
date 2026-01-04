@@ -45,6 +45,34 @@ public class CreateCom2CGTDHandler : IRequestHandler<CreateCom2CGTDCommand, Resu
 
             _context.Com2CGTD.Add(entity);
             await _context.SaveChangesAsync(cancellationToken);
+            
+            // Crear o actualizar el registro en cumplimiento_normativo para que el dashboard refleje el estado correcto
+            var estadoId = MapEstadoToId(request.Estado);
+            var cumplimientoExistente = await _context.CumplimientosNormativos
+                .FirstOrDefaultAsync(c => c.EntidadId == request.EntidadId && c.CompromisoId == request.CompromisoId, cancellationToken);
+            
+            if (cumplimientoExistente != null)
+            {
+                cumplimientoExistente.EstadoId = estadoId;
+                cumplimientoExistente.UpdatedAt = DateTime.UtcNow;
+                _logger.LogInformation("Actualizando cumplimiento normativo existente para Compromiso {CompromisoId}, Entidad {EntidadId} con EstadoId {EstadoId}", 
+                    request.CompromisoId, request.EntidadId, estadoId);
+            }
+            else
+            {
+                var nuevoCumplimiento = new Domain.Entities.CumplimientoNormativo
+                {
+                    CompromisoId = request.CompromisoId,
+                    EntidadId = request.EntidadId,
+                    EstadoId = estadoId,
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.CumplimientosNormativos.Add(nuevoCumplimiento);
+                _logger.LogInformation("Creando nuevo cumplimiento normativo para Compromiso {CompromisoId}, Entidad {EntidadId} con EstadoId {EstadoId}", 
+                    request.CompromisoId, request.EntidadId, estadoId);
+            }
+            
+            await _context.SaveChangesAsync(cancellationToken);
 
             // Guardar miembros del comité si existen
             var miembrosResponse = new List<ComiteMiembroDto>();
@@ -116,5 +144,25 @@ public class CreateCom2CGTDHandler : IRequestHandler<CreateCom2CGTDCommand, Resu
             _logger.LogError(ex, "Error al crear Com2CGTD");
             return Result<Com2CGTDResponse>.Failure($"Error al crear el registro: {ex.Message}");
         }
+    }
+    
+    /// <summary>
+    /// Convierte el estado string a su ID correspondiente en la tabla estado_cumplimiento
+    /// </summary>
+    private int MapEstadoToId(string? estado)
+    {
+        return estado?.ToLower() switch
+        {
+            "pendiente" => 1,       // PENDIENTE
+            "sin_reportar" => 2,    // SIN REPORTAR
+            "no_exigible" => 3,     // NO EXIGIBLE
+            "en_proceso" => 4,      // EN PROCESO
+            "bandeja" => 5,         // BANDEJA (equivale a ENVIADO)
+            "enviado" => 5,         // ENVIADO
+            "en_revision" => 6,     // EN REVISIÓN
+            "observado" => 7,       // OBSERVADO
+            "aceptado" => 8,        // ACEPTADO
+            _ => 4                  // Por defecto EN PROCESO si no se especifica
+        };
     }
 }
