@@ -7,48 +7,48 @@ import emailService from '../services/emailService';
 import com1LiderGTDService from '../services/com1LiderGTDService';
 import { useAuth } from '../hooks/useAuth';
 
-// Opciones para los estados
+// Opciones para los estados - ALINEADOS CON CUMPLIMIENTO NORMATIVO
 const estadosOptions = [
-  'aceptado',
-  'enviado',
-  'en revisión',
-  'en proceso',
-  'pendiente',
-  'observado',
-  'sin reportar',
-  'no exigible'
+  { id: 1, nombre: 'pendiente' },
+  { id: 2, nombre: 'sin reportar' },
+  { id: 3, nombre: 'no exigible' },
+  { id: 4, nombre: 'en proceso' },
+  { id: 5, nombre: 'enviado' },
+  { id: 6, nombre: 'en revisión' },
+  { id: 7, nombre: 'observado' },
+  { id: 8, nombre: 'aceptado' }
 ];
 
 const compromisosOptions = Array.from({ length: 21 }, (_, i) => i + 1);
 
-// Colores para los estados (semaforización)
-const getEstadoStyles = (estado) => {
+// Colores para los estados (semaforización) - ALINEADOS CON CUMPLIMIENTO NORMATIVO
+const getEstadoStyles = (estadoId) => {
   const styles = {
-    'aceptado': 'bg-green-500 text-white',
-    'enviado': 'bg-blue-500 text-white',
-    'en revisión': 'bg-purple-500 text-white',
-    'en proceso': 'bg-yellow-500 text-white',
-    'pendiente': 'bg-orange-500 text-white',
-    'observado': 'bg-red-500 text-white',
-    'sin reportar': 'bg-red-700 text-white',
-    'no exigible': 'bg-gray-400 text-white'
+    1: 'bg-orange-500 text-white',    // PENDIENTE
+    2: 'bg-red-700 text-white',       // SIN REPORTAR
+    3: 'bg-gray-400 text-white',      // NO EXIGIBLE
+    4: 'bg-yellow-500 text-white',    // EN PROCESO
+    5: 'bg-blue-500 text-white',      // ENVIADO
+    6: 'bg-purple-500 text-white',    // EN REVISIÓN
+    7: 'bg-red-500 text-white',       // OBSERVADO
+    8: 'bg-green-500 text-white',     // ACEPTADO
   };
-  return styles[estado] || 'bg-gray-300 text-gray-700';
+  return styles[estadoId] || 'bg-gray-300 text-gray-700';
 };
 
 // Abreviaturas para los estados
-const getEstadoAbreviado = (estado) => {
+const getEstadoAbreviado = (estadoId) => {
   const abreviaturas = {
-    'aceptado': 'ACE',
-    'enviado': 'ENV',
-    'en revisión': 'REV',
-    'en proceso': 'PRO',
-    'pendiente': 'PEN',
-    'observado': 'OBS',
-    'sin reportar': 'S/R',
-    'no exigible': 'N/E'
+    1: 'PEN',  // PENDIENTE
+    2: 'S/R',  // SIN REPORTAR
+    3: 'N/E',  // NO EXIGIBLE
+    4: 'PRO',  // EN PROCESO
+    5: 'ENV',  // ENVIADO
+    6: 'REV',  // EN REVISIÓN
+    7: 'OBS',  // OBSERVADO
+    8: 'ACE',  // ACEPTADO
   };
-  return abreviaturas[estado] || estado.substring(0, 3).toUpperCase();
+  return abreviaturas[estadoId] || 'N/A';
 };
 
 const ITEMS_PER_PAGE = 10;
@@ -646,7 +646,7 @@ const EvaluacionCumplimiento = () => {
                 >
                   <option value="">Todos los estados</option>
                   {estadosOptions.map((estado) => (
-                    <option key={estado} value={estado}>{estado}</option>
+                    <option key={estado.id} value={estado.id}>{estado.nombre}</option>
                   ))}
                 </select>
               </div>
@@ -685,10 +685,10 @@ const EvaluacionCumplimiento = () => {
         <div className="flex flex-wrap gap-2">
           {estadosOptions.map((estado) => (
             <span
-              key={estado}
-              className={`px-2 py-1 text-xs font-semibold rounded-full ${getEstadoStyles(estado)}`}
+              key={estado.id}
+              className={`px-2 py-1 text-xs font-semibold rounded-full ${getEstadoStyles(estado.id)}`}
             >
-              {getEstadoAbreviado(estado)} - {estado}
+              {getEstadoAbreviado(estado.id)} - {estado.nombre}
             </span>
           ))}
         </div>
@@ -740,17 +740,24 @@ const EvaluacionCumplimiento = () => {
                       </div>
                     </td>
                     {/* Celdas de compromisos - chips clickeables */}
-                    {entidad.compromisos.map((estado, index) => (
-                      <td key={index} className="px-1 py-2 text-center">
-                        <button
-                          onClick={() => handleChipClick(entidad, index, estado)}
-                          className={`inline-block px-2 py-1 text-xs font-semibold rounded-full cursor-pointer transition-all hover:scale-110 hover:shadow-md ${getEstadoStyles(estado)}`}
-                          title={`Clic para evaluar Compromiso ${index + 1}: ${estado}`}
-                        >
-                          {getEstadoAbreviado(estado)}
-                        </button>
-                      </td>
-                    ))}
+                    {entidad.compromisos.map((estado, index) => {
+                      // Asegurar que el estado sea un ID numérico
+                      const estadoId = typeof estado === 'string' ? 
+                        estadosOptions.find(e => e.nombre === estado)?.id || estado : 
+                        estado;
+                      
+                      return (
+                        <td key={index} className="px-1 py-2 text-center">
+                          <button
+                            onClick={() => handleChipClick(entidad, index, estadoId)}
+                            className={`inline-block px-2 py-1 text-xs font-semibold rounded-full cursor-pointer transition-all hover:scale-110 hover:shadow-md ${getEstadoStyles(estadoId)}`}
+                            title={`Clic para evaluar Compromiso ${index + 1}: ${estadosOptions.find(e => e.id === estadoId)?.nombre || estadoId}`}
+                          >
+                            {getEstadoAbreviado(estadoId)}
+                          </button>
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
