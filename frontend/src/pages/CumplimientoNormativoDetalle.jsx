@@ -30,7 +30,7 @@ import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toa
 import PDFViewer from '../components/PDFViewer';
 import Compromiso3Paso1 from '../components/Compromiso3/Compromiso3Paso1';
 import { Compromiso10Tabs } from '../components/Compromiso10';
-import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save, Eye, ExternalLink, Plus, Trash2, Edit2, HelpCircle } from 'lucide-react';
+import { FileText, Upload, X, Check, AlertCircle, ChevronLeft, ChevronRight, Save, Eye, ExternalLink, Plus, Trash2, Edit2, HelpCircle, Users } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import emailService from '../services/emailService';
 import emailTemplates from '../services/emailTemplates';
