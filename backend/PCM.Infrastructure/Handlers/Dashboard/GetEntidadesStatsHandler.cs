@@ -20,10 +20,10 @@ public class GetEntidadesStatsHandler : IRequestHandler<GetEntidadesStatsQuery, 
     {
         try
         {
-            // Obtener todas las entidades activas
+            // Obtener todas las entidades activas con su subclasificación
             var entidades = await _context.Entidades
                 .Include(e => e.Sector)
-                .Include(e => e.Clasificacion)
+                .Include(e => e.Clasificacion) // Clasificacion es realmente Subclasificacion
                 .Where(e => e.Activo)
                 .OrderBy(e => e.Nombre)
                 .ToListAsync(cancellationToken);
@@ -32,6 +32,26 @@ public class GetEntidadesStatsHandler : IRequestHandler<GetEntidadesStatsQuery, 
 
             foreach (var entidad in entidades)
             {
+                // Calcular el total de compromisos ASIGNADOS a la entidad según su subclasificación
+                // usando la tabla AlcancesCompromisos
+                int totalCompromisosAsignados = 21; // Valor por defecto
+                
+                if (entidad.ClasificacionId.HasValue)
+                {
+                    // Contar cuántos compromisos activos están asignados a esta subclasificación
+                    totalCompromisosAsignados = await _context.AlcancesCompromisos
+                        .Where(ac => ac.ClasificacionId == entidad.ClasificacionId.Value && ac.Activo)
+                        .Select(ac => ac.CompromisoId)
+                        .Distinct()
+                        .CountAsync(cancellationToken);
+                    
+                    // Si no hay alcances definidos, usar valor por defecto
+                    if (totalCompromisosAsignados == 0)
+                    {
+                        totalCompromisosAsignados = 21;
+                    }
+                }
+
                 // Obtener compromisos de la entidad
                 var compromisos = await _context.CumplimientosNormativos
                     .Where(c => c.EntidadId == entidad.EntidadId)
@@ -48,8 +68,8 @@ public class GetEntidadesStatsHandler : IRequestHandler<GetEntidadesStatsQuery, 
                 var aceptados = compromisos.Count(c => c.EstadoId == 8);
 
                 var totalActivos = compromisos.Count(c => c.EstadoId != 3);
-                var totalCompromisosEsperados = 21;
-                var compromisosSinRegistro = totalCompromisosEsperados - compromisos.Count();
+                var totalCompromisosEsperados = totalCompromisosAsignados;
+                var compromisosSinRegistro = Math.Max(0, totalCompromisosEsperados - compromisos.Count());
                 
                 var porcentaje = totalActivos > 0 
                     ? (byte)Math.Round((double)aceptados / totalActivos * 100) 

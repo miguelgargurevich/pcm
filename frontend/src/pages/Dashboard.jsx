@@ -189,10 +189,12 @@ const Dashboard = () => {
         const totalActivos = pendientes + sinReportar + enProceso + enviados + enRevision + observados + aceptados;
         const totalConNoExigible = totalActivos + noExigible;
         
-        // IMPORTANTE: El backend solo devuelve compromisos con registros en cumplimiento_normativo
-        // Pero el sistema tiene 21 compromisos en total. Usamos el mayor valor.
-        const totalReal = Math.max(totalConNoExigible, data.totalCompromisos, 21);
-        const compromisosSinRegistro = totalReal - totalConNoExigible;
+        // IMPORTANTE: El backend devuelve los compromisos FILTRADOS por subclasificación de la entidad
+        // El catálogo de compromisos (catalogoCompromisos) ya viene filtrado por alcance
+        // Usamos el total real de compromisos asignados a la entidad
+        const totalCompromisosAsignados = catalogoCompromisos.length || totalConNoExigible;
+        const totalReal = Math.max(totalConNoExigible, totalCompromisosAsignados);
+        const compromisosSinRegistro = Math.max(0, totalReal - totalConNoExigible);
         
         console.log('📊 Estadísticas calculadas:', {
           totalActivos,
