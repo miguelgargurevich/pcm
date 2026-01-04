@@ -9,6 +9,8 @@ public class CreateCom8PublicacionTUPACommand : IRequest<Result<Com8PublicacionT
     public Guid EntidadId { get; set; }
     public string EtapaFormulario { get; set; } = "paso1";
     public string Estado { get; set; } = "pendiente";
+    public string? EstadoPCM { get; set; }
+    public string? ObservacionesPCM { get; set; }
     
     // Campos específicos de Publicación de TUPA
     public string? UrlTupa { get; set; }

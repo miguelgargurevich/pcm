@@ -2969,7 +2969,7 @@ const CumplimientoNormativoDetalle = () => {
             DescripcionPei: formData.descripcionIncorporacion || null,
             AlineadoPgd: formData.alineadoPgd || false,
             RutaPdfPei: documentoUrl || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1'
           };
           
@@ -3037,7 +3037,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com5Data = {
             CompromisoId: 5,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             NombreEstrategia: formData.nombreEstrategia || null,
             PeriodoInicioEstrategia: parseInt(formData.anioInicio) || null,
             PeriodoFinEstrategia: parseInt(formData.anioFin) || null,
@@ -3047,7 +3047,7 @@ const CumplimientoNormativoDetalle = () => {
             AlineadoPgdEstrategia: formData.alineadoPgd || false,
             EstadoImplementacionEstrategia: formData.estadoImplementacion || null,
             RutaPdfEstrategia: documentoUrl || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1'
           };
           
@@ -3102,7 +3102,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com6Data = {
             CompromisoId: 6,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             UrlGobpe: formData.urlPortalGobPe || null,
             FechaMigracionGobpe: formData.fechaMigracion || null,
             FechaActualizacionGobpe: formData.fechaUltimaActualizacion || null,
@@ -3112,7 +3112,7 @@ const CumplimientoNormativoDetalle = () => {
             TipoMigracionGobpe: formData.tipoMigracion || null,
             ObservacionGobpe: formData.observacionesMigracion || null,
             RutaPdfGobpe: documentoUrl || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1'
           };
           
@@ -3163,7 +3163,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com7Data = {
             CompromisoId: 7,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             UrlMpd: formData.urlMpd || null,
             FechaImplementacionMpd: formData.fechaImplementacionMpd || null,
             ResponsableMpd: formData.responsableMpd || null,
@@ -3174,7 +3174,7 @@ const CumplimientoNormativoDetalle = () => {
             InteroperabilidadMpd: formData.interoperabilidadMpd || false,
             ObservacionMpd: formData.observacionMpd || null,
             RutaPdfMpd: documentoUrl || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1'
           };
           
@@ -3225,7 +3225,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com8Data = {
             CompromisoId: 8,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             UrlTupa: formData.urlTupa || null,
             NumeroResolucionTupa: formData.numeroResolucionTupa || null,
             FechaAprobacionTupa: formData.fechaAprobacionTupa || null,
@@ -3236,8 +3236,9 @@ const CumplimientoNormativoDetalle = () => {
             ActualizadoTupa: formData.actualizadoTupa || false,
             ObservacionTupa: formData.observacionesTupa || null,
             RutaPdfTupa: documentoUrl || null,
-            UsuarioRegistra: user.UserId,
-            EtapaFormulario: 'paso1'
+            UsuarioRegistra: getUserId(),
+            EtapaFormulario: 'paso1',
+            EstadoPCM: 'En Proceso'
           };
           
           if (com8RecordId) {
@@ -3287,7 +3288,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com9Data = {
             CompromisoId: 9,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             FechaAprobacionMgd: formData.fechaAprobacionMgd || null,
             NumeroResolucionMgd: formData.numeroResolucionMgd || null,
             ResponsableMgd: formData.responsableMgd || null,
@@ -3299,7 +3300,7 @@ const CumplimientoNormativoDetalle = () => {
             InteroperaSistemasMgd: formData.interoperaSistemasMgd || false,
             ObservacionMgd: formData.observacionesMgd || null,
             RutaPdfMgd: documentoUrl || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1'
           };
           
@@ -3350,7 +3351,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com10Data = {
             CompromisoId: 10,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             UrlDatosAbiertos: formData.urlDatosAbiertos || null,
             TotalDatasets: formData.totalDatasets ? parseInt(formData.totalDatasets) : null,
             FechaUltimaActualizacionDa: formData.fechaUltimaActualizacionDa || null,
@@ -3362,7 +3363,7 @@ const CumplimientoNormativoDetalle = () => {
             FechaAprobacionDa: formData.fechaAprobacionDa || null,
             ObservacionDa: formData.observacionesDa || null,
             RutaPdfDa: documentoUrl || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1'
           };
           
@@ -3414,7 +3415,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoParaGuardar === 1) {
           const com11Data = {
             CompromisoId: 11,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             // Campos específicos de GeoPeru
             UrlGeo: formData.urlGeo || null,
             TipoInformacionGeo: formData.tipoInformacionGeo || null,
@@ -3429,7 +3430,7 @@ const CumplimientoNormativoDetalle = () => {
             InteroperabilidadGeo: formData.interoperabilidadGeo || false,
             ObservacionGeo: formData.observacionGeo || null,
             RutaPdfGeo: documentoUrl || formData.rutaPdfGeo || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3482,7 +3483,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com12Data = {
             CompromisoId: 12,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             DniRsp: formData.dniRsp || null,
             NombreRsp: formData.nombreRsp || null,
             ApePatRsp: formData.apePatRsp || null,
@@ -3494,7 +3495,7 @@ const CumplimientoNormativoDetalle = () => {
             NumeroResolucionRsp: formData.numeroResolucionRsp || null,
             ObservacionRsp: formData.observacionRsp || null,
             RutaPdfRsp: documentoUrl || formData.rutaPdfRsp || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3547,7 +3548,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com13Data = {
             CompromisoId: 13,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             TipoIntegracionPide: formData.tipoIntegracionPide || null,
             NombreServicioPide: formData.nombreServicioPide || null,
             DescripcionServicioPide: formData.descripcionServicioPide || null,
@@ -3562,7 +3563,7 @@ const CumplimientoNormativoDetalle = () => {
             InteroperabilidadPide: formData.interoperabilidadPide || false,
             ObservacionPide: formData.observacionPide || null,
             RutaPdfPide: documentoUrl || formData.rutaPdfPide || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3618,7 +3619,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com14Data = {
             CompromisoId: 14,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             DniOscd: formData.dniOscd || null,
             NombreOscd: formData.nombreOscd || null,
             ApePatOscd: formData.apePatOscd || null,
@@ -3631,7 +3632,7 @@ const CumplimientoNormativoDetalle = () => {
             ComunicadoPcmOscd: formData.comunicadoPcmOscd || false,
             ObservacionOscd: formData.observacionOscd || null,
             RutaPdfOscd: documentoUrl || formData.rutaPdfOscd || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3684,7 +3685,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com15Data = {
             CompromisoId: 15,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             NombreCsirt: formData.nombreCsirt || null,
             FechaConformacionCsirt: formData.fechaConformacionCsirt || null,
             NumeroResolucionCsirt: formData.numeroResolucionCsirt || null,
@@ -3696,7 +3697,7 @@ const CumplimientoNormativoDetalle = () => {
             ComunicadoPcmCsirt: formData.comunicadoPcmCsirt || false,
             ObservacionCsirt: formData.observacionCsirt || null,
             RutaPdfCsirt: documentoUrl || formData.rutaPdfCsirt || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3749,7 +3750,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com16Data = {
             CompromisoId: 16,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             ResponsableSgsi: formData.responsableSgsi || null,
             CargoResponsableSgsi: formData.cargoResponsableSgsi || null,
             CorreoSgsi: formData.correoSgsi || null,
@@ -3763,7 +3764,7 @@ const CumplimientoNormativoDetalle = () => {
             RutaPdfPoliticasSgsi: documentoUrl || formData.rutaPdfPoliticasSgsi || null,
             RutaPdfCertificadoSgsi: formData.rutaPdfCertificadoSgsi || null,
             ObservacionSgsi: formData.observacionSgsi || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3816,7 +3817,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com17Data = {
             CompromisoId: 17,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             ResponsableIpv6: formData.responsableIpv6 || null,
             CargoResponsableIpv6: formData.cargoResponsableIpv6 || null,
             CorreoIpv6: formData.correoIpv6 || null,
@@ -3829,7 +3830,7 @@ const CumplimientoNormativoDetalle = () => {
             DescripcionPlanIpv6: formData.descripcionPlanIpv6 || null,
             RutaPdfPlanIpv6: documentoUrl || formData.rutaPdfPlanIpv6 || null,
             ObservacionIpv6: formData.observacionIpv6 || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3882,7 +3883,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com18Data = {
             CompromisoId: 18,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             ResponsablePte: formData.responsablePte || null,
             CargoResponsablePte: formData.cargoResponsablePte || null,
             CorreoPte: formData.correoPte || null,
@@ -3895,7 +3896,7 @@ const CumplimientoNormativoDetalle = () => {
             DescripcionPte: formData.descripcionPte || null,
             RutaPdfPte: documentoUrl || formData.rutaPdfPte || null,
             ObservacionPte: formData.observacionPte || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -3948,7 +3949,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com19Data = {
             CompromisoId: 19,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             AnioEnad: formData.anioEnad ? parseInt(formData.anioEnad) : null,
             ResponsableEnad: formData.responsableEnad || null,
             CargoResponsableEnad: formData.cargoResponsableEnad || null,
@@ -3959,7 +3960,7 @@ const CumplimientoNormativoDetalle = () => {
             EnlaceFormularioEnad: formData.enlaceFormularioEnad || null,
             ObservacionEnad: formData.observacionEnad || null,
             RutaPdfEnad: documentoUrl || formData.rutaPdfEnad || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -4012,7 +4013,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com20Data = {
             CompromisoId: 20,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             ResponsableFacilita: formData.responsableFacilita || null,
             CargoResponsableFacilita: formData.cargoResponsableFacilita || null,
             CorreoFacilita: formData.correoFacilita || null,
@@ -4023,7 +4024,7 @@ const CumplimientoNormativoDetalle = () => {
             TotalServiciosDigitalizados: formData.totalServiciosDigitalizados ? parseInt(formData.totalServiciosDigitalizados) : null,
             RutaPdfFacilita: documentoUrl || formData.rutaPdfFacilita || null,
             ObservacionFacilita: formData.observacionFacilita || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };
@@ -4076,7 +4077,7 @@ const CumplimientoNormativoDetalle = () => {
         if (pasoActual === 1) {
           const com21Data = {
             CompromisoId: 21,
-            EntidadId: user.EntidadId,
+            EntidadId: getUserEntityIdForData(),
             DniOgd: formData.dniOgd || null,
             NombreOgd: formData.nombreOgd || null,
             ApePatOgd: formData.apePatOgd || null,
@@ -4089,7 +4090,7 @@ const CumplimientoNormativoDetalle = () => {
             ComunicadoPcmOgd: formData.comunicadoPcmOgd || false,
             RutaPdfOgd: documentoUrl || null,
             ObservacionOgd: formData.observacionOgd || null,
-            UsuarioRegistra: user.UserId,
+            UsuarioRegistra: getUserId(),
             EtapaFormulario: 'paso1',
             Estado: 'pendiente'
           };

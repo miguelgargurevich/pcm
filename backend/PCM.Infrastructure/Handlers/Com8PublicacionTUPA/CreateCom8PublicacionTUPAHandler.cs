@@ -33,6 +33,8 @@ public class CreateCom8PublicacionTUPAHandler : IRequestHandler<CreateCom8Public
                 EntidadId = request.EntidadId,
                 EtapaFormulario = request.EtapaFormulario,
                 Estado = request.Estado,
+                EstadoPCM = request.EstadoPCM ?? "En Proceso", // Valor por defecto
+                ObservacionesPCM = request.ObservacionesPCM ?? "", // Valor por defecto
                 UrlTupa = request.UrlTupa,
                 NumeroResolucionTupa = request.NumeroResolucionTupa,
                 FechaAprobacionTupa = request.FechaAprobacionTupa.HasValue 
