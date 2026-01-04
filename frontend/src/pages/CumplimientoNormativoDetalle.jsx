@@ -2917,26 +2917,53 @@ const CumplimientoNormativoDetalle = () => {
       else if (parseInt(formData.compromisoId) === 3) {
         console.log(`🚀 Preparando datos para Com3 EPGD (Paso ${pasoActual})`);
         
-        // Paso 1: NO guardar aquí - el componente Compromiso3Paso1 maneja su propio guardado
+        // Paso 1: Actualizar estado cuando avanza a siguiente paso
         if (pasoActual === 1) {
-          console.log('⏭️ Paso 1 Com3 - El componente interno ya guardó los datos, solo avanzar');
-          // Simular respuesta exitosa para permitir avanzar
-          response = { isSuccess: true, success: true, data: {} };
+          console.log('⏭️ Paso 1 Com3 - Actualizando estado a en_proceso al avanzar');
+          
+          // Determinar estado según si es final o no
+          let nuevoEstado;
+          if (esFinal) {
+            nuevoEstado = 'enviado';
+          } else {
+            nuevoEstado = 'en_proceso';
+          }
+          
+          if (com3RecordId) {
+            const com3UpdateData = {
+              EtapaFormulario: esFinal ? 'completado' : 'paso2',
+              Estado: nuevoEstado
+            };
+            
+            console.log(`📤 Actualizando Com3 Paso 1 (esFinal: ${esFinal}, Estado: ${nuevoEstado}):`, com3UpdateData);
+            response = await com3EPGDService.update(com3RecordId, com3UpdateData);
+          } else {
+            console.log('⚠️ No hay com3RecordId, simulando respuesta exitosa');
+            response = { isSuccess: true, success: true, data: {} };
+          }
         }
         // Paso 2 y 3: Guardar directamente en com3_epgd
         // NOTA: Los criterios ahora se guardan en evaluacion_respuestas_entidad, no aquí
         else if (pasoActual >= 2) {
+          // Determinar estado según si es final o no
+          let nuevoEstado;
+          if (esFinal) {
+            nuevoEstado = 'enviado';
+          } else {
+            nuevoEstado = 'en_proceso';
+          }
+          
           const com3UpdateData = {
             ...(pasoActual === 2 && documentoUrl && { RutaPdfNormativa: documentoUrl }),
             ...(pasoActual === 3 && {
               CheckPrivacidad: formData.aceptaPoliticaPrivacidad || false,
               CheckDdjj: formData.aceptaDeclaracionJurada || false,
             }),
-            EtapaFormulario: pasoActual === 3 ? 'completado' : 'paso2',
-            Estado: pasoActual === 3 ? 'enviado' : 'en_proceso'
+            EtapaFormulario: esFinal ? 'completado' : (pasoActual === 3 ? 'completado' : 'paso2'),
+            Estado: nuevoEstado
           };
           
-          console.log(`📤 Datos Com3 Paso ${pasoActual} a enviar:`, com3UpdateData);
+          console.log(`📤 Datos Com3 Paso ${pasoActual} a enviar (esFinal: ${esFinal}, Estado: ${nuevoEstado}):`, com3UpdateData);
           
           if (com3RecordId) {
             response = await com3EPGDService.update(com3RecordId, com3UpdateData);
