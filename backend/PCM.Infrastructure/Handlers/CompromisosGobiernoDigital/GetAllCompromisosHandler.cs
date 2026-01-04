@@ -72,13 +72,14 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                         .ThenInclude(s => s!.Clasificacion) // Cargar Clasificacion padre
                 .AsQueryable();
 
-            // Filtrar por clasificación SOLO si el usuario es de tipo "Entidad"
+            // Filtrar por SUBCLASIFICACIÓN SOLO si el usuario es de tipo "Entidad"
             // Los administradores y operadores deben ver todos los compromisos
+            // AlcanceCompromiso.ClasificacionId apunta a subclasificacion_id en la BD
             bool esAdminOOperador = userPerfil == "Administrador" || userPerfil == "Operador";
             
-            if (userClasificacionId.HasValue && !esAdminOOperador)
+            if (userSubclasificacionId.HasValue && !esAdminOOperador)
             {
-                query = query.Where(c => c.AlcancesCompromisos.Any(ac => ac.ClasificacionId == userClasificacionId.Value && ac.Activo));
+                query = query.Where(c => c.AlcancesCompromisos.Any(ac => ac.ClasificacionId == userSubclasificacionId.Value && ac.Activo));
             }
 
             // Apply filters
