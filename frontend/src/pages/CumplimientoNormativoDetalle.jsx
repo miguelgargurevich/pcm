@@ -3226,6 +3226,7 @@ const CumplimientoNormativoDetalle = () => {
           const com8Data = {
             CompromisoId: 8,
             EntidadId: getUserEntityIdForData(),
+            Estado: 'en_proceso',
             UrlTupa: formData.urlTupa || null,
             NumeroResolucionTupa: formData.numeroResolucionTupa || null,
             FechaAprobacionTupa: formData.fechaAprobacionTupa || null,
