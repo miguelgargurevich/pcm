@@ -100,9 +100,9 @@ public class EvaluacionController : ControllerBase
             var com20Data = await _context.Com20DigitalizacionServiciosFacilita.Where(c => c.Activo).ToListAsync();
             var com21Data = await _context.Com21OficialGobiernoDatos.Where(c => c.Activo).ToListAsync();
 
-            // Obtener alcances de compromisos para saber cuáles son exigibles por clasificación
-            var alcances = await _context.AlcancesCompromisos
-                .Where(a => a.Activo)
+            // Obtener exigibilidades por clasificación
+            var exigibilidades = await _context.Exigibilidades
+                .Where(e => e.Activo)
                 .ToListAsync();
 
             // Construir la matriz
@@ -115,12 +115,11 @@ public class EvaluacionController : ControllerBase
                 // Para cada compromiso, determinar el estado
                 for (int i = 1; i <= 21; i++)
                 {
-                    // Obtener el estado del compromiso para esta entidad
-                    // Nota: Por ahora mostramos el estado real sin filtrar por alcances
-                    // ya que la configuración de alcances puede no estar completa
-                    string estadoCompromiso = ObtenerEstadoCompromiso(
-                        i, ent.EntidadId,
+                    // Obtener el estado del compromiso para esta entidad considerando exigibilidad
+                    string estadoCompromiso = ObtenerEstadoCompromisoConExigibilidad(
+                        i, ent.EntidadId, ent.ClasificacionId,
                         cumplimientos,
+                        exigibilidades,
                         com1Data, com2Data, com3Data, com4Data, com5Data,
                         com6Data, com7Data, com8Data, com9Data, com10Data,
                         com11Data, com12Data, com13Data, com14Data, com15Data,
@@ -483,6 +482,187 @@ public class EvaluacionController : ControllerBase
     }
 
     #region Private Methods
+
+    private string ObtenerEstadoCompromisoConExigibilidad(
+        int compromisoId, 
+        Guid entidadId,
+        long? clasificacionId,
+        List<CumplimientoNormativo> cumplimientos,
+        List<Exigibilidad> exigibilidades,
+        List<Com1LiderGTD> com1Data,
+        List<Com2CGTD> com2Data,
+        List<Com3EPGD> com3Data,
+        List<Com4PEI> com4Data,
+        List<Com5EstrategiaDigital> com5Data,
+        List<Com6MigracionGobPe> com6Data,
+        List<Com7ImplementacionMPD> com7Data,
+        List<Com8PublicacionTUPA> com8Data,
+        List<Com9ModeloGestionDocumental> com9Data,
+        List<Com10DatosAbiertos> com10Data,
+        List<Com11AportacionGeoPeru> com11Data,
+        List<Com12ResponsableSoftwarePublico> com12Data,
+        List<Com13InteroperabilidadPIDE> com13Data,
+        List<Com14OficialSeguridadDigital> com14Data,
+        List<Com15CSIRTInstitucional> com15Data,
+        List<Com16SistemaGestionSeguridad> com16Data,
+        List<Com17PlanTransicionIPv6> com17Data,
+        List<Com18AccesoPortalTransparencia> com18Data,
+        List<Com19EncuestaNacionalGobDigital> com19Data,
+        List<Com20DigitalizacionServiciosFacilita> com20Data,
+        List<Com21OficialGobiernoDatos> com21Data)
+    {
+        // PRIORIDAD 1: Verificar si existe evaluación en cumplimiento_normativo
+        var cumplimiento = cumplimientos.FirstOrDefault(c => 
+            c.EntidadId == entidadId && c.CompromisoId == compromisoId);
+        
+        if (cumplimiento != null)
+        {
+            // Mapear estado_id a string
+            return cumplimiento.EstadoId switch
+            {
+                8 => "aceptado",     // ACEPTADO
+                7 => "observado",    // OBSERVADO
+                6 => "en revisión",  // EN REVISIÓN
+                5 => "enviado",      // ENVIADO
+                4 => "en proceso",   // EN PROCESO
+                3 => "no exigible",  // NO EXIGIBLE
+                2 => "sin reportar", // SIN REPORTAR
+                1 => "pendiente",    // PENDIENTE
+                _ => "pendiente"
+            };
+        }
+        
+        // PRIORIDAD 2: Si no hay evaluación, verificar el estado en las tablas comX
+        string? estado = null;
+        string? etapa = null;
+
+        switch (compromisoId)
+        {
+            case 1:
+                var c1 = com1Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c1 != null) { estado = c1.Estado; etapa = c1.EtapaFormulario; }
+                break;
+            case 2:
+                var c2 = com2Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c2 != null) { estado = c2.Estado; etapa = c2.EtapaFormulario; }
+                break;
+            case 3:
+                var c3 = com3Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c3 != null) { estado = c3.Estado; etapa = c3.EtapaFormulario; }
+                break;
+            case 4:
+                var c4 = com4Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c4 != null) { estado = c4.Estado; etapa = c4.EtapaFormulario; }
+                break;
+            case 5:
+                var c5 = com5Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c5 != null) { estado = c5.Estado; etapa = c5.EtapaFormulario; }
+                break;
+            case 6:
+                var c6 = com6Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c6 != null) { estado = c6.Estado; etapa = c6.EtapaFormulario; }
+                break;
+            case 7:
+                var c7 = com7Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c7 != null) { estado = c7.Estado; etapa = c7.EtapaFormulario; }
+                break;
+            case 8:
+                var c8 = com8Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c8 != null) { estado = c8.Estado; etapa = c8.EtapaFormulario; }
+                break;
+            case 9:
+                var c9 = com9Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c9 != null) { estado = c9.Estado; etapa = c9.EtapaFormulario; }
+                break;
+            case 10:
+                var c10 = com10Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c10 != null) { estado = c10.Estado; etapa = c10.EtapaFormulario; }
+                break;
+            case 11:
+                var c11 = com11Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c11 != null) { estado = c11.Estado; etapa = c11.EtapaFormulario; }
+                break;
+            case 12:
+                var c12 = com12Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c12 != null) { estado = c12.Estado; etapa = c12.EtapaFormulario; }
+                break;
+            case 13:
+                var c13 = com13Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c13 != null) { estado = c13.Estado; etapa = c13.EtapaFormulario; }
+                break;
+            case 14:
+                var c14 = com14Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c14 != null) { estado = c14.Estado; etapa = c14.EtapaFormulario; }
+                break;
+            case 15:
+                var c15 = com15Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c15 != null) { estado = c15.Estado; etapa = c15.EtapaFormulario; }
+                break;
+            case 16:
+                var c16 = com16Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c16 != null) { estado = c16.Estado; etapa = c16.EtapaFormulario; }
+                break;
+            case 17:
+                var c17 = com17Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c17 != null) { estado = c17.Estado; etapa = c17.EtapaFormulario; }
+                break;
+            case 18:
+                var c18 = com18Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c18 != null) { estado = c18.Estado; etapa = c18.EtapaFormulario; }
+                break;
+            case 19:
+                var c19 = com19Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c19 != null) { estado = c19.Estado; etapa = c19.EtapaFormulario; }
+                break;
+            case 20:
+                var c20 = com20Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c20 != null) { estado = c20.Estado; etapa = c20.EtapaFormulario; }
+                break;
+            case 21:
+                var c21 = com21Data.FirstOrDefault(c => c.EntidadId == entidadId);
+                if (c21 != null) { estado = c21.Estado; etapa = c21.EtapaFormulario; }
+                break;
+        }
+
+        // Si hay registro específico, mapear estado
+        if (!string.IsNullOrEmpty(estado) || !string.IsNullOrEmpty(etapa))
+        {
+            // Mapear el campo estado a los estados de la UI
+            return estado?.ToLower() switch
+            {
+                "aceptado" or "validado" or "aprobado" => "aceptado",
+                "observado" => "observado",
+                "en_revision" or "revision" or "en revisión" => "en revisión",
+                "enviado" => "enviado",
+                "en_proceso" or "en proceso" => "en proceso",
+                "sin_reportar" or "sin reportar" => "sin reportar",
+                "no_exigible" or "no exigible" => "no exigible",
+                _ => MapearEstadoEntidad(estado, etapa)
+            };
+        }
+
+        // PRIORIDAD 3: Si no hay registro ni cumplimiento, calcular desde exigibilidad
+        if (clasificacionId.HasValue)
+        {
+            var exigibilidad = exigibilidades.FirstOrDefault(e => 
+                e.SubclasificacionId == clasificacionId.Value && 
+                e.CompromisoId == compromisoId);
+                
+            if (exigibilidad != null)
+            {
+                return exigibilidad.NivelExigibilidad switch
+                {
+                    "OBLIGATORIO" => "pendiente",    // PENDIENTE
+                    "OPCIONAL" => "sin reportar",    // SIN REPORTAR
+                    "NO_EXIGIBLE" => "no exigible",  // NO EXIGIBLE
+                    _ => "sin reportar"
+                };
+            }
+        }
+
+        // Valor por defecto
+        return "sin reportar";
+    }
 
     private string ObtenerEstadoCompromiso(
         int compromisoId, 
