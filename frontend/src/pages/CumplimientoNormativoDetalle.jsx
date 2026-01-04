@@ -4117,14 +4117,15 @@ const CumplimientoNormativoDetalle = () => {
     try {
       console.log('📧 ===== INICIANDO ENVÍO DE CORREO DE CONFIRMACIÓN =====');
       
-      // Obtener correo del líder GTD
-      const correoLider = await getCorreoLiderGTD();
-      if (!correoLider) {
-        console.warn('⚠️ No se encontró correo del líder GTD. El correo no se enviará.');
+      // Obtener correo de la entidad (campo email de la tabla entidades)
+      const correoEntidad = user?.entidadEmail;
+      if (!correoEntidad) {
+        console.warn('⚠️ No se encontró correo de la entidad. El correo no se enviará.');
+        showErrorToast('No se encontró el correo electrónico de la entidad. Por favor, actualice los datos de la entidad.');
         return false;
       }
 
-      console.log('✅ Correo destinatario:', correoLider);
+      console.log('✅ Correo destinatario (entidad):', correoEntidad);
       console.log('📝 Compromiso:', parseInt(formData.compromisoId), '-', compromisoSeleccionado?.nombreCompromiso);
 
       // Preparar datos para los templates
@@ -4148,11 +4149,11 @@ const CumplimientoNormativoDetalle = () => {
       const paso2Html = emailTemplates.paso2Html(paso2Data);
       const paso3Html = emailTemplates.paso3Html(paso3Data);
 
-      console.log('📧 Enviando correo a:', correoLider);
+      console.log('📧 Enviando correo a:', correoEntidad);
 
       // Enviar correo
       const enviado = await emailService.sendCumplimientoConfirmation({
-        toEmail: correoLider,
+        toEmail: correoEntidad,
         entidadNombre: user.entidadNombre || user.nombreCompleto || 'Entidad',
         compromisoId: parseInt(formData.compromisoId),
         compromisoNombre: compromisoSeleccionado?.nombreCompromiso || `Compromiso ${formData.compromisoId}`,
@@ -4163,8 +4164,8 @@ const CumplimientoNormativoDetalle = () => {
       });
 
       if (enviado) {
-        console.log('✅ Correo de confirmación enviado exitosamente a', correoLider);
-        showSuccessToast('Se ha enviado una notificación por correo al Líder de Gobierno y Transformación Digital.');
+        console.log('✅ Correo de confirmación enviado exitosamente a', correoEntidad);
+        showSuccessToast('Se ha enviado una notificación por correo a la entidad.');
       } else {
         console.warn('⚠️ No se pudo enviar el correo de confirmación');
         showErrorToast('No se pudo enviar la notificación por correo. Los datos fueron guardados correctamente.');

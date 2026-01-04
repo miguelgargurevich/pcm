@@ -23,6 +23,7 @@ public class UsuarioDto
     public string NombreCompleto { get; set; } = string.Empty;
     public Guid? EntidadId { get; set; }
     public string NombreEntidad { get; set; } = string.Empty;
+    public string? EntidadEmail { get; set; }
     public int PerfilId { get; set; }
     public string NombrePerfil { get; set; } = string.Empty;
     public bool Activo { get; set; }

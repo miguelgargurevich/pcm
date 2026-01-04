@@ -87,6 +87,7 @@ public class AuthService : IAuthService
                     NombreCompleto = $"{usuario.Nombres} {usuario.ApePaterno} {usuario.ApeMaterno}",
                     EntidadId = usuario.EntidadId,
                     NombreEntidad = usuario.Entidad?.Nombre ?? "",
+                    EntidadEmail = usuario.Entidad?.Email,
                     PerfilId = usuario.PerfilId,
                     NombrePerfil = usuario.Perfil?.Nombre ?? "",
                     Activo = usuario.Activo

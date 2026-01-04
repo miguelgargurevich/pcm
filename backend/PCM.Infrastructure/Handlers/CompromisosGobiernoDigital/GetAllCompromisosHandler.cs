@@ -30,21 +30,29 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
             long? userClasificacionId = null;
             long? userSubclasificacionId = null; // Para consultar exigibilidad
             Guid? userEntidadId = null;
+            string? userPerfil = null;
+            
             if (request.UserId.HasValue)
             {
                 var usuario = await _context.Usuarios
                     .Include(u => u.Entidad)
                         .ThenInclude(e => e!.Clasificacion) // Clasificacion es realmente Subclasificacion
+                    .Include(u => u.Perfil)
                     .FirstOrDefaultAsync(u => u.UserId == request.UserId.Value, cancellationToken);
                 
-                if (usuario?.Entidad != null)
+                if (usuario != null)
                 {
-                    // Entidad.ClasificacionId es subclasificacion_id
-                    // Entidad.Clasificacion es la Subclasificacion
-                    // Subclasificacion.ClasificacionId es el ID de la clasificación padre
-                    userClasificacionId = usuario.Entidad?.Clasificacion?.ClasificacionId;
-                    userSubclasificacionId = usuario.Entidad?.ClasificacionId; // subclasificacion_id real
-                    userEntidadId = usuario.Entidad?.EntidadId;
+                    userPerfil = usuario.Perfil?.Nombre;
+                    
+                    if (usuario.Entidad != null)
+                    {
+                        // Entidad.ClasificacionId es subclasificacion_id
+                        // Entidad.Clasificacion es la Subclasificacion
+                        // Subclasificacion.ClasificacionId es el ID de la clasificación padre
+                        userClasificacionId = usuario.Entidad?.Clasificacion?.ClasificacionId;
+                        userSubclasificacionId = usuario.Entidad?.ClasificacionId; // subclasificacion_id real
+                        userEntidadId = usuario.Entidad?.EntidadId;
+                    }
                 }
             }
 
@@ -64,8 +72,11 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                         .ThenInclude(s => s!.Clasificacion) // Cargar Clasificacion padre
                 .AsQueryable();
 
-            // Filtrar por clasificación de la entidad del usuario
-            if (userClasificacionId.HasValue)
+            // Filtrar por clasificación SOLO si el usuario es de tipo "Entidad"
+            // Los administradores y operadores deben ver todos los compromisos
+            bool esAdminOOperador = userPerfil == "Administrador" || userPerfil == "Operador";
+            
+            if (userClasificacionId.HasValue && !esAdminOOperador)
             {
                 query = query.Where(c => c.AlcancesCompromisos.Any(ac => ac.ClasificacionId == userClasificacionId.Value && ac.Activo));
             }
