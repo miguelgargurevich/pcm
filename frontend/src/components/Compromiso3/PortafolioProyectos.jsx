@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2, Upload, Download, X } from 'lucide-react';
+import { Plus, Trash2, Edit2, Upload, Download, X, FileText } from 'lucide-react';
+import * as XLSX from 'xlsx';
+import { showSuccessToast, showErrorToast, showInfoToast } from '../../utils/toast.jsx';
 
 /**
  * Componente para gestionar el Portafolio de Proyectos
@@ -8,6 +10,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
   const [localProyectos, setLocalProyectos] = useState(proyectos);
   const [showModal, setShowModal] = useState(false);
   const [editingProyecto, setEditingProyecto] = useState(null);
+  const [isImporting, setIsImporting] = useState(false);
   
   const [formProyecto, setFormProyecto] = useState({
     numeracionProy: '',
@@ -40,6 +43,66 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
     const count = localProyectos.length + 1;
     const year = new Date().getFullYear();
     return `PP-${year}-${count.toString().padStart(3, '0')}`;
+  };
+
+  const downloadPlantillaExcel = () => {
+    try {
+      const encabezados = [
+        'Código', 'Nombre', 'Alcance', 'Justificación', 'Tipo', 'Obj. Estratégico',
+        'Obj. Transformación Digital', 'Área Proyecto', 'Área Ejecutora', 'Tipo Beneficiario',
+        'Etapa', 'Ámbito', 'Fecha Inicio Programada', 'Fecha Fin Programada',
+        'Fecha Inicio Real', 'Fecha Fin Real', 'Estado', 'Alineado PGD', 'Acción Estratégica'
+      ];
+
+      const datosEjemplo = [
+        'PP-2026-001', 'Sistema de Gestión Documental', 'Nacional', 'Modernizar la gestión documentaria', 
+        'Software', 'Modernización del Estado', 'Digitalización de procesos', 'TI', 'OGTI',
+        'Funcionarios públicos', 'Desarrollo', 'Nacional', '2026-01-15', '2026-12-15',
+        '', '', 'Activo', 'Sí', 'Transformación Digital'
+      ];
+
+      // Intentar usar XLSX primero
+      if (XLSX) {
+        const ws = XLSX.utils.aoa_to_sheet([encabezados, datosEjemplo]);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Plantilla Proyectos');
+
+        // Ajustar ancho de columnas
+        const colWidths = [
+          { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 25 }, { wch: 15 }, { wch: 25 },
+          { wch: 25 }, { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 },
+          { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 10 }, { wch: 15 }, { wch: 20 }
+        ];
+        ws['!cols'] = colWidths;
+
+        XLSX.writeFile(wb, 'Plantilla_Portafolio_Proyectos.xlsx');
+        showSuccessToast('📊 Plantilla Excel descargada', 'Complete los datos y luego importe el archivo');
+        return;
+      }
+
+      // Respaldo con CSV
+      const BOM = '\uFEFF';
+      const csvContent = BOM + [
+        encabezados.join(','),
+        datosEjemplo.map(field => `"${field}"`).join(',')
+      ].join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'Plantilla_Portafolio_Proyectos.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      showSuccessToast('📊 Plantilla CSV descargada', 'Puede abrirse en Excel. Complete los datos y luego importe el archivo.');
+    } catch (error) {
+      console.error('Error al generar plantilla:', error);
+      showErrorToast('Error al generar la plantilla');
+    }
   };
 
   const handleAddProyecto = () => {
@@ -144,13 +207,292 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
   };
 
   const handleImportExcel = () => {
-    // TODO: Implementar importación de Excel
-    alert('Funcionalidad de importación de Excel en desarrollo');
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xlsx,.xls,.csv';
+    input.onchange = (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      setIsImporting(true);
+      
+      // Determinar si es un archivo Excel o CSV
+      const isExcelFile = file.name.toLowerCase().includes('.xlsx') || file.name.toLowerCase().includes('.xls');
+      
+      if (isExcelFile && XLSX) {
+        // Procesar archivo Excel
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            
+            if (jsonData.length < 2) {
+              showErrorToast('El archivo debe contener al menos 2 líneas (encabezado y datos)');
+              setIsImporting(false);
+              return;
+            }
+            
+            procesarDatosImportados(jsonData);
+          } catch (error) {
+            console.error('Error al procesar Excel:', error);
+            showErrorToast('Error al procesar el archivo Excel');
+            setIsImporting(false);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        // Procesar archivo CSV
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const text = e.target.result;
+            const lines = text.split('\n');
+            
+            if (lines.length < 2) {
+              showErrorToast('El archivo debe contener al menos 2 líneas (encabezado y datos)');
+              setIsImporting(false);
+              return;
+            }
+            
+            // Convertir CSV a formato array
+            const parseCSVLine = (line) => {
+              const result = [];
+              let current = '';
+              let inQuotes = false;
+              
+              for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                  inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                  result.push(current.trim());
+                  current = '';
+                } else {
+                  current += char;
+                }
+              }
+              result.push(current.trim());
+              return result;
+            };
+            
+            const csvData = lines
+              .filter(line => line.trim())
+              .map(line => parseCSVLine(line));
+              
+            procesarDatosImportados(csvData);
+          } catch (error) {
+            console.error('Error al procesar CSV:', error);
+            showErrorToast('Error al procesar el archivo CSV');
+            setIsImporting(false);
+          }
+        };
+        reader.readAsText(file, 'UTF-8');
+      }
+    };
+    
+    input.click();
+  };
+
+  const procesarDatosImportados = (data) => {
+    try {
+      const proyectosImportados = [];
+      
+      // Procesar desde la fila 1 (saltando encabezados)
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        if (!row || row.length < 4) continue;
+        
+        const nuevoProyecto = {
+          tempId: Date.now() + i,
+          numeracionProy: row[0] || generarCodigoProyecto(),
+          nombre: row[1] || '',
+          alcance: row[2] || '',
+          justificacion: row[3] || '',
+          tipoProy: row[4] || '',
+          objEst: row[5] || '',
+          objTranDig: row[6] || '',
+          areaProy: row[7] || '',
+          areaEjecuta: row[8] || '',
+          tipoBeneficiario: row[9] || '',
+          etapaProyecto: row[10] || '',
+          ambitoProyecto: row[11] || '',
+          fecIniProg: row[12] || '',
+          fecFinProg: row[13] || '',
+          fecIniReal: row[14] || '',
+          fecFinReal: row[15] || '',
+          estadoProyecto: row[16] === 'true' || row[16] === 'Activo' || false,
+          alineadoPgd: row[17] || '',
+          accEst: row[18] || '',
+          activo: true
+        };
+        
+        // Validar datos mínimos
+        if (nuevoProyecto.nombre.trim()) {
+          proyectosImportados.push(nuevoProyecto);
+        }
+      }
+
+      if (proyectosImportados.length === 0) {
+        showErrorToast('No se encontraron datos válidos en el archivo');
+      } else {
+        const updated = [...localProyectos, ...proyectosImportados];
+        setLocalProyectos(updated);
+        onProyectosChange(updated);
+        showSuccessToast('📥 Importación exitosa', `Se importaron ${proyectosImportados.length} proyecto(s) exitosamente`);
+      }
+      
+    } catch (error) {
+      console.error('Error al procesar datos:', error);
+      showErrorToast('Error al procesar los datos importados');
+    } finally {
+      setIsImporting(false);
+    }
+  };
+            const proyectosImportados = [];
+            for (let i = 1; i < jsonData.length; i++) { // Saltar encabezado
+              const row = jsonData[i];
+              if (row[1]) { // Si tiene nombre
+                const proyecto = {
+                  tempId: Date.now() + i,
+                  numeracionProy: row[0] || generarCodigoProyecto(),
+                  nombre: row[1] || '',
+                  alcance: row[2] || '',
+                  justificacion: row[3] || '',
+                  tipoProy: row[4] || '',
+                  objEst: row[5] || '',
+                  objTranDig: row[6] || '',
+                  areaProy: row[7] || '',
+                  areaEjecuta: row[8] || '',
+                  tipoBeneficiario: row[9] || '',
+                  etapaProyecto: row[10] || '',
+                  ambitoProyecto: row[11] || '',
+                  fecIniProg: row[12] ? new Date(row[12]).toISOString() : '',
+                  fecFinProg: row[13] ? new Date(row[13]).toISOString() : '',
+                  fecIniReal: row[14] ? new Date(row[14]).toISOString() : '',
+                  fecFinReal: row[15] ? new Date(row[15]).toISOString() : '',
+                  estadoProyecto: row[16] === 'Activo' || row[16] === true,
+                  alineadoPgd: row[17] || '',
+                  accEst: row[18] || '',
+                  activo: true
+                };
+                proyectosImportados.push(proyecto);
+              }
+            }
+            
+            if (proyectosImportados.length > 0) {
+              const updated = [...localProyectos, ...proyectosImportados];
+              setLocalProyectos(updated);
+              onProyectosChange(updated);
+              alert(`Se importaron ${proyectosImportados.length} proyectos exitosamente`);
+            } else {
+              alert('No se encontraron proyectos válidos en el archivo');
+            }
+            setIsImporting(false);
+          } catch (error) {
+            console.error('Error al procesar Excel:', error);
+            alert('Error al procesar el archivo Excel. Verifique el formato.');
+            setIsImporting(false);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } catch (error) {
+        console.error('Error al importar Excel:', error);
+        alert('Error al cargar la librería para leer Excel');
+        setIsImporting(false);
+      }
+    };
+    input.click();
   };
 
   const handleExportExcel = () => {
-    // TODO: Implementar exportación a Excel
-    alert('Funcionalidad de exportación a Excel en desarrollo');
+    if (localProyectos.length === 0) {
+      showInfoToast('No hay proyectos para exportar');
+      return;
+    }
+    
+    try {
+      const encabezados = [
+        'Código', 'Nombre', 'Alcance', 'Justificación', 'Tipo', 'Obj. Estratégico',
+        'Obj. Transformación Digital', 'Área Proyecto', 'Área Ejecutora', 'Tipo Beneficiario',
+        'Etapa', 'Ámbito', 'Fecha Inicio Programada', 'Fecha Fin Programada',
+        'Fecha Inicio Real', 'Fecha Fin Real', 'Estado', 'Alineado PGD', 'Acción Estratégica'
+      ];
+      
+      const datosExport = localProyectos.map(proyecto => [
+        proyecto.numeracionProy || '',
+        proyecto.nombre || '',
+        proyecto.alcance || '',
+        proyecto.justificacion || '',
+        proyecto.tipoProy || '',
+        proyecto.objEst || '',
+        proyecto.objTranDig || '',
+        proyecto.areaProy || '',
+        proyecto.areaEjecuta || '',
+        proyecto.tipoBeneficiario || '',
+        proyecto.etapaProyecto || '',
+        proyecto.ambitoProyecto || '',
+        proyecto.fecIniProg ? new Date(proyecto.fecIniProg).toLocaleDateString('es-PE') : '',
+        proyecto.fecFinProg ? new Date(proyecto.fecFinProg).toLocaleDateString('es-PE') : '',
+        proyecto.fecIniReal ? new Date(proyecto.fecIniReal).toLocaleDateString('es-PE') : '',
+        proyecto.fecFinReal ? new Date(proyecto.fecFinReal).toLocaleDateString('es-PE') : '',
+        proyecto.estadoProyecto ? 'Activo' : 'Inactivo',
+        proyecto.alineadoPgd || '',
+        proyecto.accEst || ''
+      ]);
+
+      const fecha = new Date().toISOString().split('T')[0];
+
+      // Intentar usar XLSX primero
+      if (XLSX) {
+        const ws = XLSX.utils.aoa_to_sheet([encabezados, ...datosExport]);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Portafolio de Proyectos');
+        
+        // Ajustar ancho de columnas
+        const colWidths = [
+          { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 25 }, { wch: 15 }, { wch: 25 },
+          { wch: 25 }, { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 },
+          { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 10 }, { wch: 15 }, { wch: 20 }
+        ];
+        ws['!cols'] = colWidths;
+        
+        const nombreArchivo = `Portafolio_Proyectos_${fecha}.xlsx`;
+        XLSX.writeFile(wb, nombreArchivo);
+        showSuccessToast('📤 Exportación Excel exitosa', `Archivo: ${nombreArchivo}`);
+        return;
+      }
+
+      // Respaldo con CSV
+      const BOM = '\uFEFF';
+      const csvContent = BOM + [
+        encabezados.join(','),
+        ...datosExport.map(row => 
+          row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(',')
+        )
+      ].join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      const nombreArchivo = `Portafolio_Proyectos_${fecha}.csv`;
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', nombreArchivo);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      showSuccessToast('📤 Exportación CSV exitosa', `Archivo: ${nombreArchivo}. Se puede abrir en Excel.`);
+    } catch (error) {
+      console.error('Error al exportar:', error);
+      showErrorToast('Error al exportar el archivo. Inténtelo nuevamente.');
+    }
   };
 
   const tiposProyecto = [
@@ -173,16 +515,29 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
         <div className="flex items-center gap-2">
           {!viewMode && (
             <>
-              <button
-                onClick={handleImportExcel}
-                className="flex items-center gap-2 px-3 py-1.5 text-gray-700 border border-gray-300 text-sm rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <Upload className="w-4 h-4" />
-                Importar
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={downloadPlantillaExcel}
+                  className="flex items-center gap-2 px-3 py-1.5 text-blue-700 border border-blue-300 text-sm rounded-lg hover:bg-blue-50 transition-colors"
+                  title="Descargar plantilla Excel vacía"
+                >
+                  <FileText className="w-4 h-4" />
+                  Plantilla
+                </button>
+                <button
+                  onClick={handleImportExcel}
+                  disabled={isImporting}
+                  className="flex items-center gap-2 px-3 py-1.5 text-gray-700 border border-gray-300 text-sm rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Importar proyectos desde Excel"
+                >
+                  <Upload className={`w-4 h-4 ${isImporting ? 'animate-spin' : ''}`} />
+                  {isImporting ? 'Importando...' : 'Importar'}
+                </button>
+              </div>
               <button
                 onClick={handleExportExcel}
                 className="flex items-center gap-2 px-3 py-1.5 text-gray-700 border border-gray-300 text-sm rounded-lg hover:bg-gray-50 transition-colors"
+                title="Exportar proyectos a Excel"
               >
                 <Download className="w-4 h-4" />
                 Exportar
