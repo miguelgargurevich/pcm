@@ -63,13 +63,18 @@ const SeguimientoPGDPP = () => {
   const downloadPlantillaExcel = () => {
     try {
       const encabezados = [
-        'Código', 'Nombre', 'Tipo Proyecto', 'Tipo Beneficiario', 'Fecha Inicio Prog.',
-        'Fecha Fin Prog.', 'Fecha Inicio Real', 'Fecha Fin Real', 'Etapa', 'Porcentaje Avance', 'Ámbito'
+        'Código', 'Nombre', 'Alcance', 'Justificación', 'Tipo', 'Obj. Estratégico',
+        'Obj. Transformación Digital', 'Área Proyecto', 'Área Ejecutora', 'Tipo Beneficiario',
+        'Etapa', 'Ámbito', 'Fecha Inicio Programada', 'Fecha Fin Programada',
+        'Fecha Inicio Real', 'Fecha Fin Real', 'Estado', 'Alineado PGD', 'Acción Estratégica',
+        'Porcentaje Avance', 'Informó Avance'
       ];
 
       const datosEjemplo = [
-        'PGD-2026-001', 'Sistema de Gestión Documental', 'SOFTWARE O APLICACIONES', 'INTERNO',
-        '2026-01-15', '2026-12-15', '', '', 'PLANIFICACIÓN', '25', 'NACIONAL'
+        'PGD-2026-001', 'Sistema de Gestión Documental', 'Nacional', 'Modernizar la gestión documentaria', 
+        'SOFTWARE O APLICACIONES', 'Modernización del Estado', 'Digitalización de procesos', 'TI', 'OGTI',
+        'INTERNO', 'PLANIFICACIÓN', 'NACIONAL', '2026-01-15', '2026-12-15',
+        '', '', 'Activo', 'Sí', 'Transformación Digital', '25', 'true'
       ];
 
       // Intentar usar XLSX primero
@@ -80,8 +85,10 @@ const SeguimientoPGDPP = () => {
 
         // Ajustar ancho de columnas
         const colWidths = [
-          { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 18 },
-          { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 15 }, { wch: 15 }, { wch: 12 }
+          { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 25 }, { wch: 25 }, { wch: 25 },
+          { wch: 25 }, { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 },
+          { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 10 }, { wch: 15 }, 
+          { wch: 20 }, { wch: 15 }, { wch: 15 }
         ];
         ws['!cols'] = colWidths;
 
@@ -288,16 +295,25 @@ const SeguimientoPGDPP = () => {
           id: Date.now() + i,
           codigo: row[0] || `PGD-${Date.now()}-${i}`,
           nombre: row[1] || '',
-          tipoProyecto: row[2] || '',
-          tipoBeneficiario: row[3] || '',
-          fechaInicioProg: row[4] || '',
-          fechaFinProg: row[5] || '',
-          fechaInicioReal: row[6] || '',
-          fechaFinReal: row[7] || '',
-          etapa: row[8] || 'SIN INICIAR',
-          porcentajeAvance: parseInt(row[9]) || 0,
-          ambito: row[10] || '',
-          informoAvance: false
+          alcance: row[2] || '',
+          justificacion: row[3] || '',
+          tipoProyecto: row[4] || '',
+          objEstrategico: row[5] || '',
+          objTransformacionDigital: row[6] || '',
+          areaProyecto: row[7] || '',
+          areaEjecutora: row[8] || '',
+          tipoBeneficiario: row[9] || '',
+          etapa: row[10] || 'SIN INICIAR',
+          ambito: row[11] || '',
+          fechaInicioProg: row[12] || '',
+          fechaFinProg: row[13] || '',
+          fechaInicioReal: row[14] || '',
+          fechaFinReal: row[15] || '',
+          estado: row[16] || 'Activo',
+          alineadoPgd: row[17] || '',
+          accionEstrategica: row[18] || '',
+          porcentajeAvance: parseInt(row[19]) || 0,
+          informoAvance: row[20] === 'true' || false
         };
         
         // Validar datos mínimos
@@ -330,8 +346,11 @@ const SeguimientoPGDPP = () => {
     
     try {
       const encabezados = [
-        'Código', 'Nombre', 'Tipo Proyecto', 'Tipo Beneficiario', 'Fecha Inicio Prog.',
-        'Fecha Fin Prog.', 'Fecha Inicio Real', 'Fecha Fin Real', 'Etapa', 'Porcentaje Avance', 'Ámbito'
+        'Código', 'Nombre', 'Alcance', 'Justificación', 'Tipo', 'Obj. Estratégico',
+        'Obj. Transformación Digital', 'Área Proyecto', 'Área Ejecutora', 'Tipo Beneficiario',
+        'Etapa', 'Ámbito', 'Fecha Inicio Programada', 'Fecha Fin Programada',
+        'Fecha Inicio Real', 'Fecha Fin Real', 'Estado', 'Alineado PGD', 'Acción Estratégica',
+        'Porcentaje Avance', 'Informó Avance'
       ];
       
       // Helper para formatear fechas en exportación
@@ -353,15 +372,25 @@ const SeguimientoPGDPP = () => {
       const datosExport = proyectos.map(proyecto => [
         proyecto.codigo || '',
         proyecto.nombre || '',
+        proyecto.alcance || '',
+        proyecto.justificacion || '',
         proyecto.tipoProyecto || '',
+        proyecto.objEstrategico || '',
+        proyecto.objTransformacionDigital || '',
+        proyecto.areaProyecto || '',
+        proyecto.areaEjecutora || '',
         proyecto.tipoBeneficiario || '',
+        proyecto.etapa || '',
+        proyecto.ambito || '',
         formatDateForExport(proyecto.fechaInicioProg),
         formatDateForExport(proyecto.fechaFinProg),
         formatDateForExport(proyecto.fechaInicioReal),
         formatDateForExport(proyecto.fechaFinReal),
-        proyecto.etapa || '',
+        proyecto.estado || 'Activo',
+        proyecto.alineadoPgd || '',
+        proyecto.accionEstrategica || '',
         proyecto.porcentajeAvance || 0,
-        proyecto.ambito || ''
+        proyecto.informoAvance ? 'Sí' : 'No'
       ]);
 
       const fecha = new Date().toISOString().split('T')[0];
@@ -374,8 +403,10 @@ const SeguimientoPGDPP = () => {
         
         // Ajustar ancho de columnas
         const colWidths = [
-          { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 18 },
-          { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 15 }, { wch: 15 }, { wch: 12 }
+          { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 25 }, { wch: 25 }, { wch: 25 },
+          { wch: 25 }, { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 },
+          { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 10 }, { wch: 15 }, 
+          { wch: 20 }, { wch: 15 }, { wch: 15 }
         ];
         ws['!cols'] = colWidths;
         
@@ -506,14 +537,6 @@ const SeguimientoPGDPP = () => {
       ambito: proyecto.ambito || ''
     });
     setShowModal(true);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
   };
 
   const handleSubmit = async (e) => {
