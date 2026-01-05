@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2, Upload, Download, X, FileText, Loader } from 'lucide-react';
+import { Plus, Trash2, Edit2, Upload, Download, X, FileText, Loader, FolderKanban, Save } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { showSuccessToast, showErrorToast, showInfoToast } from '../../utils/toast.jsx';
 
@@ -24,7 +24,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
     areaProyecto: '',
     areaEjecutora: '',
     tipoBeneficiario: '',
-    etapa: '',
+    etapaProyecto: '',
     ambito: '',
     fechaInicioProg: '',
     fechaFinProg: '',
@@ -121,7 +121,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
       areaProyecto: '',
       areaEjecutora: '',
       tipoBeneficiario: '',
-      etapa: '',
+      etapaProyecto: '',
       ambito: '',
       fechaInicioProg: '',
       fechaFinProg: '',
@@ -184,7 +184,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
       areaProyecto: proyecto.areaProy || proyecto.areaProyecto || '',
       areaEjecutora: proyecto.areaEjecuta || proyecto.areaEjecutora || '',
       tipoBeneficiario: proyecto.tipoBeneficiario || '',
-      etapa: proyecto.etapaProyecto || proyecto.etapa || '',
+      etapaProyecto: proyecto.etapaProyecto || proyecto.etapa || '',
       ambito: proyecto.ambitoProyecto || proyecto.ambito || '',
       fechaInicioProg: formatDateForInput(proyecto.fecIniProg || proyecto.fechaInicioProg),
       fechaFinProg: formatDateForInput(proyecto.fecFinProg || proyecto.fechaFinProg),
@@ -209,9 +209,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
     showInfoToast('🗑️ Proyecto eliminado correctamente');
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
+  const handleSubmit = async () => {
     if (isSaving) return; // Evitar múltiples submissions
     
     setIsSaving(true);
@@ -252,7 +250,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
         areaProy: formData.areaProyecto || '',
         areaEjecuta: formData.areaEjecutora || '',
         tipoBeneficiario: formData.tipoBeneficiario || '',
-        etapaProyecto: formData.etapa || '',
+        etapaProyecto: formData.etapaProyecto || '',
         ambitoProyecto: formData.ambito || '',
         fecIniProg: convertDateToISO(formData.fechaInicioProg),
         fecFinProg: convertDateToISO(formData.fechaFinProg),
@@ -625,28 +623,54 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
       {/* Tabla de proyectos */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-200">
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 w-[60px]">#</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Código</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Nombre</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Tipo Proyecto</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Tipo Beneficiario</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Fecha Inicio Prog.</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Fecha Fin Prog.</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Fecha Inicio Real</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Fecha Fin Real</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Etapa</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">% Avance</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Informó Avance</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Ámbito</th>
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="sticky left-0 z-20 bg-gray-50 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[80px] min-w-[80px]">
+                  #
+                </th>
+                <th className="sticky left-[80px] z-20 bg-gray-50 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[140px] min-w-[140px]">
+                  Código
+                </th>
+                <th className="sticky left-[220px] z-20 bg-gray-50 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[350px] min-w-[350px]">
+                  Nombre
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Tipo Proyecto
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Tipo Beneficiario
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Fecha Inicio Prog.
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Fecha Fin Prog.
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Fecha Inicio Real
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Fecha Fin Real
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Etapa
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  % Avance
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Informó Avance
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Ámbito
+                </th>
                 {!viewMode && (
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Acciones</th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                 )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="bg-white divide-y divide-gray-200">
               {localProyectos.length === 0 ? (
                 <tr>
                   <td colSpan={viewMode ? 13 : 14} className="px-6 py-8 text-center">
@@ -716,84 +740,61 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                   const porcentajeAvance = proyecto.porcentajeAvance || 0;
                   
                   return (
-                    <tr key={proyectoId} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3 border-r border-gray-100">
-                        <span className="text-sm font-medium text-gray-600">
-                          {index + 1}
-                        </span>
+                    <tr key={proyectoId} className="hover:bg-gray-50 cursor-pointer group">
+                      <td className="sticky left-0 z-10 bg-white group-hover:bg-gray-50 px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-[80px] min-w-[80px]">
+                        {index + 1}
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100">
-                        <span className="text-sm font-mono text-indigo-600 font-medium">
-                          {proyecto.numeracionProy || proyecto.codigo || `PP-${(index + 1).toString().padStart(3, '0')}`}
-                        </span>
+                      <td className="sticky left-[80px] z-10 bg-white group-hover:bg-gray-50 px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600 w-[140px] min-w-[140px]">
+                        {proyecto.numeracionProy || proyecto.codigo || `PP-${(index + 1).toString().padStart(3, '0')}`}
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100">
+                      <td className="sticky left-[220px] z-10 bg-white group-hover:bg-gray-50 px-6 py-4 text-sm text-blue-600 hover:text-blue-800 cursor-pointer w-[350px] min-w-[350px]">
                         <div className="flex flex-col">
-                          <span className="text-sm font-medium text-gray-900 line-clamp-2 max-w-xs">
+                          <span className="font-medium line-clamp-2">
                             {proyecto.nombre || 'Sin nombre'}
                           </span>
                           {proyecto.alcance && (
-                            <span className="text-xs text-gray-500 line-clamp-1 max-w-xs">
+                            <span className="text-xs text-gray-500 line-clamp-1 mt-1">
                               {proyecto.alcance}
                             </span>
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100">
-                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                          {proyecto.tipoProy || proyecto.tipoProyecto || 'N/A'}
-                        </span>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {proyecto.tipoProy || proyecto.tipoProyecto || 'N/A'}
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100">
-                        <span className="text-sm text-gray-700">
-                          {proyecto.tipoBeneficiario || 'N/A'}
-                        </span>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {proyecto.tipoBeneficiario || 'N/A'}
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100">
-                        <span className="text-sm text-gray-700">
-                          {formatDateDisplay(proyecto.fecIniProg || proyecto.fechaInicioProg)}
-                        </span>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatDateDisplay(proyecto.fecIniProg || proyecto.fechaInicioProg)}
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100">
-                        <span className="text-sm text-gray-700">
-                          {formatDateDisplay(proyecto.fecFinProg || proyecto.fechaFinProg)}
-                        </span>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatDateDisplay(proyecto.fecFinProg || proyecto.fechaFinProg)}
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100">
-                        <span className="text-sm text-gray-700">
-                          {formatDateDisplay(proyecto.fecIniReal || proyecto.fechaInicioReal)}
-                        </span>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatDateDisplay(proyecto.fecIniReal || proyecto.fechaInicioReal)}
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100">
-                        <span className="text-sm text-gray-700">
-                          {formatDateDisplay(proyecto.fecFinReal || proyecto.fechaFinReal)}
-                        </span>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatDateDisplay(proyecto.fecFinReal || proyecto.fechaFinReal)}
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100">
-                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
                           {proyecto.etapaProyecto || proyecto.etapa || 'N/A'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-gray-200 rounded-full h-2 min-w-[60px]">
+                          <div className="w-16 bg-gray-200 rounded-full h-2">
                             <div 
-                              className={`h-2 rounded-full transition-all ${
-                                porcentajeAvance >= 100 ? 'bg-green-500' :
-                                porcentajeAvance >= 75 ? 'bg-blue-500' :
-                                porcentajeAvance >= 50 ? 'bg-yellow-500' :
-                                porcentajeAvance >= 25 ? 'bg-orange-500' : 'bg-red-500'
-                              }`}
+                              className="bg-indigo-600 h-2 rounded-full" 
                               style={{ width: `${Math.min(100, Math.max(0, porcentajeAvance))}%` }}
                             ></div>
                           </div>
-                          <span className="text-xs font-medium text-gray-700 min-w-[35px]">
-                            {porcentajeAvance}%
-                          </span>
+                          <span className="text-xs font-medium">{porcentajeAvance}%</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100">
-                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           proyecto.informoAvance 
                             ? 'bg-green-100 text-green-800' 
                             : 'bg-gray-100 text-gray-800'
@@ -801,14 +802,12 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                           {proyecto.informoAvance ? 'Sí' : 'No'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 border-r border-gray-100">
-                        <span className="text-sm text-gray-700">
-                          {proyecto.ambitoProyecto || proyecto.ambito || 'N/A'}
-                        </span>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {proyecto.ambitoProyecto || proyecto.ambito || 'N/A'}
                       </td>
                       {!viewMode && (
-                        <td className="px-4 py-3">
-                          <div className="flex items-center justify-center gap-1">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <div className="flex items-center justify-center gap-2">
                             <button
                               onClick={() => handleEditProyecto(proyecto)}
                               className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
@@ -838,31 +837,29 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
       {/* Modal para Proyecto */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col">
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-indigo-600 to-purple-700 rounded-t-xl text-white">
+            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-600 to-primary-700 rounded-t-xl text-white">
               <div className="flex items-center gap-3">
-                <FileText className="w-6 h-6" />
+                <FolderKanban className="w-6 h-6" />
                 <div>
-                  <h2 className="text-lg font-semibold">
-                    {editingProyecto ? 'Editar Proyecto' : 'Nuevo Proyecto'}
-                  </h2>
-                  <p className="text-sm text-white/80">
-                    Portafolio de Proyectos - Compromiso 3
-                  </p>
+                  <h2 className="text-lg font-semibold">{editingProyecto ? 'Editar Proyecto' : 'Nuevo Proyecto'}</h2>
+                  <p className="text-sm text-white/80">Plan de Gobierno Digital - Portafolio de Proyectos</p>
                 </div>
               </div>
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  setShowModal(false);
+                  setEditingProyecto(null);
+                }}
                 className="p-2 hover:bg-white/20 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
-              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-6">
                 
                 {/* Sección 1: Datos Básicos */}
                 <div className="bg-gray-50 p-4 rounded-lg space-y-3">
@@ -952,8 +949,8 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                         Etapa del Proyecto *
                       </label>
                       <select
-                        value={formData.etapa}
-                        onChange={(e) => setFormData(prev => ({ ...prev, etapa: e.target.value }))}
+                        value={formData.etapaProyecto}
+                        onChange={(e) => setFormData(prev => ({ ...prev, etapaProyecto: e.target.value }))}
                         required
                         className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       >
@@ -983,7 +980,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                 </div>
 
                 {/* Sección 3: Objetivos y Áreas */}
-                <div className="bg-green-50 p-4 rounded-lg space-y-3">
+                <div className="bg-green-50 p-3 rounded-lg space-y-3">
                   <h4 className="text-sm font-medium text-green-900">🎯 Objetivos y Áreas</h4>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
@@ -1063,12 +1060,9 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       </select>
                     </div>
                   </div>
-                </div>
-
-                {/* Sección 4: Alineamiento */}
-                <div className="bg-purple-50 p-4 rounded-lg space-y-3">
-                  <h4 className="text-sm font-medium text-purple-900">🔗 Alineamiento y Estrategia</h4>
-                  <div className="grid grid-cols-2 gap-3">
+                  
+                  {/* Subcampos de alineamiento */}
+                  <div className="grid grid-cols-2 gap-3 pt-3 border-t border-green-200">
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">
                         Alineado al PGD
@@ -1078,7 +1072,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                         value={formData.alineadoPgd}
                         onChange={(e) => setFormData(prev => ({ ...prev, alineadoPgd: e.target.value }))}
                         maxLength={100}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="input-field-sm"
                         placeholder="Alineamiento con el Plan de Gobierno Digital..."
                       />
                     </div>
@@ -1091,115 +1085,127 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                         value={formData.accionEstrategica}
                         onChange={(e) => setFormData(prev => ({ ...prev, accionEstrategica: e.target.value }))}
                         maxLength={100}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="input-field-sm"
                         placeholder="Acción estratégica vinculada..."
                       />
                     </div>
                   </div>
                 </div>
 
-                {/* Sección 5: Cronograma y Avance */}
-                <div className="bg-orange-50 p-4 rounded-lg space-y-3">
-                  <h4 className="text-sm font-medium text-orange-900">📅 Cronograma y Estado</h4>
+                {/* Sección 4: Fechas y Cronograma */}
+                <div className="bg-yellow-50 p-4 rounded-lg space-y-3">
+                  <h4 className="text-sm font-medium text-yellow-900">Cronograma</h4>
                   <div className="grid grid-cols-4 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Fecha Inicio Programada
-                      </label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Inicio Prog. *</label>
                       <input
                         type="date"
                         value={formData.fechaInicioProg}
                         onChange={(e) => setFormData(prev => ({ ...prev, fechaInicioProg: e.target.value }))}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        required
+                        className="input-field-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Fecha Fin Programada
-                      </label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Fin Prog. *</label>
                       <input
                         type="date"
                         value={formData.fechaFinProg}
                         onChange={(e) => setFormData(prev => ({ ...prev, fechaFinProg: e.target.value }))}
                         min={formData.fechaInicioProg || ''}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        required
+                        className="input-field-sm"
                       />
-                      {formData.fechaInicioProg && (
-                        <p className="text-xs text-gray-500 mt-1">Debe ser posterior a fecha de inicio</p>
-                      )}
+                      {formData.fechaInicioProg && <p className="text-xs text-gray-500 mt-1">Debe ser mayor o igual a fecha inicio</p>}
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Fecha Inicio Real
-                      </label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Inicio Real</label>
                       <input
                         type="date"
                         value={formData.fechaInicioReal}
                         onChange={(e) => setFormData(prev => ({ ...prev, fechaInicioReal: e.target.value }))}
                         max={new Date().toISOString().split('T')[0]}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="input-field-sm"
                       />
-                      <p className="text-xs text-gray-500 mt-1">No puede ser fecha futura</p>
+                      <p className="text-xs text-gray-500 mt-1">No puede ser una fecha futura</p>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Fecha Fin Real
-                      </label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Fin Real</label>
                       <input
                         type="date"
                         value={formData.fechaFinReal}
                         onChange={(e) => setFormData(prev => ({ ...prev, fechaFinReal: e.target.value }))}
                         min={formData.fechaInicioReal || ''}
                         max={new Date().toISOString().split('T')[0]}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="input-field-sm"
                       />
+                      {formData.fechaInicioReal && <p className="text-xs text-gray-500 mt-1">Debe ser mayor o igual a fecha inicio real y no futura</p>}
                     </div>
                   </div>
-                  
+                </div>
+
+                {/* Sección 4: Estado y Avance */}
+                <div className="bg-green-50 p-3 rounded-lg space-y-3">
+                  <h4 className="text-sm font-medium text-green-900">Estado y Avance</h4>
                   <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Porcentaje de Avance (%)
-                      </label>
-                      <div className="relative">
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Etapa *</label>
+                      <select
+                        value={formData.etapaProyecto}
+                        onChange={(e) => setFormData(prev => ({ ...prev, etapaProyecto: e.target.value }))}
+                        required
+                        className="input-field-sm"
+                      >
+                        <option value="">Seleccione...</option>
+                        {etapasOptions.map(etapa => (
+                          <option key={etapa} value={etapa}>{etapa}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Porcentaje de Avance *</label>
+                      <div className="flex items-center gap-3">
                         <input
-                          type="number"
+                          type="range"
                           value={formData.porcentajeAvance}
-                          onChange={(e) => {
-                            const value = Math.max(0, Math.min(100, Number(e.target.value) || 0));
-                            setFormData(prev => ({ ...prev, porcentajeAvance: value }));
-                          }}
+                          onChange={(e) => setFormData(prev => ({ ...prev, porcentajeAvance: parseInt(e.target.value) }))}
                           min="0"
                           max="100"
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                          placeholder="0-100"
+                          className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600"
                         />
-                        <span className="absolute right-3 top-2 text-xs text-gray-500">%</span>
+                        <span className="text-xs font-semibold bg-white px-2 py-1 rounded-md min-w-[45px] text-center border">
+                          {formData.porcentajeAvance}%
+                        </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        id="estadoProyecto"
-                        checked={formData.estado}
-                        onChange={(e) => setFormData(prev => ({ ...prev, estado: e.target.checked }))}
-                        className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                      />
-                      <label htmlFor="estadoProyecto" className="text-sm font-medium text-gray-700">
-                        Proyecto Activo
-                      </label>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        id="informoAvance"
-                        checked={formData.informoAvance}
-                        onChange={(e) => setFormData(prev => ({ ...prev, informoAvance: e.target.checked }))}
-                        className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                      />
-                      <label htmlFor="informoAvance" className="text-sm font-medium text-gray-700">
-                        Informó Avance
-                      </label>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Informó Avance *</label>
+                      <div className="flex items-center gap-4 mt-2">
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="informoAvance"
+                            value="true"
+                            checked={formData.informoAvance === true}
+                            onChange={() => setFormData(prev => ({ ...prev, informoAvance: true }))}
+                            className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
+                            required
+                          />
+                          <span className="text-xs text-green-700 font-medium">Sí</span>
+                        </label>
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="informoAvance"
+                            value="false"
+                            checked={formData.informoAvance === false}
+                            onChange={() => setFormData(prev => ({ ...prev, informoAvance: false }))}
+                            className="w-4 h-4 text-red-600 border-gray-300 focus:ring-red-500"
+                            required
+                          />
+                          <span className="text-xs text-red-700 font-medium">No</span>
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1207,25 +1213,40 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
               </div>
               
               {/* Footer con botones */}
-              <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+              <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
                 <button
                   type="button"
-                  onClick={() => setShowModal(false)}
-                  disabled={isSaving}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  onClick={() => {
+                    setShowModal(false);
+                    setEditingProyecto(null);
+                  }}
+                  className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
                 >
                   Cancelar
                 </button>
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={handleSubmit}
                   disabled={isSaving || !formData.nombre.trim()}
-                  className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                  className={`px-4 py-2 text-sm rounded-lg flex items-center gap-2 transition-colors ${
+                    isSaving || !formData.nombre.trim()
+                      ? 'bg-gray-400 cursor-not-allowed text-white' 
+                      : 'bg-primary-600 text-white hover:bg-primary-700'
+                  }`}
                 >
-                  {isSaving && <Loader className="w-4 h-4 animate-spin" />}
-                  {isSaving ? 'Guardando...' : (editingProyecto ? 'Actualizar' : 'Crear')} Proyecto
+                  {isSaving ? (
+                    <>
+                      <Loader size={16} className="animate-spin" />
+                      Guardando...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={16} />
+                      {editingProyecto ? 'Guardar' : 'Agregar'}
+                    </>
+                  )}
                 </button>
               </div>
-            </form>
           </div>
         </div>
       )}
