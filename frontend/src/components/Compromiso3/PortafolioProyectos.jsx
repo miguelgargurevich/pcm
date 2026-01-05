@@ -352,61 +352,6 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
       setIsImporting(false);
     }
   };
-            const proyectosImportados = [];
-            for (let i = 1; i < jsonData.length; i++) { // Saltar encabezado
-              const row = jsonData[i];
-              if (row[1]) { // Si tiene nombre
-                const proyecto = {
-                  tempId: Date.now() + i,
-                  numeracionProy: row[0] || generarCodigoProyecto(),
-                  nombre: row[1] || '',
-                  alcance: row[2] || '',
-                  justificacion: row[3] || '',
-                  tipoProy: row[4] || '',
-                  objEst: row[5] || '',
-                  objTranDig: row[6] || '',
-                  areaProy: row[7] || '',
-                  areaEjecuta: row[8] || '',
-                  tipoBeneficiario: row[9] || '',
-                  etapaProyecto: row[10] || '',
-                  ambitoProyecto: row[11] || '',
-                  fecIniProg: row[12] ? new Date(row[12]).toISOString() : '',
-                  fecFinProg: row[13] ? new Date(row[13]).toISOString() : '',
-                  fecIniReal: row[14] ? new Date(row[14]).toISOString() : '',
-                  fecFinReal: row[15] ? new Date(row[15]).toISOString() : '',
-                  estadoProyecto: row[16] === 'Activo' || row[16] === true,
-                  alineadoPgd: row[17] || '',
-                  accEst: row[18] || '',
-                  activo: true
-                };
-                proyectosImportados.push(proyecto);
-              }
-            }
-            
-            if (proyectosImportados.length > 0) {
-              const updated = [...localProyectos, ...proyectosImportados];
-              setLocalProyectos(updated);
-              onProyectosChange(updated);
-              alert(`Se importaron ${proyectosImportados.length} proyectos exitosamente`);
-            } else {
-              alert('No se encontraron proyectos válidos en el archivo');
-            }
-            setIsImporting(false);
-          } catch (error) {
-            console.error('Error al procesar Excel:', error);
-            alert('Error al procesar el archivo Excel. Verifique el formato.');
-            setIsImporting(false);
-          }
-        };
-        reader.readAsArrayBuffer(file);
-      } catch (error) {
-        console.error('Error al importar Excel:', error);
-        alert('Error al cargar la librería para leer Excel');
-        setIsImporting(false);
-      }
-    };
-    input.click();
-  };
 
   const handleExportExcel = () => {
     if (localProyectos.length === 0) {
