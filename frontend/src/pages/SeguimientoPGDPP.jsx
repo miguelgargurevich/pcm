@@ -612,29 +612,53 @@ const SeguimientoPGDPP = () => {
 
       // Preparar los proyectos para enviar al backend (mapear de vista a BD)
       const proyectosParaBackend = proyectosActualizados.map(p => {
+        // Validar datos mínimos requeridos
+        if (!p.codigo || !p.nombre) {
+          console.warn('⚠️ Proyecto con datos incompletos:', p);
+          return null;
+        }
+
+        // Validar y limpiar fechas
+        const formatDateForBackend = (dateStr) => {
+          if (!dateStr || dateStr === '') return '';
+          try {
+            // Si ya es una fecha válida formato YYYY-MM-DD, mantenerla
+            if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+              return dateStr;
+            }
+            // Si es otra cosa, intentar convertir
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return '';
+            return date.toISOString().split('T')[0];
+          } catch {
+            return '';
+          }
+        };
+
         const proyectoBackend = {
-          proyEntId: p.id && typeof p.id === 'number' ? p.id : null, // Usar proyEntId según la entidad del backend
-          numeracionProy: p.codigo,
-          nombre: p.nombre,
-          alcance: p.alcance || '',
-          justificacion: p.justificacion || '',
-          tipoProy: p.tipoProyecto,
-          objEstrategico: p.objEstrategico || '',
-          objTransformacionDigital: p.objTransformacionDigital || '',
-          areaProyecto: p.areaProyecto || '',
-          areaEjecutora: p.areaEjecutora || '',
-          tipoBeneficiario: p.tipoBeneficiario,
-          fecIniProg: p.fechaInicioProg,
-          fecFinProg: p.fechaFinProg,
-          fecIniReal: p.fechaInicioReal,
-          fecFinReal: p.fechaFinReal,
-          etapaProyecto: p.etapa,
-          porcentajeAvance: Number(p.porcentajeAvance) || 0,
+          proyEntId: p.id && typeof p.id === 'number' ? p.id : null,
+          numeracionProy: (p.codigo || '').toString().trim(),
+          nombre: (p.nombre || '').toString().trim(),
+          tipoProy: (p.tipoProyecto || '').toString().trim(),
+          tipoBeneficiario: (p.tipoBeneficiario || '').toString().trim(),
+          fecIniProg: formatDateForBackend(p.fechaInicioProg),
+          fecFinProg: formatDateForBackend(p.fechaFinProg),
+          fecIniReal: formatDateForBackend(p.fechaInicioReal),
+          fecFinReal: formatDateForBackend(p.fechaFinReal),
+          etapaProyecto: (p.etapa || '').toString().trim(),
+          porcentajeAvance: Math.max(0, Math.min(100, Number(p.porcentajeAvance) || 0)),
           informoAvance: Boolean(p.informoAvance),
-          ambitoProyecto: p.ambito,
-          estadoProyecto: p.estado === 'Activo' ? true : false,
-          alineadoPgd: p.alineadoPgd || '',
-          accEst: p.accionEstrategica || ''
+          ambitoProyecto: (p.ambito || '').toString().trim(),
+          estadoProyecto: p.estado === 'Activo' || p.estado === true || p.estado === 'true' || p.estado === 1,
+          alineadoPgd: (p.alineadoPgd || '').toString().trim(),
+          accEst: (p.accionEstrategica || '').toString().trim(),
+          // Campos adicionales como strings vacíos para evitar null/undefined
+          alcance: (p.alcance || '').toString().trim(),
+          justificacion: (p.justificacion || '').toString().trim(),
+          objEstrategico: (p.objEstrategico || '').toString().trim(),
+          objTransformacionDigital: (p.objTransformacionDigital || '').toString().trim(),
+          areaProyecto: (p.areaProyecto || '').toString().trim(),
+          areaEjecutora: (p.areaEjecutora || '').toString().trim()
         };
         
         if (p.codigo === editingProyecto?.codigo) {
@@ -642,7 +666,14 @@ const SeguimientoPGDPP = () => {
         }
         
         return proyectoBackend;
-      });
+      }).filter(p => p !== null); // Filtrar proyectos inválidos
+
+      console.log('📊 Total proyectos válidos para enviar:', proyectosParaBackend.length);
+      
+      if (proyectosParaBackend.length === 0) {
+        showErrorToast('No hay proyectos válidos para guardar');
+        return;
+      }
 
       // Actualizar el compromiso completo con los proyectos modificados
       const updateData = {
@@ -650,12 +681,13 @@ const SeguimientoPGDPP = () => {
         proyectos: proyectosParaBackend
       };
       
-      console.log('📤 Datos completos a enviar:', updateData);
+      console.log('📤 Datos completos a enviar:', JSON.stringify(updateData, null, 2));
 
       const updateResponse = await com3EPGDService.update(compromiso.comepgdEntId, updateData);
       
       if (!updateResponse.isSuccess) {
-        showErrorToast('Error al guardar los cambios en la base de datos');
+        console.error('❌ Error del servidor:', updateResponse.error || updateResponse);
+        showErrorToast(`Error al guardar: ${updateResponse.error?.message || 'Error desconocido'}`);
         return;
       }
 
@@ -665,8 +697,22 @@ const SeguimientoPGDPP = () => {
       setEditingProyecto(null);
       showSuccessToast('Proyecto actualizado exitosamente');
     } catch (error) {
-      console.error('Error al actualizar proyecto:', error);
-      showErrorToast('Error al guardar los cambios');
+      console.error('❌ Error completo al actualizar proyecto:', error);
+      console.error('❌ Error response:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
+      
+      let errorMessage = 'Error al guardar los cambios';
+      
+      if (error.response?.status === 400) {
+        errorMessage = 'Datos inválidos. Verifique que todos los campos estén completos y sean válidos.';
+        console.error('❌ Error 400 - Datos probablemente inválidos');
+      } else if (error.response?.status === 500) {
+        errorMessage = 'Error interno del servidor. Contacte al administrador.';
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      
+      showErrorToast(errorMessage);
     }
   };
 
