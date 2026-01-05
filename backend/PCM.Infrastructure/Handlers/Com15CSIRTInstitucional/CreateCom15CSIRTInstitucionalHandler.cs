@@ -25,6 +25,14 @@ public class CreateCom15CSIRTInstitucionalHandler : IRequestHandler<CreateCom15C
             _logger.LogInformation("Creando registro Com15CSIRTInstitucional para Compromiso {CompromisoId}, Entidad {EntidadId}", 
                 request.CompromisoId, request.EntidadId);
 
+            // Debug para entender el valor de FechaConformacion
+            var fechaConformacion = request.FechaConformacion.HasValue 
+                ? DateTime.SpecifyKind(request.FechaConformacion.Value, DateTimeKind.Utc) 
+                : DateTime.UtcNow;
+            
+            _logger.LogInformation("FechaConformacion request: {RequestFecha}, FechaConformacion asignada: {FechaAsignada}", 
+                request.FechaConformacion, fechaConformacion);
+
             var entity = new Com15CSIRTInstitucionalEntity
             {
                 CompromisoId = request.CompromisoId,
@@ -39,16 +47,26 @@ public class CreateCom15CSIRTInstitucionalHandler : IRequestHandler<CreateCom15C
                 CreatedAt = DateTime.UtcNow,
                 FecRegistro = DateTime.UtcNow,
                 Activo = true,
-                FechaConformacion = request.FechaConformacion.HasValue 
-                    ? DateTime.SpecifyKind(request.FechaConformacion.Value, DateTimeKind.Utc) 
-                    : null,
-                NumeroResolucion = request.NumeroResolucion,
-                Responsable = request.Responsable,
-                EmailContacto = request.EmailContacto,
-                TelefonoContacto = request.TelefonoContacto,
-                ArchivoProcedimientos = request.ArchivoProcedimientos,
-                Descripcion = request.Descripcion,
+                
+                // Asignar directamente a las propiedades de la base de datos
+                NombreCsirt = "", // Valor por defecto
+                FechaConformacionCsirt = fechaConformacion, // Usar la variable calculada
+                NumeroResolucionCsirt = request.NumeroResolucion ?? "",
+                ResponsableCsirt = request.Responsable ?? "",
+                CargoResponsableCsirt = "", // Valor por defecto
+                CorreoCsirt = request.EmailContacto ?? "",
+                TelefonoCsirt = request.TelefonoContacto ?? "",
+                ProtocoloIncidentesCsirt = false, // Valor por defecto
+                ComunicadoPcmCsirt = false, // Valor por defecto
+                RutaPdfCsirt = request.ArchivoProcedimientos ?? "",
+                ObservacionCsirt = request.Descripcion ?? "",
+                RutaPdfNormativa = "", // Valor por defecto
             };
+
+            _logger.LogInformation("Entidad Com15CSIRTInstitucional antes de guardar:");
+            _logger.LogInformation("- FechaConformacionCsirt: {Fecha}", entity.FechaConformacionCsirt);
+            _logger.LogInformation("- NombreCsirt: '{Nombre}'", entity.NombreCsirt);
+            _logger.LogInformation("- ResponsableCsirt: '{Responsable}'", entity.ResponsableCsirt);
 
             _context.Com15CSIRTInstitucional.Add(entity);
             await _context.SaveChangesAsync(cancellationToken);
@@ -68,13 +86,15 @@ public class CreateCom15CSIRTInstitucionalHandler : IRequestHandler<CreateCom15C
                 CreatedAt = entity.CreatedAt,
                 FecRegistro = entity.FecRegistro,
                 Activo = entity.Activo,
-                FechaConformacion = entity.FechaConformacion,
-                NumeroResolucion = entity.NumeroResolucion,
-                Responsable = entity.Responsable,
-                EmailContacto = entity.EmailContacto,
-                TelefonoContacto = entity.TelefonoContacto,
-                ArchivoProcedimientos = entity.ArchivoProcedimientos,
-                Descripcion = entity.Descripcion,
+                
+                // Mapear desde las propiedades de la base de datos
+                FechaConformacion = entity.FechaConformacionCsirt,
+                NumeroResolucion = entity.NumeroResolucionCsirt,
+                Responsable = entity.ResponsableCsirt,
+                EmailContacto = entity.CorreoCsirt,
+                TelefonoContacto = entity.TelefonoCsirt,
+                ArchivoProcedimientos = entity.RutaPdfCsirt,
+                Descripcion = entity.ObservacionCsirt,
             };
 
             return Result<Com15CSIRTInstitucionalResponse>.Success(response);

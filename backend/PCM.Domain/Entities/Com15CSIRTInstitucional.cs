@@ -62,7 +62,7 @@ public class Com15CSIRTInstitucional
     public string NombreCsirt { get; set; } = "";
 
     [Column("fecha_conformacion_csirt")]
-    public DateTime? FechaConformacionCsirt { get; set; }
+    public DateTime FechaConformacionCsirt { get; set; } = DateTime.UtcNow;
 
     [Column("numero_resolucion_csirt")]
     [MaxLength(50)]
@@ -105,7 +105,7 @@ public class Com15CSIRTInstitucional
     // Propiedades de compatibilidad para handlers existentes
     [NotMapped]
     [JsonIgnore]
-    public DateTime? FechaElaboracion { get => FechaConformacionCsirt; set => FechaConformacionCsirt = value; }
+    public DateTime? FechaElaboracion { get => FechaConformacionCsirt; set => FechaConformacionCsirt = value ?? DateTime.UtcNow; }
     
     [NotMapped]
     [JsonIgnore]
@@ -138,7 +138,7 @@ public class Com15CSIRTInstitucional
     // Alias adicionales para handlers
     [NotMapped]
     [JsonIgnore]
-    public DateTime? FechaConformacion { get => FechaConformacionCsirt; set => FechaConformacionCsirt = value; }
+    public DateTime? FechaConformacion { get => FechaConformacionCsirt; set => FechaConformacionCsirt = value ?? DateTime.UtcNow; }
     
     [NotMapped]
     [JsonIgnore]
