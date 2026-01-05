@@ -60,6 +60,22 @@ const CumplimientoNormativo = () => {
     // Ordenar por compromisoId de forma ascendente (1, 2, 3, ...)
     filtered.sort((a, b) => a.compromisoId - b.compromisoId);
 
+    // Debug específico para compromiso 3
+    const com3 = filtered.find(c => c.compromisoId === 3);
+    if (com3) {
+      console.log('� [COM3 FILTROS] Compromiso 3 después del filtrado:', {
+        compromisoId: com3.compromisoId,
+        nombreCompromiso: com3.nombreCompromiso,
+        estadoCumplimiento: com3.estadoCumplimiento,
+        estadoCumplimientoTipo: typeof com3.estadoCumplimiento,
+        fechaRegistro: com3.fechaRegistro,
+        alcances: com3.alcances,
+        estadoNombre: getEstadoNombre(com3.estadoCumplimiento),
+        estadoClass: getEstadoBadgeClass(com3.estadoCumplimiento),
+        objetoCompleto: com3
+      });
+    }
+
     if (filtros.nombreCompromiso.trim()) {
       const busqueda = filtros.nombreCompromiso.toLowerCase();
       filtered = filtered.filter((c) =>
@@ -96,10 +112,24 @@ const CumplimientoNormativo = () => {
     try {
       setLoading(true);
 
-      // Cargar compromisos
-      const compromisosResponse = await compromisosService.getAll();
+      // Cargar compromisos con parámetro de timestamp para forzar refresh
+      const timestamp = new Date().getTime();
+      const compromisosResponse = await compromisosService.getAll({ _t: timestamp });
       if (compromisosResponse.isSuccess || compromisosResponse.IsSuccess) {
         const compromisosData = compromisosResponse.data || compromisosResponse.Data || [];
+        console.log('📦 [LISTA DEBUG] Compromisos cargados desde GetAllCompromisosHandler:', compromisosData);
+        
+        // Debug específico para Compromiso 3 en la respuesta del backend
+        const com3Backend = compromisosData.find(c => c.compromisoId === 3);
+        if (com3Backend) {
+          console.log('🔴 [COM3 LISTA] Compromiso 3 desde GetAllCompromisosHandler:');
+          console.log('🔴 [COM3 LISTA] - compromisoId:', com3Backend.compromisoId);
+          console.log('🔴 [COM3 LISTA] - nombreCompromiso:', com3Backend.nombreCompromiso);
+          console.log('🔴 [COM3 LISTA] - estadoCumplimiento:', com3Backend.estadoCumplimiento, '(tipo:', typeof com3Backend.estadoCumplimiento, ')');
+          console.log('🔴 [COM3 LISTA] - fechaRegistro:', com3Backend.fechaRegistro);
+          console.log('🔴 [COM3 LISTA] - Objeto completo:', com3Backend);
+        }
+        
         setCompromisos(Array.isArray(compromisosData) ? compromisosData : []);
       }
 
@@ -153,8 +183,17 @@ const CumplimientoNormativo = () => {
   };
 
   const getEstadoNombre = (estadoId) => {
-    const estado = estados.find(e => e.id === estadoId);
-    return estado ? estado.nombre : 'Desconocido';
+    const nombres = {
+      1: 'PENDIENTE',
+      2: 'SIN REPORTAR',
+      3: 'NO EXIGIBLE',
+      4: 'EN PROCESO',
+      5: 'ENVIADO',
+      6: 'EN REVISIÓN',
+      7: 'OBSERVADO',
+      8: 'ACEPTADO',
+    };
+    return nombres[estadoId] || 'Desconocido';
   };
 
   if (loading) {

@@ -72,6 +72,7 @@ const EvaluacionDetallePanel = ({
   entidad, 
   compromisoId, 
   estadoActual, 
+  user,
   onVolver,
   onEvaluar 
 }) => {
@@ -83,6 +84,16 @@ const EvaluacionDetallePanel = ({
   const [criteriosEvaluacion, setCriteriosEvaluacion] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+
+  // Verificar si el operador puede evaluar el estado actual
+  const puedeEvaluar = () => {
+    // Si no es operador, puede evaluar cualquier estado
+    if (user?.perfil !== 'Operador') {
+      return true;
+    }
+    // Si es operador, solo puede evaluar estados "enviado" (estadoActual === 5 o "enviado")
+    return estadoActual === 5 || estadoActual === 'enviado';
+  };
 
   // Función para mostrar documento en el visor
   const handleVerDocumento = (url) => {
@@ -344,50 +355,63 @@ const EvaluacionDetallePanel = ({
               />
             </div>
 
-            {/* Botones de acción */}
-            <div className="space-y-2">
-              {/* Botón En Revisión */}
-              <button
-                onClick={handleEnRevision}
-                disabled={submitting}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {submitting ? (
-                  <Loader2 size={16} className="animate-spin" />
-                ) : (
-                  <Eye size={16} />
-                )}
-                EN REVISIÓN
-              </button>
+            {/* Botones de acción - Solo si puede evaluar */}
+            {puedeEvaluar() ? (
+              <div className="space-y-2">
+                {/* Botón En Revisión */}
+                <button
+                  onClick={handleEnRevision}
+                  disabled={submitting}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submitting ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Eye size={16} />
+                  )}
+                  EN REVISIÓN
+                </button>
 
-              {/* Botones Observar y Aprobar */}
-              <div className="flex gap-2">
-                <button
-                  onClick={handleObservar}
-                  disabled={submitting}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {submitting ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    <XCircle size={16} />
-                  )}
-                  OBSERVAR
-                </button>
-                <button
-                  onClick={handleAprobar}
-                  disabled={submitting}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {submitting ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    <CheckCircle size={16} />
-                  )}
-                  APROBAR
-                </button>
+                {/* Botones Observar y Aprobar */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleObservar}
+                    disabled={submitting}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {submitting ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <XCircle size={16} />
+                    )}
+                    OBSERVAR
+                  </button>
+                  <button
+                    onClick={handleAprobar}
+                    disabled={submitting}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {submitting ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <CheckCircle size={16} />
+                    )}
+                    APROBAR
+                  </button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 text-amber-800">
+                  <AlertTriangle size={16} />
+                  <span className="text-sm font-medium">
+                    {user?.perfil === 'Operador' 
+                      ? 'Solo puede evaluar compromisos en estado "Enviado"'
+                      : 'No tiene permisos para evaluar este compromiso'}
+                  </span>
+                </div>
+              </div>
+            )}
 
             {/* Alerta informativa */}
             <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -414,6 +438,9 @@ EvaluacionDetallePanel.propTypes = {
   }).isRequired,
   compromisoId: PropTypes.number.isRequired,
   estadoActual: PropTypes.string.isRequired,
+  user: PropTypes.shape({
+    perfil: PropTypes.string
+  }),
   onVolver: PropTypes.func.isRequired,
   onEvaluar: PropTypes.func
 };

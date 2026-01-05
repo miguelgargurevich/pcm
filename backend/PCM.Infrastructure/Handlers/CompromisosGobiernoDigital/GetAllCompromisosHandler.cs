@@ -378,6 +378,8 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
         // PRIORIDAD 1: Si existe evaluación en cumplimiento_normativo, usar ese estado
         if (cumplimiento != null)
         {
+            _logger.LogInformation("Compromiso {CompromisoId}: PRIORIDAD 1 - usando cumplimiento_normativo estado {Estado}", 
+                compromiso.CompromisoId, cumplimiento.EstadoId);
             estadoCumplimiento = cumplimiento.EstadoId;
         }
         // PRIORIDAD 2: Si no hay evaluación, usar el estado de la tabla específica (comX)
@@ -395,8 +397,11 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                 "observado" => 7,  // OBSERVADO
                 "aceptado" => 8,  // ACEPTADO
                 "aprobado" => 8,  // ACEPTADO (aprobado = aceptado)
-                _ => null
+                _ => (int?)null
             };
+            
+            _logger.LogInformation("Compromiso {CompromisoId}: PRIORIDAD 2 - usando tabla com{CompromisoId} estado '{EstadoOriginal}' mapeado a {EstadoMapeado}", 
+                compromiso.CompromisoId, compromiso.CompromisoId, registroEspecifico.estado, estadoCumplimiento);
         }
         // PRIORIDAD 3: Si no hay registro ni cumplimiento, calcular desde exigibilidad
         else if (!string.IsNullOrEmpty(nivelExigibilidad))
@@ -408,11 +413,16 @@ public class GetAllCompromisosHandler : IRequestHandler<GetAllCompromisosQuery, 
                 "NO_EXIGIBLE" => 3,  // NO EXIGIBLE
                 _ => 1  // Por defecto OBLIGATORIO (PENDIENTE)
             };
+            
+            _logger.LogInformation("Compromiso {CompromisoId}: PRIORIDAD 3 - usando exigibilidad '{NivelExigibilidad}' mapeado a estado {Estado}", 
+                compromiso.CompromisoId, nivelExigibilidad, estadoCumplimiento);
         }
         // PRIORIDAD 4: Si no hay exigibilidad configurada, por defecto es OBLIGATORIO (PENDIENTE)
         else
         {
             estadoCumplimiento = 1; // PENDIENTE
+            _logger.LogInformation("Compromiso {CompromisoId}: PRIORIDAD 4 - sin datos, usando estado por defecto PENDIENTE (1)", 
+                compromiso.CompromisoId);
         }
         
         return new CompromisoResponseDto

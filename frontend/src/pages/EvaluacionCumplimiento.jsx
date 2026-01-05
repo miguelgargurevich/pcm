@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { BarChart3, Search, FilterX, ChevronLeft, ChevronRight, Loader2, Filter, ChevronDown, ChevronUp } from 'lucide-react';
-import { showSuccessToast, showErrorToast, showConfirmToast } from '../utils/toast.jsx';
+import { showSuccessToast, showErrorToast } from '../utils/toast.jsx';
 import EvaluacionDetallePanel from '../components/Evaluacion/EvaluacionDetallePanel';
 import evaluacionService from '../services/evaluacionService';
 import emailService from '../services/emailService';
@@ -80,6 +80,16 @@ const COMPROMISOS_NOMBRES = {
 
 const EvaluacionCumplimiento = () => {
   const { user } = useAuth();
+  
+  // Verificar si el operador puede editar un estado específico
+  const puedeEditarEstado = (estadoId) => {
+    // Si no es operador, puede editar cualquier estado
+    if (user?.perfil !== 'Operador') {
+      return true;
+    }
+    // Si es operador, solo puede editar estados "enviado" (5)
+    return estadoId === 5;
+  };
   const [filtros, setFiltros] = useState({
     entidad: '',
     sectorId: '',
@@ -132,6 +142,11 @@ const EvaluacionCumplimiento = () => {
   // Cargar matriz de evaluación
   const cargarMatriz = useCallback(async () => {
     setLoading(true);
+    const timestamp = new Date().toISOString();
+    console.log(`🟢 [MATRIZ LOAD] Iniciando carga de matriz - ${timestamp}`);
+    console.log('🟢 [MATRIZ LOAD] Filtros aplicados:', filtros);
+    console.log('🟢 [MATRIZ LOAD] Página actual:', currentPage);
+    
     try {
       const response = await evaluacionService.getMatriz({
         entidad: filtros.entidad || undefined,
@@ -143,7 +158,24 @@ const EvaluacionCumplimiento = () => {
         pageSize: ITEMS_PER_PAGE
       });
       
+      console.log('🟢 [MATRIZ LOAD] Response completa del backend:', response);
+      
       if (response.isSuccess) {
+        console.log('🔵 [MATRIZ DEBUG] Datos cargados desde el backend:', response.data);
+        
+        // Debug específico para entidades que tengan compromisos con estado
+        response.data.forEach(entidad => {
+          if (entidad.compromisos && entidad.compromisos.length > 0) {
+            console.log(`🔵 [MATRIZ DEBUG] Entidad: ${entidad.nombre}`);
+            console.log('🔵 [MATRIZ DEBUG] Estados compromisos:', entidad.compromisos);
+            
+            // Debug específico para Compromiso 3 (índice 2)
+            if (entidad.compromisos[2] !== undefined) {
+              console.log(`🔴 [COM3 MATRIZ] Entidad: ${entidad.nombre}, Estado Compromiso 3: ${entidad.compromisos[2]} (tipo: ${typeof entidad.compromisos[2]})`);
+            }
+          }
+        });
+        
         setEntidades(response.data);
         setPagination(response.pagination);
       } else {
@@ -186,6 +218,16 @@ const EvaluacionCumplimiento = () => {
 
   // Handler para click en chip de compromiso
   const handleChipClick = (entidad, compromisoIndex, estado) => {
+    console.log(`🔵 [MATRIZ CLICK] Click en chip:`);
+    console.log(`🔵 [MATRIZ CLICK] - Entidad: ${entidad.nombre}`);
+    console.log(`🔵 [MATRIZ CLICK] - Compromiso: ${compromisoIndex + 1}`);
+    console.log(`🔵 [MATRIZ CLICK] - Estado: ${estado} (tipo: ${typeof estado})`);
+    
+    if (compromisoIndex === 2) { // Compromiso 3
+      console.log(`🔴 [COM3 CLICK] Abriendo detalle para Compromiso 3:`);
+      console.log(`🔴 [COM3 CLICK] - Estado seleccionado: ${estado}`);
+    }
+    
     setEntidadSeleccionada(entidad);
     setCompromisoSeleccionado(compromisoIndex + 1);
     setEstadoSeleccionado(estado);
@@ -448,58 +490,6 @@ const EvaluacionCumplimiento = () => {
     }
   };
 
-  // Handler para evaluar un compromiso con confirmación
-  const handleEvaluar = async (nuevoEstado, observaciones) => {
-    if (!entidadSeleccionada || !compromisoSeleccionado) return;
-
-    // Determinar el tipo de acción
-    const esAprobacion = nuevoEstado === 'aceptado';
-    const esEnRevision = nuevoEstado === 'en revisión';
-    const esObservacion = nuevoEstado === 'observado';
-    
-    // Configurar mensajes según el tipo de acción
-    let titulo, mensaje, confirmText, confirmButtonClass, loadingText;
-    
-    if (esAprobacion) {
-      titulo = `¿Aprobar el Compromiso ${compromisoSeleccionado}?`;
-      mensaje = `Se aprobará el cumplimiento para la entidad "${entidadSeleccionada.nombre}". Esta acción enviará una notificación por correo.`;
-      confirmText = 'Aprobar';
-      confirmButtonClass = 'px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors';
-      loadingText = 'Aprobando...';
-    } else if (esEnRevision) {
-      titulo = `¿Marcar como En Revisión?`;
-      mensaje = `El Compromiso ${compromisoSeleccionado} de "${entidadSeleccionada.nombre}" quedará marcado como "En Revisión". Esto indica que está siendo evaluado actualmente.`;
-      confirmText = 'Marcar en Revisión';
-      confirmButtonClass = 'px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors';
-      loadingText = 'Actualizando estado...';
-    } else if (esObservacion) {
-      titulo = `¿Observar el Compromiso ${compromisoSeleccionado}?`;
-      mensaje = `Se marcará como observado el Compromiso ${compromisoSeleccionado} de "${entidadSeleccionada.nombre}". La entidad será notificada por correo con las observaciones registradas.`;
-      confirmText = 'Observar';
-      confirmButtonClass = 'px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors';
-      loadingText = 'Registrando observación...';
-    } else {
-      // Estado genérico
-      titulo = `¿Cambiar estado del Compromiso ${compromisoSeleccionado}?`;
-      mensaje = `Se actualizará el estado a "${nuevoEstado}" para la entidad "${entidadSeleccionada.nombre}".`;
-      confirmText = 'Confirmar';
-      confirmButtonClass = 'px-3 py-1 text-sm bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors';
-      loadingText = 'Actualizando...';
-    }
-
-    showConfirmToast({
-      title: titulo,
-      message: mensaje,
-      confirmText: confirmText,
-      cancelText: 'Cancelar',
-      loadingText: loadingText,
-      confirmButtonClass: confirmButtonClass,
-      onConfirm: async () => {
-        await ejecutarEvaluacion(nuevoEstado, observaciones);
-      }
-    });
-  };
-
   // Si está en vista de detalle, mostrar el panel
   if (vistaDetalle && entidadSeleccionada) {
     return (
@@ -508,8 +498,9 @@ const EvaluacionCumplimiento = () => {
           entidad={entidadSeleccionada}
           compromisoId={compromisoSeleccionado}
           estadoActual={estadoSeleccionado}
+          user={user}
           onVolver={handleVolver}
-          onEvaluar={handleEvaluar}
+          onEvaluar={ejecutarEvaluacion}
         />
       </div>
     );
@@ -741,17 +732,41 @@ const EvaluacionCumplimiento = () => {
                     </td>
                     {/* Celdas de compromisos - chips clickeables */}
                     {entidad.compromisos.map((estado, index) => {
+                      // Debug para todos los compromisos
+                      console.log(`🟡 [MATRIZ RENDER] Entidad: ${entidad.nombre}, Compromiso: ${index + 1}, Estado original: ${estado} (tipo: ${typeof estado})`);
+                      
                       // Asegurar que el estado sea un ID numérico
                       const estadoId = typeof estado === 'string' ? 
                         estadosOptions.find(e => e.nombre === estado)?.id || estado : 
                         estado;
                       
+                      // Debug específico para Compromiso 3
+                      if (index === 2) { // Compromiso 3
+                        console.log(`🔴 [COM3 RENDER] Entidad: ${entidad.nombre}:`);
+                        console.log(`🔴 [COM3 RENDER] - Estado original: ${estado} (tipo: ${typeof estado})`);
+                        console.log(`🔴 [COM3 RENDER] - Estado procesado: ${estadoId} (tipo: ${typeof estadoId})`);
+                        console.log(`🔴 [COM3 RENDER] - Abreviatura: ${getEstadoAbreviado(estadoId)}`);
+                        
+                        const estadoNombre = estadosOptions.find(e => e.id === estadoId)?.nombre;
+                        console.log(`🔴 [COM3 RENDER] - Nombre estado: ${estadoNombre}`);
+                      }
+                      
+                      // Verificar si puede editar este estado
+                      const puedeEditar = puedeEditarEstado(estadoId);
+                      
                       return (
                         <td key={index} className="px-1 py-2 text-center">
                           <button
-                            onClick={() => handleChipClick(entidad, index, estadoId)}
-                            className={`inline-block px-2 py-1 text-xs font-semibold rounded-full cursor-pointer transition-all hover:scale-110 hover:shadow-md ${getEstadoStyles(estadoId)}`}
-                            title={`Clic para evaluar Compromiso ${index + 1}: ${estadosOptions.find(e => e.id === estadoId)?.nombre || estadoId}`}
+                            onClick={puedeEditar ? () => handleChipClick(entidad, index, estadoId) : undefined}
+                            disabled={!puedeEditar}
+                            className={`inline-block px-2 py-1 text-xs font-semibold rounded-full transition-all ${
+                              puedeEditar 
+                                ? 'cursor-pointer hover:scale-110 hover:shadow-md' 
+                                : 'cursor-not-allowed opacity-60'
+                            } ${getEstadoStyles(estadoId)}`}
+                            title={puedeEditar 
+                              ? `Clic para evaluar Compromiso ${index + 1}: ${estadosOptions.find(e => e.id === estadoId)?.nombre || estadoId}`
+                              : `No puede modificar este estado: ${estadosOptions.find(e => e.id === estadoId)?.nombre || estadoId}`}
                           >
                             {getEstadoAbreviado(estadoId)}
                           </button>

@@ -115,11 +115,10 @@ public class EvaluacionController : ControllerBase
                 // Para cada compromiso, determinar el estado
                 for (int i = 1; i <= 21; i++)
                 {
-                    // Obtener el estado del compromiso para esta entidad considerando exigibilidad
-                    string estadoCompromiso = ObtenerEstadoCompromisoConExigibilidad(
-                        i, ent.EntidadId, ent.ClasificacionId,
+                    // Obtener el estado del compromiso para esta entidad usando la MISMA lógica que GetAllCompromisosHandler
+                    string estadoCompromiso = ObtenerEstadoCompromiso(
+                        i, ent.EntidadId,
                         cumplimientos,
-                        exigibilidades,
                         com1Data, com2Data, com3Data, com4Data, com5Data,
                         com6Data, com7Data, com8Data, com9Data, com10Data,
                         com11Data, com12Data, com13Data, com14Data, com15Data,
@@ -517,6 +516,9 @@ public class EvaluacionController : ControllerBase
         
         if (cumplimiento != null)
         {
+            _logger.LogInformation("Matriz - Compromiso {CompromisoId} para entidad {EntidadId}: PRIORIDAD 1 - usando cumplimiento_normativo estado_id {EstadoId}", 
+                compromisoId, entidadId, cumplimiento.EstadoId);
+                
             // Mapear estado_id a string
             return cumplimiento.EstadoId switch
             {
@@ -627,8 +629,7 @@ public class EvaluacionController : ControllerBase
         // Si hay registro específico, mapear estado
         if (!string.IsNullOrEmpty(estado) || !string.IsNullOrEmpty(etapa))
         {
-            // Mapear el campo estado a los estados de la UI
-            return estado?.ToLower() switch
+            var estadoMapeado = estado?.ToLower() switch
             {
                 "aceptado" or "validado" or "aprobado" => "aceptado",
                 "observado" => "observado",
@@ -639,6 +640,11 @@ public class EvaluacionController : ControllerBase
                 "no_exigible" or "no exigible" => "no exigible",
                 _ => MapearEstadoEntidad(estado, etapa)
             };
+            
+            _logger.LogInformation("Matriz - Compromiso {CompromisoId} para entidad {EntidadId}: PRIORIDAD 2 - usando tabla com{CompromisoId} estado '{Estado}' mapeado a '{EstadoMapeado}'", 
+                compromisoId, entidadId, compromisoId, estado, estadoMapeado);
+                
+            return estadoMapeado;
         }
 
         // PRIORIDAD 3: Si no hay registro ni cumplimiento, calcular desde exigibilidad
@@ -690,14 +696,19 @@ public class EvaluacionController : ControllerBase
         List<Com20DigitalizacionServiciosFacilita> com20Data,
         List<Com21OficialGobiernoDatos> com21Data)
     {
+        // Log solo para compromiso 3 para debuggear
+        if (compromisoId == 3)
+        {
+            _logger.LogInformation("🚀 MATRIZ - Iniciando ObtenerEstadoCompromiso para Compromiso {CompromisoId}, EntidadId {EntidadId}", 
+                compromisoId, entidadId);
+        }
         // PRIORIDAD 1: Verificar si existe evaluación en cumplimiento_normativo
         var cumplimiento = cumplimientos.FirstOrDefault(c => 
             c.EntidadId == entidadId && c.CompromisoId == compromisoId);
         
         if (cumplimiento != null)
         {
-            // Mapear estado_id a string
-            return cumplimiento.EstadoId switch
+            var estadoMapeado = cumplimiento.EstadoId switch
             {
                 8 => "aceptado",     // ACEPTADO
                 7 => "observado",    // OBSERVADO
@@ -709,6 +720,11 @@ public class EvaluacionController : ControllerBase
                 1 => "pendiente",    // PENDIENTE
                 _ => "pendiente"
             };
+            
+            _logger.LogInformation("🔍 MATRIZ - Compromiso {CompromisoId} entidad {EntidadId}: PRIORIDAD 1 - cumplimiento_normativo estado_id {EstadoId} → '{EstadoMapeado}'", 
+                compromisoId, entidadId, cumplimiento.EstadoId, estadoMapeado);
+                
+            return estadoMapeado;
         }
         
         // PRIORIDAD 2: Si no hay evaluación, verificar el estado en las tablas comX
@@ -806,11 +822,15 @@ public class EvaluacionController : ControllerBase
         // Si no hay registro, es "sin reportar"
         if (string.IsNullOrEmpty(estado) && string.IsNullOrEmpty(etapa))
         {
+            if (compromisoId == 3)
+            {
+                _logger.LogInformation("🔍 MATRIZ - Com3 sin registro: estado y etapa vacíos → 'sin reportar'");
+            }
             return "sin reportar";
         }
 
         // Mapear el campo estado a los estados de la UI
-        return estado?.ToLower() switch
+        var estadoFinal = estado?.ToLower() switch
         {
             "aceptado" or "validado" or "aprobado" => "aceptado",
             "observado" => "observado",
@@ -821,6 +841,14 @@ public class EvaluacionController : ControllerBase
             "no_exigible" or "no exigible" => "no exigible",
             _ => MapearEstadoEntidad(estado, etapa)
         };
+        
+        if (compromisoId == 3)
+        {
+            _logger.LogInformation("🔍 MATRIZ - Com3 PRIORIDAD 2: estado='{Estado}' etapa='{Etapa}' → '{EstadoFinal}'", 
+                estado, etapa, estadoFinal);
+        }
+        
+        return estadoFinal;
     }
 
     private string MapearEstadoEntidad(string? estado, string? etapa)
