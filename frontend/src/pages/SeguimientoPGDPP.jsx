@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
-import { showSuccessToast, showErrorToast } from '../utils/toast.jsx';
-import { FilterX, X, Save, FolderKanban, TrendingUp, Edit2, Filter, ChevronDown, ChevronUp } from 'lucide-react';
+import { showSuccessToast, showErrorToast, showInfoToast } from '../utils/toast.jsx';
+import { FilterX, X, Save, FolderKanban, TrendingUp, Edit2, Filter, ChevronDown, ChevronUp, Plus, Upload, Download, FileText } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import com3EPGDService from '../services/com3EPGDService';
+import * as XLSX from 'xlsx';
 
 // Función auxiliar para formatear fecha a YYYY-MM-DD para inputs de tipo date
 const formatDateForInput = (dateString) => {
@@ -43,6 +44,7 @@ const SeguimientoPGDPP = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingProyecto, setEditingProyecto] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   // Filtros
   const [filtros, setFiltros] = useState({
@@ -56,6 +58,62 @@ const SeguimientoPGDPP = () => {
   // Paginación
   const [paginaActual, setPaginaActual] = useState(1);
   const itemsPorPagina = 10;
+
+  // Función para descargar plantilla Excel
+  const downloadPlantillaExcel = () => {
+    try {
+      const encabezados = [
+        'Código', 'Nombre', 'Tipo Proyecto', 'Tipo Beneficiario', 'Fecha Inicio Prog.',
+        'Fecha Fin Prog.', 'Fecha Inicio Real', 'Fecha Fin Real', 'Etapa', 'Porcentaje Avance', 'Ámbito'
+      ];
+
+      const datosEjemplo = [
+        'PGD-2026-001', 'Sistema de Gestión Documental', 'SOFTWARE O APLICACIONES', 'INTERNO',
+        '2026-01-15', '2026-12-15', '', '', 'PLANIFICACIÓN', '25', 'NACIONAL'
+      ];
+
+      // Intentar usar XLSX primero
+      if (XLSX) {
+        const ws = XLSX.utils.aoa_to_sheet([encabezados, datosEjemplo]);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Plantilla PGD-PP');
+
+        // Ajustar ancho de columnas
+        const colWidths = [
+          { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 18 },
+          { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 15 }, { wch: 15 }, { wch: 12 }
+        ];
+        ws['!cols'] = colWidths;
+
+        XLSX.writeFile(wb, 'Plantilla_PGD_PP.xlsx');
+        showSuccessToast('📊 Plantilla Excel descargada', 'Complete los datos y luego importe el archivo');
+        return;
+      }
+
+      // Respaldo con CSV
+      const BOM = '\uFEFF';
+      const csvContent = BOM + [
+        encabezados.join(','),
+        datosEjemplo.map(field => `"${field}"`).join(',')
+      ].join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'Plantilla_PGD_PP.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      showSuccessToast('📊 Plantilla CSV descargada', 'Puede abrirse en Excel. Complete los datos y luego importe el archivo.');
+    } catch (error) {
+      console.error('Error al generar plantilla:', error);
+      showErrorToast('Error al generar la plantilla');
+    }
+  };
 
   // Form data para el modal
   const [formData, setFormData] = useState({
@@ -124,6 +182,257 @@ const SeguimientoPGDPP = () => {
 
     loadProyectos();
   }, [user]);
+
+  // Función para importar Excel/CSV
+  const handleImportExcel = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xlsx,.xls,.csv';
+    input.onchange = (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      setIsImporting(true);
+      
+      // Determinar si es un archivo Excel o CSV
+      const isExcelFile = file.name.toLowerCase().includes('.xlsx') || file.name.toLowerCase().includes('.xls');
+      
+      if (isExcelFile && XLSX) {
+        // Procesar archivo Excel
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            
+            if (jsonData.length < 2) {
+              showErrorToast('El archivo debe contener al menos 2 líneas (encabezado y datos)');
+              setIsImporting(false);
+              return;
+            }
+            
+            procesarDatosImportados(jsonData);
+          } catch (error) {
+            console.error('Error al procesar Excel:', error);
+            showErrorToast('Error al procesar el archivo Excel');
+            setIsImporting(false);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        // Procesar archivo CSV
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const text = e.target.result;
+            const lines = text.split('\n');
+            
+            if (lines.length < 2) {
+              showErrorToast('El archivo debe contener al menos 2 líneas (encabezado y datos)');
+              setIsImporting(false);
+              return;
+            }
+            
+            // Convertir CSV a formato array
+            const parseCSVLine = (line) => {
+              const result = [];
+              let current = '';
+              let inQuotes = false;
+              
+              for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                  inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                  result.push(current.trim());
+                  current = '';
+                } else {
+                  current += char;
+                }
+              }
+              result.push(current.trim());
+              return result;
+            };
+            
+            const csvData = lines
+              .filter(line => line.trim())
+              .map(line => parseCSVLine(line));
+              
+            procesarDatosImportados(csvData);
+          } catch (error) {
+            console.error('Error al procesar CSV:', error);
+            showErrorToast('Error al procesar el archivo CSV');
+            setIsImporting(false);
+          }
+        };
+        reader.readAsText(file, 'UTF-8');
+      }
+    };
+    
+    input.click();
+  };
+
+  const procesarDatosImportados = (data) => {
+    try {
+      const proyectosImportados = [];
+      
+      // Procesar desde la fila 1 (saltando encabezados)
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        if (!row || row.length < 3) continue;
+        
+        const nuevoProyecto = {
+          id: Date.now() + i,
+          codigo: row[0] || `PGD-${Date.now()}-${i}`,
+          nombre: row[1] || '',
+          tipoProyecto: row[2] || '',
+          tipoBeneficiario: row[3] || '',
+          fechaInicioProg: row[4] || '',
+          fechaFinProg: row[5] || '',
+          fechaInicioReal: row[6] || '',
+          fechaFinReal: row[7] || '',
+          etapa: row[8] || 'SIN INICIAR',
+          porcentajeAvance: parseInt(row[9]) || 0,
+          ambito: row[10] || '',
+          informoAvance: false
+        };
+        
+        // Validar datos mínimos
+        if (nuevoProyecto.nombre.trim()) {
+          proyectosImportados.push(nuevoProyecto);
+        }
+      }
+
+      if (proyectosImportados.length === 0) {
+        showErrorToast('No se encontraron datos válidos en el archivo');
+      } else {
+        setProyectos(prevProyectos => [...prevProyectos, ...proyectosImportados]);
+        showSuccessToast('📥 Importación exitosa', `Se importaron ${proyectosImportados.length} proyecto(s) exitosamente`);
+      }
+      
+    } catch (error) {
+      console.error('Error al procesar datos:', error);
+      showErrorToast('Error al procesar los datos importados');
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
+  // Función para exportar Excel
+  const handleExportExcel = () => {
+    if (proyectos.length === 0) {
+      showInfoToast('No hay proyectos para exportar');
+      return;
+    }
+    
+    try {
+      const encabezados = [
+        'Código', 'Nombre', 'Tipo Proyecto', 'Tipo Beneficiario', 'Fecha Inicio Prog.',
+        'Fecha Fin Prog.', 'Fecha Inicio Real', 'Fecha Fin Real', 'Etapa', 'Porcentaje Avance', 'Ámbito'
+      ];
+      
+      // Helper para formatear fechas en exportación
+      const formatDateForExport = (dateStr) => {
+        if (!dateStr) return '';
+        try {
+          if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const date = new Date(year, month - 1, day);
+            return date.toLocaleDateString('es-PE');
+          }
+          const date = new Date(dateStr);
+          return date.toLocaleDateString('es-PE');
+        } catch {
+          return '';
+        }
+      };
+      
+      const datosExport = proyectos.map(proyecto => [
+        proyecto.codigo || '',
+        proyecto.nombre || '',
+        proyecto.tipoProyecto || '',
+        proyecto.tipoBeneficiario || '',
+        formatDateForExport(proyecto.fechaInicioProg),
+        formatDateForExport(proyecto.fechaFinProg),
+        formatDateForExport(proyecto.fechaInicioReal),
+        formatDateForExport(proyecto.fechaFinReal),
+        proyecto.etapa || '',
+        proyecto.porcentajeAvance || 0,
+        proyecto.ambito || ''
+      ]);
+
+      const fecha = new Date().toISOString().split('T')[0];
+
+      // Intentar usar XLSX primero
+      if (XLSX) {
+        const ws = XLSX.utils.aoa_to_sheet([encabezados, ...datosExport]);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'PGD Portafolio Proyectos');
+        
+        // Ajustar ancho de columnas
+        const colWidths = [
+          { wch: 15 }, { wch: 30 }, { wch: 25 }, { wch: 15 }, { wch: 18 },
+          { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 15 }, { wch: 15 }, { wch: 12 }
+        ];
+        ws['!cols'] = colWidths;
+        
+        const nombreArchivo = `PGD_Portafolio_Proyectos_${fecha}.xlsx`;
+        XLSX.writeFile(wb, nombreArchivo);
+        showSuccessToast('📤 Exportación Excel exitosa', `Archivo: ${nombreArchivo}`);
+        return;
+      }
+
+      // Respaldo con CSV
+      const BOM = '\uFEFF';
+      const csvContent = BOM + [
+        encabezados.join(','),
+        ...datosExport.map(row => 
+          row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(',')
+        )
+      ].join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      const nombreArchivo = `PGD_Portafolio_Proyectos_${fecha}.csv`;
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', nombreArchivo);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      showSuccessToast('📤 Exportación CSV exitosa', `Archivo: ${nombreArchivo}. Se puede abrir en Excel.`);
+    } catch (error) {
+      console.error('Error al exportar:', error);
+      showErrorToast('Error al exportar el archivo. Inténtelo nuevamente.');
+    }
+  };
+
+  // Función para nuevo proyecto
+  const handleNuevoProyecto = () => {
+    setEditingProyecto(null);
+    setFormData({
+      codigo: `PGD-${new Date().getFullYear()}-${String(proyectos.length + 1).padStart(3, '0')}`,
+      nombre: '',
+      tipoProyecto: '',
+      tipoBeneficiario: '',
+      fechaInicioProg: '',
+      fechaFinProg: '',
+      fechaInicioReal: '',
+      fechaFinReal: '',
+      etapa: 'SIN INICIAR',
+      porcentajeAvance: 0,
+      informoAvance: false,
+      ambito: ''
+    });
+    setShowModal(true);
+  };
 
   // Aplicar filtros
   const proyectosFiltrados = useMemo(() => {
@@ -216,11 +525,17 @@ const SeguimientoPGDPP = () => {
       console.log('� Informó avance:', formData.informoAvance, 'Tipo:', typeof formData.informoAvance);
       console.log('🔑 Proyecto en edición:', editingProyecto);
       
+      // Verificar que editingProyecto no sea null
+      if (!editingProyecto) {
+        showErrorToast('No hay proyecto seleccionado para editar');
+        return;
+      }
+      
       // Actualizar el proyecto en el estado local
       const proyectosActualizados = proyectos.map(p => {
         // Comparar por ID o por código si el ID no existe
-        const esElMismo = (p.id && editingProyecto.id && p.id === editingProyecto.id) || 
-                          (p.codigo === editingProyecto.codigo);
+        const esElMismo = (p.id && editingProyecto?.id && p.id === editingProyecto.id) || 
+                          (p.codigo === editingProyecto?.codigo);
         
         if (esElMismo) {
           const proyectoActualizado = {
@@ -266,7 +581,7 @@ const SeguimientoPGDPP = () => {
           accEst: ''
         };
         
-        if (p.codigo === editingProyecto.codigo) {
+        if (p.codigo === editingProyecto?.codigo) {
           console.log('🚀 Proyecto a enviar al backend:', proyectoBackend);
         }
         
@@ -291,6 +606,7 @@ const SeguimientoPGDPP = () => {
       // Actualizar el estado local
       setProyectos(proyectosActualizados);
       setShowModal(false);
+      setEditingProyecto(null);
       showSuccessToast('Proyecto actualizado exitosamente');
     } catch (error) {
       console.error('Error al actualizar proyecto:', error);
@@ -331,13 +647,56 @@ const SeguimientoPGDPP = () => {
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <div className="flex items-center gap-3">
-          <div className="p-3 bg-primary-100 rounded-xl">
-            <TrendingUp className="w-8 h-8 text-primary-600" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-primary-100 rounded-xl">
+              <TrendingUp className="w-8 h-8 text-primary-600" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-800">Seguimiento PGD-PP</h1>
+              <p className="text-gray-600 mt-1">Plan de Gobierno Digital - Portafolio de Proyectos</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-800">Seguimiento PGD-PP</h1>
-            <p className="text-gray-600 mt-1">Plan de Gobierno Digital - Portafolio de Proyectos</p>
+
+          {/* Botones de acción */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 bg-gray-50 rounded-lg p-1">
+              <button
+                onClick={downloadPlantillaExcel}
+                className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-700 hover:bg-white hover:shadow-sm rounded-md transition-all duration-200"
+                title="Descargar plantilla Excel para importar proyectos"
+              >
+                <FileText size={16} />
+                Plantilla
+              </button>
+              
+              <button
+                onClick={handleImportExcel}
+                disabled={isImporting}
+                className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-700 hover:bg-white hover:shadow-sm rounded-md transition-all duration-200 disabled:opacity-50"
+                title="Importar proyectos desde Excel/CSV"
+              >
+                <Upload size={16} />
+                {isImporting ? 'Importando...' : 'Importar'}
+              </button>
+              
+              <button
+                onClick={handleExportExcel}
+                className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-700 hover:bg-white hover:shadow-sm rounded-md transition-all duration-200"
+                title="Exportar proyectos a Excel"
+              >
+                <Download size={16} />
+                Exportar
+              </button>
+            </div>
+            
+            <button
+              onClick={handleNuevoProyecto}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium"
+            >
+              <Plus size={18} />
+              Nuevo Proyecto
+            </button>
           </div>
         </div>
       </div>
@@ -644,265 +1003,101 @@ const SeguimientoPGDPP = () => {
         )}
       </div>
 
-      {/* Modal Editar Proyecto */}
-      {showModal && editingProyecto && (
+      {/* Modal para Proyecto */}
+      {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[95vh] flex flex-col">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-600 to-primary-700 rounded-t-xl text-white">
               <div className="flex items-center gap-3">
-                <Edit2 className="w-6 h-6" />
+                <FolderKanban className="w-6 h-6" />
                 <div>
-                  <h2 className="text-lg font-semibold">Editar Proyecto</h2>
-                  <p className="text-sm text-white/80">Seguimiento de proyecto PGDPP</p>
+                  <h2 className="text-lg font-semibold">{editingProyecto ? 'Editar Proyecto' : 'Nuevo Proyecto'}</h2>
+                  <p className="text-sm text-white/80">Plan de Gobierno Digital - Portafolio de Proyectos</p>
                 </div>
               </div>
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  setShowModal(false);
+                  setEditingProyecto(null);
+                }}
                 className="p-2 hover:bg-white/20 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-
+            
             {/* Content */}
-            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6">
-              {/* Sección: Información General */}
-              <div className="mb-6">
-                <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 pb-2 border-b border-gray-100">
-                  Información General
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Código */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-6">
+              {/* Sección 1: Datos Básicos */}
+              <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                <h4 className="text-sm font-medium text-gray-900">Datos Básicos</h4>
+                <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Código
-                    </label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Código</label>
                     <input
                       type="text"
-                      name="codigo"
                       value={formData.codigo}
-                      onChange={handleInputChange}
-                      className="input-field bg-gray-100 text-gray-500"
-                      readOnly
+                      disabled
+                      className="input-field-readonly"
                     />
                   </div>
+                  <div className="col-span-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Nombre del Proyecto *</label>
+                    <input
+                      type="text"
+                      value={formData.nombre}
+                      onChange={(e) => setFormData(prev => ({ ...prev, nombre: e.target.value }))}
+                      required
+                      maxLength={100}
+                      className="input-field-sm"
+                    />
+                  </div>
+                </div>
+              </div>
 
-                  {/* Tipo Proyecto */}
+              {/* Sección 2: Clasificación */}
+              <div className="bg-blue-50 p-4 rounded-lg space-y-3">
+                <h4 className="text-sm font-medium text-blue-900">Clasificación</h4>
+                <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Tipo Proyecto
-                    </label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Tipo de Proyecto *</label>
                     <select
-                      name="tipoProyecto"
                       value={formData.tipoProyecto}
-                      onChange={handleInputChange}
-                      className="input-field"
+                      onChange={(e) => setFormData(prev => ({ ...prev, tipoProyecto: e.target.value }))}
                       required
+                      className="input-field-sm"
                     >
-                      <option value="">Seleccionar...</option>
-                      {tiposProyectoOptions.map((tipo) => (
+                      <option value="">Seleccione...</option>
+                      {tiposProyectoOptions.map(tipo => (
                         <option key={tipo} value={tipo}>{tipo}</option>
                       ))}
                     </select>
                   </div>
-
-                  {/* Tipo Beneficiario */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Tipo Beneficiario
-                    </label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Tipo Beneficiario *</label>
                     <select
-                      name="tipoBeneficiario"
                       value={formData.tipoBeneficiario}
-                      onChange={handleInputChange}
-                      className="input-field"
+                      onChange={(e) => setFormData(prev => ({ ...prev, tipoBeneficiario: e.target.value }))}
                       required
+                      className="input-field-sm"
                     >
-                      <option value="">Seleccionar...</option>
-                      {tiposBeneficiarioOptions.map((tipo) => (
+                      <option value="">Seleccione...</option>
+                      {tiposBeneficiarioOptions.map(tipo => (
                         <option key={tipo} value={tipo}>{tipo}</option>
                       ))}
                     </select>
                   </div>
-                </div>
-
-                {/* Nombre - ancho completo */}
-                <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nombre del Proyecto
-                  </label>
-                  <input
-                    type="text"
-                    name="nombre"
-                    value={formData.nombre}
-                    onChange={handleInputChange}
-                    className="input-field"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Sección: Fechas */}
-              <div className="mb-6">
-                <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 pb-2 border-b border-gray-100">
-                  Cronograma
-                </h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Inicio Programado
-                    </label>
-                    <input
-                      type="date"
-                      name="fechaInicioProg"
-                      value={formData.fechaInicioProg}
-                      onChange={handleInputChange}
-                      className="input-field"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fin Programado
-                    </label>
-                    <input
-                      type="date"
-                      name="fechaFinProg"
-                      value={formData.fechaFinProg}
-                      onChange={handleInputChange}
-                      className="input-field"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Inicio Real
-                    </label>
-                    <input
-                      type="date"
-                      name="fechaInicioReal"
-                      value={formData.fechaInicioReal}
-                      onChange={handleInputChange}
-                      className="input-field"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fin Real
-                    </label>
-                    <input
-                      type="date"
-                      name="fechaFinReal"
-                      value={formData.fechaFinReal}
-                      onChange={handleInputChange}
-                      className="input-field"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Sección: Estado y Avance */}
-              <div className="mb-6">
-                <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 pb-2 border-b border-gray-100">
-                  Estado y Avance
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Columna izquierda */}
-                  <div className="space-y-4">
-                    {/* Etapa */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Etapa
-                      </label>
-                      <select
-                        name="etapa"
-                        value={formData.etapa}
-                        onChange={handleInputChange}
-                        className="input-field"
-                        required
-                      >
-                        <option value="">Seleccionar...</option>
-                        {etapasOptions.map((etapa) => (
-                          <option key={etapa} value={etapa}>{etapa}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* % Avance */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Porcentaje de Avance
-                      </label>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="range"
-                          name="porcentajeAvance"
-                          value={formData.porcentajeAvance}
-                          onChange={handleInputChange}
-                          min="0"
-                          max="100"
-                          className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
-                        />
-                        <span className="text-sm font-semibold bg-gray-100 px-3 py-1 rounded-md min-w-[50px] text-center">
-                          {formData.porcentajeAvance}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Columna derecha */}
-                  <div className="space-y-4">
-                    {/* Informe Avance */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Informó Avance
-                      </label>
-                      <div className="flex items-center gap-6">
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="informoAvance"
-                            checked={formData.informoAvance === true}
-                            onChange={() => setFormData(prev => ({ ...prev, informoAvance: true }))}
-                            className="w-4 h-4 text-primary accent-primary"
-                          />
-                          <span className="text-sm">Sí</span>
-                        </label>
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="informoAvance"
-                            checked={formData.informoAvance === false}
-                            onChange={() => setFormData(prev => ({ ...prev, informoAvance: false }))}
-                            className="w-4 h-4 text-primary accent-primary"
-                          />
-                          <span className="text-sm">No</span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sección: Ubicación */}
-              <div className="mb-6">
-                <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 pb-2 border-b border-gray-100">
-                  Ubicación
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Ámbito */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Ámbito
-                    </label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Ámbito *</label>
                     <select
-                      name="ambito"
                       value={formData.ambito}
-                      onChange={handleInputChange}
-                      className="input-field"
+                      onChange={(e) => setFormData(prev => ({ ...prev, ambito: e.target.value }))}
                       required
+                      className="input-field-sm"
                     >
-                      <option value="">Seleccionar...</option>
-                      {ambitosOptions.map((ambito) => (
+                      <option value="">Seleccione...</option>
+                      {ambitosOptions.map(ambito => (
                         <option key={ambito} value={ambito}>{ambito}</option>
                       ))}
                     </select>
@@ -910,24 +1105,142 @@ const SeguimientoPGDPP = () => {
                 </div>
               </div>
 
-              {/* Botones */}
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="btn-secondary px-6 py-2"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="btn-primary flex items-center gap-2 px-6 py-2"
-                >
-                  <Save size={18} />
-                  Guardar
-                </button>
+              {/* Sección 3: Fechas y Cronograma */}
+              <div className="bg-yellow-50 p-4 rounded-lg space-y-3">
+                <h4 className="text-sm font-medium text-yellow-900">Cronograma</h4>
+                <div className="grid grid-cols-4 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Inicio Prog. *</label>
+                    <input
+                      type="date"
+                      value={formData.fechaInicioProg}
+                      onChange={(e) => setFormData(prev => ({ ...prev, fechaInicioProg: e.target.value }))}
+                      required
+                      className="input-field-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Fin Prog. *</label>
+                    <input
+                      type="date"
+                      value={formData.fechaFinProg}
+                      onChange={(e) => setFormData(prev => ({ ...prev, fechaFinProg: e.target.value }))}
+                      min={formData.fechaInicioProg || ''}
+                      required
+                      className="input-field-sm"
+                    />
+                    {formData.fechaInicioProg && <p className="text-xs text-gray-500 mt-1">Debe ser mayor o igual a fecha inicio</p>}
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Inicio Real</label>
+                    <input
+                      type="date"
+                      value={formData.fechaInicioReal}
+                      onChange={(e) => setFormData(prev => ({ ...prev, fechaInicioReal: e.target.value }))}
+                      max={new Date().toISOString().split('T')[0]}
+                      className="input-field-sm"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">No puede ser una fecha futura</p>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Fin Real</label>
+                    <input
+                      type="date"
+                      value={formData.fechaFinReal}
+                      onChange={(e) => setFormData(prev => ({ ...prev, fechaFinReal: e.target.value }))}
+                      min={formData.fechaInicioReal || ''}
+                      max={new Date().toISOString().split('T')[0]}
+                      className="input-field-sm"
+                    />
+                    {formData.fechaInicioReal && <p className="text-xs text-gray-500 mt-1">Debe ser mayor o igual a fecha inicio real y no futura</p>}
+                  </div>
+                </div>
               </div>
-            </form>
+
+              {/* Sección 4: Estado y Avance */}
+              <div className="bg-green-50 p-4 rounded-lg space-y-3">
+                <h4 className="text-sm font-medium text-green-900">Estado y Avance</h4>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Etapa *</label>
+                    <select
+                      value={formData.etapa}
+                      onChange={(e) => setFormData(prev => ({ ...prev, etapa: e.target.value }))}
+                      required
+                      className="input-field-sm"
+                    >
+                      <option value="">Seleccione...</option>
+                      {etapasOptions.map(etapa => (
+                        <option key={etapa} value={etapa}>{etapa}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Porcentaje de Avance *</label>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="range"
+                        value={formData.porcentajeAvance}
+                        onChange={(e) => setFormData(prev => ({ ...prev, porcentajeAvance: parseInt(e.target.value) }))}
+                        min="0"
+                        max="100"
+                        className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600"
+                      />
+                      <span className="text-xs font-semibold bg-white px-2 py-1 rounded-md min-w-[45px] text-center border">
+                        {formData.porcentajeAvance}%
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Informó Avance *</label>
+                    <div className="flex items-center gap-4 mt-2">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="informoAvance"
+                          checked={formData.informoAvance === true}
+                          onChange={() => setFormData(prev => ({ ...prev, informoAvance: true }))}
+                          className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
+                        />
+                        <span className="text-xs">Sí</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="informoAvance"
+                          checked={formData.informoAvance === false}
+                          onChange={() => setFormData(prev => ({ ...prev, informoAvance: false }))}
+                          className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
+                        />
+                        <span className="text-xs">No</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Footer con botones */}
+            <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowModal(false);
+                  setEditingProyecto(null);
+                }}
+                className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className="px-4 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 flex items-center gap-2"
+              >
+                <Save size={16} />
+                {editingProyecto ? 'Guardar' : 'Agregar'}
+              </button>
+            </div>
           </div>
         </div>
       )}
