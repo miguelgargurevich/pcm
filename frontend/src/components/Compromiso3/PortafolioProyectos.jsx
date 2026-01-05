@@ -134,11 +134,25 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
   const handleEditProyecto = (proyecto) => {
     console.log('✏️ Editando proyecto:', proyecto);
     
-    // Helper para formatear fecha ISO a YYYY-MM-DD
+    // Helper para formatear fecha para input date sin problemas de zona horaria
     const formatDateForInput = (isoDate) => {
       if (!isoDate) return '';
       try {
-        return new Date(isoDate).toISOString().split('T')[0];
+        // Si ya es un string YYYY-MM-DD, devolverlo directamente
+        if (typeof isoDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(isoDate)) {
+          return isoDate;
+        }
+        
+        // Crear fecha local sin conversión UTC
+        const date = new Date(isoDate);
+        if (isNaN(date.getTime())) return '';
+        
+        // Obtener año, mes y día localmente
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        
+        return `${year}-${month}-${day}`;
       } catch {
         return '';
       }
@@ -184,18 +198,28 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
   const handleSaveProyecto = () => {
     if (!formProyecto.nombre.trim()) return;
 
+    // Preparar los datos del proyecto con fechas correctas
+    const proyectoData = {
+      ...formProyecto,
+      // Asegurar que las fechas mantengan el formato YYYY-MM-DD sin conversión UTC
+      fecIniProg: formProyecto.fecIniProg || '',
+      fecFinProg: formProyecto.fecFinProg || '',
+      fecIniReal: formProyecto.fecIniReal || '',
+      fecFinReal: formProyecto.fecFinReal || '',
+    };
+
     let updated;
     if (editingProyecto) {
       updated = localProyectos.map(p => {
         if ((p.proyEntId || p.tempId) === (editingProyecto.proyEntId || editingProyecto.tempId)) {
-          return { ...p, ...formProyecto };
+          return { ...p, ...proyectoData };
         }
         return p;
       });
     } else {
       const newProyecto = {
         tempId: Date.now(),
-        ...formProyecto,
+        ...proyectoData,
         activo: true
       };
       updated = [...localProyectos, newProyecto];
@@ -367,6 +391,22 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
         'Fecha Inicio Real', 'Fecha Fin Real', 'Estado', 'Alineado PGD', 'Acción Estratégica'
       ];
       
+      // Helper para formatear fechas en exportación sin zona horaria
+      const formatDateForExport = (dateStr) => {
+        if (!dateStr) return '';
+        try {
+          if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const date = new Date(year, month - 1, day);
+            return date.toLocaleDateString('es-PE');
+          }
+          const date = new Date(dateStr);
+          return date.toLocaleDateString('es-PE');
+        } catch {
+          return '';
+        }
+      };
+      
       const datosExport = localProyectos.map(proyecto => [
         proyecto.numeracionProy || '',
         proyecto.nombre || '',
@@ -380,10 +420,10 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
         proyecto.tipoBeneficiario || '',
         proyecto.etapaProyecto || '',
         proyecto.ambitoProyecto || '',
-        proyecto.fecIniProg ? new Date(proyecto.fecIniProg).toLocaleDateString('es-PE') : '',
-        proyecto.fecFinProg ? new Date(proyecto.fecFinProg).toLocaleDateString('es-PE') : '',
-        proyecto.fecIniReal ? new Date(proyecto.fecIniReal).toLocaleDateString('es-PE') : '',
-        proyecto.fecFinReal ? new Date(proyecto.fecFinReal).toLocaleDateString('es-PE') : '',
+        formatDateForExport(proyecto.fecIniProg),
+        formatDateForExport(proyecto.fecFinProg),
+        formatDateForExport(proyecto.fecIniReal),
+        formatDateForExport(proyecto.fecFinReal),
         proyecto.estadoProyecto ? 'Activo' : 'Inactivo',
         proyecto.alineadoPgd || '',
         proyecto.accEst || ''
@@ -528,11 +568,25 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
               localProyectos.map((proyecto) => {
                 const proyectoId = proyecto.proyEntId || proyecto.tempId;
                 
-                // Formatear fechas para mostrar
+                // Formatear fechas para mostrar sin problemas de zona horaria
                 const formatDateDisplay = (isoDate) => {
                   if (!isoDate) return '-';
                   try {
+                    // Si ya es formato YYYY-MM-DD, parsearlo localmente
+                    if (typeof isoDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(isoDate)) {
+                      const [year, month, day] = isoDate.split('-').map(Number);
+                      const date = new Date(year, month - 1, day); // mes - 1 porque Date usa 0-11 para meses
+                      return date.toLocaleDateString('es-PE', { 
+                        day: '2-digit', 
+                        month: '2-digit', 
+                        year: 'numeric' 
+                      });
+                    }
+                    
+                    // Para fechas ISO completas, usar parseado normal
                     const date = new Date(isoDate);
+                    if (isNaN(date.getTime())) return '-';
+                    
                     return date.toLocaleDateString('es-PE', { 
                       day: '2-digit', 
                       month: '2-digit', 
