@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PCM.Application.Features.Com15CSIRTInstitucional.Commands.CreateCom15CSIRTInstitucional;
 using PCM.Application.Common;
@@ -69,6 +70,36 @@ public class CreateCom15CSIRTInstitucionalHandler : IRequestHandler<CreateCom15C
             _logger.LogInformation("- ResponsableCsirt: '{Responsable}'", entity.ResponsableCsirt);
 
             _context.Com15CSIRTInstitucional.Add(entity);
+            
+            // Crear o actualizar el registro en cumplimiento_normativo para que el dashboard refleje el estado correcto
+            // Cuando se guardan datos del paso 1, automáticamente pasa a "EN PROCESO"
+            var estadoId = 4; // EN PROCESO
+            var cumplimientoExistente = await _context.CumplimientosNormativos
+                .FirstOrDefaultAsync(c => c.EntidadId == request.EntidadId && c.CompromisoId == request.CompromisoId, cancellationToken);
+            
+            if (cumplimientoExistente != null)
+            {
+                // Actualizar el estado existente
+                cumplimientoExistente.EstadoId = estadoId;
+                cumplimientoExistente.UpdatedAt = DateTime.UtcNow;
+                _logger.LogInformation("📝 COM15 - Actualizando cumplimiento normativo existente para Compromiso {CompromisoId}, Entidad {EntidadId} con EstadoId {EstadoId} (PENDIENTE → EN PROCESO)", 
+                    request.CompromisoId, request.EntidadId, estadoId);
+            }
+            else
+            {
+                // Crear nuevo registro en cumplimiento_normativo
+                var nuevoCumplimiento = new Domain.Entities.CumplimientoNormativo
+                {
+                    CompromisoId = request.CompromisoId,
+                    EntidadId = request.EntidadId,
+                    EstadoId = estadoId,
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.CumplimientosNormativos.Add(nuevoCumplimiento);
+                _logger.LogInformation("📝 COM15 - Creando nuevo cumplimiento normativo para Compromiso {CompromisoId}, Entidad {EntidadId} con EstadoId {EstadoId} (NUEVO → EN PROCESO)", 
+                    request.CompromisoId, request.EntidadId, estadoId);
+            }
+            
             await _context.SaveChangesAsync(cancellationToken);
 
             var response = new Com15CSIRTInstitucionalResponse

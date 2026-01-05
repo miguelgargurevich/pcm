@@ -102,7 +102,7 @@ const EvaluacionDetallePanel = ({
       // Si es relativa, construir URL absoluta con el host del backend (sin /api)
       const fullUrl = url.startsWith('http') 
         ? url 
-        : `http://localhost:5164${url}`;
+        : `http://localhost:5165${url}`;
       setPdfUrl(fullUrl);
     }
   };

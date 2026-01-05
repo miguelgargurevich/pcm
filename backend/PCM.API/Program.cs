@@ -14,7 +14,7 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var builder = WebApplication.CreateBuilder(args);
 
 // Configurar el puerto desde la variable de entorno (para Render u otros servicios en la nube)
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5164";
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5165";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 // Configuración de servicios
@@ -136,6 +136,11 @@ builder.Services.AddScoped<PCM.Infrastructure.Handlers.Com4PEI.GetCom4PEIHandler
 builder.Services.AddScoped<PCM.Infrastructure.Handlers.Com5EstrategiaDigital.CreateCom5EstrategiaDigitalHandler>();
 builder.Services.AddScoped<PCM.Infrastructure.Handlers.Com5EstrategiaDigital.UpdateCom5EstrategiaDigitalHandler>();
 builder.Services.AddScoped<PCM.Infrastructure.Handlers.Com5EstrategiaDigital.GetCom5EstrategiaDigitalHandler>();
+
+// Registro de handlers Com15 CSIRT Institucional
+builder.Services.AddScoped<PCM.Infrastructure.Handlers.Com15CSIRTInstitucional.CreateCom15CSIRTInstitucionalHandler>();
+builder.Services.AddScoped<PCM.Infrastructure.Handlers.Com15CSIRTInstitucional.UpdateCom15CSIRTInstitucionalHandler>();
+builder.Services.AddScoped<PCM.Infrastructure.Handlers.Com15CSIRTInstitucional.GetCom15CSIRTInstitucionalHandler>();
 
 // Configuración de CORS
 var corsOrigins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? new[] { "http://localhost:5173" };

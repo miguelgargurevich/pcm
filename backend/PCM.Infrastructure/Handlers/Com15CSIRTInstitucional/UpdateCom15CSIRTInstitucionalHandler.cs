@@ -69,6 +69,44 @@ public class UpdateCom15CSIRTInstitucionalHandler : IRequestHandler<UpdateCom15C
             if (!string.IsNullOrEmpty(request.ArchivoProcedimientos)) entity.ArchivoProcedimientos = request.ArchivoProcedimientos;
             if (!string.IsNullOrEmpty(request.Descripcion)) entity.Descripcion = request.Descripcion;
 
+            // ============================================
+            // ACTUALIZAR ESTADO EN CUMPLIMIENTO_NORMATIVO
+            // ============================================
+            // Cuando se actualizan datos del compromiso 15, automáticamente pasa a "EN PROCESO"
+            var estadoId = 4; // EN PROCESO
+            var cumplimientoExistente = await _context.CumplimientosNormativos
+                .FirstOrDefaultAsync(c => c.EntidadId == entity.EntidadId && c.CompromisoId == entity.CompromisoId, cancellationToken);
+            
+            if (cumplimientoExistente != null)
+            {
+                // Actualizar el estado existente solo si está en PENDIENTE
+                if (cumplimientoExistente.EstadoId == 1) // Solo si está PENDIENTE
+                {
+                    cumplimientoExistente.EstadoId = estadoId;
+                    cumplimientoExistente.UpdatedAt = DateTime.UtcNow;
+                    _logger.LogInformation("📝 COM15 UPDATE - Actualizando cumplimiento normativo existente para Compromiso {CompromisoId}, Entidad {EntidadId} con EstadoId {EstadoId} (PENDIENTE → EN PROCESO)", 
+                        entity.CompromisoId, entity.EntidadId, estadoId);
+                }
+                else
+                {
+                    _logger.LogInformation("📝 COM15 UPDATE - Cumplimiento normativo ya tiene estado {EstadoId}, no se modifica", cumplimientoExistente.EstadoId);
+                }
+            }
+            else
+            {
+                // Crear nuevo registro en cumplimiento_normativo
+                var nuevoCumplimiento = new Domain.Entities.CumplimientoNormativo
+                {
+                    CompromisoId = entity.CompromisoId,
+                    EntidadId = entity.EntidadId,
+                    EstadoId = estadoId,
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.CumplimientosNormativos.Add(nuevoCumplimiento);
+                _logger.LogInformation("📝 COM15 UPDATE - Creando nuevo cumplimiento normativo para Compromiso {CompromisoId}, Entidad {EntidadId} con EstadoId {EstadoId} (NUEVO → EN PROCESO)", 
+                    entity.CompromisoId, entity.EntidadId, estadoId);
+            }
+
             await _context.SaveChangesAsync(cancellationToken);
 
             // Registrar en historial si el estado cambió
