@@ -143,17 +143,27 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
           return isoDate;
         }
         
-        // Crear fecha local sin conversión UTC
+        // Para fechas ISO (2024-01-15T00:00:00.000Z), extraer solo la parte de la fecha
+        if (typeof isoDate === 'string' && isoDate.includes('T')) {
+          // Crear fecha parseando manualmente la parte de fecha para evitar zona horaria
+          const datePart = isoDate.split('T')[0]; // "2024-01-15"
+          if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+            return datePart;
+          }
+        }
+        
+        // Crear fecha local sin conversión UTC usando getUTC* methods
         const date = new Date(isoDate);
         if (isNaN(date.getTime())) return '';
         
-        // Obtener año, mes y día localmente
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
+        // Usar UTC para evitar que la zona horaria afecte la fecha mostrada
+        const year = date.getUTCFullYear();
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(date.getUTCDate()).padStart(2, '0');
         
         return `${year}-${month}-${day}`;
-      } catch {
+      } catch (error) {
+        console.error('Error al formatear fecha:', error);
         return '';
       }
     };
@@ -198,15 +208,39 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
   const handleSaveProyecto = () => {
     if (!formProyecto.nombre.trim()) return;
 
-    // Preparar los datos del proyecto con fechas correctas
+    // Helper para convertir fecha YYYY-MM-DD a ISO con hora local al mediodía para evitar zona horaria
+    const convertDateToISO = (dateStr) => {
+      if (!dateStr || typeof dateStr !== 'string') return dateStr;
+      try {
+        // Si ya es formato YYYY-MM-DD, convertir a ISO con hora local al mediodía
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+          const [year, month, day] = dateStr.split('-').map(Number);
+          // Crear fecha local al mediodía (12:00) para evitar problemas de zona horaria
+          const date = new Date(year, month - 1, day, 12, 0, 0);
+          return date.toISOString();
+        }
+        return dateStr;
+      } catch {
+        return dateStr;
+      }
+    };
+
+    // Preparar los datos del proyecto con fechas en formato ISO correcto
     const proyectoData = {
       ...formProyecto,
-      // Asegurar que las fechas mantengan el formato YYYY-MM-DD sin conversión UTC
-      fecIniProg: formProyecto.fecIniProg || '',
-      fecFinProg: formProyecto.fecFinProg || '',
-      fecIniReal: formProyecto.fecIniReal || '',
-      fecFinReal: formProyecto.fecFinReal || '',
+      // Convertir fechas a formato ISO con hora local para evitar desfase
+      fecIniProg: convertDateToISO(formProyecto.fecIniProg),
+      fecFinProg: convertDateToISO(formProyecto.fecFinProg),
+      fecIniReal: convertDateToISO(formProyecto.fecIniReal),
+      fecFinReal: convertDateToISO(formProyecto.fecFinReal),
     };
+
+    console.log('📅 Fechas antes de enviar:', {
+      original_fecIniProg: formProyecto.fecIniProg,
+      converted_fecIniProg: proyectoData.fecIniProg,
+      original_fecFinProg: formProyecto.fecFinProg,
+      converted_fecFinProg: proyectoData.fecFinProg
+    });
 
     let updated;
     if (editingProyecto) {
@@ -583,16 +617,37 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       });
                     }
                     
-                    // Para fechas ISO completas, usar parseado normal
+                    // Para fechas ISO (2024-01-15T00:00:00.000Z), extraer la fecha sin zona horaria
+                    if (typeof isoDate === 'string' && isoDate.includes('T')) {
+                      const datePart = isoDate.split('T')[0]; // "2024-01-15"
+                      if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+                        const [year, month, day] = datePart.split('-').map(Number);
+                        const date = new Date(year, month - 1, day);
+                        return date.toLocaleDateString('es-PE', { 
+                          day: '2-digit', 
+                          month: '2-digit', 
+                          year: 'numeric' 
+                        });
+                      }
+                    }
+                    
+                    // Para fechas ISO completas, usar parseado normal pero con UTC
                     const date = new Date(isoDate);
                     if (isNaN(date.getTime())) return '-';
                     
-                    return date.toLocaleDateString('es-PE', { 
+                    // Usar UTC para evitar zona horaria
+                    const year = date.getUTCFullYear();
+                    const month = date.getUTCMonth();
+                    const day = date.getUTCDate();
+                    const localDate = new Date(year, month, day);
+                    
+                    return localDate.toLocaleDateString('es-PE', { 
                       day: '2-digit', 
                       month: '2-digit', 
                       year: 'numeric' 
                     });
-                  } catch {
+                  } catch (error) {
+                    console.error('Error al formatear fecha para display:', error);
                     return '-';
                   }
                 };
