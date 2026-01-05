@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { showSuccessToast, showErrorToast, showInfoToast } from '../utils/toast.jsx';
-import { FilterX, X, Save, FolderKanban, TrendingUp, Edit2, Filter, ChevronDown, ChevronUp, Plus, Upload, Download, FileText } from 'lucide-react';
+import { FilterX, X, Save, FolderKanban, TrendingUp, Edit2, Filter, ChevronDown, ChevronUp, Plus, Upload, Download, FileText, Loader } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import com3EPGDService from '../services/com3EPGDService';
 import * as XLSX from 'xlsx';
@@ -45,6 +45,7 @@ const SeguimientoPGDPP = () => {
   const [editingProyecto, setEditingProyecto] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Filtros
   const [filtros, setFiltros] = useState({
@@ -569,6 +570,10 @@ const SeguimientoPGDPP = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (isSaving) return; // Evitar múltiples submissions
+    
+    setIsSaving(true);
+    
     try {
       console.log('📝 FormData antes de guardar:', formData);
       console.log('📊 Porcentaje avance:', formData.porcentajeAvance, 'Tipo:', typeof formData.porcentajeAvance);
@@ -639,26 +644,25 @@ const SeguimientoPGDPP = () => {
           proyEntId: p.id && typeof p.id === 'number' ? p.id : null,
           numeracionProy: (p.codigo || '').toString().trim(),
           nombre: (p.nombre || '').toString().trim(),
+          alcance: (p.alcance || '').toString().trim(),
+          justificacion: (p.justificacion || '').toString().trim(),
           tipoProy: (p.tipoProyecto || '').toString().trim(),
+          objEst: (p.objEstrategico || '').toString().trim(),
+          objTranDig: (p.objTransformacionDigital || '').toString().trim(),
+          areaProy: (p.areaProyecto || '').toString().trim(),
+          areaEjecuta: (p.areaEjecutora || '').toString().trim(),
           tipoBeneficiario: (p.tipoBeneficiario || '').toString().trim(),
+          etapaProyecto: (p.etapa || '').toString().trim(),
+          ambitoProyecto: (p.ambito || '').toString().trim(),
           fecIniProg: formatDateForBackend(p.fechaInicioProg),
           fecFinProg: formatDateForBackend(p.fechaFinProg),
           fecIniReal: formatDateForBackend(p.fechaInicioReal),
           fecFinReal: formatDateForBackend(p.fechaFinReal),
-          etapaProyecto: (p.etapa || '').toString().trim(),
-          porcentajeAvance: Math.max(0, Math.min(100, Number(p.porcentajeAvance) || 0)),
-          informoAvance: Boolean(p.informoAvance),
-          ambitoProyecto: (p.ambito || '').toString().trim(),
           estadoProyecto: p.estado === 'Activo' || p.estado === true || p.estado === 'true' || p.estado === 1,
           alineadoPgd: (p.alineadoPgd || '').toString().trim(),
           accEst: (p.accionEstrategica || '').toString().trim(),
-          // Campos adicionales como strings vacíos para evitar null/undefined
-          alcance: (p.alcance || '').toString().trim(),
-          justificacion: (p.justificacion || '').toString().trim(),
-          objEstrategico: (p.objEstrategico || '').toString().trim(),
-          objTransformacionDigital: (p.objTransformacionDigital || '').toString().trim(),
-          areaProyecto: (p.areaProyecto || '').toString().trim(),
-          areaEjecutora: (p.areaEjecutora || '').toString().trim()
+          porcentajeAvance: Math.max(0, Math.min(100, Number(p.porcentajeAvance) || 0)),
+          informoAvance: Boolean(p.informoAvance)
         };
         
         if (p.codigo === editingProyecto?.codigo) {
@@ -713,6 +717,8 @@ const SeguimientoPGDPP = () => {
       }
       
       showErrorToast(errorMessage);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -1454,10 +1460,24 @@ const SeguimientoPGDPP = () => {
               <button
                 type="button"
                 onClick={handleSubmit}
-                className="px-4 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 flex items-center gap-2"
+                disabled={isSaving}
+                className={`px-4 py-2 text-sm rounded-lg flex items-center gap-2 transition-colors ${
+                  isSaving 
+                    ? 'bg-gray-400 cursor-not-allowed text-white' 
+                    : 'bg-primary-600 text-white hover:bg-primary-700'
+                }`}
               >
-                <Save size={16} />
-                {editingProyecto ? 'Guardar' : 'Agregar'}
+                {isSaving ? (
+                  <>
+                    <Loader size={16} className="animate-spin" />
+                    Guardando...
+                  </>
+                ) : (
+                  <>
+                    <Save size={16} />
+                    {editingProyecto ? 'Guardar' : 'Agregar'}
+                  </>
+                )}
               </button>
             </div>
           </div>
