@@ -595,16 +595,20 @@ const SeguimientoPGDPP = () => {
 
       // Validar y limpiar fechas
       const formatDateForBackend = (dateStr) => {
-        if (!dateStr || dateStr === '') return '';
+        if (!dateStr || dateStr === '' || dateStr === null || dateStr === undefined) return null;
         try {
+          // Si ya es una fecha válida formato YYYY-MM-DD, convertir a Date y luego a ISO
           if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-            return dateStr;
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const date = new Date(year, month - 1, day, 12, 0, 0); // Mediodía para evitar zona horaria
+            return date.toISOString();
           }
+          // Si es otra cosa, intentar convertir
           const date = new Date(dateStr);
-          if (isNaN(date.getTime())) return '';
-          return date.toISOString().split('T')[0];
+          if (isNaN(date.getTime())) return null;
+          return date.toISOString();
         } catch {
-          return '';
+          return null;
         }
       };
 
@@ -616,7 +620,7 @@ const SeguimientoPGDPP = () => {
           return null;
         }
 
-        return {
+        const proyectoBackend = {
           proyEntId: p.id && typeof p.id === 'number' ? p.id : null,
           numeracionProy: (p.codigo || '').toString().trim(),
           nombre: (p.nombre || '').toString().trim(),
@@ -634,12 +638,26 @@ const SeguimientoPGDPP = () => {
           fecFinProg: formatDateForBackend(p.fechaFinProg),
           fecIniReal: formatDateForBackend(p.fechaInicioReal),
           fecFinReal: formatDateForBackend(p.fechaFinReal),
-          estadoProyecto: p.estado === 'Activo' || p.estado === true || p.estado === 'true' || p.estado === 1,
-          alineadoPgd: (p.alineadoPgd || '').toString().trim(),
+          estadoProyecto: Boolean(p.estado === 'Activo' || p.estado === true || p.estado === 'true' || p.estado === 1),
+          alienadoPgd: (p.alineadoPgd || '').toString().trim(), // Nota: typo en BD es "alienado"
           accEst: (p.accionEstrategica || '').toString().trim(),
           porcentajeAvance: Math.max(0, Math.min(100, Number(p.porcentajeAvance) || 0)),
           informoAvance: Boolean(p.informoAvance)
         };
+
+        // Log del proyecto que se va a enviar
+        console.log('📦 Proyecto mapeado para backend:', {
+          codigo: proyectoBackend.numeracionProy,
+          nombre: proyectoBackend.nombre,
+          fechas: {
+            fecIniProg: proyectoBackend.fecIniProg,
+            fecFinProg: proyectoBackend.fecFinProg,
+            fecIniReal: proyectoBackend.fecIniReal,
+            fecFinReal: proyectoBackend.fecFinReal
+          }
+        });
+
+        return proyectoBackend;
       }).filter(p => p !== null);
 
       if (proyectosParaBackend.length === 0) {
@@ -729,18 +747,20 @@ const SeguimientoPGDPP = () => {
 
         // Validar y limpiar fechas
         const formatDateForBackend = (dateStr) => {
-          if (!dateStr || dateStr === '') return '';
+          if (!dateStr || dateStr === '' || dateStr === null || dateStr === undefined) return null;
           try {
-            // Si ya es una fecha válida formato YYYY-MM-DD, mantenerla
+            // Si ya es una fecha válida formato YYYY-MM-DD, convertir a Date y luego a ISO
             if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-              return dateStr;
+              const [year, month, day] = dateStr.split('-').map(Number);
+              const date = new Date(year, month - 1, day, 12, 0, 0); // Mediodía para evitar zona horaria
+              return date.toISOString();
             }
             // Si es otra cosa, intentar convertir
             const date = new Date(dateStr);
-            if (isNaN(date.getTime())) return '';
-            return date.toISOString().split('T')[0];
+            if (isNaN(date.getTime())) return null;
+            return date.toISOString();
           } catch {
-            return '';
+            return null;
           }
         };
 
@@ -762,12 +782,24 @@ const SeguimientoPGDPP = () => {
           fecFinProg: formatDateForBackend(p.fechaFinProg),
           fecIniReal: formatDateForBackend(p.fechaInicioReal),
           fecFinReal: formatDateForBackend(p.fechaFinReal),
-          estadoProyecto: p.estado === 'Activo' || p.estado === true || p.estado === 'true' || p.estado === 1,
-          alineadoPgd: (p.alineadoPgd || '').toString().trim(),
+          estadoProyecto: Boolean(p.estado === 'Activo' || p.estado === true || p.estado === 'true' || p.estado === 1),
+          alienadoPgd: (p.alineadoPgd || '').toString().trim(), // Nota: typo en BD es "alienado"
           accEst: (p.accionEstrategica || '').toString().trim(),
           porcentajeAvance: Math.max(0, Math.min(100, Number(p.porcentajeAvance) || 0)),
           informoAvance: Boolean(p.informoAvance)
         };
+        
+        // Log del proyecto que se va a enviar
+        console.log('📦 Proyecto mapeado para backend (handleSubmit):', {
+          codigo: proyectoBackend.numeracionProy,
+          nombre: proyectoBackend.nombre,
+          fechas: {
+            fecIniProg: proyectoBackend.fecIniProg,
+            fecFinProg: proyectoBackend.fecFinProg,
+            fecIniReal: proyectoBackend.fecIniReal,
+            fecFinReal: proyectoBackend.fecFinReal
+          }
+        });
         
         if (p.codigo === editingProyecto?.codigo) {
           console.log('🚀 Proyecto a enviar al backend:', proyectoBackend);
@@ -780,8 +812,11 @@ const SeguimientoPGDPP = () => {
       
       if (proyectosParaBackend.length === 0) {
         showErrorToast('No hay proyectos válidos para guardar');
+        setIsSaving(false);
         return;
       }
+
+      console.log('📤 Datos finales a enviar al backend:', { proyectos: proyectosParaBackend });
 
       // Actualizar el compromiso completo con los proyectos modificados
       const updateData = {
