@@ -126,16 +126,25 @@ const SeguimientoPGDPP = () => {
   const [formData, setFormData] = useState({
     codigo: '',
     nombre: '',
+    alcance: '',
+    justificacion: '',
     tipoProyecto: '',
+    objEstrategico: '',
+    objTransformacionDigital: '',
+    areaProyecto: '',
+    areaEjecutora: '',
     tipoBeneficiario: '',
+    etapa: '',
+    ambito: '',
     fechaInicioProg: '',
     fechaFinProg: '',
     fechaInicioReal: '',
     fechaFinReal: '',
-    etapa: '',
+    estado: '',
+    alineadoPgd: '',
+    accionEstrategica: '',
     porcentajeAvance: 0,
-    informoAvance: false,
-    ambito: ''
+    informoAvance: false
   });
 
   // Cargar proyectos desde la API
@@ -161,16 +170,25 @@ const SeguimientoPGDPP = () => {
               id: p.proyectoId || p.proyEntId || index, // Usar proyEntId como ID principal
               codigo: p.numeracionProy,
               nombre: p.nombre,
+              alcance: p.alcance || '',
+              justificacion: p.justificacion || '',
               tipoProyecto: p.tipoProy,
+              objEstrategico: p.objEstrategico || '',
+              objTransformacionDigital: p.objTransformacionDigital || '',
+              areaProyecto: p.areaProyecto || '',
+              areaEjecutora: p.areaEjecutora || '',
               tipoBeneficiario: p.tipoBeneficiario,
+              etapa: p.etapaProyecto,
+              ambito: p.ambitoProyecto,
               fechaInicioProg: p.fecIniProg,
               fechaFinProg: p.fecFinProg,
               fechaInicioReal: p.fecIniReal,
               fechaFinReal: p.fecFinReal,
-              etapa: p.etapaProyecto,
+              estado: p.estadoProyecto ? 'Activo' : 'Inactivo',
+              alineadoPgd: p.alineadoPgd || '',
+              accionEstrategica: p.accEst || '',
               porcentajeAvance: p.porcentajeAvance || 0,
-              informoAvance: p.informoAvance || false,
-              ambito: p.ambitoProyecto
+              informoAvance: p.informoAvance || false
             };
             
             console.log(`Proyecto ${index}:`, proyecto);
@@ -525,16 +543,25 @@ const SeguimientoPGDPP = () => {
     setFormData({
       codigo: proyecto.codigo || '',
       nombre: proyecto.nombre || '',
+      alcance: proyecto.alcance || '',
+      justificacion: proyecto.justificacion || '',
       tipoProyecto: proyecto.tipoProyecto || '',
+      objEstrategico: proyecto.objEstrategico || '',
+      objTransformacionDigital: proyecto.objTransformacionDigital || '',
+      areaProyecto: proyecto.areaProyecto || '',
+      areaEjecutora: proyecto.areaEjecutora || '',
       tipoBeneficiario: proyecto.tipoBeneficiario || '',
+      etapa: proyecto.etapa || '',
+      ambito: proyecto.ambito || '',
       fechaInicioProg: formatDateForInput(proyecto.fechaInicioProg),
       fechaFinProg: formatDateForInput(proyecto.fechaFinProg),
       fechaInicioReal: formatDateForInput(proyecto.fechaInicioReal),
       fechaFinReal: formatDateForInput(proyecto.fechaFinReal),
-      etapa: proyecto.etapa || '',
+      estado: proyecto.estado || '',
+      alineadoPgd: proyecto.alineadoPgd || '',
+      accionEstrategica: proyecto.accionEstrategica || '',
       porcentajeAvance: proyecto.porcentajeAvance || 0,
-      informoAvance: proyecto.informoAvance || false,
-      ambito: proyecto.ambito || ''
+      informoAvance: proyecto.informoAvance || false
     });
     setShowModal(true);
   };
@@ -589,7 +616,13 @@ const SeguimientoPGDPP = () => {
           proyEntId: p.id && typeof p.id === 'number' ? p.id : null, // Usar proyEntId según la entidad del backend
           numeracionProy: p.codigo,
           nombre: p.nombre,
+          alcance: p.alcance || '',
+          justificacion: p.justificacion || '',
           tipoProy: p.tipoProyecto,
+          objEstrategico: p.objEstrategico || '',
+          objTransformacionDigital: p.objTransformacionDigital || '',
+          areaProyecto: p.areaProyecto || '',
+          areaEjecutora: p.areaEjecutora || '',
           tipoBeneficiario: p.tipoBeneficiario,
           fecIniProg: p.fechaInicioProg,
           fecFinProg: p.fechaFinProg,
@@ -599,9 +632,9 @@ const SeguimientoPGDPP = () => {
           porcentajeAvance: Number(p.porcentajeAvance) || 0,
           informoAvance: Boolean(p.informoAvance),
           ambitoProyecto: p.ambito,
-          estadoProyecto: true,
-          alineadoPgd: '',
-          accEst: ''
+          estadoProyecto: p.estado === 'Activo' ? true : false,
+          alineadoPgd: p.alineadoPgd || '',
+          accEst: p.accionEstrategica || ''
         };
         
         if (p.codigo === editingProyecto?.codigo) {
@@ -1077,6 +1110,30 @@ const SeguimientoPGDPP = () => {
                     />
                   </div>
                 </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Alcance</label>
+                    <input
+                      type="text"
+                      value={formData.alcance}
+                      onChange={(e) => setFormData(prev => ({ ...prev, alcance: e.target.value }))}
+                      maxLength={100}
+                      className="input-field-sm"
+                      placeholder="Ej: Nacional, Regional, Local"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Justificación</label>
+                    <input
+                      type="text"
+                      value={formData.justificacion}
+                      onChange={(e) => setFormData(prev => ({ ...prev, justificacion: e.target.value }))}
+                      maxLength={200}
+                      className="input-field-sm"
+                      placeholder="Justificación del proyecto"
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Sección 2: Clasificación */}
@@ -1128,7 +1185,60 @@ const SeguimientoPGDPP = () => {
                 </div>
               </div>
 
-              {/* Sección 3: Fechas y Cronograma */}
+              {/* Sección 3: Objetivos y Áreas */}
+              <div className="bg-green-50 p-4 rounded-lg space-y-3">
+                <h4 className="text-sm font-medium text-green-900">Objetivos y Áreas</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Objetivo Estratégico</label>
+                    <input
+                      type="text"
+                      value={formData.objEstrategico}
+                      onChange={(e) => setFormData(prev => ({ ...prev, objEstrategico: e.target.value }))}
+                      maxLength={150}
+                      className="input-field-sm"
+                      placeholder="Objetivo estratégico del proyecto"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Obj. Transformación Digital</label>
+                    <input
+                      type="text"
+                      value={formData.objTransformacionDigital}
+                      onChange={(e) => setFormData(prev => ({ ...prev, objTransformacionDigital: e.target.value }))}
+                      maxLength={150}
+                      className="input-field-sm"
+                      placeholder="Objetivo de transformación digital"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Área del Proyecto</label>
+                    <input
+                      type="text"
+                      value={formData.areaProyecto}
+                      onChange={(e) => setFormData(prev => ({ ...prev, areaProyecto: e.target.value }))}
+                      maxLength={100}
+                      className="input-field-sm"
+                      placeholder="Área responsable del proyecto"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Área Ejecutora</label>
+                    <input
+                      type="text"
+                      value={formData.areaEjecutora}
+                      onChange={(e) => setFormData(prev => ({ ...prev, areaEjecutora: e.target.value }))}
+                      maxLength={100}
+                      className="input-field-sm"
+                      placeholder="Área que ejecuta el proyecto"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Sección 4: Fechas y Cronograma */}
               <div className="bg-yellow-50 p-4 rounded-lg space-y-3">
                 <h4 className="text-sm font-medium text-yellow-900">Cronograma</h4>
                 <div className="grid grid-cols-4 gap-3">
@@ -1238,6 +1348,46 @@ const SeguimientoPGDPP = () => {
                         <span className="text-xs">No</span>
                       </label>
                     </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Estado del Proyecto</label>
+                    <select
+                      value={formData.estado}
+                      onChange={(e) => setFormData(prev => ({ ...prev, estado: e.target.value }))}
+                      className="input-field-sm"
+                    >
+                      <option value="">Seleccione...</option>
+                      <option value="Activo">Activo</option>
+                      <option value="Inactivo">Inactivo</option>
+                      <option value="Suspendido">Suspendido</option>
+                      <option value="Finalizado">Finalizado</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Alineado al PGD</label>
+                    <select
+                      value={formData.alineadoPgd}
+                      onChange={(e) => setFormData(prev => ({ ...prev, alineadoPgd: e.target.value }))}
+                      className="input-field-sm"
+                    >
+                      <option value="">Seleccione...</option>
+                      <option value="Sí">Sí</option>
+                      <option value="No">No</option>
+                      <option value="Parcial">Parcial</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Acción Estratégica</label>
+                    <input
+                      type="text"
+                      value={formData.accionEstrategica}
+                      onChange={(e) => setFormData(prev => ({ ...prev, accionEstrategica: e.target.value }))}
+                      maxLength={150}
+                      className="input-field-sm"
+                      placeholder="Acción estratégica asociada"
+                    />
                   </div>
                 </div>
               </div>
