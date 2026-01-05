@@ -226,7 +226,7 @@ const SeguimientoPGDPP = () => {
       if (isExcelFile && XLSX) {
         // Procesar archivo Excel
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
           try {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
@@ -240,7 +240,7 @@ const SeguimientoPGDPP = () => {
               return;
             }
             
-            procesarDatosImportados(jsonData);
+            await procesarDatosImportados(jsonData);
           } catch (error) {
             console.error('Error al procesar Excel:', error);
             showErrorToast('Error al procesar el archivo Excel');
@@ -251,7 +251,7 @@ const SeguimientoPGDPP = () => {
       } else {
         // Procesar archivo CSV
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
           try {
             const text = e.target.result;
             const lines = text.split('\n');
@@ -287,7 +287,7 @@ const SeguimientoPGDPP = () => {
               .filter(line => line.trim())
               .map(line => parseCSVLine(line));
               
-            procesarDatosImportados(csvData);
+            await procesarDatosImportados(csvData);
           } catch (error) {
             console.error('Error al procesar CSV:', error);
             showErrorToast('Error al procesar el archivo CSV');
@@ -301,7 +301,7 @@ const SeguimientoPGDPP = () => {
     input.click();
   };
 
-  const procesarDatosImportados = (data) => {
+  const procesarDatosImportados = async (data) => {
     try {
       const proyectosImportados = [];
       
@@ -344,8 +344,21 @@ const SeguimientoPGDPP = () => {
       if (proyectosImportados.length === 0) {
         showErrorToast('No se encontraron datos válidos en el archivo');
       } else {
-        setProyectos(prevProyectos => [...prevProyectos, ...proyectosImportados]);
-        showSuccessToast('📥 Importación exitosa', `Se importaron ${proyectosImportados.length} proyecto(s) exitosamente`);
+        // Actualizar el estado local
+        const proyectosActualizados = [...proyectos, ...proyectosImportados];
+        setProyectos(proyectosActualizados);
+        
+        // Mostrar mensaje de importación exitosa
+        showSuccessToast('📥 Importación exitosa', `Se importaron ${proyectosImportados.length} proyecto(s). Guardando en la base de datos...`);
+        
+        // Guardar automáticamente en la base de datos
+        const savedSuccessfully = await saveAllProyectos(proyectosActualizados);
+        
+        if (savedSuccessfully) {
+          showSuccessToast('💾 Guardado completo', 'Los proyectos se importaron y guardaron correctamente en la base de datos');
+        } else {
+          showErrorToast('⚠️ Importación parcial', 'Los proyectos se importaron pero hubo un error al guardar en la base de datos. Use el botón Exportar para verificar los datos.');
+        }
       }
       
     } catch (error) {
@@ -565,6 +578,97 @@ const SeguimientoPGDPP = () => {
       informoAvance: proyecto.informoAvance || false
     });
     setShowModal(true);
+  };
+
+  // Función para guardar todos los proyectos en BD
+  const saveAllProyectos = async (proyectosToSave) => {
+    try {
+      // Obtener el compromiso completo actual desde la API
+      const compromisoResponse = await com3EPGDService.getByEntidad(user.entidadId);
+      
+      if (!compromisoResponse.isSuccess || !compromisoResponse.data) {
+        showErrorToast('No se pudo obtener los datos del compromiso');
+        return false;
+      }
+
+      const compromiso = compromisoResponse.data;
+
+      // Validar y limpiar fechas
+      const formatDateForBackend = (dateStr) => {
+        if (!dateStr || dateStr === '') return '';
+        try {
+          if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+            return dateStr;
+          }
+          const date = new Date(dateStr);
+          if (isNaN(date.getTime())) return '';
+          return date.toISOString().split('T')[0];
+        } catch {
+          return '';
+        }
+      };
+
+      // Mapear proyectos para el backend
+      const proyectosParaBackend = proyectosToSave.map(p => {
+        // Validar datos mínimos requeridos
+        if (!p.codigo || !p.nombre) {
+          console.warn('⚠️ Proyecto con datos incompletos:', p);
+          return null;
+        }
+
+        return {
+          proyEntId: p.id && typeof p.id === 'number' ? p.id : null,
+          numeracionProy: (p.codigo || '').toString().trim(),
+          nombre: (p.nombre || '').toString().trim(),
+          alcance: (p.alcance || '').toString().trim(),
+          justificacion: (p.justificacion || '').toString().trim(),
+          tipoProy: (p.tipoProyecto || '').toString().trim(),
+          objEst: (p.objEstrategico || '').toString().trim(),
+          objTranDig: (p.objTransformacionDigital || '').toString().trim(),
+          areaProy: (p.areaProyecto || '').toString().trim(),
+          areaEjecuta: (p.areaEjecutora || '').toString().trim(),
+          tipoBeneficiario: (p.tipoBeneficiario || '').toString().trim(),
+          etapaProyecto: (p.etapa || '').toString().trim(),
+          ambitoProyecto: (p.ambito || '').toString().trim(),
+          fecIniProg: formatDateForBackend(p.fechaInicioProg),
+          fecFinProg: formatDateForBackend(p.fechaFinProg),
+          fecIniReal: formatDateForBackend(p.fechaInicioReal),
+          fecFinReal: formatDateForBackend(p.fechaFinReal),
+          estadoProyecto: p.estado === 'Activo' || p.estado === true || p.estado === 'true' || p.estado === 1,
+          alineadoPgd: (p.alineadoPgd || '').toString().trim(),
+          accEst: (p.accionEstrategica || '').toString().trim(),
+          porcentajeAvance: Math.max(0, Math.min(100, Number(p.porcentajeAvance) || 0)),
+          informoAvance: Boolean(p.informoAvance)
+        };
+      }).filter(p => p !== null);
+
+      if (proyectosParaBackend.length === 0) {
+        showErrorToast('No hay proyectos válidos para guardar');
+        return false;
+      }
+
+      // Actualizar el compromiso completo con los proyectos
+      const updateData = {
+        ...compromiso,
+        proyectos: proyectosParaBackend
+      };
+      
+      console.log('💾 Guardando proyectos automáticamente:', proyectosParaBackend.length);
+
+      const updateResponse = await com3EPGDService.update(compromiso.comepgdEntId, updateData);
+      
+      if (!updateResponse.isSuccess) {
+        console.error('❌ Error del servidor:', updateResponse.error || updateResponse);
+        showErrorToast(`Error al guardar: ${updateResponse.error?.message || 'Error desconocido'}`);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('❌ Error al guardar proyectos:', error);
+      showErrorToast('Error al guardar los proyectos en la base de datos');
+      return false;
+    }
   };
 
   const handleSubmit = async (e) => {
