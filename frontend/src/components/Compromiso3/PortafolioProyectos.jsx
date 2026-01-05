@@ -628,14 +628,19 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
           <table className="w-full">
             <thead>
               <tr className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-200">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200 w-[60px]">#</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Código</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Nombre</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Tipo</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Área</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Estado</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Avance</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Inicio</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Fin</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Tipo Proyecto</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Tipo Beneficiario</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Fecha Inicio Prog.</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Fecha Fin Prog.</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Fecha Inicio Real</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Fecha Fin Real</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Etapa</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">% Avance</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Informó Avance</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">Ámbito</th>
                 {!viewMode && (
                   <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Acciones</th>
                 )}
@@ -644,7 +649,7 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
             <tbody className="divide-y divide-gray-100">
               {localProyectos.length === 0 ? (
                 <tr>
-                  <td colSpan={viewMode ? 8 : 9} className="px-6 py-8 text-center">
+                  <td colSpan={viewMode ? 13 : 14} className="px-6 py-8 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <FileText className="w-12 h-12 text-gray-300" />
                       <div>
@@ -713,17 +718,22 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                   return (
                     <tr key={proyectoId} className="hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-3 border-r border-gray-100">
+                        <span className="text-sm font-medium text-gray-600">
+                          {index + 1}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 border-r border-gray-100">
                         <span className="text-sm font-mono text-indigo-600 font-medium">
                           {proyecto.numeracionProy || proyecto.codigo || `PP-${(index + 1).toString().padStart(3, '0')}`}
                         </span>
                       </td>
                       <td className="px-4 py-3 border-r border-gray-100">
                         <div className="flex flex-col">
-                          <span className="text-sm font-medium text-gray-900 line-clamp-1">
+                          <span className="text-sm font-medium text-gray-900 line-clamp-2 max-w-xs">
                             {proyecto.nombre || 'Sin nombre'}
                           </span>
                           {proyecto.alcance && (
-                            <span className="text-xs text-gray-500 line-clamp-1">
+                            <span className="text-xs text-gray-500 line-clamp-1 max-w-xs">
                               {proyecto.alcance}
                             </span>
                           )}
@@ -736,16 +746,32 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                       </td>
                       <td className="px-4 py-3 border-r border-gray-100">
                         <span className="text-sm text-gray-700">
-                          {proyecto.areaProy || proyecto.areaProyecto || 'N/A'}
+                          {proyecto.tipoBeneficiario || 'N/A'}
                         </span>
                       </td>
                       <td className="px-4 py-3 border-r border-gray-100">
-                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                          (proyecto.estadoProyecto || proyecto.estado) 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {(proyecto.estadoProyecto || proyecto.estado) ? 'Activo' : 'Inactivo'}
+                        <span className="text-sm text-gray-700">
+                          {formatDateDisplay(proyecto.fecIniProg || proyecto.fechaInicioProg)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 border-r border-gray-100">
+                        <span className="text-sm text-gray-700">
+                          {formatDateDisplay(proyecto.fecFinProg || proyecto.fechaFinProg)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 border-r border-gray-100">
+                        <span className="text-sm text-gray-700">
+                          {formatDateDisplay(proyecto.fecIniReal || proyecto.fechaInicioReal)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 border-r border-gray-100">
+                        <span className="text-sm text-gray-700">
+                          {formatDateDisplay(proyecto.fecFinReal || proyecto.fechaFinReal)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 border-r border-gray-100">
+                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                          {proyecto.etapaProyecto || proyecto.etapa || 'N/A'}
                         </span>
                       </td>
                       <td className="px-4 py-3 border-r border-gray-100">
@@ -767,13 +793,17 @@ const PortafolioProyectos = ({ proyectos = [], onProyectosChange, viewMode = fal
                         </div>
                       </td>
                       <td className="px-4 py-3 border-r border-gray-100">
-                        <span className="text-sm text-gray-700">
-                          {formatDateDisplay(proyecto.fecIniProg || proyecto.fechaInicioProg)}
+                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                          proyecto.informoAvance 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {proyecto.informoAvance ? 'Sí' : 'No'}
                         </span>
                       </td>
                       <td className="px-4 py-3 border-r border-gray-100">
                         <span className="text-sm text-gray-700">
-                          {formatDateDisplay(proyecto.fecFinProg || proyecto.fechaFinProg)}
+                          {proyecto.ambitoProyecto || proyecto.ambito || 'N/A'}
                         </span>
                       </td>
                       {!viewMode && (
