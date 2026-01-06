@@ -18,7 +18,7 @@ RUN dotnet restore backend/PCM.API/PCM.API.csproj
 # Copiar todo el código y compilar
 COPY backend/ ./backend/
 WORKDIR /src/backend/PCM.API
-RUN dotnet clean && dotnet publish -c Release -o /app/publish --no-restore
+RUN dotnet clean PCM.API.csproj && dotnet publish PCM.API.csproj -c Release -o /app/publish --no-restore
 
 # Etapa 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:9.0

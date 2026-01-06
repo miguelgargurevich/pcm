@@ -21,10 +21,10 @@ services:
     container_name: pcm-backend-server
     restart: unless-stopped
     ports:
-      - "5164:5164"
+      - "5165:5165"
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
-      - ASPNETCORE_URLS=http://+:5164
+      - ASPNETCORE_URLS=http://+:5165
     volumes:
       - storage_data:/app/storage  # Volumen para archivos
     extra_hosts:
@@ -43,7 +43,7 @@ services:
       platforms:
         - linux/amd64
       args:
-        - VITE_API_URL=http://101.44.1.6:5164/api
+        - VITE_API_URL=/api
         - VITE_RECAPTCHA_SITE_KEY=6Lc2mgEsAAAAAMAsjyD9M0MsqCJxpYHS0-prSm9J
     container_name: pcm-frontend-server
     restart: unless-stopped
