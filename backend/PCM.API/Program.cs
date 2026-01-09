@@ -99,11 +99,17 @@ builder.Services.AddScoped<ICumplimientoHistorialService, CumplimientoHistorialS
 builder.Services.AddHttpClient<IReCaptchaService, ReCaptchaService>();
 builder.Services.AddHttpClient<ISunatService, SunatService>();
 
-// Configuración de Email Service (AWS SES, SMTP o Resend según configuración)
+// Configuración de Email Service (Gmail, AWS SES, SMTP o Resend según configuración)
+var useGmail = !string.IsNullOrEmpty(builder.Configuration["Gmail:RefreshToken"]);
 var useAwsSes = !string.IsNullOrEmpty(builder.Configuration["Aws:AccessKeyId"]);
 var useSmtp = !string.IsNullOrEmpty(builder.Configuration["Smtp:Host"]);
 
-if (useAwsSes)
+if (useGmail)
+{
+    builder.Services.AddHttpClient<IEmailService, GmailEmailService>();
+    Console.WriteLine("📧 Email Service: Gmail (OAuth2)");
+}
+else if (useAwsSes)
 {
     builder.Services.AddScoped<IEmailService, AwsSesEmailService>();
     Console.WriteLine("📧 Email Service: AWS SES (Amazon Simple Email Service)");

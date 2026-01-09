@@ -19,6 +19,66 @@ public class EmailController : ControllerBase
     }
 
     /// <summary>
+    /// Endpoint genérico para enviar correos electrónicos
+    /// </summary>
+    [HttpPost("sendMail")]
+    public async Task<IActionResult> SendMail([FromBody] SendMailRequest request)
+    {
+        try
+        {
+            _logger.LogInformation("📧 Recibiendo solicitud de envío de correo a {ToEmail}", request.ToEmail);
+
+            if (string.IsNullOrWhiteSpace(request.ToEmail))
+            {
+                return BadRequest(new { message = "El email del destinatario es requerido" });
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Subject))
+            {
+                return BadRequest(new { message = "El asunto del correo es requerido" });
+            }
+
+            if (string.IsNullOrWhiteSpace(request.HtmlContent))
+            {
+                return BadRequest(new { message = "El contenido HTML del correo es requerido" });
+            }
+
+            var success = await _emailService.SendEmailAsync(
+                request.ToEmail,
+                request.Subject,
+                request.HtmlContent
+            );
+
+            if (success)
+            {
+                _logger.LogInformation("✅ Correo enviado exitosamente a {ToEmail}", request.ToEmail);
+                return Ok(new 
+                { 
+                    success = true, 
+                    message = "Correo enviado exitosamente",
+                    destinatario = request.ToEmail,
+                    asunto = request.Subject
+                });
+            }
+            else
+            {
+                _logger.LogWarning("⚠️ No se pudo enviar el correo a {ToEmail}", request.ToEmail);
+                return StatusCode(500, new { success = false, message = "No se pudo enviar el correo" });
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "❌ Error al enviar correo");
+            return StatusCode(500, new 
+            { 
+                success = false, 
+                message = "Error al enviar el correo",
+                error = ex.Message 
+            });
+        }
+    }
+
+    /// <summary>
     /// Envía un correo de notificación de cumplimiento normativo
     /// </summary>
     [HttpPost("send-cumplimiento-notification")]
@@ -88,6 +148,13 @@ public class EmailController : ControllerBase
             });
         }
     }
+}
+
+public class SendMailRequest
+{
+    public required string ToEmail { get; set; }
+    public required string Subject { get; set; }
+    public required string HtmlContent { get; set; }
 }
 
 public class SendCumplimientoEmailRequest
