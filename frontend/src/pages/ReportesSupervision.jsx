@@ -185,32 +185,32 @@ const ReportesSupervision = () => {
   const totalEnRevision = filteredData.reduce((sum, e) => sum + (e.enRevision || 0), 0);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header Principal */}
-      <header className="bg-slate-900 text-white p-4 shadow-xl no-print sticky top-0 z-50">
+      <header className="bg-gradient-to-r from-primary-600 to-primary-700 text-white p-6 shadow-lg no-print">
         <div className="max-w-[1400px] mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="bg-red-600 p-2 rounded-lg text-white shadow-lg">
-              <Shield className="w-6 h-6" />
+            <div className="bg-white/20 p-3 rounded-lg backdrop-blur-sm">
+              <Shield className="w-7 h-7" />
             </div>
             <div>
-              <h1 className="text-xl font-black tracking-tight leading-none">PCM | CUMPLIMIENTO DIGITAL</h1>
-              <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mt-1">SGTD - Supervisión Nacional</p>
+              <h1 className="text-2xl font-bold">PCM | Cumplimiento Digital</h1>
+              <p className="text-sm text-primary-100 font-medium">SGTD - Supervisión Nacional</p>
             </div>
           </div>
-          <div className="flex bg-slate-800 p-1 rounded-xl gap-1">
+          <div className="flex bg-white/10 backdrop-blur-sm p-1 rounded-lg gap-1">
             <button 
               onClick={() => setActiveTab('dashboard')} 
-              className={`px-5 py-2 rounded-lg text-xs font-bold transition-all duration-200 ${
-                activeTab === 'dashboard' ? 'bg-blue-600 shadow-md text-white' : 'text-slate-400 hover:text-white'
+              className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                activeTab === 'dashboard' ? 'bg-white text-primary-600 shadow-md' : 'text-white/80 hover:text-white hover:bg-white/10'
               }`}
             >
               Dashboard
             </button>
             <button 
               onClick={() => setActiveTab('reporte')} 
-              className={`px-5 py-2 rounded-lg text-xs font-bold transition-all duration-200 ${
-                activeTab === 'reporte' ? 'bg-blue-600 shadow-md text-white' : 'text-slate-400 hover:text-white'
+              className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                activeTab === 'reporte' ? 'bg-white text-primary-600 shadow-md' : 'text-white/80 hover:text-white hover:bg-white/10'
               }`}
             >
               Listado Detallado
@@ -218,9 +218,9 @@ const ReportesSupervision = () => {
           </div>
           <button 
             onClick={exportarCSV} 
-            className="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2"
+            className="bg-white text-primary-600 hover:bg-primary-50 px-5 py-2.5 rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow-md"
           >
-            <Download className="w-4 h-4" /> EXPORTAR CSV
+            <Download className="w-4 h-4" /> Exportar CSV
           </button>
         </div>
       </header>
@@ -292,36 +292,36 @@ const ReportesSupervision = () => {
           <div className="animate-fade-in space-y-6">
             {/* KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-blue-500">
-                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Entidades en Filtro</p>
-                <h3 className="text-3xl font-black mt-2 text-slate-800">{filteredData.length}</h3>
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl shadow-sm border border-blue-200">
+                <p className="text-blue-600 text-xs font-semibold uppercase tracking-wide">Entidades en Filtro</p>
+                <h3 className="text-4xl font-bold mt-2 text-blue-700">{filteredData.length}</h3>
               </div>
 
-              <div className="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-emerald-500">
-                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Tasa de Aceptación</p>
-                <h3 className="text-3xl font-black mt-2 text-emerald-600">{tasaAceptacion}%</h3>
+              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-6 rounded-xl shadow-sm border border-emerald-200">
+                <p className="text-emerald-600 text-xs font-semibold uppercase tracking-wide">Tasa de Aceptación</p>
+                <h3 className="text-4xl font-bold mt-2 text-emerald-700">{tasaAceptacion}%</h3>
               </div>
 
-              <div className="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-red-500">
-                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Ítemes Observados</p>
-                <h3 className="text-3xl font-black mt-2 text-red-600">{totalObservados}</h3>
+              <div className="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-xl shadow-sm border border-red-200">
+                <p className="text-red-600 text-xs font-semibold uppercase tracking-wide">Ítemes Observados</p>
+                <h3 className="text-4xl font-bold mt-2 text-red-700">{totalObservados}</h3>
               </div>
 
-              <div className="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-purple-500">
-                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">En Revisión PCM</p>
-                <h3 className="text-3xl font-black mt-2 text-purple-600">{totalEnRevision}</h3>
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl shadow-sm border border-purple-200">
+                <p className="text-purple-600 text-xs font-semibold uppercase tracking-wide">En Revisión PCM</p>
+                <h3 className="text-4xl font-bold mt-2 text-purple-700">{totalEnRevision}</h3>
               </div>
             </div>
 
             {/* Gráficos Interactivos */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-white p-6 rounded-2xl border shadow-sm">
-                <h4 className="font-black text-slate-700 mb-6 uppercase text-xs tracking-wider flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                <h4 className="font-bold text-gray-700 mb-4 text-sm flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-primary-500"></span>
                   Distribución de Estados Nacionales
                 </h4>
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
+                <div style={{ width: '100%', height: '300px' }}>
+                  <ResponsiveContainer>
                     <PieChart>
                       <Pie 
                         data={statsGlobal.filter(s => s.value > 0)} 
@@ -335,25 +335,25 @@ const ReportesSupervision = () => {
                         ))}
                       </Pie>
                       <Tooltip />
-                      <Legend wrapperStyle={{fontSize: '10px', fontWeight: 'bold'}} />
+                      <Legend wrapperStyle={{fontSize: '11px', fontWeight: '600'}} />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
               <div className="bg-white p-6 rounded-2xl border shadow-sm">
-                <h4 className="font-black text-slate-700 mb-6 uppercase text-xs tracking-wider flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                <h4 className="font-bold text-gray-700 mb-4 text-sm flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-primary-500"></span>
                   Tasa de Aceptación por Sector
                 </h4>
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
+                <div style={{ width: '100%', height: '300px' }}>
+                  <ResponsiveContainer>
                     <BarChart data={datosPorSector}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                      <XAxis dataKey="name" fontSize={9} tick={{fontWeight: 'bold'}} angle={-45} textAnchor="end" height={80} />
-                      <YAxis fontSize={9} />
+                      <XAxis dataKey="name" fontSize={10} tick={{fontWeight: '600'}} angle={-45} textAnchor="end" height={80} />
+                      <YAxis fontSize={10} tick={{fontWeight: '600'}} />
                       <Tooltip />
-                      <Bar dataKey="value" name="% Aceptación" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={20} />
+                      <Bar dataKey="value" name="% Aceptación" fill="#1e40af" radius={[6, 6, 0, 0]} barSize={24} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

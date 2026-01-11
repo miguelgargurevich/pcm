@@ -15,7 +15,7 @@ import CumplimientoNormativo from './pages/CumplimientoNormativo';
 import CumplimientoNormativoDetalle from './pages/CumplimientoNormativoDetalle';
 import SeguimientoPGDPP from './pages/SeguimientoPGDPP';
 import EvaluacionCumplimiento from './pages/EvaluacionCumplimiento';
-import Reportes from './pages/Reportes';
+import ReportesSupervision from './pages/ReportesSupervision';
 // import HistorialCumplimiento from './pages/HistorialCumplimiento';
 import DashboardLayout from './layouts/DashboardLayout';
 
@@ -77,7 +77,7 @@ function App() {
             <Route path="seguimiento" element={<SeguimientoPGDPP />} />
             <Route path="evaluacion" element={<EvaluacionCumplimiento />} />
             {/* <Route path="historial" element={<HistorialCumplimiento />} /> */}
-            <Route path="reportes" element={<Reportes />} />
+            <Route path="reportes" element={<ReportesSupervision />} />
           </Route>
 
           {/* Redirigir a login por defecto */}
