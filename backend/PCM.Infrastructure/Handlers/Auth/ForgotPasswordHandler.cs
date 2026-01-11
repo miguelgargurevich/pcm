@@ -29,7 +29,8 @@ public class ForgotPasswordHandler
         _context = context;
         _emailService = emailService;
         _logger = logger;
-        _frontendUrl = configuration["Resend:FrontendUrl"] ?? "http://localhost:5173";
+        // Leer de Gmail:FrontendUrl para usar la configuración correcta del servidor
+        _frontendUrl = configuration["Gmail:FrontendUrl"] ?? configuration["Resend:FrontendUrl"] ?? "http://localhost:5173";
     }
 
     public async Task<Result<string>> Handle(ForgotPasswordRequestDto request)

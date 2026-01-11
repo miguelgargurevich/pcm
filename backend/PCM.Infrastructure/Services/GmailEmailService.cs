@@ -146,7 +146,8 @@ public class GmailEmailService : IEmailService
         var message = new StringBuilder();
         message.AppendLine($"From: {_fromName} <{_fromEmail}>");
         message.AppendLine($"To: {to}");
-        message.AppendLine($"Subject: {subject}");
+        // Codificar el subject en UTF-8 para evitar problemas con acentos
+        message.AppendLine($"Subject: =?UTF-8?B?{Convert.ToBase64String(Encoding.UTF8.GetBytes(subject))}?=");
         message.AppendLine("MIME-Version: 1.0");
         message.AppendLine("Content-Type: text/html; charset=utf-8");
         message.AppendLine();

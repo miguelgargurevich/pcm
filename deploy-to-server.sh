@@ -19,7 +19,8 @@ cd "$LOCAL_PATH"
 find . -name "._*" -type f -delete 2>/dev/null || true
 find . -name ".DS_Store" -type f -delete 2>/dev/null || true
 
-tar --exclude='node_modules' --exclude='bin' --exclude='obj' --exclude='.git' --exclude='*.tar.gz' --exclude='._*' --exclude='.DS_Store' -czf /tmp/pcm-deploy.tar.gz .
+# Usar tar con COPYFILE_DISABLE para evitar archivos de metadatos de macOS
+COPYFILE_DISABLE=1 tar --exclude='node_modules' --exclude='bin' --exclude='obj' --exclude='.git' --exclude='*.tar.gz' --exclude='._*' --exclude='.DS_Store' -czf /tmp/pcm-deploy.tar.gz .
 echo "✅ Archivo creado: /tmp/pcm-deploy.tar.gz"
 
 # Copiar al servidor
@@ -41,6 +42,10 @@ cd /root/PCM
 echo "📦 Descomprimiendo archivos..."
 tar -xzf /tmp/pcm-deploy.tar.gz
 rm /tmp/pcm-deploy.tar.gz
+
+echo "🧹 Limpiando archivos de macOS..."
+find . -name "._*" -type f -delete
+find . -name ".DS_Store" -type f -delete
 
 echo "📍 Directorio actual: $(pwd)"
 ls -la docker-compose.server.yml
