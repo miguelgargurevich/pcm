@@ -68,8 +68,13 @@ public class FilesController : ControllerBase
 
             _logger.LogInformation("📥 Sirviendo archivo: {FilePath}", filePath);
 
-            // Devolver el archivo
+            // Devolver el archivo con headers para permitir visualización en iframe
             var fileStream = new FileStream(physicalPath, FileMode.Open, FileAccess.Read);
+            
+            // Permitir que el archivo se muestre en iframes del mismo origen
+            Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
+            Response.Headers["Content-Disposition"] = $"inline; filename=\"{Path.GetFileName(filePath)}\"";
+            
             return File(fileStream, contentType);
         }
         catch (Exception ex)

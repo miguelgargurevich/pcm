@@ -13,7 +13,6 @@ public class LocalFileStorageService : IFileStorageService
     private readonly ILogger<LocalFileStorageService> _logger;
     private readonly string _basePath;
     private readonly string _baseUrl;
-    private readonly long _maxFileSizeBytes;
     private readonly string[] _allowedExtensions;
 
     public LocalFileStorageService(
@@ -26,7 +25,6 @@ public class LocalFileStorageService : IFileStorageService
         _basePath = configuration["FileStorage:BasePath"] 
             ?? Path.Combine(Directory.GetCurrentDirectory(), "storage");
         _baseUrl = configuration["FileStorage:BaseUrl"] ?? "/api/files";
-        _maxFileSizeBytes = long.Parse(configuration["FileStorage:MaxFileSizeMB"] ?? "10") * 1024 * 1024;
         _allowedExtensions = (configuration["FileStorage:AllowedExtensions"] ?? ".pdf,.doc,.docx,.xls,.xlsx,.jpg,.png")
             .Split(',', StringSplitOptions.RemoveEmptyEntries);
 
@@ -36,7 +34,7 @@ public class LocalFileStorageService : IFileStorageService
         _logger.LogInformation("📁 LocalFileStorageService inicializado");
         _logger.LogInformation("   BasePath: {BasePath}", _basePath);
         _logger.LogInformation("   BaseUrl: {BaseUrl}", _baseUrl);
-        _logger.LogInformation("   MaxFileSize: {MaxSize}MB", _maxFileSizeBytes / 1024 / 1024);
+        _logger.LogInformation("   Sin límite de tamaño de archivo");
     }
 
     public async Task<FileUploadResult> UploadFileAsync(Stream fileStream, string fileName, string contentType, string? folder = null)
@@ -54,15 +52,7 @@ public class LocalFileStorageService : IFileStorageService
                 };
             }
 
-            // Validar tamaño
-            if (fileStream.Length > _maxFileSizeBytes)
-            {
-                return new FileUploadResult
-                {
-                    Success = false,
-                    ErrorMessage = $"El archivo excede el tamaño máximo permitido ({_maxFileSizeBytes / 1024 / 1024}MB)"
-                };
-            }
+            // Sin validación de tamaño - archivos de cualquier tamaño permitidos
 
             // Sanitizar nombre de archivo
             var sanitizedFileName = SanitizeFileName(fileName);

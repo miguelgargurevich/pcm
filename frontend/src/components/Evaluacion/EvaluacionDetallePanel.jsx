@@ -24,6 +24,10 @@ import EvaluacionCompromiso20 from './EvaluacionCompromiso20';
 import EvaluacionCompromiso21 from './EvaluacionCompromiso21';
 import evaluacionService from '../../services/evaluacionService';
 
+// Obtener URL base del backend (sin /api)
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5165/api';
+const BACKEND_BASE_URL = API_BASE_URL.replace('/api', '');
+
 // Nombres de los compromisos
 const COMPROMISOS_NOMBRES = {
   1: 'Designación del Líder Digital',
@@ -99,10 +103,11 @@ const EvaluacionDetallePanel = ({
   const handleVerDocumento = (url) => {
     if (url) {
       // Si la URL ya es absoluta (empieza con http), usarla tal cual
-      // Si es relativa, construir URL absoluta con el host del backend (sin /api)
+      // Si es relativa, construir URL absoluta con el host del backend
       const fullUrl = url.startsWith('http') 
         ? url 
-        : `http://localhost:5165${url}`;
+        : `${BACKEND_BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+      console.log('📄 Mostrando PDF:', fullUrl);
       setPdfUrl(fullUrl);
     }
   };

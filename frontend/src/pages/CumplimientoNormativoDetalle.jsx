@@ -825,7 +825,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 3: Plan de Gobierno Digital (Usar tabla com3_epgd)
-      if (compromisoId === 3 && user?.entidadId) {
+      if (compromisoId === 3 && getUserEntityId()) {
         console.log('📞 Llamando Com3EPGD.getByEntidad con:', getUserEntityId());
         try {
           const response = await com3EPGDService.getByEntidad(getUserEntityId());
@@ -900,7 +900,7 @@ const CumplimientoNormativoDetalle = () => {
       }
       
       // COMPROMISO 4: Incorporar TD en el PEI
-      if (compromisoId === 4 && user?.entidadId) {
+      if (compromisoId === 4 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 4, getUserEntityId());
         const response = await com4PEIService.getByEntidad(4, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -963,7 +963,7 @@ const CumplimientoNormativoDetalle = () => {
       }
       
       // COMPROMISO 5: Estrategia Digital
-      if (compromisoId === 5 && user?.entidadId) {
+      if (compromisoId === 5 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 5, getUserEntityId());
         const response = await com5EstrategiaDigitalService.getByEntidad(5, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1023,7 +1023,7 @@ const CumplimientoNormativoDetalle = () => {
       }
       
       // COMPROMISO 6: Migración GOB.PE
-      if (compromisoId === 6 && user?.entidadId) {
+      if (compromisoId === 6 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 6, getUserEntityId());
         const response = await com6MigracionGobPeService.getByEntidad(6, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1104,7 +1104,7 @@ const CumplimientoNormativoDetalle = () => {
       }
       
       // COMPROMISO 7: Implementación MPD
-      if (compromisoId === 7 && user?.entidadId) {
+      if (compromisoId === 7 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 7, getUserEntityId());
         const response = await com7ImplementacionMPDService.getByEntidad(7, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1165,7 +1165,7 @@ const CumplimientoNormativoDetalle = () => {
       }
       
       // COMPROMISO 8: Publicación TUPA
-      if (compromisoId === 8 && user?.entidadId) {
+      if (compromisoId === 8 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 8, getUserEntityId());
         const response = await com8PublicacionTUPAService.getByEntidad(8, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1226,7 +1226,7 @@ const CumplimientoNormativoDetalle = () => {
       }
       
       // COMPROMISO 9: Modelo de Gestión Documental
-      if (compromisoId === 9 && user?.entidadId) {
+      if (compromisoId === 9 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 9, getUserEntityId());
         const response = await com9ModeloGestionDocumentalService.getByEntidad(9, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1288,7 +1288,7 @@ const CumplimientoNormativoDetalle = () => {
       }
       
       // COMPROMISO 10: Datos Abiertos
-      if (compromisoId === 10 && user?.entidadId) {
+      if (compromisoId === 10 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 10, getUserEntityId());
         const response = await com10DatosAbiertosService.getByEntidad(10, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1350,7 +1350,7 @@ const CumplimientoNormativoDetalle = () => {
       }
       
       // COMPROMISO 11: AportacionGeoPeru
-      if (compromisoId === 11 && user?.entidadId) {
+      if (compromisoId === 11 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 11, getUserEntityId());
         const response = await com11AportacionGeoPeruService.getByEntidad(11, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1415,7 +1415,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 12: ResponsableSoftwarePublico
-      if (compromisoId === 12 && user?.entidadId) {
+      if (compromisoId === 12 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 12, getUserEntityId());
         const response = await com12ResponsableSoftwarePublicoService.getByEntidad(12, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1476,7 +1476,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 13: InteroperabilidadPIDE
-      if (compromisoId === 13 && user?.entidadId) {
+      if (compromisoId === 13 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 13, getUserEntityId());
         const response = await com13InteroperabilidadPIDEService.getByEntidad(13, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1540,7 +1540,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 14: OficialSeguridadDigital
-      if (compromisoId === 14 && user?.entidadId) {
+      if (compromisoId === 14 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 14, getUserEntityId());
         const response = await com14OficialSeguridadDigitalService.getByEntidad(14, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1602,7 +1602,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 15: CSIRTInstitucional
-      if (compromisoId === 15 && user?.entidadId) {
+      if (compromisoId === 15 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 15, getUserEntityId());
         const response = await com15CSIRTInstitucionalService.getByEntidad(15, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1664,7 +1664,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 16: SistemaGestionSeguridad
-      if (compromisoId === 16 && user?.entidadId) {
+      if (compromisoId === 16 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 16, getUserEntityId());
         const response = await com16SistemaGestionSeguridadService.getByEntidad(16, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1727,7 +1727,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 17: PlanTransicionIPv6
-      if (compromisoId === 17 && user?.entidadId) {
+      if (compromisoId === 17 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 17, getUserEntityId());
         const response = await com17PlanTransicionIPv6Service.getByEntidad(17, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1790,7 +1790,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 18: AccesoPortalTransparencia
-      if (compromisoId === 18 && user?.entidadId) {
+      if (compromisoId === 18 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 18, getUserEntityId());
         const response = await com18AccesoPortalTransparenciaService.getByEntidad(18, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1853,7 +1853,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 19: EncuestaNacionalGobDigital
-      if (compromisoId === 19 && user?.entidadId) {
+      if (compromisoId === 19 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 19, getUserEntityId());
         const response = await com19EncuestaNacionalGobDigitalService.getByEntidad(19, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1914,7 +1914,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 20: DigitalizacionServiciosFacilita
-      if (compromisoId === 20 && user?.entidadId) {
+      if (compromisoId === 20 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 20, getUserEntityId());
         const response = await com20DigitalizacionServiciosFacilitaService.getByEntidad(20, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -1975,7 +1975,7 @@ const CumplimientoNormativoDetalle = () => {
       }
 
       // COMPROMISO 21: OficialGobiernoDatos (OGD)
-      if (compromisoId === 21 && user?.entidadId) {
+      if (compromisoId === 21 && getUserEntityId()) {
         console.log('📞 Llamando getByEntidad con:', 21, getUserEntityId());
         const response = await com21OficialGobiernoDatosService.getByEntidad(21, getUserEntityId());
         console.log('📦 Respuesta de getByEntidad:', response);
@@ -2068,10 +2068,6 @@ const CumplimientoNormativoDetalle = () => {
     if (file) {
       if (file.type !== 'application/pdf') {
         showErrorToast('Solo se permiten archivos PDF');
-        return;
-      }
-      if (file.size > 10 * 1024 * 1024) { // 10MB max
-        showErrorToast('El archivo no puede superar los 10MB');
         return;
       }
 
@@ -2564,17 +2560,53 @@ const CumplimientoNormativoDetalle = () => {
       }
       // Validación específica para Compromiso 20 (DigitalizacionServiciosFacilita)
       else if (parseInt(formData.compromisoId) === 20) {
-        if (formData.sistemasDocumentados && formData.sistemasTotal && parseInt(formData.sistemasDocumentados) > parseInt(formData.sistemasTotal)) {
-          nuevosErrores.sistemasDocumentados = 'No puede ser mayor al total de sistemas';
+        if (!formData.responsableFacilita || formData.responsableFacilita.trim() === '') {
+          nuevosErrores.responsableFacilita = 'Ingrese el nombre del responsable';
+        }
+        if (!formData.cargoResponsableFacilita || formData.cargoResponsableFacilita.trim() === '') {
+          nuevosErrores.cargoResponsableFacilita = 'Ingrese el cargo del responsable';
+        }
+        if (!formData.correoFacilita || formData.correoFacilita.trim() === '') {
+          nuevosErrores.correoFacilita = 'Ingrese el correo del responsable';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoFacilita)) {
+          nuevosErrores.correoFacilita = 'Ingrese un correo válido';
+        }
+        if (!formData.estadoImplementacionFacilita || formData.estadoImplementacionFacilita.trim() === '') {
+          nuevosErrores.estadoImplementacionFacilita = 'Seleccione el estado de implementación';
+        }
+        if (!formData.fechaInicioFacilita) {
+          nuevosErrores.fechaInicioFacilita = 'Seleccione la fecha de inicio';
         }
       }
       // Validación específica para Compromiso 21 (OficialGobiernoDatos)
       else if (parseInt(formData.compromisoId) === 21) {
-        if (!formData.fechaElaboracion) {
-          nuevosErrores.fechaElaboracion = 'Seleccione la fecha de elaboración';
+        if (!formData.dniOgd || formData.dniOgd.trim() === '') {
+          nuevosErrores.dniOgd = 'Ingrese el DNI del OGD';
+        } else if (formData.dniOgd.length !== 8) {
+          nuevosErrores.dniOgd = 'El DNI debe tener 8 dígitos';
         }
-        if (!formData.numeroDocumento || formData.numeroDocumento.trim() === '') {
-          nuevosErrores.numeroDocumento = 'Ingrese el número de documento';
+        if (!formData.nombreOgd || formData.nombreOgd.trim() === '') {
+          nuevosErrores.nombreOgd = 'Ingrese el nombre del OGD';
+        }
+        if (!formData.apePatOgd || formData.apePatOgd.trim() === '') {
+          nuevosErrores.apePatOgd = 'Ingrese el apellido paterno del OGD';
+        }
+        if (!formData.apeMatOgd || formData.apeMatOgd.trim() === '') {
+          nuevosErrores.apeMatOgd = 'Ingrese el apellido materno del OGD';
+        }
+        if (!formData.cargoOgd || formData.cargoOgd.trim() === '') {
+          nuevosErrores.cargoOgd = 'Ingrese el cargo del OGD';
+        }
+        if (!formData.correoOgd || formData.correoOgd.trim() === '') {
+          nuevosErrores.correoOgd = 'Ingrese el correo del OGD';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoOgd)) {
+          nuevosErrores.correoOgd = 'Ingrese un correo válido';
+        }
+        if (!formData.fechaDesignacionOgd) {
+          nuevosErrores.fechaDesignacionOgd = 'Seleccione la fecha de designación';
+        }
+        if (!formData.numeroResolucionOgd || formData.numeroResolucionOgd.trim() === '') {
+          nuevosErrores.numeroResolucionOgd = 'Ingrese el número de resolución';
         }
       }
       else if (parseInt(formData.compromisoId) !== 3) {
@@ -4609,7 +4641,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -4812,7 +4844,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -5194,7 +5226,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -5438,7 +5470,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -5679,7 +5711,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -5942,7 +5974,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -6207,7 +6239,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -6515,7 +6547,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -6785,7 +6817,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -7095,7 +7127,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -7374,7 +7406,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -7629,7 +7661,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -7890,7 +7922,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -8232,7 +8264,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -8468,7 +8500,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -8710,7 +8742,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -8926,7 +8958,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -9222,7 +9254,7 @@ const CumplimientoNormativoDetalle = () => {
                             Seleccionar archivo
                           </label>
                         )}
-                        <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                        <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-4">
@@ -9474,7 +9506,7 @@ const CumplimientoNormativoDetalle = () => {
                       Seleccionar archivo
                     </label>
                   )}
-                  <p className="text-xs text-gray-500 mt-2">Tamaño máximo: 10 MB</p>
+                  <p className="text-xs text-gray-500 mt-2">Formato: PDF</p>
                 </div>
               ) : (
                 <div className="border border-gray-300 rounded-lg p-4">

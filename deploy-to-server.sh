@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Script de deploy al servidor con Gmail OAuth2
+# Script de deploy al servidor 
 set -e
 
 SERVER_IP="101.44.1.6"
 SERVER_USER="root"
-KEY_FILE="/Users/miguelfernandezgargurevich/Downloads/KeyPair-cumplimiento (1).pem"
+KEY_FILE="/Users/miguelfernandezgargurevich/Library/Mobile Documents/com~apple~CloudDocs/Personal/Proyectos/repositorios/PCM/KeyPair-cumplimiento.pem"
 REMOTE_PATH="/root/PCM"
 LOCAL_PATH="/Users/miguelfernandezgargurevich/Library/Mobile Documents/com~apple~CloudDocs/Personal/Proyectos/repositorios/PCM"
 
@@ -70,21 +70,13 @@ echo "   Frontend: http://101.44.1.6:3000"
 echo "   Backend:  http://101.44.1.6:5164/api"
 echo "   Health:   http://101.44.1.6:5164/health"
 echo ""
-echo "📧 Configuración de Email:"
-echo "   Proveedor: Gmail OAuth2"
-echo "   Cuenta: tidragon1981@gmail.com"
-echo "   Endpoint: POST /api/Email/sendMail"
-echo ""
-echo "⚠️  IMPORTANTE: Configura Client ID y Client Secret"
-echo "   Ver: docs/GMAIL_OAUTH_SETUP.md"
-echo ""
 echo "📋 Comandos útiles:"
 echo "   ssh -i '$KEY_FILE' $SERVER_USER@$SERVER_IP 'docker ps'"
 echo "   ssh -i '$KEY_FILE' $SERVER_USER@$SERVER_IP 'docker logs pcm-backend-server'"
 echo "   Frontend: http://101.44.1.6:3000
-   Backend:  http://101.44.1.6:5165/api
+echo "   Backend:  http://101.44.1.6:5165/api
 
-📋 Nuevas claves reCAPTCHA configuradas:
+📋 claves reCAPTCHA configuradas:
    Site Key: 6LcbukMsAAAAAIPzvfzToFDYpLxuSZEz3IkfVeCy
    Secret Key: 6LcbukMsAAAAAN1vrEdKmrFX_ISzqkN3Um4mPhWC
 "
