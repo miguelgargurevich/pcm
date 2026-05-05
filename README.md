@@ -1,171 +1,173 @@
 # Plataforma de Cumplimiento Digital (PCM)
 
-Sistema integral para la gestión de cumplimiento normativo y gobierno digital en entidades públicas del Perú.
+Sistema web para la gestión de compromisos y cumplimiento normativo en entidades del Estado.
 
-## 🏗️ Arquitectura
+## Resumen
 
-### Backend (.NET 9.0)
-- **Clean Architecture** con CQRS pattern
-- **Entity Framework Core** con PostgreSQL
-- **JWT Authentication** con refresh tokens
-- **MediatR** para Commands y Queries
-- **Swagger** para documentación de API
+PCM es una solución full stack con:
 
-### Frontend (React + Vite)
-- **React 19** con React Router DOM
-- **Tailwind CSS** para estilos
-- **Axios** para llamadas HTTP
-- **reCAPTCHA v3** para seguridad
-- **Lucide React** para iconos
+- Backend en .NET 9 con arquitectura en capas y MediatR (CQRS).
+- Frontend en React + Vite + Tailwind.
+- Persistencia en PostgreSQL.
+- Autenticación JWT y validación con reCAPTCHA.
+- Soporte de ejecución local y despliegue con Docker.
 
-## 📦 Estructura del Proyecto
-
-```
-PCM/
-├── backend/
-│   ├── PCM.API/              # Web API con controladores
-│   ├── PCM.Application/      # Commands, Queries, DTOs
-│   ├── PCM.Domain/           # Entidades del dominio
-│   ├── PCM.Infrastructure/   # Handlers, DbContext, Services
-│   └── PCM.Shared/           # Utilidades compartidas
-├── frontend/
-│   ├── src/
-│   │   ├── components/       # Componentes reutilizables
-│   │   ├── pages/           # Páginas de la aplicación
-│   │   ├── layouts/         # Layouts (Dashboard, etc.)
-│   │   ├── services/        # Servicios de API
-│   │   ├── context/         # Context API de React
-│   │   └── hooks/           # Custom hooks
-│   └── public/              # Recursos estáticos
-├── db/                       # Scripts SQL y backups
-└── docs/                     # Documentación del proyecto
-```
-
-## 🚀 Tecnologías
+## Arquitectura
 
 ### Backend
-- .NET 9.0
-- PostgreSQL 15+
-- Entity Framework Core 9.0
-- BCrypt.Net para hashing de contraseñas
-- FluentValidation
+
+- .NET 9
+- Entity Framework Core + Npgsql
+- MediatR para comandos/consultas
+- Swagger/OpenAPI
+- Servicios de correo (Gmail OAuth2, AWS SES, SMTP o Resend según configuración)
 
 ### Frontend
-- React 19.1
-- Vite 7.1
-- Tailwind CSS 3
-- React Router DOM 7
+
+- React 19 + Vite
+- React Router
+- Tailwind CSS
 - Axios
-- react-google-recaptcha-v3
+- reCAPTCHA v3
 
-## 📋 Requisitos Previos
+## Estructura del repositorio
 
-- [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
-- [Node.js 18+](https://nodejs.org/)
-- [PostgreSQL 15+](https://www.postgresql.org/download/) o Docker
-- [Git](https://git-scm.com/)
-
-## 🔧 Configuración
-
-### 1. Base de Datos
-
-**Opción A: Docker (Recomendado)**
-```bash
-docker run --name pg-dashboard -e POSTGRES_PASSWORD=dashboard_pass -e POSTGRES_USER=dashboard_user -e POSTGRES_DB=plataforma_cumplimiento_digital -p 5433:5432 -d postgres:15
+```text
+PCM/
+├── backend/
+│   ├── PCM.API/              # API, configuración y arranque
+│   ├── PCM.Application/      # Casos de uso, DTOs, interfaces
+│   ├── PCM.Domain/           # Entidades y reglas de dominio
+│   ├── PCM.Infrastructure/   # Persistencia e implementaciones
+│   └── PCM.Shared/           # Código transversal
+├── frontend/                 # Aplicación React
+├── db/                       # Scripts SQL y utilidades de base de datos
+├── deploy/                   # Archivos y scripts de despliegue productivo
+├── docs/                     # Documentación funcional/técnica
+└── docker-compose*.yml       # Orquestación Docker local/servidor
 ```
 
-**Opción B: PostgreSQL local**
-- Crear base de datos: `plataforma_cumplimiento_digital`
-- Ejecutar script: `db/Plataforma de Cumplimiento Digital-1762212194.sql`
+## Requisitos
 
-### 2. Backend
+- Git
+- Node.js 18 o superior
+- npm
+- .NET SDK 9.0
+- PostgreSQL 15 o superior (o acceso a una instancia remota)
+- Docker y Docker Compose (opcional pero recomendado)
+
+## Inicio rápido
+
+### Opción A: Desarrollo full stack sin Docker
+
+1. Instalar dependencias del frontend:
 
 ```bash
-cd backend/PCM.API
-dotnet restore
-dotnet build
-dotnet run
+npm run install:all
 ```
 
-El backend estará disponible en: http://localhost:5164
-
-### 3. Frontend
+2. Ejecutar backend y frontend en paralelo:
 
 ```bash
-cd frontend
-npm install
 npm run dev
 ```
 
-El frontend estará disponible en: http://localhost:5173
+Servicios esperados:
 
-### 4. Variables de Entorno
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:5165 (por defecto en Program.cs)
 
-**Frontend (.env)**
+Nota: si el frontend apunta a otro puerto de API, revisar la variable VITE_API_URL en el entorno correspondiente.
+
+### Opción B: Ejecución local con Docker
+
+```bash
+chmod +x start-local-docker.sh
+./start-local-docker.sh
+```
+
+Servicios esperados en Docker local:
+
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5164
+- Health check: http://localhost:5164/health
+
+## Configuración de entorno
+
+### Frontend
+
+Archivos disponibles:
+
+- frontend/.env
+- frontend/.env.local
+- frontend/.env.production
+- frontend/.env.docker
+
+Variables típicas:
+
 ```env
-VITE_RECAPTCHA_SITE_KEY=your_site_key_here
 VITE_API_URL=http://localhost:5164/api
+VITE_RECAPTCHA_SITE_KEY=tu_site_key
 ```
 
-**Backend (appsettings.json)**
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5433;Database=plataforma_cumplimiento_digital;Username=dashboard_user;Password=dashboard_pass"
-  },
-  "JwtSettings": {
-    "SecretKey": "your_secret_key_minimum_32_characters",
-    "ExpirationMinutes": 60
-  },
-  "ReCaptcha": {
-    "SecretKey": "your_recaptcha_secret_key"
-  }
-}
-```
+### Backend
 
-## 👤 Usuario de Prueba
+Archivos disponibles:
 
-- **Email**: admin@pcm.gob.pe
-- **Contraseña**: Admin123!
+- backend/PCM.API/appsettings.json
+- backend/PCM.API/appsettings.Development.json
+- backend/PCM.API/appsettings.Production.json
+- backend/PCM.API/appsettings.Docker.json
 
-## 🎨 Paleta de Colores
+Claves importantes a validar:
 
-- **Primary**: #2E3791 (Azul institucional)
-- **Primary Dark**: #1e2563
-- **Primary Light**: #3d47a8
+- ConnectionStrings:DefaultConnection
+- JwtSettings:SecretKey / Issuer / Audience
+- ReCaptcha:SecretKey
+- Sección de proveedor de correo (Gmail, AWS, SMTP o Resend)
+- Cors:Origins
 
-## 📚 Módulos Implementados
+## Scripts útiles del repositorio
 
-### ✅ Completados
-- [x] Autenticación JWT
-- [x] Gestión de Usuarios
-- [x] Gestión de Entidades Públicas
-- [x] Marco Normativo
+- npm run dev: ejecuta backend y frontend a la vez
+- npm run dev:backend: inicia backend con dotnet watch
+- npm run dev:frontend: inicia frontend con Vite
+- start-local-docker.sh: entorno local dockerizado
+- start-server-docker.sh: arranque para servidor Linux del cliente
+- deploy-to-server.sh: utilidad de despliegue a servidor
+- delete-from-server.sh: utilidad de limpieza en servidor
 
-### 🚧 En Desarrollo
-- [ ] Compromisos de Gobierno Digital
-- [ ] Cumplimiento Normativo
-- [ ] Seguimiento PGD-PP
-- [ ] Evaluación y Cumplimiento
-- [ ] Consultas y Reportes
+## Despliegue
 
-## 🔒 Seguridad
+Para despliegue productivo o en servidor Ubuntu, revisar:
 
-- JWT con refresh tokens
-- BCrypt para hashing de contraseñas
-- reCAPTCHA v3 en login
-- CORS configurado
-- SQL Injection prevention con EF Core
+- deploy/README.md
+- docs/GUIA_DEPLOY_UBUNTU.md
+- docker-compose.server.yml
+- deploy/docker-compose.prod.yml
 
-## 📄 Licencia
+## Seguridad
 
-Este proyecto es propiedad de la Presidencia del Consejo de Ministros (PCM) del Perú.
+- JWT para autenticación de API
+- Hashing de contraseñas
+- Validación reCAPTCHA
+- CORS configurable por entorno
 
-## 👥 Equipo de Desarrollo
+## Documentación adicional
 
-Desarrollado por el equipo de Transformación Digital de la PCM.
+Documentos relevantes:
 
----
+- docs/DOCKER_LOCAL_README.md
+- docs/MIGRACION_PRODUCCION.md
+- docs/VERCEL_ENV_SETUP.md
+- docs/CONFIGURACION_SMTP.md
+- docs/AWS_SES_CONFIG.md
+- docs/PASSWORD_RESET_FEATURE.md
 
-**Versión**: 1.0.0  
-**Última actualización**: Noviembre 2025
+## Estado del proyecto
+
+El repositorio contiene módulos funcionales y módulos en evolución. Para el estado funcional detallado por entregable, revisar la carpeta informes.
+
+## Licencia
+
+Proyecto de uso institucional para la Presidencia del Consejo de Ministros del Peru.
