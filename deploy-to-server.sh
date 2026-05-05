@@ -75,8 +75,8 @@ echo "   ssh -i '$KEY_FILE' $SERVER_USER@$SERVER_IP 'docker ps'"
 echo "   ssh -i '$KEY_FILE' $SERVER_USER@$SERVER_IP 'docker logs pcm-backend-server'"
 echo "   Frontend: http://101.44.1.6:3000
 echo "   Backend:  http://101.44.1.6:5165/api
-
-📋 claves reCAPTCHA configuradas:
+echo ""
+echo "📋 claves reCAPTCHA configuradas:
    Site Key: 6LcbukMsAAAAAIPzvfzToFDYpLxuSZEz3IkfVeCy
    Secret Key: 6LcbukMsAAAAAN1vrEdKmrFX_ISzqkN3Um4mPhWC
 "
