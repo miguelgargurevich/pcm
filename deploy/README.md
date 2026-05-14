@@ -45,6 +45,16 @@ Internet → Nginx (80/443) → Frontend (archivos estáticos)
                          → Backend Docker (5000) → PostgreSQL Docker
 ```
 
+## Despliegue separado en Coolify
+
+Cuando el frontend y el backend se despliegan como proyectos distintos:
+
+- El frontend consume la API usando `VITE_API_URL` apuntando al dominio o URL pública del backend.
+- El backend debe recibir por entorno `ConnectionStrings__DefaultConnection`, `JwtSettings__SecretKey`, `JwtSettings__Issuer`, `JwtSettings__Audience` y `JwtSettings__ExpirationMinutes`.
+- Si la base de datos vive en otro proyecto o contenedor, la cadena de conexión debe apuntar a un host alcanzable desde el backend; no uses `postgres` salvo que compartan red.
+- Agrega el dominio real del frontend a `Cors__Origins__0` para evitar bloqueos por CORS.
+- Para backend en Docker, usa `ASPNETCORE_ENVIRONMENT=Production` y `PORT=8080`.
+
 ## Comandos del Script
 
 | Comando | Descripción |

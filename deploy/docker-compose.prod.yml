@@ -32,11 +32,13 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=${POSTGRES_DB:-pcm_db};Username=${POSTGRES_USER:-pcm_user};Password=${POSTGRES_PASSWORD}
-      - JwtSettings__Secret=${JWT_SECRET}
+      - PORT=8080
+      - ConnectionStrings__DefaultConnection=Host=${DB_HOST};Port=${DB_PORT:-5432};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+      - JwtSettings__SecretKey=${JWT_SECRET}
       - JwtSettings__Issuer=${JWT_ISSUER:-PCM}
       - JwtSettings__Audience=${JWT_AUDIENCE:-PCM-Users}
-      - JwtSettings__ExpirationInMinutes=${JWT_EXPIRATION:-60}
+      - JwtSettings__ExpirationMinutes=${JWT_EXPIRATION:-60}
+      - Cors__Origins__0=${CORS_ORIGIN_0}
       - Supabase__Url=${SUPABASE_URL:-}
       - Supabase__Key=${SUPABASE_KEY:-}
     depends_on:

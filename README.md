@@ -146,6 +146,19 @@ Para despliegue productivo o en servidor Ubuntu, revisar:
 - docker-compose.server.yml
 - deploy/docker-compose.prod.yml
 
+### Despliegue separado en Coolify
+
+Si el frontend y el backend van en proyectos distintos, el backend debe recibir estas variables en Coolify:
+
+- `ConnectionStrings__DefaultConnection`
+- `JwtSettings__SecretKey`
+- `JwtSettings__Issuer`
+- `JwtSettings__Audience`
+- `JwtSettings__ExpirationMinutes`
+- `Cors__Origins__0` con la URL pública del frontend
+
+En ese escenario, no uses `postgres` como host de la cadena de conexión salvo que la base esté en el mismo stack o red de Docker.
+
 ## Seguridad
 
 - JWT para autenticación de API
