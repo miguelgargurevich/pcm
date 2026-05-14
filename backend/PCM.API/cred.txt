@@ -1,2 +1,0 @@
-# # ssh-root-password=0qAD34yXV54lw
-# ssh root@84.247.167.43 
