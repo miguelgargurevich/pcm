@@ -32,27 +32,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Obtener reCAPTCHA token si está disponible
-      let recaptchaToken = null;
-      const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-      
-      if (recaptchaSiteKey && window.grecaptcha) {
-        try {
-          console.log('🤖 Obteniendo token de reCAPTCHA...');
-          recaptchaToken = await window.grecaptcha.execute(recaptchaSiteKey, { action: 'login' });
-          console.log('✅ Token de reCAPTCHA obtenido');
-        } catch (recaptchaError) {
-          console.warn('⚠️ Error al obtener token de reCAPTCHA:', recaptchaError);
-        }
-      } else {
-        console.log('ℹ️ reCAPTCHA no disponible (modo desarrollo)');
-      }
-      
-      console.log('🔐 Iniciando login...');
-      console.log('📧 Email:', formData.email);
-      console.log('🤖 reCAPTCHA Token:', recaptchaToken ? 'Disponible' : 'No disponible');
-      
-      const result = await login(formData.email, formData.password, recaptchaToken);
+      const result = await login(formData.email, formData.password, null);
       
       console.log('📥 Respuesta del login:', result);
       
