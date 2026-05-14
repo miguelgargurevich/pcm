@@ -46,6 +46,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 # Variables de entorno por defecto
 ENV ASPNETCORE_ENVIRONMENT=Docker
 ENV ASPNETCORE_URLS=http://+:8080
+ENV PORT=8080
 
 # Comando de inicio
 ENTRYPOINT ["dotnet", "PCM.API.dll"]
