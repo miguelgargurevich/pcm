@@ -8,7 +8,7 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 # Argumentos de build para variables de entorno
-ARG VITE_API_URL=http://localhost:5164/api
+ARG VITE_API_URL=https://api.pcm.gargurevich.dev/api
 ARG VITE_RECAPTCHA_SITE_KEY=6LfEE8csAAAAAHg7Nbk0Ly-obOi6877B6Y7esrwz
 
 # Establecer como variables de entorno para el build
