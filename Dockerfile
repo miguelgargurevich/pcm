@@ -24,6 +24,11 @@ RUN dotnet clean && dotnet publish -c Release -o /app/publish --no-restore
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 
+# Instalar curl y wget para healthcheck de Coolify
+RUN apt-get update && \
+    apt-get install -y curl wget && \
+    rm -rf /var/lib/apt/lists/*
+
 # Copiar archivos publicados
 COPY --from=build /app/publish .
 
@@ -32,15 +37,15 @@ RUN mkdir -p /app/storage && \
     chmod 755 /app/storage
 
 # Exponer puerto
-EXPOSE 5164
+EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:5164/health || exit 1
+  CMD curl -f http://localhost:8080/health || exit 1
 
 # Variables de entorno por defecto
 ENV ASPNETCORE_ENVIRONMENT=Docker
-ENV ASPNETCORE_URLS=http://+:5164
+ENV ASPNETCORE_URLS=http://+:8080
 
 # Comando de inicio
 ENTRYPOINT ["dotnet", "PCM.API.dll"]
