@@ -210,7 +210,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Endpoint de salud básico (para health check de Render)
-app.MapGet("/", () => Results.Ok(new
+app.MapMethods("/", new[] { "GET", "HEAD" }, () => Results.Ok(new
 {
     api = "PCM API",
     status = "running",
@@ -222,7 +222,7 @@ app.MapGet("/", () => Results.Ok(new
 .AllowAnonymous();
 
 // Endpoint de salud con verificación real de DB
-app.MapGet("/health", async (PCMDbContext dbContext) =>
+app.MapMethods("/health", new[] { "GET", "HEAD" }, async (PCMDbContext dbContext) =>
 {
     try
     {
