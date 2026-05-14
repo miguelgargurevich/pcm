@@ -3,16 +3,16 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copiar archivos de proyecto y restaurar dependencias
-COPY PCM.Domain/*.csproj ./PCM.Domain/
-COPY PCM.Application/*.csproj ./PCM.Application/
-COPY PCM.Infrastructure/*.csproj ./PCM.Infrastructure/
-COPY PCM.Shared/*.csproj ./PCM.Shared/
-COPY PCM.API/*.csproj ./PCM.API/
-RUN dotnet restore PCM.API/PCM.API.csproj
+COPY backend/PCM.Domain/*.csproj ./backend/PCM.Domain/
+COPY backend/PCM.Application/*.csproj ./backend/PCM.Application/
+COPY backend/PCM.Infrastructure/*.csproj ./backend/PCM.Infrastructure/
+COPY backend/PCM.Shared/*.csproj ./backend/PCM.Shared/
+COPY backend/PCM.API/*.csproj ./backend/PCM.API/
+RUN dotnet restore backend/PCM.API/PCM.API.csproj
 
 # Copiar todo el código y compilar
-COPY . .
-WORKDIR /src/PCM.API
+COPY backend/ ./backend/
+WORKDIR /src/backend/PCM.API
 RUN dotnet clean && dotnet publish -c Release -o /app/publish --no-restore
 
 # Usar la imagen runtime de .NET 9 para ejecutar
